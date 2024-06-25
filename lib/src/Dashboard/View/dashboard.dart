@@ -8,29 +8,36 @@ class DashboardPage extends StatelessWidget {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body : Container(
-        color: Colors.indigo,
+      body: Container(
+        color: const Color(0xFF4313E9),
         height: height,
         width: width,
-      child : Column(
-        children: [
-          Container(
-            decoration: const BoxDecoration(),
-            height: height * 0.15,
-            width: width,
-            child: Column(
-              children: [
-                Padding(padding: const EdgeInsets.only(top: 55, left: 15, right: 15),
-                child : 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ClipRect(
-                      child: Image.asset("assets/images/mana2logo.png",
-                      height : 60,
-                      width : 60,
-                      ),
-                    ),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: const DecorationImage(
+                  image: AssetImage('assets/images/appbar_background.png'),
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
+              height: height * 0.15,
+              width: width,
+              child: Column(
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 55, left: 15, right: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ClipRect(
+                          child: Image.asset(
+                            "assets/images/mana2logo.png",
+                            height: 60,
+                            width: 60,
+                          ),
+                        ),
                         const Text(
                           'Dashboard',
                           style: TextStyle(
@@ -41,33 +48,41 @@ class DashboardPage extends StatelessWidget {
                           ),
                           textAlign: TextAlign.left,
                         ),
-                    InkWell(
-                      onTap: (){},
-                      child: const Icon(
-                        Icons.sort,
-                        color: Colors.white,
-                        size: 40,
-                      ),
+                        InkWell(
+                          onTap: () {},
+                          child: const Icon(
+                            Icons.sort,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
+                  ),
+                ],
               ),
             ),
-            height: height * 0.85 ,
-            width: width,
-          )
-      ],
-      ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.5),
+                    spreadRadius: 10,
+                    blurRadius: 50,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              height: height * 0.85,
+              width: width,
+            )
+          ],
+        ),
       ),
     );
   }
