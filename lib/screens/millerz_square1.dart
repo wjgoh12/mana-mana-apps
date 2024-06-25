@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/personal_millerz_square.dart';
-import 'package:mana_mana_app/widgets/gradient_text.dart';
+import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 const List<String> list = <String>['Type A', 'Type B', 'Type C', 'Type D'];
@@ -12,37 +12,11 @@ class MillerzSquare1Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0XFFFFFFFF),
-      appBar: AppBar(
-        backgroundColor: const Color(0XFFFFFFFF).withOpacity(0),
-        leadingWidth: 15.width,
-        centerTitle: true,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 7.width),
-          child: InkWell(
-              onTap: () {
-                print('hello');
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) {
-                  return const PersonalMillerzSquare1Screen();
-                }));
-              },
-              child: Image.asset(
-                'assets/images/return.png',
-              )),
-        ),
-        title: GradientText1(
-            text: 'Property(s)',
-            style: TextStyle(
-              fontFamily: 'Open Sans',
-              fontSize: 20.fSize,
-              fontWeight: FontWeight.w800,
-            ),
-            gradient: const LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xFF2900B7), Color(0xFF120051)],
-            )),
-      ),
+      appBar: propertyAppBar(context, () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return const PersonalMillerzSquare1Screen();
+        }));
+      }),
       body: Center(
         child: Column(
           children: [
@@ -50,17 +24,32 @@ class MillerzSquare1Screen extends StatelessWidget {
               height: 5,
             ),
             propertyStack(
-                'millerz_square', 'Millerz Square', '@ Old Klang Road'),
+              'millerz_square',
+              'Millerz Square',
+              '@ Old Klang Road',
+              90.width,
+              12.height,
+            ),
             const SizedBox(
               height: 20,
             ),
             propertyStack(
-                'scarletz_suites', 'Scarletz Suites', '@ KL City Centre'),
+              'scarletz_suites',
+              'Scarletz Suites',
+              '@ KL City Centre',
+              90.width,
+              12.height,
+            ),
             const SizedBox(
               height: 20,
             ),
             propertyStack(
-                'expressionz', 'Expressionz Suites', '@ Jalan Tun Razak'),
+              'expressionz',
+              'Expressionz Suites',
+              '@ Jalan Tun Razak',
+              90.width,
+              12.height,
+            ),
           ],
         ),
       ),
@@ -112,14 +101,14 @@ class _TypeDropdownButtonState extends State<TypeDropdownButton> {
   }
 }
 
-Widget propertyStack(image, text1, text2) {
+Widget propertyStack(image, text1, text2, width, height) {
   return Stack(
     children: [
       Align(
         alignment: Alignment.center,
         child: Container(
-          width: 90.width,
-          height: 12.height,
+          width: width,
+          height: height,
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
           child: Image.asset(
