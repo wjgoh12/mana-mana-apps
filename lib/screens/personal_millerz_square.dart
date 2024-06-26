@@ -7,9 +7,21 @@ import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class PersonalMillerzSquare1Screen extends StatelessWidget {
+class PersonalMillerzSquare1Screen extends StatefulWidget {
   const PersonalMillerzSquare1Screen({super.key});
 
+  @override
+  State<PersonalMillerzSquare1Screen> createState() =>
+      _PersonalMillerzSquare1ScreenState();
+}
+
+class _PersonalMillerzSquare1ScreenState
+    extends State<PersonalMillerzSquare1Screen> {
+  void SetState() {
+    setState(() {});
+  }
+
+  bool isClicked = false;
   @override
   Widget build(BuildContext context) {
     final List<String> items = ['Type A', 'Type B', 'Type C', 'Type D'];
@@ -213,10 +225,46 @@ class PersonalMillerzSquare1Screen extends StatelessWidget {
                                     fontSize: 15.fSize,
                                     color: const Color(0XFF888888))),
                             const Spacer(),
-                            Icon(Icons.keyboard_arrow_down_outlined,
-                                size: 8.width, color: const Color(0XFF4313E9)),
+                             InkWell(onTap: () {
+                                if (isClicked == false) {
+                                  isClicked = true;
+                                  SetState();
+                                } else {
+                                  isClicked = false;
+                                  SetState();
+                                }
+                              },
+                               child: Icon(Icons.keyboard_arrow_down_outlined,
+                                    size: 8.width,
+                                    color: const Color(0XFF4313E9)),
+                             ),
                           ],
                         ),
+                        isClicked
+                            ? Row(
+                                children: [
+                                  Text('SCARLETZ - 11-03 - APR2024',
+                                      style: TextStyle(
+                                        color: const Color(0XFF0044CC)
+                                            .withOpacity(0.8),
+                                        fontFamily: 'Open Sans',
+                                        fontSize: 15.fSize,
+                                        fontWeight: FontWeight.w600,
+                                      )),
+                                  const Spacer(),
+                                  Text(
+                                    'PDF',
+                                    style: TextStyle(
+                                        color: const Color(0XFF0044CC)
+                                            .withOpacity(0.8),
+                                        fontFamily: 'Open Sans',
+                                        fontSize: 15.fSize,
+                                        fontWeight: FontWeight.w600,
+                                        decoration: TextDecoration.underline),
+                                  ),
+                                ],
+                              )
+                            : Container(),
                         Divider(
                           color: const Color(0XFF888888),
                           thickness: 0.5.fSize,
@@ -297,7 +345,7 @@ class PersonalMillerzSquare1Screen extends StatelessWidget {
                   height: 3.height,
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 3.width,right:3.width ),
+                  padding: EdgeInsets.only(left: 3.width, right: 3.width),
                   width: 86.width,
                   height: 6.height,
                   decoration: BoxDecoration(
@@ -335,6 +383,8 @@ class PersonalMillerzSquare1Screen extends StatelessWidget {
                     ],
                   ),
                 ),
+                //for view
+                SizedBox(height: 10.height,)
               ],
             ),
           ),
