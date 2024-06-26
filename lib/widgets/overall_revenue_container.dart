@@ -2,12 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class OverallRevenueContainer extends StatelessWidget{
-  const OverallRevenueContainer({super.key});
-
+  const OverallRevenueContainer({super.key,required this.color,required this.backgroundColor,required this.text1,required this.text2,required this.text3,required this.text4,required this.text5,required this.text6});
+final String text1;
+final String text2;
+final String text3;
+final String text4;
+final String text5;
+final String text6;
+final Color color;
+final Color backgroundColor;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return  SizedBox(
+
+    return SizedBox(
               width: 86.width,
               height: 12.height,
               child: Stack(
@@ -20,7 +28,7 @@ class OverallRevenueContainer extends StatelessWidget{
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(9),
                           border: Border.all(color: const Color(0XFFBBBCBE)),
-                          color: const Color(0XFF4313E9)),
+                          color: backgroundColor),
                       child: Image.asset(
                         'assets/images/revenue_pattern.png',
                         fit: BoxFit.cover,
@@ -37,7 +45,7 @@ class OverallRevenueContainer extends StatelessWidget{
                           Icon(
                             size: 4.height,
                             Icons.account_balance_wallet_outlined,
-                            color: Colors.white,
+                            color: color,
                           ),
                           SizedBox(
                             width: 4.width,
@@ -46,17 +54,17 @@ class OverallRevenueContainer extends StatelessWidget{
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Overall Revenue',
+                                text1,
                                 style: TextStyle(
-                                    color: const Color(0XFFFFFFFF),
+                                    color: color,
                                     fontFamily: 'Open Sans',
                                     fontWeight: FontWeight.w400,
                                     fontSize: 10.fSize),
                               ),
                               Text(
-                                'RM 9,999.99',
+                                text2,
                                 style: TextStyle(
-                                    color: const Color(0XFFFFFFFF),
+                                    color: color,
                                     fontFamily: 'Open Sans',
                                     fontWeight: FontWeight.w700,
                                     fontSize: 15.fSize),
@@ -65,9 +73,9 @@ class OverallRevenueContainer extends StatelessWidget{
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '100%',
+                                    text3,
                                     style: TextStyle(
-                                        color: const Color(0XFFFFFFFF),
+                                        color: color,
                                         fontFamily: 'Open Sans',
                                         fontWeight: FontWeight.w400,
                                         fontSize: 10.fSize),
@@ -93,7 +101,7 @@ class OverallRevenueContainer extends StatelessWidget{
                           Icon(
                             size: 4.height,
                             Icons.home_outlined,
-                            color: Colors.white,
+                            color: color,
                           ),
                           SizedBox(
                             width: 4.width,
@@ -102,17 +110,17 @@ class OverallRevenueContainer extends StatelessWidget{
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Overall Rental Income',
+                                text4,
                                 style: TextStyle(
-                                    color: const Color(0XFFFFFFFF),
+                                    color: color,
                                     fontFamily: 'Open Sans',
                                     fontWeight: FontWeight.w400,
                                     fontSize: 10.fSize),
                               ),
                               Text(
-                                'RM 8,888.88',
+                                text5,
                                 style: TextStyle(
-                                    color: const Color(0XFFFFFFFF),
+                                    color: color,
                                     fontFamily: 'Open Sans',
                                     fontWeight: FontWeight.w700,
                                     fontSize: 15.fSize),
@@ -121,9 +129,9 @@ class OverallRevenueContainer extends StatelessWidget{
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '88%',
+                                    text6,
                                     style: TextStyle(
-                                        color: const Color(0XFFFFFFFF),
+                                        color: color,
                                         fontFamily: 'Open Sans',
                                         fontWeight: FontWeight.w400,
                                         fontSize: 10.fSize),
@@ -144,5 +152,142 @@ class OverallRevenueContainer extends StatelessWidget{
                 ],
               ),
             );
+    // return  SizedBox(
+    //           width: 86.width,
+    //           height: 12.height,
+    //           child: Stack(
+    //             clipBehavior: Clip.hardEdge,
+    //             children: [
+    //               Align(
+    //                 alignment: Alignment.center,
+    //                 child: Container(
+    //                   clipBehavior: Clip.hardEdge,
+    //                   decoration: BoxDecoration(
+    //                       borderRadius: BorderRadius.circular(9),
+    //                       border: Border.all(color: const Color(0XFFBBBCBE)),
+    //                       color: const Color(0XFF4313E9)),
+    //                   child: Image.asset(
+    //                     'assets/images/revenue_pattern.png',
+    //                     fit: BoxFit.cover,
+    //                   ),
+    //                 ),
+    //               ),
+    //               Align(
+    //                 alignment: Alignment.center,
+    //                 child: SizedBox(
+    //                   height: 6.height,
+    //                   child: Row(
+    //                     mainAxisAlignment: MainAxisAlignment.center,
+    //                     children: [
+    //                       Icon(
+    //                         size: 4.height,
+    //                         Icons.account_balance_wallet_outlined,
+    //                         color: Colors.white,
+    //                       ),
+    //                       SizedBox(
+    //                         width: 4.width,
+    //                       ),
+    //                       Column(
+    //                         crossAxisAlignment: CrossAxisAlignment.start,
+    //                         children: [
+    //                           Text(
+    //                             'Overall Revenue',
+    //                             style: TextStyle(
+    //                                 color: const Color(0XFFFFFFFF),
+    //                                 fontFamily: 'Open Sans',
+    //                                 fontWeight: FontWeight.w400,
+    //                                 fontSize: 10.fSize),
+    //                           ),
+    //                           Text(
+    //                             'RM 9,999.99',
+    //                             style: TextStyle(
+    //                                 color: const Color(0XFFFFFFFF),
+    //                                 fontFamily: 'Open Sans',
+    //                                 fontWeight: FontWeight.w700,
+    //                                 fontSize: 15.fSize),
+    //                           ),
+    //                           Row(
+    //                             crossAxisAlignment: CrossAxisAlignment.start,
+    //                             children: [
+    //                               Text(
+    //                                 '100%',
+    //                                 style: TextStyle(
+    //                                     color: const Color(0XFFFFFFFF),
+    //                                     fontFamily: 'Open Sans',
+    //                                     fontWeight: FontWeight.w400,
+    //                                     fontSize: 10.fSize),
+    //                               ),
+    //                               Icon(
+    //                                 Icons.arrow_drop_up,
+    //                                 color: Color(0XFF42C18B),
+    //                                 size: 2.width,
+    //                               )
+    //                             ],
+    //                           )
+    //                         ],
+    //                       ),
+    //                       SizedBox(
+    //                         width: 5.width,
+    //                       ),
+    //                       const VerticalDivider(
+    //                         color: Color(0XFFBBBCBE),
+    //                       ),
+    //                       SizedBox(
+    //                         width: 3.width,
+    //                       ),
+    //                       Icon(
+    //                         size: 4.height,
+    //                         Icons.home_outlined,
+    //                         color: Colors.white,
+    //                       ),
+    //                       SizedBox(
+    //                         width: 4.width,
+    //                       ),
+    //                       Column(
+    //                         crossAxisAlignment: CrossAxisAlignment.start,
+    //                         children: [
+    //                           Text(
+    //                             'Overall Rental Income',
+    //                             style: TextStyle(
+    //                                 color: const Color(0XFFFFFFFF),
+    //                                 fontFamily: 'Open Sans',
+    //                                 fontWeight: FontWeight.w400,
+    //                                 fontSize: 10.fSize),
+    //                           ),
+    //                           Text(
+    //                             'RM 8,888.88',
+    //                             style: TextStyle(
+    //                                 color: const Color(0XFFFFFFFF),
+    //                                 fontFamily: 'Open Sans',
+    //                                 fontWeight: FontWeight.w700,
+    //                                 fontSize: 15.fSize),
+    //                           ),
+    //                           Row(
+    //                             crossAxisAlignment: CrossAxisAlignment.start,
+    //                             children: [
+    //                               Text(
+    //                                 '88%',
+    //                                 style: TextStyle(
+    //                                     color: const Color(0XFFFFFFFF),
+    //                                     fontFamily: 'Open Sans',
+    //                                     fontWeight: FontWeight.w400,
+    //                                     fontSize: 10.fSize),
+    //                               ),
+    //                               Icon(
+    //                                 Icons.arrow_drop_up,
+    //                                 color: const Color(0XFF42C18B),
+    //                                 size: 2.width,
+    //                               )
+    //                             ],
+    //                           )
+    //                         ],
+    //                       ),
+    //                     ],
+    //                   ),
+    //                 ),
+    //               )
+    //             ],
+    //           ),
+    //         );
   }
 }
