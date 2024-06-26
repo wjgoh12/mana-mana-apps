@@ -52,7 +52,8 @@ class propertyStack extends StatelessWidget {
               '$text2',
               style: TextStyle(
                   color: const Color(0XFFFFFFFF),
-                  fontFamily: 'Italic',
+                  fontFamily: 'Open Sans',
+                  fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w600,
                   shadows: [
                     Shadow(
