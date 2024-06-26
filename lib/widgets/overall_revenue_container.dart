@@ -50,44 +50,46 @@ final Color backgroundColor;
                           SizedBox(
                             width: 4.width,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                text1,
-                                style: TextStyle(
-                                    color: color,
-                                    fontFamily: 'Open Sans',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10.fSize),
-                              ),
-                              Text(
-                                text2,
-                                style: TextStyle(
-                                    color: color,
-                                    fontFamily: 'Open Sans',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15.fSize),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    text3,
-                                    style: TextStyle(
-                                        color: color,
-                                        fontFamily: 'Open Sans',
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 10.fSize),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_drop_up,
-                                    color: Color(0XFF42C18B),
-                                    size: 2.width,
-                                  )
-                                ],
-                              )
-                            ],
+                          SizedBox(width: 20.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  text1,
+                                  style: TextStyle(
+                                      color: color,
+                                      fontFamily: 'Open Sans',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 10.fSize),
+                                ),
+                                Text(
+                                  text2,
+                                  style: TextStyle(
+                                      color: color,
+                                      fontFamily: 'Open Sans',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15.fSize),
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      text3,
+                                      style: TextStyle(
+                                          color: color,
+                                          fontFamily: 'Open Sans',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 10.fSize),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_drop_up,
+                                      color: Color(0XFF42C18B),
+                                      size: 2.width,
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                           SizedBox(
                             width: 5.width,
@@ -106,44 +108,46 @@ final Color backgroundColor;
                           SizedBox(
                             width: 4.width,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                text4,
-                                style: TextStyle(
-                                    color: color,
-                                    fontFamily: 'Open Sans',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10.fSize),
-                              ),
-                              Text(
-                                text5,
-                                style: TextStyle(
-                                    color: color,
-                                    fontFamily: 'Open Sans',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15.fSize),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    text6,
-                                    style: TextStyle(
-                                        color: color,
-                                        fontFamily: 'Open Sans',
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 10.fSize),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_drop_up,
-                                    color: const Color(0XFF42C18B),
-                                    size: 2.width,
-                                  )
-                                ],
-                              )
-                            ],
+                          SizedBox(width: 20.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  text4,
+                                  style: TextStyle(
+                                      color: color,
+                                      fontFamily: 'Open Sans',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 10.fSize),
+                                ),
+                                Text(
+                                  text5,
+                                  style: TextStyle(
+                                      color: color,
+                                      fontFamily: 'Open Sans',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15.fSize),
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      text6,
+                                      style: TextStyle(
+                                          color: color,
+                                          fontFamily: 'Open Sans',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 10.fSize),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_drop_up,
+                                      color: const Color(0XFF42C18B),
+                                      size: 2.width,
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ],
                       ),
