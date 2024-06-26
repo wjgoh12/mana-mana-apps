@@ -14,6 +14,15 @@ class PersonalMillerzSquare1Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<String> items = ['Type A', 'Type B', 'Type C', 'Type D'];
     final List<String> items2 = ['A-13-2', 'A-13-3', 'A-13-4', 'A-13-5'];
+    final List<String> items3 = [
+      '2024',
+      '2025',
+      '2026',
+      '2027',
+      '2028',
+      '2029',
+      '2030'
+    ];
     return Scaffold(
       backgroundColor: const Color(0XFFFFFFFF),
       appBar: propertyAppBar(context, () {
@@ -120,195 +129,210 @@ class PersonalMillerzSquare1Screen extends StatelessWidget {
                 SizedBox(
                   height: 1.height,
                 ),
+                _chartContainer(),
+                SizedBox(height: 5.height),
+                Row(
+                  children: [
+                    Text(
+                      'Monthly Statement',
+                      style: TextStyle(
+                        fontFamily: 'Open Sans',
+                        fontSize: 20.fSize,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0XFF4313E9),
+                      ),
+                    ),
+                    const Spacer(),
+                    SizedBox(
+                        width: 14.width,
+                        height: 14.width,
+                        child: Image.asset(
+                          'assets/images/patterns.png',
+                          fit: BoxFit.cover,
+                        ))
+                  ],
+                ),
+                SizedBox(
+                  height: 3.height,
+                ),
                 Container(
-                    width: 90.width,
-                    height: 30.height,
-                    decoration: BoxDecoration(
-                      color: const Color(0XFFFFFFFF),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0XFF120051).withOpacity(0.1),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                          spreadRadius:
-                              -1.0, // Negative value to apply shadow only to the border
+                  width: 90.width,
+                  decoration: BoxDecoration(
+                    color: const Color(0XFFFFFFFF),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0XFF120051).withOpacity(0.1),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                        spreadRadius:
+                            -1.0, // Negative value to apply shadow only to the border
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 2.height,
+                        left: 6.width,
+                        right: 5.width,
+                        bottom: 2.height),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            GradientText1(
+                                text: 'Year',
+                                style: TextStyle(
+                                  fontFamily: 'Open Sans',
+                                  fontSize: 15.fSize,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                gradient: const LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    Color(0xFF2900B7),
+                                    Color(0xFF120051)
+                                  ],
+                                )),
+                            SizedBox(width: 2.width),
+                            NewDropdownButton(
+                              list: items3,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 1.height,
+                        ),
+                        Row(
+                          children: [
+                            Text('01 - 30 April',
+                                style: TextStyle(
+                                    fontFamily: 'Open Sans',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15.fSize,
+                                    color: const Color(0XFF888888))),
+                            const Spacer(),
+                            Icon(Icons.keyboard_arrow_down_outlined,
+                                size: 8.width, color: const Color(0XFF4313E9)),
+                          ],
+                        ),
+                        Divider(
+                          color: const Color(0XFF888888),
+                          thickness: 0.5.fSize,
+                        ),
+                        Row(
+                          children: [
+                            Text('01 - 31 March',
+                                style: TextStyle(
+                                    fontFamily: 'Open Sans',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15.fSize,
+                                    color: const Color(0XFF888888))),
+                            const Spacer(),
+                            Icon(Icons.keyboard_arrow_down_outlined,
+                                size: 8.width, color: const Color(0XFF4313E9)),
+                          ],
+                        ),
+                        Divider(
+                          color: const Color(0XFF888888),
+                          thickness: 0.5.fSize,
+                        ),
+                        Row(
+                          children: [
+                            Text('01 - 29 February',
+                                style: TextStyle(
+                                    fontFamily: 'Open Sans',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15.fSize,
+                                    color: const Color(0XFF888888))),
+                            const Spacer(),
+                            Icon(Icons.keyboard_arrow_down_outlined,
+                                size: 8.width, color: const Color(0XFF4313E9)),
+                          ],
+                        ),
+                        Divider(
+                          color: const Color(0XFF888888),
+                          thickness: 0.5.fSize,
+                        ),
+                        Row(
+                          children: [
+                            Text('01 - 31 January',
+                                style: TextStyle(
+                                    fontFamily: 'Open Sans',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15.fSize,
+                                    color: const Color(0XFF888888))),
+                            const Spacer(),
+                            Icon(Icons.keyboard_arrow_down_outlined,
+                                size: 8.width, color: const Color(0XFF4313E9)),
+                          ],
                         ),
                       ],
                     ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: 1.height, left: 6.width, right: 5.width),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Monthly Overall Earnings',
-                                  style: TextStyle(
-                                      fontFamily: 'Open Sans',
-                                      fontSize: 12.fSize,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0XFF4313E9)),
-                                ),
-                                const Spacer(),
-                                Container(
-                                  width: 2.width,
-                                  height: 2.width,
-                                  decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: gradientColor1),
-                                ),
-                                SizedBox(
-                                  width: 1.width,
-                                ),
-                                Text(
-                                  'Overall Revenue',
-                                  style: TextStyle(
-                                      fontFamily: 'Open Sans',
-                                      fontSize: 12.fSize,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0XFF888888)),
-                                ),
-                                SizedBox(
-                                  width: 2.width,
-                                ),
-                                Container(
-                                  width: 2.width,
-                                  height: 2.width,
-                                  decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: gradientColor2),
-                                ),
-                                SizedBox(
-                                  width: 1.width,
-                                ),
-                                Text(
-                                  'Overall Revenue',
-                                  style: TextStyle(
-                                      fontFamily: 'Open Sans',
-                                      fontSize: 12.fSize,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0XFF888888)),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Align(
-                            alignment: const Alignment(
-                              -0.8,
-                              0,
-                            ),
-                            child: Text(
-                              '(Ringgit in thousands)',
-                              style: TextStyle(
-                                  fontFamily: 'Open Sans',
-                                  fontSize: 10.fSize,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0XFF4313E9)),
-                            ),
-                          ),
-                          BarChartSample7(),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 6.width, right: 5.width, top: 1.height),
-                            //continue
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 20.width,
-                                    ),
-                                    SizedBox(
-                                      width: 5.width,
-                                    ),
-                                    SizedBox(
-                                      width: 25.width,
-                                      child: Text(
-                                        'Monthly Revenue',
-                                        style: TextStyle(
-                                            color: const Color(0XFF888888),
-                                            fontSize: 8.fSize,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Open Sans'),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    SizedBox(
-                                      width: 25.width,
-                                      child: Text(
-                                        'Monthly Rental Income',
-                                        style: TextStyle(
-                                            color: const Color(0XFF888888),
-                                            fontSize: 8.fSize,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Open Sans'),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 1.height,
-                                ),
-                                revenueChartRow('April 2024', 'RM 0', 'RM 0'),
-                                SizedBox(
-                                  height: 0.5.height,
-                                ),
-                                Divider(
-                                  color: Color(0XFF888888),
-                                  thickness: 0.5.fSize,
-                                ),
-                                SizedBox(
-                                  height: 0.5.height,
-                                ),
-                                revenueChartRow(
-                                    'Mar 2024', 'RM 4,562.40', 'RM 4,562.40'),
-                                SizedBox(
-                                  height: 0.5.height,
-                                ),
-                                Divider(
-                                  color: Color(0XFF888888),
-                                  thickness: 0.5.fSize,
-                                ),
-                                SizedBox(
-                                  height: 0.5.height,
-                                ),
-                                revenueChartRow('Feb 2024', 'RM 100,562.40',
-                                    'RM 100,562.40'),
-                                SizedBox(
-                                  height: 0.5.height,
-                                ),
-                                Divider(
-                                  color: Color(0XFF888888),
-                                  thickness: 0.5.fSize,
-                                ),
-                                SizedBox(
-                                  height: 0.5.height,
-                                ),
-                                revenueChartRow(
-                                    'Jan 2024', 'RM 60,562.40', 'RM 60,562.40'),
-                                SizedBox(
-                                  height: 3.height,
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Agreement(s)',
+                      style: TextStyle(
+                        fontFamily: 'Open Sans',
+                        fontSize: 20.fSize,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0XFF4313E9),
                       ),
-                    )),
-                SizedBox(height: 5.height),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Monthly Statement',
-                    style: TextStyle(
-                      fontFamily: 'Open Sans',
-                      fontSize: 20.fSize,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0XFF4313E9),
                     ),
+                    const Spacer(),
+                    SizedBox(
+                        width: 14.width,
+                        height: 14.width,
+                        child: Image.asset(
+                          'assets/images/patterns.png',
+                          fit: BoxFit.cover,
+                        ))
+                  ],
+                ),
+                SizedBox(
+                  height: 3.height,
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 3.width,right:3.width ),
+                  width: 86.width,
+                  height: 6.height,
+                  decoration: BoxDecoration(
+                    color: const Color(0XFFFFFFFF),
+                    borderRadius: BorderRadius.circular(9),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0XFF120051).withOpacity(0.1),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                        spreadRadius:
+                            -1.0, // Negative value to apply shadow only to the border
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Text('SCARLETZ - 11-03 - APR2024',
+                          style: TextStyle(
+                            color: const Color(0XFF0044CC).withOpacity(0.8),
+                            fontFamily: 'Open Sans',
+                            fontSize: 15.fSize,
+                            fontWeight: FontWeight.w600,
+                          )),
+                      const Spacer(),
+                      Text(
+                        'PDF',
+                        style: TextStyle(
+                            color: const Color(0XFF0044CC).withOpacity(0.8),
+                            fontFamily: 'Open Sans',
+                            fontSize: 15.fSize,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -318,6 +342,182 @@ class PersonalMillerzSquare1Screen extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _chartContainer() {
+  return Container(
+      width: 90.width,
+      height: 30.height,
+      decoration: BoxDecoration(
+        color: const Color(0XFFFFFFFF),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0XFF120051).withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+            spreadRadius:
+                -1.0, // Negative value to apply shadow only to the border
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding:
+                  EdgeInsets.only(top: 2.height, left: 6.width, right: 5.width),
+              child: Row(
+                children: [
+                  Text(
+                    'Monthly Overall Earnings',
+                    style: TextStyle(
+                        fontFamily: 'Open Sans',
+                        fontSize: 12.fSize,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0XFF4313E9)),
+                  ),
+                  const Spacer(),
+                  Container(
+                    width: 2.width,
+                    height: 2.width,
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle, gradient: gradientColor1),
+                  ),
+                  SizedBox(
+                    width: 1.width,
+                  ),
+                  Text(
+                    'Overall Revenue',
+                    style: TextStyle(
+                        fontFamily: 'Open Sans',
+                        fontSize: 12.fSize,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0XFF888888)),
+                  ),
+                  SizedBox(
+                    width: 2.width,
+                  ),
+                  Container(
+                    width: 2.width,
+                    height: 2.width,
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle, gradient: gradientColor2),
+                  ),
+                  SizedBox(
+                    width: 1.width,
+                  ),
+                  Text(
+                    'Overall Revenue',
+                    style: TextStyle(
+                        fontFamily: 'Open Sans',
+                        fontSize: 12.fSize,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0XFF888888)),
+                  ),
+                ],
+              ),
+            ),
+            Align(
+              alignment: const Alignment(
+                -0.8,
+                0,
+              ),
+              child: Text(
+                '(Ringgit in thousands)',
+                style: TextStyle(
+                    fontFamily: 'Open Sans',
+                    fontSize: 10.fSize,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0XFF4313E9)),
+              ),
+            ),
+            BarChartSample7(),
+            Padding(
+              padding:
+                  EdgeInsets.only(left: 6.width, right: 5.width, top: 1.height),
+              //continue
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 20.width,
+                      ),
+                      SizedBox(
+                        width: 5.width,
+                      ),
+                      SizedBox(
+                        width: 25.width,
+                        child: Text(
+                          'Monthly Revenue',
+                          style: TextStyle(
+                              color: const Color(0XFF888888),
+                              fontSize: 8.fSize,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Open Sans'),
+                        ),
+                      ),
+                      const Spacer(),
+                      SizedBox(
+                        width: 25.width,
+                        child: Text(
+                          'Monthly Rental Income',
+                          style: TextStyle(
+                              color: const Color(0XFF888888),
+                              fontSize: 8.fSize,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Open Sans'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 1.height,
+                  ),
+                  revenueChartRow('April 2024', 'RM 0', 'RM 0'),
+                  SizedBox(
+                    height: 0.5.height,
+                  ),
+                  Divider(
+                    color: Color(0XFF888888),
+                    thickness: 0.5.fSize,
+                  ),
+                  SizedBox(
+                    height: 0.5.height,
+                  ),
+                  revenueChartRow('Mar 2024', 'RM 4,562.40', 'RM 4,562.40'),
+                  SizedBox(
+                    height: 0.5.height,
+                  ),
+                  Divider(
+                    color: Color(0XFF888888),
+                    thickness: 0.5.fSize,
+                  ),
+                  SizedBox(
+                    height: 0.5.height,
+                  ),
+                  revenueChartRow('Feb 2024', 'RM 100,562.40', 'RM 100,562.40'),
+                  SizedBox(
+                    height: 0.5.height,
+                  ),
+                  Divider(
+                    color: Color(0XFF888888),
+                    thickness: 0.5.fSize,
+                  ),
+                  SizedBox(
+                    height: 0.5.height,
+                  ),
+                  revenueChartRow('Jan 2024', 'RM 60,562.40', 'RM 60,562.40'),
+                  SizedBox(
+                    height: 3.height,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ));
 }
 
 //edit this
@@ -387,7 +587,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
             iconEnabledColor: const Color(0XFF4313E9),
             iconDisabledColor: const Color(0XFF4313E9)),
         menuItemStyleData: MenuItemStyleData(
-          height: 4.height,
+          height: 3.height,
         ),
       ),
     );
