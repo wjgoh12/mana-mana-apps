@@ -1,0 +1,75 @@
+import 'package:flutter/material.dart';
+import 'package:mana_mana_app/widgets/size_utils.dart';
+class propertyStack extends StatelessWidget {
+  const propertyStack({super.key,required this.width,required this.height,required this.image,required this.text1,required this.text2});
+  final String image;
+  final String text1;
+  final String text2;
+  final double width;
+  final double height;
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+   return Stack(
+    children: [
+      Align(
+        alignment: Alignment.center,
+        child: Container(
+          width: width,
+          height: height,
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+          child: Image.asset(
+            'assets/images/$image.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+      Center(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 2.height,
+            ),
+            Text(
+              '$text1',
+              style: TextStyle(
+                  color: const Color(0XFFFFFFFF),
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.w800,
+                  shadows: [
+                    Shadow(
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                        color: const Color(0XFF120051).withOpacity(0.75))
+                  ],
+                  fontSize: 30.fSize),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Text(
+              '$text2',
+              style: TextStyle(
+                  color: const Color(0XFFFFFFFF),
+                  fontFamily: 'Italic',
+                  fontWeight: FontWeight.w600,
+                  shadows: [
+                    Shadow(
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                        color: const Color(0XFF120051).withOpacity(0.75))
+                  ],
+                  fontSize: 15.fSize),
+            ),
+            // const SizedBox(
+            //   height: 10,
+            // ),
+            // const TypeDropdownButton()
+          ],
+        ),
+      ),
+    ],
+  );
+  }
+}
