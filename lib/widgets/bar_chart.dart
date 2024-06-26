@@ -11,12 +11,12 @@ class BarChartSample7 extends StatefulWidget {
   final labelColor1=const Color(0XFFFEBD74);
   final labelColor2=const Color(0XFF8C71E7);
   final dataList = [
-     const _BarData(gradientColor1, 30, 2),
-    const _BarData(gradientColor1, 1, 3),
-    const _BarData(gradientColor1, 20, 5),
-    const _BarData(gradientColor1, 40, 40),
-    const _BarData(gradientColor1, 60, 25),
-    const _BarData(gradientColor1, 70, 10),
+     const _BarData(gradientColor1, 60.5, 30),
+    const _BarData(gradientColor1, 100.5, 50),
+    const _BarData(gradientColor1, 4.5, 10),
+    const _BarData(gradientColor1, 120, 140),
+    const _BarData(gradientColor1, 160, 125),
+    const _BarData(gradientColor1, 170, 110),
   ];
  final List<Color> monthColors = [
     Colors.red,
@@ -72,7 +72,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
           toY: shadowValue,
           gradient: gradientColor2,
           color: widget.labelColor2,
-          width: 3.width,
+          width: 2.width,
         ),
       ],
       showingTooltipIndicators: touchedGroupIndex == x ? [0,1] : [],
@@ -150,7 +150,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
                   data.shadowValue,
                 );
               }).toList(),
-              maxY: 100,
+              maxY: 200,
               barTouchData: BarTouchData(
                 enabled: true,
                 handleBuiltInTouches: false,
