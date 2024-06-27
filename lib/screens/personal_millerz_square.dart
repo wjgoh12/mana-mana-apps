@@ -46,8 +46,8 @@ class _PersonalMillerzSquare1ScreenState
             padding: EdgeInsets.only(left: 7.width, right: 7.width),
             child: Column(
               children: [
-                const SizedBox(
-                  height: 5,
+                  SizedBox(
+                  height: 2.height,
                 ),
                 propertyStack(
                   image: 'millerz_square',
@@ -57,7 +57,7 @@ class _PersonalMillerzSquare1ScreenState
                   height: 12.height,
                 ),
                 SizedBox(
-                  height: 0.5.height,
+                  height: 2.height,
                 ),
                 const OverallRevenueContainer(
                   text1: 'Overall Revenue',
@@ -69,8 +69,8 @@ class _PersonalMillerzSquare1ScreenState
                   color: Color(0XFFFFFFFF),
                   backgroundColor: Color(0XFF4313E9),
                 ),
-                SizedBox(
-                  height: 0.5.height,
+                 SizedBox(
+                  height: 2.height,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -111,7 +111,7 @@ class _PersonalMillerzSquare1ScreenState
                   ],
                 ),
                 SizedBox(
-                  height: 1.height,
+                  height: 2.height,
                 ),
                 const OverallRevenueContainer(
                   text1: 'Unit Revenue',
