@@ -149,8 +149,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
                   data.value,
                   data.shadowValue,
                 );
-              }).toList(),
-              maxY: 200,
+              }).toList(),            
               barTouchData: BarTouchData(
                 enabled: true,
                 handleBuiltInTouches: false,
