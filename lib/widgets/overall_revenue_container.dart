@@ -17,13 +17,13 @@ final Color backgroundColor;
 
     return SizedBox(
               width: 86.width,
-              height: 12.height,
+              height: 10.height,
               child: Stack(
                 clipBehavior: Clip.hardEdge,
                 children: [
                   Align(
                     alignment: Alignment.center,
-                    child: Container(
+                    child: Container(width: 86.width,
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(9),
@@ -37,7 +37,7 @@ final Color backgroundColor;
                   ),
                   Align(
                     alignment: Alignment.center,
-                    child: SizedBox(
+                    child: SizedBox(width: 86.width,
                       height: 6.height,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

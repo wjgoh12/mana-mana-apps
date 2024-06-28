@@ -134,7 +134,7 @@ class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Scr
                     ),
                     const Spacer(),
                     SizedBox(
-                      width: 14.width,
+                      width: 12.width,
                       height: 14.width,
                       child: Image.asset(
                         'assets/images/patterns.png',
@@ -253,6 +253,7 @@ class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Scr
                     ),
                   ),
                 ),
+                SizedBox(height: 1.height,),
                 Row(
                   children: [
                     Text(
@@ -266,7 +267,7 @@ class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Scr
                     ),
                     const Spacer(),
                     SizedBox(
-                      width: 14.width,
+                      width: 12.width,
                       height: 14.width,
                       child: Image.asset(
                         'assets/images/patterns.png',

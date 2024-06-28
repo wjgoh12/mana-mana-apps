@@ -86,7 +86,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: SizedBox(width: 80.width,
-      height: 20.height,
+      height: 15.height,
         child: AspectRatio(
           aspectRatio: 1.4,
           child: BarChart(
