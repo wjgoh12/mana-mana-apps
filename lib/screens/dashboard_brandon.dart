@@ -5,8 +5,6 @@ import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class NewDashboardPage extends StatelessWidget {
-  var height, width;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,21 +108,29 @@ class NewDashboardPage extends StatelessWidget {
                         ],
                       ),
                       const Spacer(),
-                      Container(
-                        width: 8.width,
-                        height: 8.width,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(9),
-                            gradient: const LinearGradient(
-                                colors: [
-                                  Color(0XFF2900B7),
-                                  Color.fromARGB(255, 114, 96, 180)
-                                ],
-                                begin: AlignmentDirectional.topCenter,
-                                end: Alignment.bottomCenter)),
-                        child: const Icon(
-                          Icons.keyboard_arrow_right_outlined,
-                          color: Colors.white,
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) {
+                            return const PersonalMillerzSquare1Screen();
+                          }));
+                        },
+                        child: Container(
+                          width: 8.width,
+                          height: 8.width,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(9),
+                              gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0XFF2900B7),
+                                    Color.fromARGB(255, 114, 96, 180)
+                                  ],
+                                  begin: AlignmentDirectional.topCenter,
+                                  end: Alignment.bottomCenter)),
+                          child: const Icon(
+                            Icons.keyboard_arrow_right_outlined,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -398,7 +404,7 @@ class NewDashboardPage extends StatelessWidget {
                               ),
                             ),
                             const Spacer(),
-                             ClipRRect(
+                            ClipRRect(
                               borderRadius: BorderRadius.circular(9),
                               child: SizedBox(
                                 width: 40.width,
@@ -416,7 +422,7 @@ class NewDashboardPage extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                             ClipRRect(
+                            ClipRRect(
                               borderRadius: BorderRadius.circular(9),
                               child: SizedBox(
                                 width: 40.width,
@@ -428,7 +434,7 @@ class NewDashboardPage extends StatelessWidget {
                               ),
                             ),
                             const Spacer(),
-                           ClipRRect(
+                            ClipRRect(
                               borderRadius: BorderRadius.circular(9),
                               child: SizedBox(
                                 width: 40.width,
