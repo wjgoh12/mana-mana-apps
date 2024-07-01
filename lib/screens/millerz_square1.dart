@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/personal_millerz_square.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -13,9 +12,7 @@ class MillerzSquare1Screen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0XFFFFFFFF),
       appBar: propertyAppBar(context, () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return const PersonalMillerzSquare1Screen();
-        }));
+        Navigator.of(context).pop();
       }),
       body: Center(
         child: Column(

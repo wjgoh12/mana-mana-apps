@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/dashboard_brandon.dart';
 import 'package:mana_mana_app/widgets/bar_chart.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
@@ -31,7 +32,7 @@ class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Scr
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0XFFFFFFFF),
-      appBar: propertyAppBar(context, () => Navigator.of(context).pop()),
+      appBar: propertyAppBar(context, () => Navigator.of(context).push(MaterialPageRoute(builder: (context){return NewDashboardPage();}))),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
