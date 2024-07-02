@@ -39,6 +39,8 @@ dependencies:
   responsive_grid: ^2.4.4
   dropdown_button2: ^2.3.9
   fl_chart: ^0.68.0
+  gradient_borders: ^1.0.1
+  gradient_icon: ^2.0.9
 
 dev_dependencies:
   flutter_test:
