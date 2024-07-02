@@ -3,6 +3,7 @@ import 'package:mana_mana_app/screens/personal_millerz_square.dart';
 import 'package:mana_mana_app/widgets/bar_chart.dart';
 import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
+import 'package:responsive_grid/responsive_grid.dart';
 
 class NewDashboardPage extends StatelessWidget {
   @override
@@ -390,63 +391,49 @@ class NewDashboardPage extends StatelessWidget {
                             )
                           ],
                         ),
-                        Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(9),
-                              child: SizedBox(
-                                width: 40.width,
-                                height: 20.height,
+                        ResponsiveGridRow(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ResponsiveGridCol(
+                                // lg: 4,
+                                // md: 4,
+                                // sm: 12,
+                                xs: 6,
                                 child: Image.asset(
                                   'assets/images/Promotions.png',
-                                  fit: BoxFit.cover,
+                                  // fit: BoxFit.fill,
                                 ),
                               ),
-                            ),
-                            const Spacer(),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(9),
-                              child: SizedBox(
-                                width: 40.width,
-                                height: 20.height,
+                              ResponsiveGridCol(
+                                // lg: 4,
+                                // md: 4,
+                                // sm: 12,
+                                xs: 6,
                                 child: Image.asset(
                                   'assets/images/Discounts.png',
-                                  fit: BoxFit.cover,
+                                  // fit: BoxFit.fill,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ]),
                         SizedBox(
-                          height: 3.height,
+                          height: 2.height,
                         ),
-                        Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(9),
-                              child: SizedBox(
-                                width: 40.width,
-                                height: 20.height,
+                        ResponsiveGridRow(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ResponsiveGridCol(
+                                xs: 6,
                                 child: Image.asset(
                                   'assets/images/Exchange.png',
-                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            ),
-                            const Spacer(),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(9),
-                              child: SizedBox(
-                                width: 40.width,
-                                height: 20.height,
+                              ResponsiveGridCol(
+                                xs: 6,
                                 child: Image.asset(
                                   'assets/images/Earn Points.png',
-                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ]),
                       ]),
                     ),
                   ),
