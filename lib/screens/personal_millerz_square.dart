@@ -250,6 +250,7 @@ class _PersonalMillerzSquare1ScreenState
                                   fontSize: 15.fSize,
                                   fontWeight: FontWeight.w600,
                                   decoration: TextDecoration.underline,
+                                  decorationColor: const Color(0XFF0044CC).withOpacity(0.8)
                                 ),
                               ),
                             ],
@@ -338,6 +339,7 @@ class _PersonalMillerzSquare1ScreenState
                           fontSize: 15.fSize,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline,
+                          decorationColor: const Color(0XFF0044CC).withOpacity(0.8)
                         ),
                       ),
                     ],

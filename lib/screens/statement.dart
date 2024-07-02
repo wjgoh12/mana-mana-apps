@@ -7,9 +7,9 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 
 final List<String> items = [
   'Overall',
-  'MILLERZ',
-  'SCARLETZ',
-  'EXPRESSIONZ',
+  'Milletz',
+  'Scarletz',
+  'Expressionz',
 ];
 final List<String> items2 =
     List.generate(8, (index) => (DateTime.now().year - index).toString());
@@ -24,43 +24,43 @@ class _StatementPageState extends State<StatementPage> {
   String? selectedYear;
   List<Map<String, String>> statements = [
     {
-      'property': 'SCARLETZ',
+      'property': 'Scarletz',
       'date': '11-03 - APR2024',
       'month': 'APRIL 2024',
       'year': '2024'
     },
     {
-      'property': 'MILLERZ',
+      'property': 'Millerz',
       'date': '15-01 - APR2024',
       'month': 'APRIL 2024',
       'year': '2024'
     },
     {
-      'property': 'SCARLETZ',
+      'property': 'Scarletz',
       'date': '11-03 - MAR2024',
       'month': 'MAY 2024',
       'year': '2024'
     },
     {
-      'property': 'MILLERZ',
+      'property': 'Millerz',
       'date': '15-01 - MAR2024',
       'month': 'MAY 2024',
       'year': '2024'
     },
     {
-      'property': 'EXPRESSIONZ',
+      'property': 'Expressionz',
       'date': '22-01 - MAR2024',
       'month': 'MAY 2024',
       'year': '2024'
     },
     {
-      'property': 'SCARLETZ',
+      'property': 'Scarletz',
       'date': '11-03 - FEB2023',
       'month': 'FEBRUARY 2023',
       'year': '2023'
     },
     {
-      'property': 'MILLERZ',
+      'property': 'Millerz',
       'date': '15-01 - JAN2023',
       'month': 'JANUARY 2023',
       'year': '2023'
@@ -82,7 +82,7 @@ class _StatementPageState extends State<StatementPage> {
         children: [
           Align(
             alignment: Alignment.center,
-            child: dropDownButton(
+            child: dropDownButton(width: 30.width,
               label: 'Overall',
               list: items,
               selectedValue: selectedValue,
@@ -102,7 +102,7 @@ class _StatementPageState extends State<StatementPage> {
             height: 4.8.height,
             padding: EdgeInsets.only(left: 5.width),
             decoration: const BoxDecoration(color: Color(0XFFF4F6FF)),
-            child: dropDownButton(
+            child: dropDownButton(width:  20.width,
               label: '2024',
               list: items2,
               selectedValue: selectedYear,
@@ -168,6 +168,7 @@ class _StatementPageState extends State<StatementPage> {
                           fontSize: 15.fSize,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline,
+                          decorationColor: const Color(0XFF0044CC).withOpacity(0.8)
                         ),
                       ),
                     ],
@@ -230,6 +231,7 @@ class _StatementPageState extends State<StatementPage> {
                           fontSize: 15.fSize,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline,
+                          decorationColor: const Color(0XFF0044CC).withOpacity(0.8)
                         ),
                       ),
                     ],
@@ -297,9 +299,11 @@ class dropDownButton extends StatefulWidget {
       required this.label,
       required this.list,
       required this.selectedValue,
+      required this.width,
       required this.onChanged});
 
   final String label;
+  final double width;
   final List<String> list;
   final String? selectedValue;
   final Function(String?) onChanged;
@@ -371,9 +375,8 @@ class _dropDownButtonState extends State<dropDownButton> {
             ),
           ),
         ),
-        buttonStyleData: ButtonStyleData(
+        buttonStyleData: ButtonStyleData(width:widget.width,
           height: 3.height,
-          width: 25.width,
         ),
         menuItemStyleData: MenuItemStyleData(
           height: 3.height,
