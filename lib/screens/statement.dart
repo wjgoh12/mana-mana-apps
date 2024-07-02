@@ -7,7 +7,7 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 
 final List<String> items = [
   'Overall',
-  'Milletz',
+  'Millerz',
   'Scarletz',
   'Expressionz',
 ];
