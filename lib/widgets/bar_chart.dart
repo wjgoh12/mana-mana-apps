@@ -230,6 +230,7 @@ class ColoredSideTitleWidget extends StatelessWidget {
       axisSide: axisSide,
       child: GradientText1(
         text:monthNames[index],
+        style: TextStyle(fontSize: 15.fSize),
         gradient: monthColors,
         ),
       );
