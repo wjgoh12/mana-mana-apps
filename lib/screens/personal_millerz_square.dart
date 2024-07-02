@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/dashboard_brandon.dart';
+import 'package:mana_mana_app/screens/statement.dart';
 import 'package:mana_mana_app/widgets/bar_chart.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
@@ -12,14 +13,17 @@ class PersonalMillerzSquare1Screen extends StatefulWidget {
   const PersonalMillerzSquare1Screen({super.key});
 
   @override
-  State<PersonalMillerzSquare1Screen> createState() => _PersonalMillerzSquare1ScreenState();
+  State<PersonalMillerzSquare1Screen> createState() =>
+      _PersonalMillerzSquare1ScreenState();
 }
 
-class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Screen> {
+class _PersonalMillerzSquare1ScreenState
+    extends State<PersonalMillerzSquare1Screen> {
   bool isClicked = false;
   final List<String> items = ['Type A', 'Type B', 'Type C', 'Type D'];
   final List<String> items2 = ['A-13-2', 'A-13-3', 'A-13-4', 'A-13-5'];
-  final List<String> items3 = ['2024', '2025', '2026', '2027', '2028', '2029', '2030'];
+  final List<String> items3 =
+      List.generate(8, (index) => (DateTime.now().year - index).toString());
   String? selectedValue;
 
   void toggleIsClicked() {
@@ -32,7 +36,12 @@ class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Scr
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0XFFFFFFFF),
-      appBar: propertyAppBar(context, () => Navigator.of(context).push(MaterialPageRoute(builder: (context){return NewDashboardPage();}))),
+      appBar: propertyAppBar(
+          context,
+          () =>
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return NewDashboardPage();
+              }))),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -134,6 +143,14 @@ class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Scr
                       ),
                     ),
                     const Spacer(),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) {
+                            return StatementPage();
+                          }));
+                        },
+                        icon: const Icon(Icons.arrow_right_rounded)),
                     SizedBox(
                       width: 12.width,
                       height: 14.width,
@@ -216,7 +233,8 @@ class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Scr
                               Text(
                                 'SCARLETZ - 11-03 - APR2024',
                                 style: TextStyle(
-                                  color: const Color(0XFF0044CC).withOpacity(0.8),
+                                  color:
+                                      const Color(0XFF0044CC).withOpacity(0.8),
                                   fontFamily: 'Open Sans',
                                   fontSize: 15.fSize,
                                   fontWeight: FontWeight.w600,
@@ -226,7 +244,8 @@ class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Scr
                               Text(
                                 'PDF',
                                 style: TextStyle(
-                                  color: const Color(0XFF0044CC).withOpacity(0.8),
+                                  color:
+                                      const Color(0XFF0044CC).withOpacity(0.8),
                                   fontFamily: 'Open Sans',
                                   fontSize: 15.fSize,
                                   fontWeight: FontWeight.w600,
@@ -239,22 +258,27 @@ class _PersonalMillerzSquare1ScreenState extends State<PersonalMillerzSquare1Scr
                           color: const Color(0XFF888888),
                           thickness: 0.5.fSize,
                         ),
-                        _monthlyStatementRow('01 - 31 March', Icons.keyboard_arrow_down_outlined),
+                        _monthlyStatementRow('01 - 31 March',
+                            Icons.keyboard_arrow_down_outlined),
                         Divider(
                           color: const Color(0XFF888888),
                           thickness: 0.5.fSize,
                         ),
-                        _monthlyStatementRow('01 - 29 February', Icons.keyboard_arrow_down_outlined),
+                        _monthlyStatementRow('01 - 29 February',
+                            Icons.keyboard_arrow_down_outlined),
                         Divider(
                           color: const Color(0XFF888888),
                           thickness: 0.5.fSize,
                         ),
-                        _monthlyStatementRow('01 - 31 January', Icons.keyboard_arrow_down_outlined),
+                        _monthlyStatementRow('01 - 31 January',
+                            Icons.keyboard_arrow_down_outlined),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 1.height,),
+                SizedBox(
+                  height: 1.height,
+                ),
                 Row(
                   children: [
                     Text(
@@ -371,7 +395,8 @@ Widget _chartContainer() {
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 2.height, left: 6.width, right: 5.width),
+            padding:
+                EdgeInsets.only(top: 2.height, left: 6.width, right: 5.width),
             child: Row(
               children: [
                 Text(
@@ -424,7 +449,7 @@ Widget _chartContainer() {
               ],
             ),
           ),
-                  Align(
+          Align(
             alignment: const Alignment(-0.8, 0),
             child: Text(
               '(Ringgit in thousands)',
@@ -438,7 +463,8 @@ Widget _chartContainer() {
           ),
           BarChartSample7(),
           Padding(
-            padding: EdgeInsets.only(left: 6.width, right: 5.width, top: 1.height),
+            padding:
+                EdgeInsets.only(left: 6.width, right: 5.width, top: 1.height),
             child: Column(
               children: [
                 Row(
@@ -627,4 +653,3 @@ Widget revenueChartRow(String text1, String text2, String text3) {
     ],
   );
 }
-
