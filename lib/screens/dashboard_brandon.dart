@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mana_mana_app/screens/personal_millerz_square.dart';
 import 'package:mana_mana_app/widgets/bar_chart.dart';
 import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
@@ -337,11 +339,28 @@ class NewDashboardPage extends StatelessWidget {
                           ],
                         ),
                         SizedBox(
-                          height: 20.height,
+                          height: 40.height,
                           child: ListView(
                             // This next line does the trick.
                             scrollDirection: Axis.horizontal,
                             children: <Widget>[
+                              _propertyImageStack(
+                                  'millerz_square2',
+                                  'MILLERZ SQUARE',
+                                  '@ Old Klang Road',
+                                  '3,300.00'),
+                                  SizedBox(width: 5.width,),
+                                   _propertyImageStack(
+                                  'millerz_square2',
+                                  'EXPRESSIONZ SUITES',
+                                  '@ Jalan Tun Razak',
+                                  '2,045.19'),
+                                      SizedBox(width: 3.width,),
+                                   _propertyImageStack(
+                                  'millerz_square2',
+                                  'MILLERZ SQUARE',
+                                  '@ Old Klang Road',
+                                  '3,300.00'),
                               Container(
                                 width: 160,
                                 color: Colors.red,
@@ -445,4 +464,104 @@ class NewDashboardPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _propertyImageStack(image, label, location, amount) {
+  return Stack(
+    clipBehavior: Clip.none,
+    children: [
+      SizedBox(
+          width: 51.width,
+          height: 30.height,
+          child: Image.asset(
+            'assets/images/$image.png',
+            fit: BoxFit.cover,
+          )),
+      Positioned(
+        top: 20.height,
+        child: Container(
+            width: 41.width,
+            height: 18.height,
+            decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                      color: const Color(0XFF120051).withOpacity(0.05),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2))
+                ],
+                color: const Color(0XFFFFFFFF),
+                borderRadius:
+                    const BorderRadius.only(bottomLeft: Radius.circular(10))),
+            child: Padding(
+              padding: EdgeInsets.only(top: 2.height, left: 2.width),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                        fontFamily: 'Open Sans',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20.fSize,
+                        color: const Color(0XFF4313E9)),
+                  ),
+                  Text(
+                    location,
+                    style: TextStyle(
+                        fontFamily: 'Open Sans',
+                        fontWeight: FontWeight.w300,
+                        fontSize: 10.fSize,
+                        fontStyle: FontStyle.italic,
+                        color: const Color(0XFF4313E9)),
+                  ),
+                  SizedBox(
+                    height: 2.height,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'RM',
+                        style: TextStyle(
+                            fontFamily: 'Open Sans',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10.fSize,
+                            color: const Color(0XFF4313E9)),
+                      ),
+                      Text(
+                        amount,
+                        style: TextStyle(
+                            fontFamily: 'Open Sans',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20.fSize,
+                            color: const Color(0XFF4313E9)),
+                      ),
+                    ],
+                  ),
+                  Text('Total Owner Profit Of The Month',
+                      style: TextStyle(
+                          fontFamily: 'Open Sans',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 8.fSize,
+                          color: const Color(0XFF4313E9))),
+                ],
+              ),
+            )),
+      ),
+      Positioned(
+          top: 30.height,
+          left: 37.5.width,
+          child: Container(
+            width: 7.width,
+            height: 7.width,
+            decoration: BoxDecoration(
+              color: Color(0XFF4313E9),
+            ),
+            child: Icon(
+              Icons.keyboard_arrow_right_rounded,
+              color: Colors.white,
+            ),
+          ))
+    ],
+  );
 }
