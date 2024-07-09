@@ -1,6 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/dashboard_brandon.dart';
+import 'package:mana_mana_app/screens/dashboard.dart';
 import 'package:mana_mana_app/screens/statement.dart';
 import 'package:mana_mana_app/widgets/bar_chart.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
