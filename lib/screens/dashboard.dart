@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/millerz_square1.dart';
 import 'package:mana_mana_app/screens/personal_millerz_square.dart';
 import 'package:mana_mana_app/widgets/bar_chart.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -54,52 +55,26 @@ class NewDashboardPage extends StatelessWidget {
                             'assets/images/dashboard_menu.png',
                             fit: BoxFit.cover,
                           ))),
-                  // InkWell(
-                  // onTap: () {
-                  //   print("object123123");
-                  //   Navigator.of(context)
-                  //       .push(MaterialPageRoute(builder: (context) {
-                  //     return const PersonalMillerzSquare1Screen();
-                  //   }));
-                  // },
-                  // child: SizedBox(
-                  //     width: 6.width,
-                  //     height: 6.width,
-                  //     child: Image.asset(
-                  //       'assets/images/dashboard_menu.png',
-                  //       fit: BoxFit.cover,
-                  //     )),
-                  // ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        print('clicked');
-                        return const PersonalMillerzSquare1Screen();
-                      }));
-                    },
-                    child: Text(
-                      'Main Dashboard',
-                      style: TextStyle(
-                          fontSize: 20.fSize,
-                          color: Color(0xFFC3B9FF),
-                          fontFamily: 'Open Sans',
-                          fontWeight: FontWeight.w800,
-                          shadows: const [
-                            Shadow(
-                                color: Color(0XFFC3B9FF),
-                                blurRadius: 0.5,
-                                offset: Offset(0.25, 0.5))
-                          ]),
-                      textAlign: TextAlign.left,
-                    ),
+                  Text(
+                    'Main Dashboard',
+                    style: TextStyle(
+                        fontSize: 20.fSize,
+                        color: Color(0xFFC3B9FF),
+                        fontFamily: 'Open Sans',
+                        fontWeight: FontWeight.w800,
+                        shadows: const [
+                          Shadow(
+                              color: Color(0XFFC3B9FF),
+                              blurRadius: 0.5,
+                              offset: Offset(0.25, 0.5))
+                        ]),
+                    textAlign: TextAlign.left,
                   ),
                   InkWell(
                     onTap: () {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
-                        print('clicked');
-                        return const PersonalMillerzSquare1Screen();
+                        return const MillerzSquare1Screen();
                       }));
                     },
                     child: SizedBox(
@@ -121,22 +96,13 @@ class NewDashboardPage extends StatelessWidget {
                   SizedBox(
                     width: 10.width,
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        print('clicked');
-                        return const PersonalMillerzSquare1Screen();
-                      }));
-                    },
-                    child: SizedBox(
-                        width: 8.width,
-                        height: 8.width,
-                        child: Image.asset(
-                          'assets/images/dashboard_gem.png',
-                          fit: BoxFit.cover,
-                        )),
-                  ),
+                  SizedBox(
+                      width: 8.width,
+                      height: 8.width,
+                      child: Image.asset(
+                        'assets/images/dashboard_gem.png',
+                        fit: BoxFit.cover,
+                      )),
                   SizedBox(
                     width: 5.width,
                   ),
@@ -188,125 +154,112 @@ class NewDashboardPage extends StatelessWidget {
                       width: 40.width,
                       child: Stack(
                         children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (context) {
-                                print('clicked');
-                                return const PersonalMillerzSquare1Screen();
-                              }));
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(1.height),
-                              decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFFFF),
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: const Color(0xffC3B9FF)
-                                            .withOpacity(0.25),
-                                        offset: const Offset(0, 4),
-                                        blurRadius: 4)
-                                  ]),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 1.width,
+                          Container(
+                            padding: EdgeInsets.all(1.height),
+                            decoration: BoxDecoration(
+                                color: const Color(0xFFFFFFFF),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: const Color(0xffC3B9FF)
+                                          .withOpacity(0.25),
+                                      offset: const Offset(0, 4),
+                                      blurRadius: 4)
+                                ]),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 1.width,
+                                    ),
+                                    Text(
+                                      'Overall Revenue',
+                                      style: TextStyle(
+                                        fontFamily: 'Open Sans',
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 12.fSize,
+                                        color: const Color(0XFF3E51FF),
                                       ),
-                                      Text(
-                                        'Overall Revenue',
-                                        style: TextStyle(
-                                          fontFamily: 'Open Sans',
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 12.fSize,
-                                          color: const Color(0XFF3E51FF),
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      //here
-                                      Container(
-                                          width: 3.width,
-                                          height: 3.width,
-                                          alignment: Alignment.center,
-                                          child: Icon(
-                                            Icons.arrow_outward_rounded,
-                                            color: Color(0xff3E51FF),
-                                            size: 3.width,
-                                          ))
-                                    ],
-                                  ),
-                                  SizedBox(height: 1.height),
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 1.width,
-                                      ),
-                                      Container(
-                                        width: 8.width,
-                                        height: 8.width,
-                                        decoration: const BoxDecoration(
-                                            color: Color(0XFFF9F8FF),
-                                            shape: BoxShape.circle),
+                                    ),
+                                    const Spacer(),
+                                    //here
+                                    Container(
+                                        width: 3.width,
+                                        height: 3.width,
+                                        alignment: Alignment.center,
                                         child: Icon(
-                                          Icons.account_balance_wallet_outlined,
-                                          color: const Color(0XFF2900B7),
-                                          size: 4.width,
-                                        ),
+                                          Icons.arrow_outward_rounded,
+                                          color: Color(0xff3E51FF),
+                                          size: 3.width,
+                                        ))
+                                  ],
+                                ),
+                                SizedBox(height: 1.height),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 1.width,
+                                    ),
+                                    Container(
+                                      width: 8.width,
+                                      height: 8.width,
+                                      decoration: const BoxDecoration(
+                                          color: Color(0XFFF9F8FF),
+                                          shape: BoxShape.circle),
+                                      child: Icon(
+                                        Icons.account_balance_wallet_outlined,
+                                        color: const Color(0XFF2900B7),
+                                        size: 4.width,
                                       ),
-                                      const Spacer(),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text.rich(TextSpan(
-                                              text: 'RM',
-                                              style: TextStyle(
-                                                  fontFamily: 'Open Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 12.fSize,
-                                                  color:
-                                                      const Color(0XFF2900B7)),
-                                              children: <InlineSpan>[
-                                                WidgetSpan(
-                                                    child: SizedBox(
-                                                  width: 1.width,
-                                                )),
-                                                TextSpan(
-                                                  text: '9,999.99',
-                                                  style: TextStyle(
-                                                      fontFamily: 'Open Sans',
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      fontSize: 20.fSize,
-                                                      color: const Color(
-                                                          0XFF2900B7)),
-                                                )
-                                              ])),
-                                          Text.rich(TextSpan(
-                                              text: '100%',
-                                              style: TextStyle(
-                                                  fontFamily: 'Open Sans',
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 10.fSize,
-                                                  color:
-                                                      const Color(0XFF2900B7)),
-                                              children: <InlineSpan>[
-                                                WidgetSpan(
-                                                    child: Icon(
-                                                  Icons.arrow_drop_up,
-                                                  color:
-                                                      const Color(0XFF42C18B),
-                                                  size: 3.width,
-                                                )),
-                                              ])),
-                                        ],
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
+                                    ),
+                                    const Spacer(),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text.rich(TextSpan(
+                                            text: 'RM',
+                                            style: TextStyle(
+                                                fontFamily: 'Open Sans',
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 12.fSize,
+                                                color: const Color(0XFF2900B7)),
+                                            children: <InlineSpan>[
+                                              WidgetSpan(
+                                                  child: SizedBox(
+                                                width: 1.width,
+                                              )),
+                                              TextSpan(
+                                                text: '9,999.99',
+                                                style: TextStyle(
+                                                    fontFamily: 'Open Sans',
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 20.fSize,
+                                                    color: const Color(
+                                                        0XFF2900B7)),
+                                              )
+                                            ])),
+                                        Text.rich(TextSpan(
+                                            text: '100%',
+                                            style: TextStyle(
+                                                fontFamily: 'Open Sans',
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 10.fSize,
+                                                color: const Color(0XFF2900B7)),
+                                            children: <InlineSpan>[
+                                              WidgetSpan(
+                                                  child: Icon(
+                                                Icons.arrow_drop_up,
+                                                color: const Color(0XFF42C18B),
+                                                size: 3.width,
+                                              )),
+                                            ])),
+                                      ],
+                                    )
+                                  ],
+                                )
+                              ],
                             ),
                           ),
                           Positioned(
@@ -677,7 +630,7 @@ class NewDashboardPage extends StatelessWidget {
                     height: 2.height,
                   ),
                   SizedBox(
-                    height: 40.height,
+                    height: 38.height,
                     child: ListView(
                       // This next line does the trick.
                       scrollDirection: Axis.horizontal,
@@ -688,15 +641,67 @@ class NewDashboardPage extends StatelessWidget {
                           width: 5.width,
                         ),
                         _propertyImageStack(
-                            'millerz_square2',
+                            'expression_suites_property',
                             'EXPRESSIONZ SUITES',
                             '@ Jalan Tun Razak',
                             '2,045.19'),
                         SizedBox(
-                          width: 3.width,
+                          width: 5.width,
                         ),
-                        _propertyImageStack('millerz_square2', 'CEYLONZ SUITES',
+                        _propertyImageStack('ceylonz_suites', 'CEYLONZ SUITES',
                             '@ Bukit Ceylon', '5,400.00'),
+                        SizedBox(
+                          width: 5.width,
+                        ),
+                        Container(
+                          width: 51.width,
+                          height: 38.height,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color: const Color(0xFFFFFFFF),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: const Color(0XFF120051)
+                                        .withOpacity(0.05),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2))
+                              ]),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'VIEW ALL',
+                                  style: TextStyle(
+                                      fontFamily: 'Open Sans',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 20.fSize,
+                                      color: const Color(0XFF4313E9)),
+                                ),
+                                Text(
+                                  '@ Your Property(s)',
+                                  style: TextStyle(
+                                      fontFamily: 'Open Sans',
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 10.fSize,
+                                      fontStyle: FontStyle.italic,
+                                      color: const Color(0XFF4313E9)),
+                                ),
+                                SizedBox(
+                                  height: 2.height,
+                                ),
+                                Container(
+                                  width: 7.width,
+                                  height: 7.width,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0XFF4313E9),
+                                  ),
+                                  child: const Icon(
+                                    Icons.keyboard_arrow_right_rounded,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              ]),
+                        )
                       ],
                     ),
                   ),
