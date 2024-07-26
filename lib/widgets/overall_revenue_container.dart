@@ -83,8 +83,8 @@ final Color backgroundColor;
                                     ),
                                     Icon(
                                       Icons.arrow_drop_up,
-                                      color: Color(0XFF42C18B),
-                                      size: 2.width,
+                                      color: const Color(0XFF42C18B),
+                                      size: 1.height,
                                     )
                                   ],
                                 )
@@ -136,7 +136,7 @@ final Color backgroundColor;
                                     Icon(
                                       Icons.arrow_drop_up,
                                       color: const Color(0XFF42C18B),
-                                      size: 2.width,
+                                      size: 1.height,
                                     )
                                   ],
                                 )
