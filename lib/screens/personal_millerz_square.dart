@@ -150,6 +150,7 @@ class _PersonalMillerzSquare1ScreenState
                             return StatementPage();
                           }));
                         },
+                        iconSize: 4.height,
                         icon: const Icon(Icons.arrow_right_rounded)),
                     SizedBox(
                       width: 12.width,
@@ -221,7 +222,7 @@ class _PersonalMillerzSquare1ScreenState
                               onTap: toggleIsClicked,
                               child: Icon(
                                 Icons.keyboard_arrow_down_outlined,
-                                size: 8.width,
+                                size: 4.height,
                                 color: const Color(0XFF4313E9),
                               ),
                             ),
@@ -369,7 +370,7 @@ class _PersonalMillerzSquare1ScreenState
         const Spacer(),
         Icon(
           icon,
-          size: 8.width,
+          size: 4.height,
           color: const Color(0XFF4313E9),
         ),
       ],
