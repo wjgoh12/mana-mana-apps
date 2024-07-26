@@ -131,10 +131,11 @@ class _StatementPageState extends State<StatementPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          SizedBox(height: 2.height),
           Align(
             alignment: Alignment.center,
             child: DropdownButton(
-              width: 30.width,
+              width: 25.width,
               label: 'Overall',
               list: items,
               selectedValue: selectedValue,
@@ -168,7 +169,7 @@ class _StatementPageState extends State<StatementPage> {
                   },
                 ),
                 const Spacer(),
-                //unit button 
+                //unit button
                 DropdownButtonHideUnderline(
                   child: DropdownButton2<String>(
                     dropdownSearchData: DropdownSearchData(
@@ -190,8 +191,9 @@ class _StatementPageState extends State<StatementPage> {
                                 TextSelection.collapsed(
                                     offset: _searchController.text.length);
                             _filteredList
-                                .where((item) =>
-                                    item.toLowerCase().contains(value.toLowerCase()))
+                                .where((item) => item
+                                    .toLowerCase()
+                                    .contains(value.toLowerCase()))
                                 .toList();
                           });
                         },
@@ -208,7 +210,8 @@ class _StatementPageState extends State<StatementPage> {
                             fontWeight: FontWeight.w600,
                           ),
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 2.width),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 2.width),
                         ),
                       ),
                     ),
@@ -237,13 +240,14 @@ class _StatementPageState extends State<StatementPage> {
                                   fontSize: 15.fSize,
                                   fontWeight: FontWeight.w700,
                                   fontFamily: 'Open Sans',
-                                  color: const Color(0XFF0044CC).withOpacity(0.8),
+                                  color:
+                                      const Color(0XFF0044CC).withOpacity(0.8),
                                 ),
                               ),
                             ))
                         .toList(),
-                    dropdownStyleData:
-                        DropdownStyleData(width: 20.width, maxHeight: 30.height),
+                    dropdownStyleData: DropdownStyleData(
+                        width: 20.width, maxHeight: 30.height),
                     value: selectedUnit,
                     onChanged: _onUnitNumberChanged,
                     iconStyleData: IconStyleData(
@@ -256,12 +260,15 @@ class _StatementPageState extends State<StatementPage> {
                           border: const GradientBoxBorder(
                               width: 2,
                               gradient: LinearGradient(
-                                  colors: [Color(0XFF120051), Color(0XFF170DF2)],
+                                  colors: [
+                                    Color(0XFF120051),
+                                    Color(0XFF170DF2)
+                                  ],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter)),
                         ),
                         child: GradientIcon(
-                          size: 3.width,
+                          size: 2.height,
                           offset: const Offset(0, 0),
                           icon: _isDropdownOpen
                               ? Icons.keyboard_arrow_up_rounded
@@ -421,10 +428,10 @@ class _StatementPageState extends State<StatementPage> {
           ),
           SizedBox(
             width: 7.width,
-            height: 7.width,
+            height: 5.height,
             child: Image.asset(
               'assets/images/patterns.png',
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
         ],
@@ -453,72 +460,65 @@ class DropdownButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
-        style: TextStyle(
-          fontSize: 15.fSize,
-          fontWeight: FontWeight.w700,
-          fontFamily: 'Open Sans',
-          color: const Color(0XFF0044CC).withOpacity(0.8),
-        ),
-        isExpanded: false,
-        hint: Text(
-          label,
           style: TextStyle(
             fontSize: 15.fSize,
             fontWeight: FontWeight.w700,
             fontFamily: 'Open Sans',
             color: const Color(0XFF0044CC).withOpacity(0.8),
           ),
-        ),
-        items: list
-            .map((String item) => DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: TextStyle(
-                      fontSize: 15.fSize,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Open Sans',
-                      color: const Color(0XFF0044CC).withOpacity(0.8),
-                    ),
-                  ),
-                ))
-            .toList(),
-        dropdownStyleData: DropdownStyleData(width: width),
-        value: selectedValue,
-        onChanged: onChanged,
-        iconStyleData: IconStyleData(
-          icon: Container(
-            alignment: Alignment.center,
-            width: 5.width,
-            height: 5.width,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: const GradientBoxBorder(
-                  width: 2,
-                  gradient: LinearGradient(
-                      colors: [Color(0XFF120051), Color(0XFF170DF2)],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter)),
-            ),
-            child: GradientIcon(
-              size: 3.width,
-              offset: const Offset(0, 0),
-              icon: Icons.keyboard_arrow_down_rounded,
-              gradient: const LinearGradient(
-                  colors: [Color(0XFF120051), Color(0XFF170DF2)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
+          isExpanded: false,
+          hint: Text(
+            label,
+            style: TextStyle(
+              fontSize: 15.fSize,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Open Sans',
+              color: const Color(0XFF0044CC).withOpacity(0.8),
             ),
           ),
-        ),
-        buttonStyleData: ButtonStyleData(
-          width: width,
-          height: 3.height,
-        ),
-        menuItemStyleData: MenuItemStyleData(
-          height: 3.height,
-        ),
-      ),
+          items: list
+              .map((String item) => DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(
+                      item,
+                    ),
+                  ))
+              .toList(),
+          dropdownStyleData: DropdownStyleData(width: width),
+          value: selectedValue,
+          onChanged: onChanged,
+          iconStyleData: IconStyleData(
+            icon: Container(
+              alignment: Alignment.center,
+              width: 5.width,
+              height: 3.height,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: const GradientBoxBorder(
+                    width: 2,
+                    gradient: LinearGradient(
+                        colors: [Color(0XFF120051), Color(0XFF170DF2)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter)),
+              ),
+              child: GradientIcon(
+                size: 2.height,
+                offset: const Offset(0, 0),
+                icon: Icons.keyboard_arrow_down_rounded,
+                gradient: const LinearGradient(
+                    colors: [Color(0XFF120051), Color(0XFF170DF2)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter),
+              ),
+            ),
+          ),
+          buttonStyleData: ButtonStyleData(
+            width: width,
+            height: 3.height,
+          ),
+          menuItemStyleData: MenuItemStyleData(
+            height: 3.height,
+          )),
     );
   }
 }
