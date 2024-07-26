@@ -3,7 +3,8 @@ import 'package:mana_mana_app/screens/millerz_square1.dart';
 import 'package:mana_mana_app/screens/personal_millerz_square.dart';
 import 'package:mana_mana_app/widgets/bar_chart.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
-import 'package:responsive_grid/responsive_grid.dart';
+import 'package:responsive_grid/responsive_grid.dart' hide ResponsiveBuilder;
+import 'package:responsive_builder/responsive_builder.dart';
 
 class NewDashboardPage extends StatelessWidget {
   void navigateToPersonalMillerzSquare(BuildContext context) {
@@ -50,10 +51,10 @@ class NewDashboardPage extends StatelessWidget {
                       },
                       icon: SizedBox(
                           width: 6.width,
-                          height: 6.width,
+                          height: 3.height,
                           child: Image.asset(
                             'assets/images/dashboard_menu.png',
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                           ))),
                   Text(
                     'Main Dashboard',
@@ -79,10 +80,10 @@ class NewDashboardPage extends StatelessWidget {
                     },
                     child: SizedBox(
                         width: 6.width,
-                        height: 6.width,
+                        height: 3.height,
                         child: Image.asset(
                           'assets/images/notifications.png',
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                         )),
                   )
                 ],
@@ -98,10 +99,10 @@ class NewDashboardPage extends StatelessWidget {
                   ),
                   SizedBox(
                       width: 8.width,
-                      height: 8.width,
+                      height: 6.height,
                       child: Image.asset(
                         'assets/images/dashboard_gem.png',
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                       )),
                   SizedBox(
                     width: 5.width,
@@ -174,7 +175,7 @@ class NewDashboardPage extends StatelessWidget {
                   SizedBox(
                     height: 2.height,
                   ),
-                 _statisticTable(),
+                  _statisticTable(),
                   SizedBox(
                     height: 2.height,
                   ),
@@ -199,21 +200,27 @@ class NewDashboardPage extends StatelessWidget {
                       // This next line does the trick.
                       scrollDirection: Axis.horizontal,
                       children: <Widget>[
-                        _propertyImageStack('millerz_square2', 'MILLERZ SQUARE',
-                            '@ Old Klang Road', '3,300.00'),
+                        const _propertyImageStack(
+                            image: 'Millerz_square2',
+                            label: 'MILLERZ SQUARE',
+                            location: '@ Old Klang Road',
+                            amount: '3,300.00'),
                         SizedBox(
                           width: 5.width,
                         ),
-                        _propertyImageStack(
-                            'expression_suites_property',
-                            'EXPRESSIONZ SUITES',
-                            '@ Jalan Tun Razak',
-                            '2,045.19'),
+                        const _propertyImageStack(
+                            image: 'expression_suites_property',
+                            label: 'EXPRESSIONZ SUITES',
+                            location: '@ Jalan Tun Razak',
+                            amount: '2,045.19'),
                         SizedBox(
                           width: 5.width,
                         ),
-                        _propertyImageStack('ceylonz_suites', 'CEYLONZ SUITES',
-                            '@ Bukit Ceylon', '5,400.00'),
+                        const _propertyImageStack(
+                            image: 'ceylonz_suites',
+                            label: 'CEYLONZ SUITES',
+                            location: '@ Bukit Ceylon',
+                            amount: '5,400.00'),
                         SizedBox(
                           width: 5.width,
                         ),
@@ -332,105 +339,141 @@ class NewDashboardPage extends StatelessWidget {
   }
 }
 
-Widget _propertyImageStack(image, label, location, amount) {
-  return Stack(
-    clipBehavior: Clip.none,
-    children: [
-      SizedBox(
-          width: 51.width,
-          height: 30.height,
-          child: Image.asset(
-            'assets/images/$image.png',
-            fit: BoxFit.cover,
-          )),
-      Positioned(
-        top: 20.height,
-        child: Container(
-            width: 41.width,
-            height: 18.height,
-            decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                      color: const Color(0XFF120051).withOpacity(0.05),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2))
-                ],
-                color: const Color(0XFFFFFFFF),
-                borderRadius:
-                    const BorderRadius.only(bottomLeft: Radius.circular(10))),
-            child: Padding(
-              padding: EdgeInsets.only(top: 2.height, left: 2.width),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20.fSize,
-                        color: const Color(0XFF4313E9)),
-                  ),
-                  Text(
-                    location,
-                    style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontWeight: FontWeight.w300,
-                        fontSize: 10.fSize,
-                        fontStyle: FontStyle.italic,
-                        color: const Color(0XFF4313E9)),
-                  ),
-                  SizedBox(
-                    height: 2.height,
-                  ),
-                  Row(
+class _propertyImageStack extends StatelessWidget {
+  //add responsive builder
+  const _propertyImageStack(
+      {super.key,
+      required this.image,
+      required this.label,
+      required this.location,
+      required this.amount});
+  final String image;
+  final String label;
+  final String location;
+  final String amount;
+
+  @override
+  Widget build(BuildContext context) {
+    var width = 51.width;
+    var height = 30.height;
+    var position = 20.height;
+    var containerWidth = 41.width;
+    var containerHeight = 18.height;
+    var arrowTop = 30.height;
+    var arrowLeft = 37.5.width;
+    return ResponsiveBuilder(builder: (context, sizingInformation) {
+      if (sizingInformation.deviceScreenType == DeviceScreenType.mobile) {
+      } else {
+        width = 40.width;
+        height = 30.height;
+        position = 20.height;
+        containerWidth = 31.width;
+        containerHeight = 18.height;
+        arrowTop = 30.height;
+        arrowLeft = 27.5.width;
+      }
+      return Stack(
+        clipBehavior: Clip.none,
+        children: [
+          SizedBox(
+              width: width,
+              height: height,
+              child: Image.asset(
+                'assets/images/$image.png',
+                fit: BoxFit.fill,
+              )),
+          Positioned(
+            top: position,
+            child: Container(
+                width: containerWidth,
+                height: containerHeight,
+                decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                          color: const Color(0XFF120051).withOpacity(0.05),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2))
+                    ],
+                    color: const Color(0XFFFFFFFF),
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(10))),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 2.height, left: 2.width),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'RM',
+                        label,
                         style: TextStyle(
                             fontFamily: 'Open Sans',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10.fSize,
-                            color: const Color(0XFF4313E9)),
-                      ),
-                      Text(
-                        amount,
-                        style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                             fontSize: 20.fSize,
                             color: const Color(0XFF4313E9)),
                       ),
+                      Text(
+                        location,
+                        style: TextStyle(
+                            fontFamily: 'Open Sans',
+                            fontWeight: FontWeight.w300,
+                            fontSize: 10.fSize,
+                            fontStyle: FontStyle.italic,
+                            color: const Color(0XFF4313E9)),
+                      ),
+                      SizedBox(
+                        height: 2.height,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'RM',
+                            style: TextStyle(
+                                fontFamily: 'Open Sans',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 10.fSize,
+                                color: const Color(0XFF4313E9)),
+                          ),
+                          Text(
+                            amount,
+                            style: TextStyle(
+                                fontFamily: 'Open Sans',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.fSize,
+                                color: const Color(0XFF4313E9)),
+                          ),
+                        ],
+                      ),
+                      Text('Total Owner Profit Of The Month',
+                          style: TextStyle(
+                              fontFamily: 'Open Sans',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 8.fSize,
+                              color: const Color(0XFF4313E9))),
                     ],
                   ),
-                  Text('Total Owner Profit Of The Month',
-                      style: TextStyle(
-                          fontFamily: 'Open Sans',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 8.fSize,
-                          color: const Color(0XFF4313E9))),
-                ],
-              ),
-            )),
-      ),
-      Positioned(
-          top: 30.height,
-          left: 37.5.width,
-          child: Container(
-            width: 7.width,
-            height: 7.width,
-            decoration: const BoxDecoration(
-              color: Color(0XFF4313E9),
-            ),
-            child: const Icon(
-              Icons.keyboard_arrow_right_rounded,
-              color: Colors.white,
-            ),
-          ))
-    ],
-  );
+                )),
+          ),
+          Positioned(
+              top: arrowTop,
+              left: arrowLeft,
+              child: Container(
+                alignment: Alignment.center,
+                width: 7.width,
+                height: 5.height,
+                decoration: const BoxDecoration(
+                  color: Color(0XFF4313E9),
+                ),
+                child: const Icon(
+                  Icons.keyboard_arrow_right_rounded,
+                  color: Colors.white,
+                ),
+              ))
+        ],
+      );
+    });
+  }
 }
+
 
 Widget _revenueContainer(title, icon) {
   return SizedBox(
@@ -531,7 +574,7 @@ Widget _revenueContainer(title, icon) {
                                 child: Icon(
                               Icons.arrow_drop_up,
                               color: const Color(0XFF42C18B),
-                              size: 3.width,
+                              size: 2.height,
                             )),
                           ])),
                     ],
@@ -556,196 +599,187 @@ Widget _revenueContainer(title, icon) {
   );
 }
 
-Widget _statisticTable(){
-  return  Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            color: const Color(0XFFF9F8FF),
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              left: 6.width,
-                              right: 3.width,
-                              top: 2.height,
-                              bottom: 2.height),
-                          child: Column(children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'Monthly Overall Earnings',
-                                  style: TextStyle(
-                                    fontFamily: 'Open Sans',
-                                    fontSize: 12.fSize,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0XFF2900B7),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Align(
-                              alignment: const Alignment(-0.8, 0),
-                              child: Text(
-                                '(Ringgit in thousands)',
-                                style: TextStyle(
-                                  fontFamily: 'Open Sans',
-                                  fontSize: 6.fSize,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0XFF4313E9),
-                                ),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  width: 2.width,
-                                  height: 2.width,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: gradientColor1,
-                                  ),
-                                ),
-                                SizedBox(width: 1.width),
-                                Text(
-                                  'Overall Revenue',
-                                  style: TextStyle(
-                                    fontFamily: 'Open Sans',
-                                    fontSize: 8.fSize,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0XFF888888),
-                                  ),
-                                ),
-                                SizedBox(width: 2.width),
-                                Container(
-                                  width: 2.width,
-                                  height: 2.width,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: gradientColor2,
-                                  ),
-                                ),
-                                SizedBox(width: 1.width),
-                                Text(
-                                  'Overall Rental Revenue',
-                                  style: TextStyle(
-                                    fontFamily: 'Open Sans',
-                                    fontSize: 8.fSize,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0XFF888888),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            BarChartSample7(),
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    SizedBox(width: 20.width),
-                                    SizedBox(width: 5.width),
-                                    SizedBox(
-                                      width: 25.width,
-                                      child: Text(
-                                        'Monthly Revenue',
-                                        style: TextStyle(
-                                          color: const Color(0XFF888888),
-                                          fontSize: 8.fSize,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: 'Open Sans',
-                                        ),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    SizedBox(
-                                      width: 25.width,
-                                      child: Text(
-                                        'Monthly Rental Income',
-                                        style: TextStyle(
-                                          color: const Color(0XFF888888),
-                                          fontSize: 8.fSize,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: 'Open Sans',
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                revenueChartRow('April 2024', 'RM 0', 'RM 0'),
-                                Divider(
-                                  color: Color(0XFF888888),
-                                  thickness: 0.5.fSize,
-                                ),
-                                revenueChartRow(
-                                    'Mar 2024', 'RM 4,562.40', 'RM 4,562.40'),
-                                Divider(
-                                  color: Color(0XFF888888),
-                                  thickness: 0.5.fSize,
-                                ),
-                                revenueChartRow('Feb 2024', 'RM 100,562.40',
-                                    'RM 100,562.40'),
-                                Divider(
-                                  color: Color(0XFF888888),
-                                  thickness: 0.5.fSize,
-                                ),
-                                revenueChartRow(
-                                    'Jan 2024', 'RM 60,562.40', 'RM 60,562.40'),
-                              ],
-                            ),
-                          ]),
+Widget _statisticTable() {
+  return Stack(
+    children: [
+      Container(
+        decoration: BoxDecoration(
+            color: const Color(0XFFF9F8FF),
+            borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: EdgeInsets.only(
+              left: 6.width, right: 3.width, top: 2.height, bottom: 2.height),
+          child: Column(children: [
+            Row(
+              children: [
+                Text(
+                  'Monthly Overall Earnings',
+                  style: TextStyle(
+                    fontFamily: 'Open Sans',
+                    fontSize: 12.fSize,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0XFF2900B7),
+                  ),
+                ),
+              ],
+            ),
+            Align(
+              alignment: const Alignment(-0.8, 0),
+              child: Text(
+                '(Ringgit in thousands)',
+                style: TextStyle(
+                  fontFamily: 'Open Sans',
+                  fontSize: 6.fSize,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0XFF4313E9),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: 2.width,
+                  height: 2.width,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: gradientColor1,
+                  ),
+                ),
+                SizedBox(width: 1.width),
+                Text(
+                  'Overall Revenue',
+                  style: TextStyle(
+                    fontFamily: 'Open Sans',
+                    fontSize: 8.fSize,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0XFF888888),
+                  ),
+                ),
+                SizedBox(width: 2.width),
+                Container(
+                  width: 2.width,
+                  height: 2.width,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: gradientColor2,
+                  ),
+                ),
+                SizedBox(width: 1.width),
+                Text(
+                  'Overall Rental Revenue',
+                  style: TextStyle(
+                    fontFamily: 'Open Sans',
+                    fontSize: 8.fSize,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0XFF888888),
+                  ),
+                ),
+              ],
+            ),
+            BarChartSample7(),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    SizedBox(width: 20.width),
+                    SizedBox(width: 5.width),
+                    SizedBox(
+                      width: 25.width,
+                      child: Text(
+                        'Monthly Revenue',
+                        style: TextStyle(
+                          color: const Color(0XFF888888),
+                          fontSize: 8.fSize,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Open Sans',
                         ),
                       ),
-                      Positioned(
-                        left: 0,
-                        top: -5.height,
-                        child: SizedBox(
-                          width: 27.width,
-                          height: 16.height,
-                          child: Opacity(
-                            opacity: 0.2,
-                            child: Image.asset(
-                              'assets/images/patterns_faded.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                    ),
+                    const Spacer(),
+                    SizedBox(
+                      width: 25.width,
+                      child: Text(
+                        'Monthly Rental Income',
+                        style: TextStyle(
+                          color: const Color(0XFF888888),
+                          fontSize: 8.fSize,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Open Sans',
                         ),
                       ),
-                      Positioned(
-                          right: 0,
-                          top: 1.height,
-                          child: SizedBox(
-                            width: 27.width,
-                            height: 16.height,
-                            child: Opacity(
-                              opacity: 0.2,
-                              child: Image.asset(
-                                  'assets/images/patterns_faded.png'),
-                            ),
-                          )),
-                      Positioned(
-                          bottom: 1.height,
-                          left: 1.width,
-                          child: SizedBox(
-                            width: 27.width,
-                            height: 16.height,
-                            child: Opacity(
-                              opacity: 0.2,
-                              child: Image.asset(
-                                  'assets/images/patterns_faded.png'),
-                            ),
-                          )),
-                      Positioned(
-                          right: 0,
-                          bottom: -5.height,
-                          child: SizedBox(
-                            width: 27.width,
-                            height: 16.height,
-                            child: Opacity(
-                              opacity: 0.2,
-                              child: Image.asset(
-                                  'assets/images/patterns_faded.png'),
-                            ),
-                          )),
-                    ],
-                  );
+                    ),
+                  ],
+                ),
+                revenueChartRow('April 2024', 'RM 0', 'RM 0'),
+                Divider(
+                  color: Color(0XFF888888),
+                  thickness: 0.5.fSize,
+                ),
+                revenueChartRow('Mar 2024', 'RM 4,562.40', 'RM 4,562.40'),
+                Divider(
+                  color: Color(0XFF888888),
+                  thickness: 0.5.fSize,
+                ),
+                revenueChartRow('Feb 2024', 'RM 100,562.40', 'RM 100,562.40'),
+                Divider(
+                  color: Color(0XFF888888),
+                  thickness: 0.5.fSize,
+                ),
+                revenueChartRow('Jan 2024', 'RM 60,562.40', 'RM 60,562.40'),
+              ],
+            ),
+          ]),
+        ),
+      ),
+      Positioned(
+        left: 0,
+        top: -5.height,
+        child: SizedBox(
+          width: 27.width,
+          height: 16.height,
+          child: Opacity(
+            opacity: 0.2,
+            child: Image.asset(
+              'assets/images/patterns_faded.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+      Positioned(
+          right: 0,
+          top: 1.height,
+          child: SizedBox(
+            width: 27.width,
+            height: 16.height,
+            child: Opacity(
+              opacity: 0.2,
+              child: Image.asset('assets/images/patterns_faded.png'),
+            ),
+          )),
+      Positioned(
+          bottom: 1.height,
+          left: 1.width,
+          child: SizedBox(
+            width: 27.width,
+            height: 16.height,
+            child: Opacity(
+              opacity: 0.2,
+              child: Image.asset('assets/images/patterns_faded.png'),
+            ),
+          )),
+      Positioned(
+          right: 0,
+          bottom: -5.height,
+          child: SizedBox(
+            width: 27.width,
+            height: 16.height,
+            child: Opacity(
+              opacity: 0.2,
+              child: Image.asset('assets/images/patterns_faded.png'),
+            ),
+          )),
+    ],
+  );
 }
