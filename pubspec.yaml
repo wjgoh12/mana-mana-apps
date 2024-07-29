@@ -41,6 +41,8 @@ dependencies:
   fl_chart: ^0.68.0
   gradient_borders: ^1.0.1
   gradient_icon: ^2.0.9
+  stylish_bottom_bar: ^1.1.0
+  responsive_builder: ^0.7.1
 
 dev_dependencies:
   flutter_test:
