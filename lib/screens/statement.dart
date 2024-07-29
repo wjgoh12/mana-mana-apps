@@ -215,17 +215,12 @@ class _StatementPageState extends State<StatementPage> {
                         ),
                       ),
                     ),
-                    style: TextStyle(
-                      fontSize: 15.fSize,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Open Sans',
-                      color: const Color(0XFF0044CC).withOpacity(0.8),
-                    ),
+                 
                     isExpanded: false,
                     hint: Text(
                       'Select Unit',
                       style: TextStyle(
-                        fontSize: 15.fSize,
+                        fontSize: 12.fSize,
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Open Sans',
                         color: const Color(0XFF0044CC).withOpacity(0.8),
@@ -461,7 +456,7 @@ class DropdownButton extends StatelessWidget {
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
           style: TextStyle(
-            fontSize: 15.fSize,
+            fontSize: 14.fSize,
             fontWeight: FontWeight.w700,
             fontFamily: 'Open Sans',
             color: const Color(0XFF0044CC).withOpacity(0.8),
