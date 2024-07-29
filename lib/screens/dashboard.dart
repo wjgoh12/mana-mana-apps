@@ -15,329 +15,302 @@ class NewDashboardPage extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            alignment: Alignment.topCenter,
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Stack(
+      clipBehavior: Clip.none,
+      children: [
+        _buildBackgroundContainer(),
+        Column(
+          children: [
+            SizedBox(height: 2.height),
+            _buildTopBar(context),
+            SizedBox(height: 2.height),
+            _buildUserInfo(),
+          ],
+        ),
+        Positioned(
+          top: 20.height,
+          child: Container(
             width: 100.width,
-            height: 100.height,
-            color: const Color(0XFF4313E9),
-            padding: EdgeInsets.only(
-              top: 2.height,
+            height: 80.height,
+            padding: EdgeInsets.all(7.width),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0XFFFFFFFF), Color(0XFFDFD8FF)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
             ),
-            child: SizedBox(
-                width: 110.width,
-                height: 30.height,
-                child: Image.asset(
-                  'assets/images/mana2_patterns.png',
-                  fit: BoxFit.cover,
-                )),
-          ),
-          Column(
-            children: [
-              SizedBox(
-                height: 2.height,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        navigateToPersonalMillerzSquare(context);
-                      },
-                      icon: SizedBox(
-                          width: 6.width,
-                          height: 3.height,
-                          child: Image.asset(
-                            'assets/images/dashboard_menu.png',
-                            fit: BoxFit.contain,
-                          ))),
-                  Text(
-                    'Main Dashboard',
-                    style: TextStyle(
-                        fontSize: 20.fSize,
-                        color: Color(0xFFC3B9FF),
-                        fontFamily: 'Open Sans',
-                        fontWeight: FontWeight.w800,
-                        shadows: const [
-                          Shadow(
-                              color: Color(0XFFC3B9FF),
-                              blurRadius: 0.5,
-                              offset: Offset(0.25, 0.5))
-                        ]),
-                    textAlign: TextAlign.left,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        return const MillerzSquare1Screen();
-                      }));
-                    },
-                    child: SizedBox(
-                        width: 6.width,
-                        height: 3.height,
-                        child: Image.asset(
-                          'assets/images/notifications.png',
-                          fit: BoxFit.contain,
-                        )),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 2.height,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 10.width,
-                  ),
-                  SizedBox(
-                      width: 8.width,
-                      height: 6.height,
-                      child: Image.asset(
-                        'assets/images/dashboard_gem.png',
-                        fit: BoxFit.contain,
-                      )),
-                  SizedBox(
-                    width: 5.width,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Good day!',
-                        style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontSize: 15.fSize,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0XFFFFFFFF)),
-                      ),
-                      Text(
-                        'Azeem Mohd Fahmi',
-                        style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontSize: 20.fSize,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0XFFFFFFFF),
-                            fontStyle: FontStyle.italic),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Positioned(
-            top: 20.height,
-            child: Container(
-              width: 100.width,
-              height: 80.height,
-              padding: EdgeInsets.all(7.width),
-              decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [Color(0XFFFFFFFF), Color(0XFFDFD8FF)],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
-              child: SingleChildScrollView(
-                child: Column(children: [
-                  //revenue containers here
-                  Row(children: [
-                    _revenueContainer('Overall Revenue',
-                        Icons.account_balance_wallet_outlined),
-                    const Spacer(),
-                    _revenueContainer(
-                        'Overall Rental Income', Icons.home_outlined)
-                  ]),
-                  SizedBox(
-                    height: 2.height,
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Statistics',
-                      style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontSize: 20.fSize,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0XFF4313E9),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 2.height,
-                  ),
+                  _buildRevenueContainers(),
+                  SizedBox(height: 2.height),
+                  _buildSectionTitle('Statistics'),
+                  SizedBox(height: 2.height),
                   _statisticTable(),
-                  SizedBox(
-                    height: 2.height,
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Property(s)',
-                      style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontSize: 20.fSize,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0XFF4313E9),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 2.height,
-                  ),
-                  SizedBox(
-                    height: 38.height,
-                    child: ListView(
-                      // This next line does the trick.
-                      scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        const _propertyImageStack(
-                            image: 'Millerz_square2',
-                            label: 'MILLERZ SQUARE',
-                            location: '@ Old Klang Road',
-                            amount: '3,300.00'),
-                        SizedBox(
-                          width: 5.width,
-                        ),
-                        const _propertyImageStack(
-                            image: 'expression_suites_property',
-                            label: 'EXPRESSIONZ SUITES',
-                            location: '@ Jalan Tun Razak',
-                            amount: '2,045.19'),
-                        SizedBox(
-                          width: 5.width,
-                        ),
-                        const _propertyImageStack(
-                            image: 'ceylonz_suites',
-                            label: 'CEYLONZ SUITES',
-                            location: '@ Bukit Ceylon',
-                            amount: '5,400.00'),
-                        SizedBox(
-                          width: 5.width,
-                        ),
-                        Container(
-                          width: 51.width,
-                          height: 38.height,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: const Color(0xFFFFFFFF),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: const Color(0XFF120051)
-                                        .withOpacity(0.05),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2))
-                              ]),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'VIEW ALL',
-                                  style: TextStyle(
-                                      fontFamily: 'Open Sans',
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 20.fSize,
-                                      color: const Color(0XFF4313E9)),
-                                ),
-                                Text(
-                                  '@ Your Property(s)',
-                                  style: TextStyle(
-                                      fontFamily: 'Open Sans',
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 10.fSize,
-                                      fontStyle: FontStyle.italic,
-                                      color: const Color(0XFF4313E9)),
-                                ),
-                                SizedBox(
-                                  height: 2.height,
-                                ),
-                                Container(
-                                  width: 7.width,
-                                  height: 7.width,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0XFF4313E9),
-                                  ),
-                                  child: const Icon(
-                                    Icons.keyboard_arrow_right_rounded,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              ]),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 2.height,
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Highlights',
-                      style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontSize: 20.fSize,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0XFF4313E9),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 2.height,
-                  ),
-                  ResponsiveGridRow(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ResponsiveGridCol(
-                          xs: 6,
-                          child: Image.asset(
-                            'assets/images/Promotions.png',
-                          ),
-                        ),
-                        ResponsiveGridCol(
-                          xs: 6,
-                          child: Image.asset(
-                            'assets/images/Discounts.png',
-                          ),
-                        ),
-                      ]),
-                  SizedBox(
-                    height: 2.height,
-                  ),
-                  ResponsiveGridRow(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ResponsiveGridCol(
-                          xs: 6,
-                          child: Image.asset(
-                            'assets/images/Exchange.png',
-                          ),
-                        ),
-                        ResponsiveGridCol(
-                          xs: 6,
-                          child: Image.asset(
-                            'assets/images/Earn Points.png',
-                          ),
-                        ),
-                      ]),
-                ]),
+                  SizedBox(height: 2.height),
+                  _buildSectionTitle('Property(s)'),
+                  SizedBox(height: 2.height),
+                  _buildPropertyList(),
+                  SizedBox(height: 2.height),
+                  _buildSectionTitle('Highlights'),
+                  SizedBox(height: 2.height),
+                  _buildHighlights(),
+                ],
               ),
             ),
-          )
+          ),
+        )
+      ],
+    ),
+  );
+}
+
+Widget _buildBackgroundContainer() {
+  return Container(
+    alignment: Alignment.topCenter,
+    width: 100.width,
+    height: 100.height,
+    color: const Color(0XFF4313E9),
+    padding: EdgeInsets.only(top: 2.height),
+    child: Image.asset(
+      'assets/images/mana2_patterns.png',
+      width: 110.width,
+      height: 30.height,
+      fit: BoxFit.cover,
+    ),
+  );
+}
+
+Widget _buildTopBar(BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    children: [
+      IconButton(
+        onPressed: () => navigateToPersonalMillerzSquare(context),
+        icon: Image.asset(
+          'assets/images/dashboard_menu.png',
+          width: 6.width,
+          height: 3.height,
+          fit: BoxFit.contain,
+        ),
+      ),
+      Text(
+        'Main Dashboard',
+        style: TextStyle(
+          fontSize: 20.fSize,
+          color: Color(0xFFC3B9FF),
+          fontFamily: 'Open Sans',
+          fontWeight: FontWeight.w800,
+          shadows: const [
+            Shadow(color: Color(0XFFC3B9FF), blurRadius: 0.5, offset: Offset(0.25, 0.5))
+          ],
+        ),
+      ),
+      InkWell(
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
+        child: Image.asset(
+          'assets/images/notifications.png',
+          width: 6.width,
+          height: 3.height,
+          fit: BoxFit.contain,
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildUserInfo() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      SizedBox(width: 10.width),
+      Image.asset(
+        'assets/images/dashboard_gem.png',
+        width: 8.width,
+        height: 6.height,
+        fit: BoxFit.contain,
+      ),
+      SizedBox(width: 5.width),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Good day!',
+            style: TextStyle(
+              fontFamily: 'Open Sans',
+              fontSize: 15.fSize,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            'Azeem Mohd Fahmi',
+            style: TextStyle(
+              fontFamily: 'Open Sans',
+              fontSize: 20.fSize,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
         ],
       ),
-    );
-  }
+    ],
+  );
 }
+
+Widget _buildRevenueContainers() {
+  return Row(
+    children: [
+      _revenueContainer('Overall Revenue', Icons.account_balance_wallet_outlined),
+      const Spacer(),
+      _revenueContainer('Overall Rental Income', Icons.home_outlined),
+    ],
+  );
+}
+
+Widget _buildSectionTitle(String title) {
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: Text(
+      title,
+      style: TextStyle(
+        fontFamily: 'Open Sans',
+        fontSize: 20.fSize,
+        fontWeight: FontWeight.w800,
+        color: Color(0XFF4313E9),
+      ),
+    ),
+  );
+}
+
+Widget _buildPropertyList() {
+  return SizedBox(
+    height: 38.height,
+    child: ListView(
+      scrollDirection: Axis.horizontal,
+      children: [
+        const _propertyImageStack(
+          image: 'Millerz_square2',
+          label: 'MILLERZ SQUARE',
+          location: '@ Old Klang Road',
+          amount: '3,300.00',
+        ),
+        SizedBox(width: 5.width),
+        const _propertyImageStack(
+          image: 'expression_suites_property',
+          label: 'EXPRESSIONZ SUITES',
+          location: '@ Jalan Tun Razak',
+          amount: '2,045.19',
+        ),
+        SizedBox(width: 5.width),
+        const _propertyImageStack(
+          image: 'ceylonz_suites',
+          label: 'CEYLONZ SUITES',
+          location: '@ Bukit Ceylon',
+          amount: '5,400.00',
+        ),
+        SizedBox(width: 5.width),
+        _buildViewAllProperty(),
+      ],
+    ),
+  );
+}
+
+Widget _buildViewAllProperty() {
+  return Container(
+    width: 51.width,
+    height: 38.height,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: const Color(0XFF120051).withOpacity(0.05),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        )
+      ],
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'VIEW ALL',
+          style: TextStyle(
+            fontFamily: 'Open Sans',
+            fontWeight: FontWeight.w700,
+            fontSize: 20.fSize,
+            color: const Color(0XFF4313E9),
+          ),
+        ),
+        Text(
+          '@ Your Property(s)',
+          style: TextStyle(
+            fontFamily: 'Open Sans',
+            fontWeight: FontWeight.w300,
+            fontSize: 10.fSize,
+            fontStyle: FontStyle.italic,
+            color: const Color(0XFF4313E9),
+          ),
+        ),
+        SizedBox(height: 2.height),
+        Container(
+          width: 7.width,
+          height: 7.width,
+          decoration: const BoxDecoration(color: Color(0XFF4313E9)),
+          child: const Icon(
+            Icons.keyboard_arrow_right_rounded,
+            color: Colors.white,
+          ),
+        )
+      ],
+    ),
+  );
+}
+
+Widget _buildHighlights() {
+  return Column(
+    children: [
+      ResponsiveGridRow(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ResponsiveGridCol(
+            xs: 6,
+            child: Image.asset('assets/images/Promotions.png'),
+          ),
+          ResponsiveGridCol(
+            xs: 6,
+            child: Image.asset('assets/images/Discounts.png'),
+          ),
+        ],
+      ),
+      SizedBox(height: 2.height),
+      ResponsiveGridRow(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ResponsiveGridCol(
+            xs: 6,
+            child: Image.asset('assets/images/Exchange.png'),
+          ),
+          ResponsiveGridCol(
+            xs: 6,
+            child: Image.asset('assets/images/Earn Points.png'),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+  }
 
 class _propertyImageStack extends StatelessWidget {
   //add responsive builder

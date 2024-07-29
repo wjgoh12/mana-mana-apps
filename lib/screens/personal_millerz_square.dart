@@ -33,327 +33,340 @@ class _PersonalMillerzSquare1ScreenState
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0XFFFFFFFF),
-      appBar: propertyAppBar(
-          context,
-          () =>
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return NewDashboardPage();
-              }))),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.only(left: 7.width, right: 7.width),
-            child: Column(
-              children: [
-                SizedBox(height: 2.height),
-                propertyStack(
-                  image: 'millerz_square',
-                  text1: 'Millerz Square',
-                  text2: '@ Old Klang Road',
-                  width: 86.width,
-                  height: 12.height,
-                ),
-                SizedBox(height: 2.height),
-                const OverallRevenueContainer(
-                  text1: 'Overall Revenue',
-                  text2: 'RM 9,999.99',
-                  text3: '100%',
-                  text4: 'Overall Rental Income',
-                  text5: 'RM 8,888.88',
-                  text6: '88%',
-                  color: Color(0XFFFFFFFF),
-                  backgroundColor: Color(0XFF4313E9),
-                ),
-                SizedBox(height: 2.height),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GradientText1(
-                      text: 'Type',
-                      style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontSize: 15.fSize,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      gradient: const LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [Color(0xFF2900B7), Color(0xFF120051)],
-                      ),
-                    ),
-                    SizedBox(width: 1.width),
-                    NewDropdownButton(list: items),
-                    const Spacer(),
-                    GradientText1(
-                      text: 'Unit',
-                      style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontSize: 15.fSize,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      gradient: const LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [Color(0xFF2900B7), Color(0xFF120051)],
-                      ),
-                    ),
-                    SizedBox(width: 1.width),
-                    NewDropdownButton(list: items2),
-                  ],
-                ),
-                SizedBox(height: 2.height),
-                const OverallRevenueContainer(
-                  text1: 'Unit Revenue',
-                  text2: 'RM 2,399.99',
-                  text3: '100%',
-                  text4: 'Unit Rental Income',
-                  text5: 'RM 2,399.00',
-                  text6: '88%',
-                  color: Color(0XFF4313E9),
-                  backgroundColor: Color(0XFFFFFFFF),
-                ),
-                SizedBox(height: 1.height),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Statistics',
-                    style: TextStyle(
-                      fontFamily: 'Open Sans',
-                      fontSize: 20.fSize,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0XFF4313E9),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 1.height),
-                _chartContainer(),
-                SizedBox(height: 5.height),
-                Row(
-                  children: [
-                    Text(
-                      'Monthly Statement',
-                      style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontSize: 20.fSize,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0XFF4313E9),
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) {
-                            return StatementPage();
-                          }));
-                        },
-                        iconSize: 4.height,
-                        icon: const Icon(Icons.arrow_right_rounded)),
-                    SizedBox(
-                      width: 12.width,
-                      height: 14.width,
-                      child: Image.asset(
-                        'assets/images/patterns.png',
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(height: 3.height),
-                Container(
-                  width: 90.width,
-                  decoration: BoxDecoration(
-                    color: const Color(0XFFFFFFFF),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0XFF120051).withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                        spreadRadius: -1.0,
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      top: 2.height,
-                      left: 6.width,
-                      right: 5.width,
-                      bottom: 2.height,
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            GradientText1(
-                              text: 'Year',
-                              style: TextStyle(
-                                fontFamily: 'Open Sans',
-                                fontSize: 15.fSize,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              gradient: const LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [Color(0xFF2900B7), Color(0xFF120051)],
-                              ),
-                            ),
-                            SizedBox(width: 2.width),
-                            NewDropdownButton(list: items3),
-                          ],
-                        ),
-                        SizedBox(height: 1.height),
-                        Row(
-                          children: [
-                            Text(
-                              '01 - 30 April',
-                              style: TextStyle(
-                                fontFamily: 'Open Sans',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15.fSize,
-                                color: const Color(0XFF888888),
-                              ),
-                            ),
-                            const Spacer(),
-                            InkWell(
-                              onTap: toggleIsClicked,
-                              child: Icon(
-                                Icons.keyboard_arrow_down_outlined,
-                                size: 4.height,
-                                color: const Color(0XFF4313E9),
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (isClicked)
-                          Row(
-                            children: [
-                              Text(
-                                'SCARLETZ - 11-03 - APR2024',
-                                style: TextStyle(
-                                  color:
-                                      const Color(0XFF0044CC).withOpacity(0.8),
-                                  fontFamily: 'Open Sans',
-                                  fontSize: 15.fSize,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const Spacer(),
-                              Text(
-                                'PDF',
-                                style: TextStyle(
-                                  color:
-                                      const Color(0XFF0044CC).withOpacity(0.8),
-                                  fontFamily: 'Open Sans',
-                                  fontSize: 15.fSize,
-                                  fontWeight: FontWeight.w600,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: const Color(0XFF0044CC).withOpacity(0.8)
-                                ),
-                              ),
-                            ],
-                          ),
-                        Divider(
-                          color: const Color(0XFF888888),
-                          thickness: 0.5.fSize,
-                        ),
-                        _monthlyStatementRow('01 - 31 March',
-                            Icons.keyboard_arrow_down_outlined),
-                        Divider(
-                          color: const Color(0XFF888888),
-                          thickness: 0.5.fSize,
-                        ),
-                        _monthlyStatementRow('01 - 29 February',
-                            Icons.keyboard_arrow_down_outlined),
-                        Divider(
-                          color: const Color(0XFF888888),
-                          thickness: 0.5.fSize,
-                        ),
-                        _monthlyStatementRow('01 - 31 January',
-                            Icons.keyboard_arrow_down_outlined),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 1.height,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      'Agreement(s)',
-                      style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontSize: 20.fSize,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0XFF4313E9),
-                      ),
-                    ),
-                    const Spacer(),
-                    SizedBox(
-                      width: 12.width,
-                      height: 14.width,
-                      child: Image.asset(
-                        'assets/images/patterns.png',
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(height: 3.height),
-                Container(
-                  padding: EdgeInsets.only(left: 3.width, right: 3.width),
-                  width: 86.width,
-                  height: 6.height,
-                  decoration: BoxDecoration(
-                    color: const Color(0XFFFFFFFF),
-                    borderRadius: BorderRadius.circular(9),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0XFF120051).withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                        spreadRadius: -1.0,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        'SCARLETZ - 11-03 - APR2024',
-                        style: TextStyle(
-                          color: const Color(0XFF0044CC).withOpacity(0.8),
-                          fontFamily: 'Open Sans',
-                          fontSize: 15.fSize,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        'PDF',
-                        style: TextStyle(
-                          color: const Color(0XFF0044CC).withOpacity(0.8),
-                          fontFamily: 'Open Sans',
-                          fontSize: 15.fSize,
-                          fontWeight: FontWeight.w600,
-                          decoration: TextDecoration.underline,
-                          decorationColor: const Color(0XFF0044CC).withOpacity(0.8)
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10.height),
-              ],
-            ),
-          ),
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color(0XFFFFFFFF),
+    appBar: propertyAppBar(
+      context,
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => NewDashboardPage())),
+    ),
+    body: SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 7.width),
+        child: Column(
+          children: [
+            SizedBox(height: 2.height),
+            _buildPropertyHeader(),
+            SizedBox(height: 2.height),
+            _buildOverallRevenue(),
+            SizedBox(height: 2.height),
+            _buildTypeAndUnitSelection(),
+            SizedBox(height: 2.height),
+            _buildUnitRevenue(),
+            SizedBox(height: 1.height),
+            _buildStatisticsSection(),
+            SizedBox(height: 5.height),
+            _buildMonthlyStatementSection(),
+            SizedBox(height: 3.height),
+            _buildMonthlyStatementContainer(),
+            SizedBox(height: 1.height),
+            _buildAgreementsSection(),
+            SizedBox(height: 3.height),
+            _buildAgreementContainer(),
+            SizedBox(height: 10.height),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+Widget _buildPropertyHeader() {
+  return propertyStack(
+    image: 'millerz_square',
+    text1: 'Millerz Square',
+    text2: '@ Old Klang Road',
+    width: 86.width,
+    height: 12.height,
+  );
+}
+
+Widget _buildOverallRevenue() {
+  return const OverallRevenueContainer(
+    text1: 'Overall Revenue',
+    text2: 'RM 9,999.99',
+    text3: '100%',
+    text4: 'Overall Rental Income',
+    text5: 'RM 8,888.88',
+    text6: '88%',
+    color: Color(0XFFFFFFFF),
+    backgroundColor: Color(0XFF4313E9),
+  );
+}
+
+Widget _buildTypeAndUnitSelection() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      _buildGradientText('Type'),
+      SizedBox(width: 1.width),
+      NewDropdownButton(list: items),
+      const Spacer(),
+      _buildGradientText('Unit'),
+      SizedBox(width: 1.width),
+      NewDropdownButton(list: items2),
+    ],
+  );
+}
+
+Widget _buildGradientText(String text) {
+  return GradientText1(
+    text: text,
+    style: TextStyle(
+      fontFamily: 'Open Sans',
+      fontSize: 15.fSize,
+      fontWeight: FontWeight.w700,
+    ),
+    gradient: const LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      colors: [Color(0xFF2900B7), Color(0xFF120051)],
+    ),
+  );
+}
+
+Widget _buildUnitRevenue() {
+  return const OverallRevenueContainer(
+    text1: 'Unit Revenue',
+    text2: 'RM 2,399.99',
+    text3: '100%',
+    text4: 'Unit Rental Income',
+    text5: 'RM 2,399.00',
+    text6: '88%',
+    color: Color(0XFF4313E9),
+    backgroundColor: Color(0XFFFFFFFF),
+  );
+}
+
+Widget _buildStatisticsSection() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Statistics',
+        style: TextStyle(
+          fontFamily: 'Open Sans',
+          fontSize: 20.fSize,
+          fontWeight: FontWeight.w800,
+          color: Color(0XFF4313E9),
+        ),
+      ),
+      SizedBox(height: 1.height),
+      _chartContainer(),
+    ],
+  );
+}
+
+Widget _buildMonthlyStatementSection() {
+  return Row(
+    children: [
+      Text(
+        'Monthly Statement',
+        style: TextStyle(
+          fontFamily: 'Open Sans',
+          fontSize: 20.fSize,
+          fontWeight: FontWeight.w800,
+          color: Color(0XFF4313E9),
+        ),
+      ),
+      const Spacer(),
+      IconButton(
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => StatementPage())),
+        iconSize: 4.height,
+        icon: const Icon(Icons.arrow_right_rounded),
+      ),
+      Image.asset(
+        'assets/images/patterns.png',
+        width: 12.width,
+        height: 14.width,
+        fit: BoxFit.cover,
+      ),
+    ],
+  );
+}
+
+Widget _buildMonthlyStatementContainer() {
+  return Container(
+    width: 90.width,
+    decoration: BoxDecoration(
+      color: const Color(0XFFFFFFFF),
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+          color: const Color(0XFF120051).withOpacity(0.1),
+          blurRadius: 6,
+          offset: const Offset(0, 3),
+          spreadRadius: -1.0,
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: EdgeInsets.fromLTRB(6.width, 2.height, 5.width, 2.height),
+      child: Column(
+        children: [
+          _buildYearSelection(),
+          SizedBox(height: 1.height),
+          _buildMonthlyStatementContent(),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildYearSelection() {
+  return Row(
+    children: [
+      _buildGradientText('Year'),
+      SizedBox(width: 2.width),
+      NewDropdownButton(list: items3),
+    ],
+  );
+}
+
+Widget _buildMonthlyStatementContent() {
+  return Column(
+    children: [
+      _buildMonthRow(),
+      if (isClicked) _buildClickedContent(),
+      _buildDivider(),
+      _monthlyStatementRow('01 - 31 March', Icons.keyboard_arrow_down_outlined),
+      _buildDivider(),
+      _monthlyStatementRow('01 - 29 February', Icons.keyboard_arrow_down_outlined),
+      _buildDivider(),
+      _monthlyStatementRow('01 - 31 January', Icons.keyboard_arrow_down_outlined),
+    ],
+  );
+}
+
+Widget _buildMonthRow() {
+  return Row(
+    children: [
+      Text(
+        '01 - 30 April',
+        style: TextStyle(
+          fontFamily: 'Open Sans',
+          fontWeight: FontWeight.w600,
+          fontSize: 15.fSize,
+          color: const Color(0XFF888888),
+        ),
+      ),
+      const Spacer(),
+      InkWell(
+        onTap: toggleIsClicked,
+        child: Icon(
+          Icons.keyboard_arrow_down_outlined,
+          size: 4.height,
+          color: const Color(0XFF4313E9),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildClickedContent() {
+  return Row(
+    children: [
+      Text(
+        'SCARLETZ - 11-03 - APR2024',
+        style: TextStyle(
+          color: const Color(0XFF0044CC).withOpacity(0.8),
+          fontFamily: 'Open Sans',
+          fontSize: 15.fSize,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      const Spacer(),
+      Text(
+        'PDF',
+        style: TextStyle(
+          color: const Color(0XFF0044CC).withOpacity(0.8),
+          fontFamily: 'Open Sans',
+          fontSize: 15.fSize,
+          fontWeight: FontWeight.w600,
+          decoration: TextDecoration.underline,
+          decorationColor: const Color(0XFF0044CC).withOpacity(0.8),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildDivider() {
+  return Divider(
+    color: const Color(0XFF888888),
+    thickness: 0.5.fSize,
+  );
+}
+
+Widget _buildAgreementsSection() {
+  return Row(
+    children: [
+      Text(
+        'Agreement(s)',
+        style: TextStyle(
+          fontFamily: 'Open Sans',
+          fontSize: 20.fSize,
+          fontWeight: FontWeight.w800,
+          color: Color(0XFF4313E9),
+        ),
+      ),
+      const Spacer(),
+      Image.asset(
+        'assets/images/patterns.png',
+        width: 12.width,
+        height: 14.width,
+        fit: BoxFit.cover,
+      ),
+    ],
+  );
+}
+
+Widget _buildAgreementContainer() {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 3.width),
+    width: 86.width,
+    height: 6.height,
+    decoration: BoxDecoration(
+      color: const Color(0XFFFFFFFF),
+      borderRadius: BorderRadius.circular(9),
+      boxShadow: [
+        BoxShadow(
+          color: const Color(0XFF120051).withOpacity(0.1),
+          blurRadius: 6,
+          offset: const Offset(0, 3),
+          spreadRadius: -1.0,
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        Text(
+          'SCARLETZ - 11-03 - APR2024',
+          style: TextStyle(
+            color: const Color(0XFF0044CC).withOpacity(0.8),
+            fontFamily: 'Open Sans',
+            fontSize: 15.fSize,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const Spacer(),
+        Text(
+          'PDF',
+          style: TextStyle(
+            color: const Color(0XFF0044CC).withOpacity(0.8),
+            fontFamily: 'Open Sans',
+            fontSize: 15.fSize,
+            fontWeight: FontWeight.w600,
+            decoration: TextDecoration.underline,
+            decorationColor: const Color(0XFF0044CC).withOpacity(0.8),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _monthlyStatementRow(String text, IconData icon) {
     return Row(
