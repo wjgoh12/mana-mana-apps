@@ -15,302 +15,307 @@ class NewDashboardPage extends StatelessWidget {
     );
   }
 
- @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: Stack(
-      clipBehavior: Clip.none,
-      children: [
-        _buildBackgroundContainer(),
-        Column(
-          children: [
-            SizedBox(height: 2.height),
-            _buildTopBar(context),
-            SizedBox(height: 2.height),
-            _buildUserInfo(),
-          ],
-        ),
-        Positioned(
-          top: 20.height,
-          child: Container(
-            width: 100.width,
-            height: 80.height,
-            padding: EdgeInsets.all(7.width),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0XFFFFFFFF), Color(0XFFDFD8FF)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildRevenueContainers(),
-                  SizedBox(height: 2.height),
-                  _buildSectionTitle('Statistics'),
-                  SizedBox(height: 2.height),
-                  _statisticTable(),
-                  SizedBox(height: 2.height),
-                  _buildSectionTitle('Property(s)'),
-                  SizedBox(height: 2.height),
-                  _buildPropertyList(),
-                  SizedBox(height: 2.height),
-                  _buildSectionTitle('Highlights'),
-                  SizedBox(height: 2.height),
-                  _buildHighlights(),
-                ],
-              ),
-            ),
-          ),
-        )
-      ],
-    ),
-  );
-}
-
-Widget _buildBackgroundContainer() {
-  return Container(
-    alignment: Alignment.topCenter,
-    width: 100.width,
-    height: 100.height,
-    color: const Color(0XFF4313E9),
-    padding: EdgeInsets.only(top: 2.height),
-    child: Image.asset(
-      'assets/images/mana2_patterns.png',
-      width: 110.width,
-      height: 30.height,
-      fit: BoxFit.cover,
-    ),
-  );
-}
-
-Widget _buildTopBar(BuildContext context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceAround,
-    children: [
-      IconButton(
-        onPressed: () => navigateToPersonalMillerzSquare(context),
-        icon: Image.asset(
-          'assets/images/dashboard_menu.png',
-          width: 6.width,
-          height: 3.height,
-          fit: BoxFit.contain,
-        ),
-      ),
-      Text(
-        'Main Dashboard',
-        style: TextStyle(
-          fontSize: 20.fSize,
-          color: Color(0xFFC3B9FF),
-          fontFamily: 'Open Sans',
-          fontWeight: FontWeight.w800,
-          shadows: const [
-            Shadow(color: Color(0XFFC3B9FF), blurRadius: 0.5, offset: Offset(0.25, 0.5))
-          ],
-        ),
-      ),
-      InkWell(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
-        child: Image.asset(
-          'assets/images/notifications.png',
-          width: 6.width,
-          height: 3.height,
-          fit: BoxFit.contain,
-        ),
-      ),
-    ],
-  );
-}
-
-Widget _buildUserInfo() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: [
-      SizedBox(width: 10.width),
-      Image.asset(
-        'assets/images/dashboard_gem.png',
-        width: 8.width,
-        height: 6.height,
-        fit: BoxFit.contain,
-      ),
-      SizedBox(width: 5.width),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Text(
-            'Good day!',
-            style: TextStyle(
-              fontFamily: 'Open Sans',
-              fontSize: 15.fSize,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
+          _buildBackgroundContainer(),
+          Column(
+            children: [
+              SizedBox(height: 2.height),
+              _buildTopBar(context),
+              SizedBox(height: 2.height),
+              _buildUserInfo(),
+            ],
           ),
-          Text(
-            'Azeem Mohd Fahmi',
-            style: TextStyle(
-              fontFamily: 'Open Sans',
-              fontSize: 20.fSize,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-              fontStyle: FontStyle.italic,
+          Positioned(
+            top: 20.height,
+            child: Container(
+              width: 100.width,
+              height: 80.height,
+              padding: EdgeInsets.all(7.width),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0XFFFFFFFF), Color(0XFFDFD8FF)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildRevenueContainers(),
+                    SizedBox(height: 2.height),
+                    _buildSectionTitle('Statistics'),
+                    SizedBox(height: 2.height),
+                    statisticTable(),
+                    SizedBox(height: 2.height),
+                    _buildSectionTitle('Property(s)'),
+                    SizedBox(height: 2.height),
+                    _buildPropertyList(),
+                    SizedBox(height: 2.height),
+                    _buildSectionTitle('Highlights'),
+                    SizedBox(height: 2.height),
+                    _buildHighlights(),
+                  ],
+                ),
+              ),
             ),
-          ),
+          )
         ],
       ),
-    ],
-  );
-}
+    );
+  }
 
-Widget _buildRevenueContainers() {
-  return Row(
-    children: [
-      _revenueContainer('Overall Revenue', Icons.account_balance_wallet_outlined),
-      const Spacer(),
-      _revenueContainer('Overall Rental Income', Icons.home_outlined),
-    ],
-  );
-}
-
-Widget _buildSectionTitle(String title) {
-  return Align(
-    alignment: Alignment.centerLeft,
-    child: Text(
-      title,
-      style: TextStyle(
-        fontFamily: 'Open Sans',
-        fontSize: 20.fSize,
-        fontWeight: FontWeight.w800,
-        color: Color(0XFF4313E9),
+  Widget _buildBackgroundContainer() {
+    return Container(
+      alignment: Alignment.topCenter,
+      width: 100.width,
+      height: 100.height,
+      color: const Color(0XFF4313E9),
+      padding: EdgeInsets.only(top: 2.height),
+      child: Image.asset(
+        'assets/images/mana2_patterns.png',
+        width: 110.width,
+        height: 30.height,
+        fit: BoxFit.cover,
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildPropertyList() {
-  return SizedBox(
-    height: 38.height,
-    child: ListView(
-      scrollDirection: Axis.horizontal,
+  Widget _buildTopBar(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const _propertyImageStack(
-          image: 'Millerz_square2',
-          label: 'MILLERZ SQUARE',
-          location: '@ Old Klang Road',
-          amount: '3,300.00',
+        IconButton(
+          onPressed: () => navigateToPersonalMillerzSquare(context),
+          icon: Image.asset(
+            'assets/images/dashboard_menu.png',
+            width: 6.width,
+            height: 3.height,
+            fit: BoxFit.contain,
+          ),
         ),
-        SizedBox(width: 5.width),
-        const _propertyImageStack(
-          image: 'expression_suites_property',
-          label: 'EXPRESSIONZ SUITES',
-          location: '@ Jalan Tun Razak',
-          amount: '2,045.19',
-        ),
-        SizedBox(width: 5.width),
-        const _propertyImageStack(
-          image: 'ceylonz_suites',
-          label: 'CEYLONZ SUITES',
-          location: '@ Bukit Ceylon',
-          amount: '5,400.00',
-        ),
-        SizedBox(width: 5.width),
-        _buildViewAllProperty(),
-      ],
-    ),
-  );
-}
-
-Widget _buildViewAllProperty() {
-  return Container(
-    width: 51.width,
-    height: 38.height,
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      boxShadow: [
-        BoxShadow(
-          color: const Color(0XFF120051).withOpacity(0.05),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
-        )
-      ],
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
         Text(
-          'VIEW ALL',
+          'Main Dashboard',
           style: TextStyle(
-            fontFamily: 'Open Sans',
-            fontWeight: FontWeight.w700,
             fontSize: 20.fSize,
-            color: const Color(0XFF4313E9),
+            color: Color(0xFFC3B9FF),
+            fontFamily: 'Open Sans',
+            fontWeight: FontWeight.w800,
+            shadows: const [
+              Shadow(
+                  color: Color(0XFFC3B9FF),
+                  blurRadius: 0.5,
+                  offset: Offset(0.25, 0.5))
+            ],
           ),
         ),
-        Text(
-          '@ Your Property(s)',
-          style: TextStyle(
-            fontFamily: 'Open Sans',
-            fontWeight: FontWeight.w300,
-            fontSize: 10.fSize,
-            fontStyle: FontStyle.italic,
-            color: const Color(0XFF4313E9),
+        InkWell(
+          onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
+          child: Image.asset(
+            'assets/images/notifications.png',
+            width: 6.width,
+            height: 3.height,
+            fit: BoxFit.contain,
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserInfo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(width: 10.width),
+        Image.asset(
+          'assets/images/dashboard_gem.png',
+          width: 8.width,
+          height: 6.height,
+          fit: BoxFit.contain,
+        ),
+        SizedBox(width: 5.width),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Good day!',
+              style: TextStyle(
+                fontFamily: 'Open Sans',
+                fontSize: 15.fSize,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              'Azeem Mohd Fahmi',
+              style: TextStyle(
+                fontFamily: 'Open Sans',
+                fontSize: 20.fSize,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRevenueContainers() {
+    return Row(
+      children: [
+        _revenueContainer(
+            'Overall Revenue', Icons.account_balance_wallet_outlined),
+        const Spacer(),
+        _revenueContainer('Overall Rental Income', Icons.home_outlined),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: TextStyle(
+          fontFamily: 'Open Sans',
+          fontSize: 20.fSize,
+          fontWeight: FontWeight.w800,
+          color: Color(0XFF4313E9),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPropertyList() {
+    return SizedBox(
+      height: 38.height,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          const _propertyImageStack(
+            image: 'Millerz_square2',
+            label: 'MILLERZ SQUARE',
+            location: '@ Old Klang Road',
+            amount: '3,300.00',
+          ),
+          SizedBox(width: 5.width),
+          const _propertyImageStack(
+            image: 'expression_suites_property',
+            label: 'EXPRESSIONZ SUITES',
+            location: '@ Jalan Tun Razak',
+            amount: '2,045.19',
+          ),
+          SizedBox(width: 5.width),
+          const _propertyImageStack(
+            image: 'ceylonz_suites',
+            label: 'CEYLONZ SUITES',
+            location: '@ Bukit Ceylon',
+            amount: '5,400.00',
+          ),
+          SizedBox(width: 5.width),
+          _buildViewAllProperty(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildViewAllProperty() {
+    return Container(
+      width: 51.width,
+      height: 38.height,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0XFF120051).withOpacity(0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'VIEW ALL',
+            style: TextStyle(
+              fontFamily: 'Open Sans',
+              fontWeight: FontWeight.w700,
+              fontSize: 20.fSize,
+              color: const Color(0XFF4313E9),
+            ),
+          ),
+          Text(
+            '@ Your Property(s)',
+            style: TextStyle(
+              fontFamily: 'Open Sans',
+              fontWeight: FontWeight.w300,
+              fontSize: 10.fSize,
+              fontStyle: FontStyle.italic,
+              color: const Color(0XFF4313E9),
+            ),
+          ),
+          SizedBox(height: 2.height),
+          Container(
+            width: 7.width,
+            height: 7.width,
+            decoration: const BoxDecoration(color: Color(0XFF4313E9)),
+            child: const Icon(
+              Icons.keyboard_arrow_right_rounded,
+              color: Colors.white,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHighlights() {
+    return Column(
+      children: [
+        ResponsiveGridRow(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ResponsiveGridCol(
+              xs: 6,
+              child: Image.asset('assets/images/Promotions.png'),
+            ),
+            ResponsiveGridCol(
+              xs: 6,
+              child: Image.asset('assets/images/Discounts.png'),
+            ),
+          ],
         ),
         SizedBox(height: 2.height),
-        Container(
-          width: 7.width,
-          height: 7.width,
-          decoration: const BoxDecoration(color: Color(0XFF4313E9)),
-          child: const Icon(
-            Icons.keyboard_arrow_right_rounded,
-            color: Colors.white,
-          ),
-        )
+        ResponsiveGridRow(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ResponsiveGridCol(
+              xs: 6,
+              child: Image.asset('assets/images/Exchange.png'),
+            ),
+            ResponsiveGridCol(
+              xs: 6,
+              child: Image.asset('assets/images/Earn Points.png'),
+            ),
+          ],
+        ),
       ],
-    ),
-  );
-}
-
-Widget _buildHighlights() {
-  return Column(
-    children: [
-      ResponsiveGridRow(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ResponsiveGridCol(
-            xs: 6,
-            child: Image.asset('assets/images/Promotions.png'),
-          ),
-          ResponsiveGridCol(
-            xs: 6,
-            child: Image.asset('assets/images/Discounts.png'),
-          ),
-        ],
-      ),
-      SizedBox(height: 2.height),
-      ResponsiveGridRow(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ResponsiveGridCol(
-            xs: 6,
-            child: Image.asset('assets/images/Exchange.png'),
-          ),
-          ResponsiveGridCol(
-            xs: 6,
-            child: Image.asset('assets/images/Earn Points.png'),
-          ),
-        ],
-      ),
-    ],
-  );
-}
+    );
   }
+}
 
 class _propertyImageStack extends StatelessWidget {
   //add responsive builder
@@ -447,7 +452,6 @@ class _propertyImageStack extends StatelessWidget {
   }
 }
 
-
 Widget _revenueContainer(title, icon) {
   return SizedBox(
     width: 40.width,
@@ -572,14 +576,23 @@ Widget _revenueContainer(title, icon) {
   );
 }
 
-Widget _statisticTable() {
-  return Stack(
-    children: [
-      Container(
-        decoration: BoxDecoration(
-            color: const Color(0XFFF9F8FF),
-            borderRadius: BorderRadius.circular(12)),
-        child: Padding(
+Widget statisticTable() {
+  return Container(
+    decoration: BoxDecoration(
+      color: const Color(0XFFFFFFFF),
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+          color: const Color(0XFF120051).withOpacity(0.1),
+          blurRadius: 6,
+          offset: const Offset(0, 3),
+          spreadRadius: -1.0,
+        ),
+      ],
+    ),
+    child: Stack(
+      children: [
+        Padding(
           padding: EdgeInsets.only(
               left: 6.width, right: 3.width, top: 2.height, bottom: 2.height),
           child: Column(children: [
@@ -597,7 +610,7 @@ Widget _statisticTable() {
               ],
             ),
             Align(
-              alignment: const Alignment(-0.8, 0),
+              alignment: const Alignment(-0.9, 0),
               child: Text(
                 '(Ringgit in thousands)',
                 style: TextStyle(
@@ -654,31 +667,41 @@ Widget _statisticTable() {
             Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(width: 20.width),
-                    SizedBox(width: 5.width),
-                    SizedBox(
-                      width: 25.width,
-                      child: Text(
-                        'Monthly Revenue',
-                        style: TextStyle(
-                          color: const Color(0XFF888888),
-                          fontSize: 8.fSize,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Open Sans',
+                    const Expanded(
+                      flex: 4,
+                      child: SizedBox(),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Center(
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Monthly Revenue',
+                            style: TextStyle(
+                              color: const Color(0XFF888888),
+                              fontSize: 8.fSize,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Open Sans',
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    const Spacer(),
-                    SizedBox(
-                      width: 25.width,
-                      child: Text(
-                        'Monthly Rental Income',
-                        style: TextStyle(
-                          color: const Color(0XFF888888),
-                          fontSize: 8.fSize,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Open Sans',
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Monthly Rental Income',
+                          style: TextStyle(
+                            color: const Color(0XFF888888),
+                            fontSize: 8.fSize,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Open Sans',
+                          ),
                         ),
                       ),
                     ),
@@ -686,17 +709,17 @@ Widget _statisticTable() {
                 ),
                 revenueChartRow('April 2024', 'RM 0', 'RM 0'),
                 Divider(
-                  color: Color(0XFF888888),
+                  color: const Color(0XFF888888),
                   thickness: 0.5.fSize,
                 ),
                 revenueChartRow('Mar 2024', 'RM 4,562.40', 'RM 4,562.40'),
                 Divider(
-                  color: Color(0XFF888888),
+                  color: const Color(0XFF888888),
                   thickness: 0.5.fSize,
                 ),
                 revenueChartRow('Feb 2024', 'RM 100,562.40', 'RM 100,562.40'),
                 Divider(
-                  color: Color(0XFF888888),
+                  color: const Color(0XFF888888),
                   thickness: 0.5.fSize,
                 ),
                 revenueChartRow('Jan 2024', 'RM 60,562.40', 'RM 60,562.40'),
@@ -704,55 +727,109 @@ Widget _statisticTable() {
             ),
           ]),
         ),
+        Positioned(
+          left: 0,
+          top: -5.height,
+          child: SizedBox(
+            width: 27.width,
+            height: 16.height,
+            child: Opacity(
+              opacity: 0.2,
+              child: Image.asset(
+                'assets/images/patterns_faded.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+            right: 0,
+            top: 1.height,
+            child: SizedBox(
+              width: 27.width,
+              height: 16.height,
+              child: Opacity(
+                opacity: 0.2,
+                child: Image.asset('assets/images/patterns_faded.png'),
+              ),
+            )),
+        Positioned(
+            bottom: 1.height,
+            left: 1.width,
+            child: SizedBox(
+              width: 27.width,
+              height: 16.height,
+              child: Opacity(
+                opacity: 0.2,
+                child: Image.asset('assets/images/patterns_faded.png'),
+              ),
+            )),
+        Positioned(
+            right: 0,
+            bottom: -5.height,
+            child: SizedBox(
+              width: 27.width,
+              height: 16.height,
+              child: Opacity(
+                opacity: 0.2,
+                child: Image.asset('assets/images/patterns_faded.png'),
+              ),
+            )),
+      ],
+    ),
+  );
+}
+
+Widget revenueChartRow(String text1, String text2, String text3) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Expanded(
+        flex: 4,
+        child: Text(
+          text1,
+          style: TextStyle(
+            fontFamily: 'Open Sans',
+            fontWeight: FontWeight.w600,
+            fontSize: 12.fSize,
+            color: const Color(0XFF888888),
+          ),
+        ),
       ),
-      Positioned(
-        left: 0,
-        top: -5.height,
-        child: SizedBox(
-          width: 27.width,
-          height: 16.height,
-          child: Opacity(
-            opacity: 0.2,
-            child: Image.asset(
-              'assets/images/patterns_faded.png',
-              fit: BoxFit.cover,
+      Expanded(
+        flex: 4,
+        child: Container(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            text2,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              color: const Color(0XFF4313E9),
+              fontSize: 12.fSize,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'Open Sans',
             ),
           ),
         ),
       ),
-      Positioned(
-          right: 0,
-          top: 1.height,
-          child: SizedBox(
-            width: 27.width,
-            height: 16.height,
-            child: Opacity(
-              opacity: 0.2,
-              child: Image.asset('assets/images/patterns_faded.png'),
+      Expanded(
+        flex: 3,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Container(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              text3,
+              style: TextStyle(
+                color: const Color(0XFF4313E9),
+                fontSize: 12.fSize,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Open Sans',
+              ),
             ),
-          )),
-      Positioned(
-          bottom: 1.height,
-          left: 1.width,
-          child: SizedBox(
-            width: 27.width,
-            height: 16.height,
-            child: Opacity(
-              opacity: 0.2,
-              child: Image.asset('assets/images/patterns_faded.png'),
-            ),
-          )),
-      Positioned(
-          right: 0,
-          bottom: -5.height,
-          child: SizedBox(
-            width: 27.width,
-            height: 16.height,
-            child: Opacity(
-              opacity: 0.2,
-              child: Image.asset('assets/images/patterns_faded.png'),
-            ),
-          )),
+          ),
+        ),
+      ),
     ],
   );
 }
