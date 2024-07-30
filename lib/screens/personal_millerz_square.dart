@@ -154,7 +154,7 @@ class _PersonalMillerzSquare1ScreenState
           ),
         ),
         SizedBox(height: 1.height),
-       statisticTable(),
+        statisticTable(),
       ],
     );
   }
@@ -628,49 +628,4 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
       ),
     );
   }
-}
-
-Widget revenueChartRow(String text1, String text2, String text3) {
-  return Row(
-    children: [
-      SizedBox(
-        width: 20.width,
-        child: Text(
-          text1,
-          style: TextStyle(
-            fontFamily: 'Open Sans',
-            fontWeight: FontWeight.w600,
-            fontSize: 15.fSize,
-            color: const Color(0XFF888888),
-          ),
-        ),
-      ),
-      SizedBox(width: 5.width),
-      SizedBox(
-        width: 25.width,
-        child: Text(
-          text2,
-          style: TextStyle(
-            color: const Color(0XFF4313E9),
-            fontSize: 15.fSize,
-            fontWeight: FontWeight.w400,
-            fontFamily: 'Open Sans',
-          ),
-        ),
-      ),
-      const Spacer(),
-      SizedBox(
-        width: 25.width,
-        child: Text(
-          text3,
-          style: TextStyle(
-            color: const Color(0XFF4313E9),
-            fontSize: 15.fSize,
-            fontWeight: FontWeight.w400,
-            fontFamily: 'Open Sans',
-          ),
-        ),
-      ),
-    ],
-  );
 }
