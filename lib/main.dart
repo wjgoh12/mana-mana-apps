@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
+import 'package:mana_mana_app/splashscreen.dart';
 
 void main() {
   runApp(const MaterialApp(
-    home: NewDashboardPage(),
+    home: Splashscreen(),
   ));
 }
 
