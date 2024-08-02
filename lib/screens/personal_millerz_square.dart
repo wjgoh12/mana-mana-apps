@@ -1,8 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/dashboard.dart';
-import 'package:mana_mana_app/screens/statement.dart';
-// import 'package:mana_mana_app/widgets/bar_chart.dart';
+import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
+import 'package:mana_mana_app/screens/Dashboard/View/statistic_dashboard.dart';
+import 'package:mana_mana_app/screens/Statement/View/statement.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
@@ -40,7 +40,7 @@ class _PersonalMillerzSquare1ScreenState
       appBar: propertyAppBar(
         context,
         () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => NewDashboardPage())),
+            .push(MaterialPageRoute(builder: (_) => const NewDashboardPage())),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -150,11 +150,11 @@ class _PersonalMillerzSquare1ScreenState
             fontFamily: 'Open Sans',
             fontSize: 20.fSize,
             fontWeight: FontWeight.w800,
-            color: Color(0XFF4313E9),
+            color: const Color(0XFF4313E9),
           ),
         ),
         SizedBox(height: 1.height),
-        statisticTable(),
+        const StatisticTable(),
       ],
     );
   }
@@ -168,13 +168,13 @@ class _PersonalMillerzSquare1ScreenState
             fontFamily: 'Open Sans',
             fontSize: 20.fSize,
             fontWeight: FontWeight.w800,
-            color: Color(0XFF4313E9),
+            color: const Color(0XFF4313E9),
           ),
         ),
         const Spacer(),
         IconButton(
           onPressed: () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => StatementPage())),
+              .push(MaterialPageRoute(builder: (_) => const StatementPage())),
           iconSize: 4.height,
           icon: const Icon(Icons.arrow_right_rounded),
         ),
@@ -313,7 +313,7 @@ class _PersonalMillerzSquare1ScreenState
             fontFamily: 'Open Sans',
             fontSize: 20.fSize,
             fontWeight: FontWeight.w800,
-            color: Color(0XFF4313E9),
+            color: const Color(0XFF4313E9),
           ),
         ),
         const Spacer(),

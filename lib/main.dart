@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/personal_millerz_square.dart';
+import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
 
 void main() {
   runApp(const MaterialApp(
-    home: PersonalMillerzSquare1Screen(),
+    home: NewDashboardPage(),
   ));
 }
 
