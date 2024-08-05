@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
+import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
 import 'package:mana_mana_app/screens/Login/View/Introduction/owner_welcome_screen.dart';
 
 class Splashscreen extends StatefulWidget {
@@ -9,12 +11,21 @@ class Splashscreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<Splashscreen> with SingleTickerProviderStateMixin{
+  
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2),(){
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> const OnboardingScreen()));
-      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> const NewDashboardPage()));
+    Future.delayed(const Duration(seconds: 2), () async {
+      final authService = AuthService();
+      bool success = await authService.authenticate();
+      if (success) {
+        // Navigate to home page or show success message
+        print('Login successful');
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => NewDashboardPage()));
+      } else {
+        // Show error message
+        print('Login failed');
+      }
     });
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Login/View/Introduction/owner_welcome_screenVM.dart';
 import 'package:mana_mana_app/screens/Login/View/loginpage.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -81,7 +82,10 @@ class OnboardingScreen extends StatelessWidget {
                       backgroundColor: const Color(0xFF2900B7),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> LoginPage()));
+                      loginAuthenticate(
+                          context,
+                        );
+                      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> LoginPage()));
                     },
                     child: Text(
                       'Login >>>',

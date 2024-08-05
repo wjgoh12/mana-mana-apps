@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
 import 'package:mana_mana_app/screens/Login/View/Introduction/owner_welcome_screen.dart';
+import 'package:mana_mana_app/screens/Login/View/Introduction/owner_welcome_screenVM.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -9,6 +9,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: screenSize.height * 0.05),
                   TextFormField(
+                    controller: _usernameController,
                     decoration: InputDecoration(
                       labelText: 'Username',
                       hintText: 'Enter your name',
@@ -69,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: screenSize.height * 0.03),
                   TextFormField(
+                    controller: _passwordController,
                     obscureText: _obscureText,
                     decoration: InputDecoration(
                       labelText: 'Password',
@@ -113,7 +117,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> const NewDashboardPage()));
+                        // loginAuthenticate(
+                        //   context,
+                        // );
                       },
                       child: Text(
                         'Login >>>',
