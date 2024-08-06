@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/config/AppAuth/keycloak_config.dart';
+import 'package:mana_mana_app/config/env_config.dart';
 import 'package:mana_mana_app/splashscreen.dart';
 
 void main() {
+  // change dev and prod
   initApp('dev');
   runApp(const MaterialApp(
     home: Splashscreen(),
@@ -10,7 +11,7 @@ void main() {
 }
 
 Future<void> initApp(String env) async {
-  KeycloakConfig.initialize(env);
+  EnvConfig.initialize(env);
 }
 
 class MyApp extends StatelessWidget {

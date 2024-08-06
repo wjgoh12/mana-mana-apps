@@ -1,6 +1,6 @@
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'keycloak_config.dart';
+import '../env_config.dart';
 
 class AuthService {
   final FlutterAppAuth _appAuth = FlutterAppAuth();
@@ -11,17 +11,17 @@ class AuthService {
       final AuthorizationTokenResponse? result =
           await _appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
-          KeycloakConfig.clientId,
-          KeycloakConfig.redirectUrl,
-          discoveryUrl: KeycloakConfig.discoveryUrl,
-          clientSecret: KeycloakConfig.clientSecret,
+          EnvConfig.keycloak_clientId,
+          EnvConfig.keycloak_redirectUrl,
+          discoveryUrl: EnvConfig.keycloak_discoveryUrl,
+          clientSecret: EnvConfig.keycloak_clientSecret,
           scopes: ['openid', 'profile', 'email'],
           preferEphemeralSession: true,
           allowInsecureConnections: true,
           
         ),
       );
-      print(result);
+      
       if (result != null) {
         await _secureStorage.write(key: 'access_token', value: result.accessToken);
         await _secureStorage.write(key: 'refresh_token', value: result.refreshToken);
@@ -49,9 +49,10 @@ class AuthService {
 
       final TokenResponse? result = await _appAuth.token(
         TokenRequest(
-          KeycloakConfig.clientId,
-          KeycloakConfig.redirectUrl,
-          discoveryUrl: KeycloakConfig.discoveryUrl,
+          EnvConfig.keycloak_clientId,
+          EnvConfig.keycloak_redirectUrl,
+          discoveryUrl: EnvConfig.keycloak_discoveryUrl,
+          clientSecret: EnvConfig.keycloak_clientSecret,
           refreshToken: refreshToken,
           scopes: ['openid', 'profile', 'email'],
         ),

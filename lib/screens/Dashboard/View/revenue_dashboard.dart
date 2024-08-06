@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class BuildRevenueContainers extends StatelessWidget {
@@ -6,7 +7,7 @@ class BuildRevenueContainers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       children: [
         _RevenueContainer(
             title: 'Overall Revenue',
@@ -31,29 +32,34 @@ class _RevenueContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DashboardVM model = DashboardVM();
     return SizedBox(
       width: 40.width,
       child: Stack(
         children: [
-          Container(
-            padding: EdgeInsets.all(1.height),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFFFFF),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xffC3B9FF).withOpacity(0.25),
-                  offset: const Offset(0, 4),
-                  blurRadius: 4,
-                )
-              ],
-            ),
-            child: Column(
-              children: [
-                _buildTitleRow(),
-                SizedBox(height: 1.height),
-                _buildContentRow(),
-              ],
+          GestureDetector(
+            // onTap: () => model.updateOverallRevenueAmount(),
+            onTap: () => model.fetchUsers(),
+            child: Container(
+              padding: EdgeInsets.all(1.height),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFFFF),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xffC3B9FF).withOpacity(0.25),
+                    offset: const Offset(0, 4),
+                    blurRadius: 4,
+                  )
+                ],
+              ),
+              child: Column(
+                children: [
+                  _buildTitleRow(),
+                  SizedBox(height: 1.height),
+                  _buildContentRow(),
+                ],
+              ),
             ),
           ),
           Positioned(
@@ -128,28 +134,33 @@ class _RevenueContainer extends StatelessWidget {
   }
 
   Widget _buildAmountText() {
-    return Text.rich(
-      TextSpan(
-        text: 'RM',
-        style: TextStyle(
-          fontFamily: 'Open Sans',
-          fontWeight: FontWeight.w700,
-          fontSize: 12.fSize,
-          color: const Color(0XFF2900B7),
-        ),
-        children: <InlineSpan>[
-          WidgetSpan(child: SizedBox(width: 1.width)),
+    return ListenableBuilder(
+      listenable: DashboardVM(),
+      builder: (context, _) {
+        return Text.rich(
           TextSpan(
-            text: '9,999.99',
+            text: 'RM',
             style: TextStyle(
               fontFamily: 'Open Sans',
               fontWeight: FontWeight.w700,
-              fontSize: 20.fSize,
+              fontSize: 12.fSize,
               color: const Color(0XFF2900B7),
             ),
+            children: <InlineSpan>[
+              WidgetSpan(child: SizedBox(width: 1.width)),
+              TextSpan(
+                text: DashboardVM().overallRevenueAmount,
+                style: TextStyle(
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20.fSize,
+                  color: const Color(0XFF2900B7),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
