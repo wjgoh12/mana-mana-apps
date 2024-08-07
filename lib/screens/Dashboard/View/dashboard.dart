@@ -11,14 +11,6 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 class NewDashboardPage extends StatelessWidget {
   const NewDashboardPage({Key? key}) : super(key: key);
 
-  void navigateToPersonalMillerzSquare(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const PersonalMillerzSquare1Screen(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,11 +18,11 @@ class NewDashboardPage extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           _buildBackgroundContainer(),
-          Column(
-            children: [
-              SizedBox(height: 5.height),
-              _buildTopBar(context),
-            ],
+          AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: _buildTopBar(context),
+            automaticallyImplyLeading: false, // This will remove the back button
           ),
           Positioned(
             top: 14.height,
@@ -49,8 +41,6 @@ class NewDashboardPage extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      _buildUserInfo(),
-                      SizedBox(height: 2.height),
                       Container(
                         width: 100.width,
                         padding: EdgeInsets.all(7.width),
@@ -64,6 +54,7 @@ class NewDashboardPage extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
+                            _buildUserInfo(),
                             const BuildRevenueContainers(),
                             SizedBox(height: 2.height),
                             _buildSectionTitle('Statistics'),
@@ -112,7 +103,7 @@ class NewDashboardPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () => navigateToPersonalMillerzSquare(context),
+          onPressed: () => '',
           icon: Image.asset(
             'assets/images/dashboard_menu.png',
             width: 6.width,
@@ -154,39 +145,65 @@ class NewDashboardPage extends StatelessWidget {
       listenable: DashboardVM(),
       builder: (context, _) {
     return Padding(
-      padding: EdgeInsets.only(left: 10.width),
-      child: Row(
+      padding: EdgeInsets.only(left: 2.width, bottom: 4.height),
+      child: Column(
         children: [
-          Image.asset(
-            'assets/images/dashboard_gem.png',
-            width: 8.width,
-            height: 6.height,
-            fit: BoxFit.contain,
-          ),
-          SizedBox(width: 5.width),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
-                'Good day!',
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontSize: 15.fSize,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+              Image.asset(
+                'assets/images/dashboard_gem.png',
+                width: 8.width,
+                height: 6.height,
+                fit: BoxFit.contain,
               ),
-              Text(
-                DashboardVM().userNameAccount,
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontSize: 20.fSize,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                  fontStyle: FontStyle.italic,
+              SizedBox(width: 5.width),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DashboardVM().userNameAccount,
+                    style: TextStyle(
+                      fontFamily: 'Open Sans',
+                      fontSize: 20.fSize,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0XFF4313E9),
+                      // fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  Text(
+                    'Property Owner',
+                    style: TextStyle(
+                      fontFamily: 'Open Sans',
+                      fontSize: 15.fSize,
+                      fontWeight: FontWeight.w300,
+                      fontStyle: FontStyle.italic,
+                      color: const Color(0XFF555555),
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {
+                  print("testing222");
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: 2.height,right: 2.width),
+                  child: Image.asset(
+                    'assets/images/arrow_button.png',
+                    width: 7.width,
+                    height: 5.height,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ],
+          ),
+          SizedBox(height: 2.height),
+          Container(
+            height: 1,
+            color: Colors.grey[300],
           ),
         ],
       ),

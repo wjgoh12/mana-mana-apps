@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 const gradientColor1=LinearGradient(begin: Alignment.topCenter,end: Alignment.bottomCenter,colors: [Color(0XFFFEBD74),Color(0XFFFB6764)]);
@@ -10,14 +11,7 @@ class BarChartSample7 extends StatefulWidget {
   final shadowColor = const Color(0xFFCCCCCC);
   final labelColor1=const Color(0XFFFEBD74);
   final labelColor2=const Color(0XFF8C71E7);
-  final dataList = [
-     const _BarData(gradientColor1, 60.5, 30),
-    const _BarData(gradientColor1, 100.5, 50),
-    const _BarData(gradientColor1, 4.5, 10),
-    const _BarData(gradientColor1, 120, 140),
-    const _BarData(gradientColor1, 160, 125),
-    const _BarData(gradientColor1, 170, 110),
-  ];
+  
  final List<Color> monthColors = [
     Colors.red,
     Colors.orange,
@@ -39,10 +33,10 @@ class BarChartSample7 extends StatefulWidget {
 
 class _BarChartSample7State extends State<BarChartSample7> {
   final List<String> monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
     'May',
     'Jun',
     'Jul',
@@ -83,6 +77,18 @@ class _BarChartSample7State extends State<BarChartSample7> {
 
   @override
   Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: DashboardVM(),
+      builder: (context, _) {
+    final dataList = [
+     _BarData(gradientColor1, DashboardVM().totalByMonth.isEmpty ? 0 : DashboardVM().totalByMonth[0]['total'], 0),
+    _BarData(gradientColor1, 0, 0),
+    _BarData(gradientColor1, 0, 0),
+    _BarData(gradientColor1, 0, 0),
+    // _BarData(gradientColor1, 160, 125),
+    // _BarData(gradientColor1, 170, 110),
+  ];
+  
     return Padding(
       padding: const EdgeInsets.all(24),
       child: SizedBox(width: 80.width,
@@ -140,7 +146,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
                   strokeWidth: 1,
                 ),
               ),
-              barGroups: widget.dataList.asMap().entries.map((e) {
+              barGroups: dataList.asMap().entries.map((e) {
                 final index = e.key;
                 final data = e.value;
                 return generateBarGroup(
@@ -198,6 +204,7 @@ class _BarChartSample7State extends State<BarChartSample7> {
         ),
       ),
     );
+      });
   }
 }
 

@@ -32,11 +32,25 @@ class _SplashScreenState extends State<Splashscreen> with SingleTickerProviderSt
   @override
   Widget build (BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/splashscreen.png'),
-            fit: BoxFit.cover,
+      body: GestureDetector(
+        onTap: () async {
+          final authService = AuthService();
+          bool success = await authService.authenticate();
+          if (success) {
+            // Navigate to home page or show success message
+            print('Login successful');
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => NewDashboardPage()));
+          } else {
+            // Show error message
+            print('Login failed');
+          }
+        },
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/splashscreen.png'),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),

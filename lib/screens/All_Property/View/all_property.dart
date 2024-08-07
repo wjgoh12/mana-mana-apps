@@ -11,19 +11,22 @@ class MillerzSquare1Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0XFFFFFFFF),
-      appBar: propertyAppBar(context, () => Navigator.of(context).pop()),
-      body: Center(
+          appBar: propertyAppBar(
+            context,
+            () => Navigator.of(context).pop(),
+          ),      
+          body: Center(
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 5),
           children: [
             GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const PersonalMillerzSquare1Screen(),
-                  ),
-                );
-              },
+              // onTap: () {
+              //   Navigator.of(context).push(
+              //     MaterialPageRoute(
+              //       builder: (context) => const PersonalMillerzSquare1Screen(),
+              //     ),
+              //   );
+              // },
               child: _buildPropertyStack(
                 image: 'millerz_square',
                 text1: 'Millerz Square',

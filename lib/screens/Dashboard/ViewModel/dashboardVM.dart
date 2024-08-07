@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/user_model.dart';
+import 'package:mana_mana_app/provider/global_owner_state.dart';
+import 'package:mana_mana_app/provider/global_user_state.dart';
+import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 
 class DashboardVM extends ChangeNotifier {
@@ -8,34 +12,46 @@ class DashboardVM extends ChangeNotifier {
   factory DashboardVM() {
     return _instance;
   }
-  DashboardVM._internal();
-
-  @override
-  void onModelReady() {
+  DashboardVM._internal() {
     fetchUsers();
   }
 
   final UserRepository user_repository = UserRepository();
+  final PropertyListRepository ownerPropertyList_repository = PropertyListRepository();
   List<User> _users = [];
+  List<OwnerPropertyList> ownerUnits = [];
+  List<Map<String, dynamic>> revenue_dashboard = [];
+  List<Map<String, dynamic>> locationByMonth = [];
+  List<Map<String, dynamic>> totalByMonth = [];
 
-  List<User> get users => _users;
+  double get totalRevenue => revenue_dashboard.isNotEmpty ? revenue_dashboard.first["total"] : 0.0;
+  int get currentYear => revenue_dashboard.isNotEmpty ? revenue_dashboard.first["iyear"] : DateTime.now().year;
 
-  Future<void> fetchUsers() async {
-    _users = await user_repository.getUsers();
-    userNameAccount = _users.isNotEmpty ? '${_users.first.firstName} ${_users.first.lastName}' : '';
-    print(_users.first.firstName);
+  void updateData(List<Map<String, dynamic>> newData) {
+    revenue_dashboard = newData;
     notifyListeners();
   }
 
   String overallRevenueAmount = '0';
   String userNameAccount = '';
-  int abc = 0;
+  List<User> get users => _users;
+
+  Future<void> fetchUsers() async {
+    _users = await user_repository.getUsers();
+    GlobalUserState.instance.setUsers(_users);
+    userNameAccount = _users.isNotEmpty ? '${_users.first.firstName} ${_users.first.lastName}' : '';
+    revenue_dashboard = await ownerPropertyList_repository.revenueByYear();
+    totalByMonth = await ownerPropertyList_repository.totalByMonth();
+    ownerUnits = await ownerPropertyList_repository.getOwnerUnit();
+    GlobalOwnerState.instance.setOwnerData(ownerUnits);   
+    locationByMonth = await ownerPropertyList_repository.locationByMonth();
+    print(totalByMonth);
+    notifyListeners();
   
+  }
 
   void updateOverallRevenueAmount() {
-    print('testing');
-    abc ++;
-    overallRevenueAmount = abc.toString();
-    notifyListeners();
+    // notifyListeners();
+    print("clicked");
   }
 }

@@ -11,10 +11,10 @@ class BuildRevenueContainers extends StatelessWidget {
       children: [
         _RevenueContainer(
             title: 'Overall Revenue',
-            icon: Icons.account_balance_wallet_outlined),
+            icon: Icons.account_balance_wallet_outlined,overallRevenue: true),
         Spacer(),
         _RevenueContainer(
-            title: 'Overall Rental Income', icon: Icons.home_outlined),
+            title: 'Overall Rental Income', icon: Icons.home_outlined, overallRevenue: false),
       ],
     );
   }
@@ -23,11 +23,13 @@ class BuildRevenueContainers extends StatelessWidget {
 class _RevenueContainer extends StatelessWidget {
   final String title;
   final IconData icon;
+  final bool overallRevenue;
 
   const _RevenueContainer({
     Key? key,
     required this.title,
-    required this.icon,
+    required this.icon, 
+    required this.overallRevenue,
   }) : super(key: key);
 
   @override
@@ -38,8 +40,7 @@ class _RevenueContainer extends StatelessWidget {
       child: Stack(
         children: [
           GestureDetector(
-            // onTap: () => model.updateOverallRevenueAmount(),
-            onTap: () => model.fetchUsers(),
+            onTap: () => model.updateOverallRevenueAmount(),
             child: Container(
               padding: EdgeInsets.all(1.height),
               decoration: BoxDecoration(
@@ -137,28 +138,29 @@ class _RevenueContainer extends StatelessWidget {
     return ListenableBuilder(
       listenable: DashboardVM(),
       builder: (context, _) {
-        return Text.rich(
-          TextSpan(
-            text: 'RM',
-            style: TextStyle(
-              fontFamily: 'Open Sans',
-              fontWeight: FontWeight.w700,
-              fontSize: 12.fSize,
-              color: const Color(0XFF2900B7),
-            ),
-            children: <InlineSpan>[
-              WidgetSpan(child: SizedBox(width: 1.width)),
-              TextSpan(
-                text: DashboardVM().overallRevenueAmount,
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20.fSize,
-                  color: const Color(0XFF2900B7),
-                ),
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'RM',
+              style: TextStyle(
+                fontFamily: 'Open Sans',
+                fontWeight: FontWeight.w700,
+                fontSize: 12.fSize,
+                color: const Color(0XFF2900B7),
               ),
-            ],
-          ),
+            ),
+            SizedBox(width: 1.width),
+            Text(
+              overallRevenue ? DashboardVM().totalRevenue.toStringAsFixed(2) : '0.00',              
+                style: TextStyle(
+                fontFamily: 'Open Sans',
+                fontWeight: FontWeight.w700,
+                fontSize: 20.fSize,
+                color: const Color(0XFF2900B7),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -167,7 +169,7 @@ class _RevenueContainer extends StatelessWidget {
   Widget _buildPercentageText() {
     return Text.rich(
       TextSpan(
-        text: '100%',
+        text: '-',
         style: TextStyle(
           fontFamily: 'Open Sans',
           fontWeight: FontWeight.w400,

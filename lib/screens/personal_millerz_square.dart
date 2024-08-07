@@ -1,8 +1,14 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/model/OwnerPropertyList.dart';
+import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
+import 'package:mana_mana_app/provider/global_owner_state.dart';
+import 'package:mana_mana_app/provider/global_unitByMonth_state.dart';
+import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/statistic_dashboard.dart';
 import 'package:mana_mana_app/screens/Statement/View/statement.dart';
+import 'package:mana_mana_app/screens/personal_millerz_squareVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
@@ -10,7 +16,8 @@ import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class PersonalMillerzSquare1Screen extends StatefulWidget {
-  const PersonalMillerzSquare1Screen({super.key});
+  List<Map<String, dynamic>> locationByMonth;
+  PersonalMillerzSquare1Screen(this.locationByMonth, {super.key});
 
   @override
   State<PersonalMillerzSquare1Screen> createState() =>
@@ -19,13 +26,20 @@ class PersonalMillerzSquare1Screen extends StatefulWidget {
 
 class _PersonalMillerzSquare1ScreenState
     extends State<PersonalMillerzSquare1Screen> {
+  final PropertyListRepository ownerPropertyList_repository =
+      PropertyListRepository();
   bool isClicked = false;
-  final List<String> items = ['Type A', 'Type B', 'Type C', 'Type D'];
-  final List<String> items2 = ['A-13-2', 'A-13-3', 'A-13-4', 'A-13-5'];
-  final List<String> items3 =
-      List.generate(8, (index) => (DateTime.now().year - index).toString());
+  final List<String> yearItems =
+      List.generate(1, (index) => (DateTime.now().year - index).toString());
+  final List<String> monthItems =
+      List.generate(1, (index) => (DateTime.now().month-3 - index).toString());
   String? selectedValue;
-
+  String? selectedYearValue = DateTime.now().year.toString();
+  String? selectedMonthValue = DateTime.now().month.toString();
+  String? selectedType;
+  String? selectedUnitNo;
+  var selectedUnit;
+  // widget.lseqid
   void toggleIsClicked() {
     setState(() {
       isClicked = !isClicked;
@@ -33,50 +47,56 @@ class _PersonalMillerzSquare1ScreenState
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0XFFFFFFFF),
-      appBar: propertyAppBar(
-        context,
-        () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const NewDashboardPage())),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 7.width),
-          child: Column(
-            children: [
-              SizedBox(height: 2.height),
-              _buildPropertyHeader(),
-              SizedBox(height: 2.height),
-              _buildOverallRevenue(),
-              SizedBox(height: 2.height),
-              _buildTypeAndUnitSelection(),
-              SizedBox(height: 2.height),
-              _buildUnitRevenue(),
-              SizedBox(height: 1.height),
-              _buildStatisticsSection(),
-              SizedBox(height: 5.height),
-              _buildMonthlyStatementSection(),
-              SizedBox(height: 3.height),
-              _buildMonthlyStatementContainer(),
-              SizedBox(height: 1.height),
-              _buildAgreementsSection(),
-              SizedBox(height: 3.height),
-              _buildAgreementContainer(),
-              SizedBox(height: 10.height),
-            ],
-          ),
-        ),
-      ),
-    );
+    return ListenableBuilder(
+        listenable: personalMillerzSquareVM(),
+        builder: (context, _) {
+          final personalMillerzSquareVM model = personalMillerzSquareVM();
+          String property = widget.locationByMonth[0]['location'];
+
+          return Scaffold(
+            backgroundColor: const Color(0XFFFFFFFF),
+            appBar: propertyAppBar(
+              context,
+              () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => NewDashboardPage())),
+            ),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 7.width),
+                child: Column(
+                  children: [
+                    SizedBox(height: 2.height),
+                    _buildPropertyHeader(property),
+                    SizedBox(height: 2.height),
+                    // _buildOverallRevenue(),
+                    SizedBox(height: 2.height),
+                    _buildTypeAndUnitSelection(property),
+                    SizedBox(height: 2.height),
+                    _buildUnitRevenue(property),
+                    // SizedBox(height: 1.height),
+                    // _buildStatisticsSection(),
+                    // SizedBox(height: 5.height),
+                    _buildMonthlyStatementSection(),
+                    SizedBox(height: 3.height),
+                    _buildMonthlyStatementContainer(property),
+                    SizedBox(height: 1.height),
+                    // _buildAgreementsSection(),
+                    SizedBox(height: 3.height),
+                    // _buildAgreementContainer(),
+                    SizedBox(height: 10.height),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 
-  Widget _buildPropertyHeader() {
+  Widget _buildPropertyHeader(property) {
     return propertyStack(
-      image: 'millerz_square',
-      text1: 'Millerz Square',
+      image: property,
+      text1: property,
       text2: '@ Old Klang Road',
       width: 86.width,
       height: 12.height,
@@ -96,17 +116,46 @@ class _PersonalMillerzSquare1ScreenState
     );
   }
 
-  Widget _buildTypeAndUnitSelection() {
+  Widget _buildTypeAndUnitSelection(property) {
+    
+
+    List<OwnerPropertyList> ownerData =
+        GlobalOwnerState.instance.getOwnerData();
+
+    List<String> typeItems = ownerData
+        .where((types) => types.location == property)
+        .map((types) => types.type.toString())
+        .toList();
+    selectedType = typeItems.first;
+    List<String> unitNoItems = ownerData
+        .where((types) => types.location == property)
+        .map((types) => types.unitno.toString())
+        .toList();
+    selectedUnitNo = unitNoItems.first;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildGradientText('Type'),
         SizedBox(width: 1.width),
-        NewDropdownButton(list: items),
+        NewDropdownButton(
+          list: typeItems,
+          onChanged: (_) {
+            setState(() {
+              selectedType = _;
+            });
+          },
+        ),
         const Spacer(),
         _buildGradientText('Unit'),
         SizedBox(width: 1.width),
-        NewDropdownButton(list: items2),
+        NewDropdownButton(
+          list: unitNoItems,
+          onChanged: (_) {
+            setState(() {
+              selectedUnitNo = _;
+            });
+          },
+        ),
       ],
     );
   }
@@ -127,18 +176,45 @@ class _PersonalMillerzSquare1ScreenState
     );
   }
 
-  Widget _buildUnitRevenue() {
-    return const OverallRevenueContainer(
-      text1: 'Unit Revenue',
-      text2: 'RM 2,399.99',
-      text3: '100%',
-      text4: 'Unit Rental Income',
-      text5: 'RM 2,399.00',
-      text6: '88%',
-      color: Color(0XFF4313E9),
-      backgroundColor: Color(0XFFFFFFFF),
-    );
-  }
+  Widget _buildUnitRevenue(property) {
+  return ListenableBuilder(
+    listenable: personalMillerzSquareVM(),
+    builder: (context, _) {
+      List<singleUnitByMonth> _singleUnitByMonth = GlobalUnitByMonthState.instance.getUnitByMonthData();
+      
+      var now = DateTime.now();
+      var selectedUnit = _singleUnitByMonth.firstWhere(
+        (unit) => 
+          unit.slocation == property &&
+          unit.stype == selectedType &&
+          unit.sunitno == selectedUnitNo &&
+          unit.imonth == now.month &&
+          unit.iyear == now.year,
+        orElse: () => _singleUnitByMonth.firstWhere(
+          (unit) => 
+            unit.slocation == property &&
+            unit.stype == selectedType &&
+            unit.sunitno == selectedUnitNo,
+          orElse: () => singleUnitByMonth(total: 0.00),
+        ),
+      );
+
+     
+
+      return OverallRevenueContainer(
+        text1: 'Unit Revenue',
+        text2: 'RM ${selectedUnit.total?.toStringAsFixed(2) ?? '0.00'}',
+        text3: '100%',
+        text4: 'Unit Rental Income',
+        text5: 'RM 0.00',
+        text6: '0%',
+        color: const Color(0XFF4313E9),
+        backgroundColor: const Color(0XFFFFFFFF),
+      );
+    }
+  );
+}
+
 
   Widget _buildStatisticsSection() {
     return Column(
@@ -188,7 +264,7 @@ class _PersonalMillerzSquare1ScreenState
     );
   }
 
-  Widget _buildMonthlyStatementContainer() {
+  Widget _buildMonthlyStatementContainer(property) {
     return Container(
       width: 90.width,
       decoration: BoxDecoration(
@@ -204,24 +280,71 @@ class _PersonalMillerzSquare1ScreenState
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(6.width, 2.height, 5.width, 2.height),
+        padding: EdgeInsets.fromLTRB(6.width, 3.height, 5.width, 2.height),
         child: Column(
           children: [
-            _buildYearSelection(),
-            SizedBox(height: 1.height),
-            _buildMonthlyStatementContent(),
+            _buildYearMonthSelection(),
+            SizedBox(height: 2.height),
+            _buttonDownloadPdf(property),
+            // _buildMonthlyStatementContent(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildYearSelection() {
+  Widget _buttonDownloadPdf(property) {
+    return ElevatedButton(
+      onPressed: () async {
+        await ownerPropertyList_repository.downloadPdfStatement(
+            property, selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo);
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0XFF4313E9),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      child: Padding(
+        padding:
+            EdgeInsets.symmetric(horizontal: 8.width, vertical: 0.5.height),
+        child: Text(
+          'Download PDF',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.fSize,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildYearMonthSelection() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildGradientText('Year'),
         SizedBox(width: 2.width),
-        NewDropdownButton(list: items3),
+        NewDropdownButton(
+          list: yearItems,
+          onChanged: (_) {
+            setState(() {
+              selectedYearValue = _;
+            });
+          },
+        ),
+        SizedBox(width: 6.width),
+        _buildGradientText('Month'),
+        SizedBox(width: 2.width),
+        NewDropdownButton(
+          list: monthItems,
+          onChanged: (_) {
+            setState(() {
+              selectedMonthValue = _;
+            });
+          },
+        ),
       ],
     );
   }
@@ -553,8 +676,10 @@ class _PersonalMillerzSquare1ScreenState
 // }
 
 class NewDropdownButton extends StatefulWidget {
-  const NewDropdownButton({super.key, required this.list});
+  const NewDropdownButton(
+      {super.key, required this.list, required this.onChanged});
   final List<String> list;
+  final Function(String?) onChanged;
 
   @override
   State<NewDropdownButton> createState() => _NewDropdownButtonState();
@@ -605,6 +730,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
           setState(() {
             selectedValue = value;
           });
+          widget.onChanged(value);
         },
         buttonStyleData: ButtonStyleData(
           padding: const EdgeInsets.symmetric(horizontal: 10),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
+import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
 import 'package:mana_mana_app/screens/personal_millerz_square.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -9,63 +11,64 @@ class BuildPropertyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 38.height,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: const [
-          PropertyImageStack(
-            image: 'Millerz_square2',
-            label: 'MILLERZ SQUARE',
-            location: '@ Old Klang Road',
-            amount: '3,300.00',
-            onTap: 'MILLERZ SQUARE'
-          ),
-          SizedBox(width: 5),
-          PropertyImageStack(
-            image: 'expression_suites_property',
-            label: 'EXPRESSIONZ SUITES',
-            location: '@ Jalan Tun Razak',
-            amount: '2,045.19',
-            onTap: ''
-          ),
-          SizedBox(width: 5),
-          PropertyImageStack(
-            image: 'ceylonz_suites',
-            label: 'CEYLONZ SUITES',
-            location: '@ Bukit Ceylon',
-            amount: '5,400.00',
-            onTap: ''
-          ),
-          SizedBox(width: 5),
-          ViewAllProperty(),
-        ],
-      ),
-    );
+    final DashboardVM model = DashboardVM();
+    return ListenableBuilder(
+        listenable: DashboardVM(),
+        builder: (context, _) {
+          return model.locationByMonth.isEmpty
+                  ? Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: const Center(
+                        child: Text('No properties available'),
+                      ),
+                    )
+                  : SizedBox(
+                      height: 38.height,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          ...model.locationByMonth
+                              .map((property) => PropertyImageStack(
+                                    locationByMonth: [property],
+                                  ))
+                              .toList(),
+                          const SizedBox(width: 5),
+                          const ViewAllProperty(),
+                        ],
+                      ),
+                    );
+        });
   }
 }
 
 class PropertyImageStack extends StatelessWidget {
-  const PropertyImageStack({
+  PropertyImageStack({
     Key? key,
-    required this.image,
-    required this.label,
-    required this.location,
-    required this.amount,
-    required this.onTap,
+    // required this.image,
+    // required this.label,
+    // required this.location,
+    // required this.amount,
+    required this.locationByMonth,
   }) : super(key: key);
 
-  final String image;
-  final String label;
-  final String location;
-  final String amount;
-  final String onTap;
+  // final String image;
+  // final String label;
+  // final String location;
+  // final String amount;
+  
+  List<Map<String, dynamic>> locationByMonth;
 
   @override
   Widget build(BuildContext context) {
+    print(locationByMonth.first['total']);
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
-        final isMobile = sizingInformation.deviceScreenType == DeviceScreenType.mobile;
+        final isMobile =
+            sizingInformation.deviceScreenType == DeviceScreenType.mobile;
         final width = isMobile ? 51.width : 40.width;
         final height = 30.height;
         final position = 20.height;
@@ -81,7 +84,7 @@ class PropertyImageStack extends StatelessWidget {
               width: width,
               height: height,
               child: Image.asset(
-                'assets/images/$image.png',
+                'assets/images/${locationByMonth.first['location']}.png',
                 fit: BoxFit.fill,
               ),
             ),
@@ -99,7 +102,8 @@ class PropertyImageStack extends StatelessWidget {
                     )
                   ],
                   color: const Color(0XFFFFFFFF),
-                  borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10)),
+                  borderRadius:
+                      const BorderRadius.only(bottomLeft: Radius.circular(10)),
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(top: 2.height, left: 2.width),
@@ -107,7 +111,7 @@ class PropertyImageStack extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        label,
+                        locationByMonth.first['location'] ?? '',
                         style: TextStyle(
                           fontFamily: 'Open Sans',
                           fontWeight: FontWeight.w700,
@@ -116,7 +120,7 @@ class PropertyImageStack extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        location,
+                        locationByMonth.first['location'] ?? '',
                         style: TextStyle(
                           fontFamily: 'Open Sans',
                           fontWeight: FontWeight.w300,
@@ -139,7 +143,7 @@ class PropertyImageStack extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            amount,
+                            locationByMonth.first['total'].toString(),
                             style: TextStyle(
                               fontFamily: 'Open Sans',
                               fontWeight: FontWeight.w600,
@@ -168,11 +172,16 @@ class PropertyImageStack extends StatelessWidget {
               left: arrowLeft,
               child: GestureDetector(
                 onTap: () {
-                  if (onTap == 'MILLERZ SQUARE'){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PersonalMillerzSquare1Screen()));
-                  }else{
-                    print('onTap == ''');
-                  }
+                  print("checking1111");
+                  print(locationByMonth);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PersonalMillerzSquare1Screen(
+                          locationByMonth
+                          ),
+                    ),
+                  );
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -202,7 +211,8 @@ class ViewAllProperty extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => MillerzSquare1Screen()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => MillerzSquare1Screen()));
       },
       child: Container(
         width: 51.width,

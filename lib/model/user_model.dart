@@ -32,7 +32,6 @@ class User {
   });
 
   User.fromJson(Map<String, dynamic> json) {
-    print("11111");
     email = json['email'];
     role = json['roles'];
     token = json['token'];
@@ -48,4 +47,6 @@ class User {
     ownerAltContact = json['ownersinfo']['altContact'];
     ownerAddress = json['ownersinfo']['address'];
   }
+
+  Object? toJson() {}
 }
