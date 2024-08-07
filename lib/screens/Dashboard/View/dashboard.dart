@@ -5,6 +5,7 @@ import 'package:mana_mana_app/screens/Dashboard/View/property_list_dashboard.dar
 import 'package:mana_mana_app/screens/Dashboard/View/revenue_dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/statistic_dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
+import 'package:mana_mana_app/screens/Setting/settingPage.dart';
 import 'package:mana_mana_app/screens/personal_millerz_square.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
@@ -186,7 +187,8 @@ class NewDashboardPage extends StatelessWidget {
               const Spacer(),
               GestureDetector(
                 onTap: () {
-                  print("testing222");
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SettingPage()));
                 },
                 child: Padding(
                   padding: EdgeInsets.only(top: 2.height,right: 2.width),

@@ -31,8 +31,8 @@ class _PersonalMillerzSquare1ScreenState
   bool isClicked = false;
   final List<String> yearItems =
       List.generate(1, (index) => (DateTime.now().year - index).toString());
-  final List<String> monthItems =
-      List.generate(1, (index) => (DateTime.now().month-3 - index).toString());
+  final List<String> monthItems = List.generate(
+      4, (index) => (DateTime.now().month - index).toString());
   String? selectedValue;
   String? selectedYearValue = DateTime.now().year.toString();
   String? selectedMonthValue = DateTime.now().month.toString();
@@ -58,8 +58,8 @@ class _PersonalMillerzSquare1ScreenState
             backgroundColor: const Color(0XFFFFFFFF),
             appBar: propertyAppBar(
               context,
-              () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => NewDashboardPage())),
+              () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => NewDashboardPage())),
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -117,8 +117,6 @@ class _PersonalMillerzSquare1ScreenState
   }
 
   Widget _buildTypeAndUnitSelection(property) {
-    
-
     List<OwnerPropertyList> ownerData =
         GlobalOwnerState.instance.getOwnerData();
 
@@ -126,12 +124,12 @@ class _PersonalMillerzSquare1ScreenState
         .where((types) => types.location == property)
         .map((types) => types.type.toString())
         .toList();
-    selectedType = typeItems.first;
+    selectedType = selectedType == '' ? typeItems.first : selectedType;    
     List<String> unitNoItems = ownerData
         .where((types) => types.location == property)
         .map((types) => types.unitno.toString())
         .toList();
-    selectedUnitNo = unitNoItems.first;
+    selectedUnitNo = selectedUnitNo == '' ? unitNoItems.first : selectedUnitNo;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -151,8 +149,28 @@ class _PersonalMillerzSquare1ScreenState
         NewDropdownButton(
           list: unitNoItems,
           onChanged: (_) {
+            List<singleUnitByMonth> _singleUnitByMonth =
+              GlobalUnitByMonthState.instance.getUnitByMonthData();
+
+          
             setState(() {
               selectedUnitNo = _;
+              var now = DateTime.now();
+             selectedUnit = _singleUnitByMonth.firstWhere(
+            (unit) =>
+                unit.slocation == property &&
+                unit.stype == selectedType &&
+                unit.sunitno == selectedUnitNo &&
+                unit.imonth == now.month &&
+                unit.iyear == now.year,
+            orElse: () => _singleUnitByMonth.firstWhere(
+              (unit) =>
+                  unit.slocation == property &&
+                  unit.stype == selectedType &&
+                  unit.sunitno == selectedUnitNo,
+              orElse: () => singleUnitByMonth(total: 0.00),
+            ),
+          );
             });
           },
         ),
@@ -177,44 +195,41 @@ class _PersonalMillerzSquare1ScreenState
   }
 
   Widget _buildUnitRevenue(property) {
-  return ListenableBuilder(
-    listenable: personalMillerzSquareVM(),
-    builder: (context, _) {
-      List<singleUnitByMonth> _singleUnitByMonth = GlobalUnitByMonthState.instance.getUnitByMonthData();
-      
-      var now = DateTime.now();
-      var selectedUnit = _singleUnitByMonth.firstWhere(
-        (unit) => 
-          unit.slocation == property &&
-          unit.stype == selectedType &&
-          unit.sunitno == selectedUnitNo &&
-          unit.imonth == now.month &&
-          unit.iyear == now.year,
-        orElse: () => _singleUnitByMonth.firstWhere(
-          (unit) => 
-            unit.slocation == property &&
-            unit.stype == selectedType &&
-            unit.sunitno == selectedUnitNo,
-          orElse: () => singleUnitByMonth(total: 0.00),
-        ),
-      );
+    return ListenableBuilder(
+        listenable: personalMillerzSquareVM(),
+        builder: (context, _) {
+          List<singleUnitByMonth> _singleUnitByMonth =
+              GlobalUnitByMonthState.instance.getUnitByMonthData();
 
-     
+          var now = DateTime.now();
+           selectedUnit = _singleUnitByMonth.firstWhere(
+            (unit) =>
+                unit.slocation == property &&
+                unit.stype == selectedType &&
+                unit.sunitno == selectedUnitNo &&
+                unit.imonth == now.month &&
+                unit.iyear == now.year,
+            orElse: () => _singleUnitByMonth.firstWhere(
+              (unit) =>
+                  unit.slocation == property &&
+                  unit.stype == selectedType &&
+                  unit.sunitno == selectedUnitNo,
+              orElse: () => singleUnitByMonth(total: 0.00),
+            ),
+          );
 
-      return OverallRevenueContainer(
-        text1: 'Unit Revenue',
-        text2: 'RM ${selectedUnit.total?.toStringAsFixed(2) ?? '0.00'}',
-        text3: '100%',
-        text4: 'Unit Rental Income',
-        text5: 'RM 0.00',
-        text6: '0%',
-        color: const Color(0XFF4313E9),
-        backgroundColor: const Color(0XFFFFFFFF),
-      );
-    }
-  );
-}
-
+          return OverallRevenueContainer(
+            text1: 'Unit Revenue',
+            text2: 'RM ${selectedUnit.total?.toStringAsFixed(2) ?? '0.00'}',
+            text3: '100%',
+            text4: 'Unit Rental Income',
+            text5: 'RM 0.00',
+            text6: '0%',
+            color: const Color(0XFF4313E9),
+            backgroundColor: const Color(0XFFFFFFFF),
+          );
+        });
+  }
 
   Widget _buildStatisticsSection() {
     return Column(
@@ -296,8 +311,19 @@ class _PersonalMillerzSquare1ScreenState
   Widget _buttonDownloadPdf(property) {
     return ElevatedButton(
       onPressed: () async {
+        setState(() {
+    print("checking000");
+    print(selectedYearValue);
+    print(selectedMonthValue);
+    print(selectedType);
+    print(selectedUnitNo);
+  });
         await ownerPropertyList_repository.downloadPdfStatement(
-            property, selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo);
+            property,
+            selectedYearValue,
+            selectedMonthValue,
+            selectedType,
+            selectedUnitNo);
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0XFF4313E9),

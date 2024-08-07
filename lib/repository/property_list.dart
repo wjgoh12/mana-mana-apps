@@ -43,7 +43,13 @@ class PropertyListRepository {
         "email": users.first.ownerEmail
       }
     };
-
+    print(selectedYearValue);
+    print(selectedMonthValue);
+    print(selectedType);
+    print(selectedUnitNo);
+    print(property);
+    print(users.first.ownerFullName);
+    
     final res = await _apiService.postWithBytes(ApiEndpoint.DOWNLOAD_PDF_STATEMENT, data: data);
     if (res is Uint8List) {
       final pdfBytes = res;
