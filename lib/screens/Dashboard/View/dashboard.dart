@@ -101,17 +101,17 @@ class NewDashboardPage extends StatelessWidget {
 
   Widget _buildTopBar(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // IconButton(
-        //   onPressed: () => '',
-        //   icon: Image.asset(
-        //     'assets/images/dashboard_menu.png',
-        //     width: 6.width,
-        //     height: 3.height,
-        //     fit: BoxFit.contain,
-        //   ),
-        // ),
+        IconButton(
+          onPressed: () => '',
+          icon: Image.asset(
+            'assets/images/mana2logo.png',
+            width: 10.width,
+            height: 5.height,
+            fit: BoxFit.fill,
+          ),
+        ),
         Text(
           'Main Dashboard',
           style: TextStyle(
@@ -127,17 +127,18 @@ class NewDashboardPage extends StatelessWidget {
             ],
           ),
         ),
-        // IconButton(
-        //   onPressed: () => print('Notification button pressed'),
-        //   // Navigator.of(context).push(
-        //   //     MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
-        //   icon: Image.asset(
-        //     'assets/images/notifications.png',
-        //     width: 6.width,
-        //     height: 3.height,
-        //     fit: BoxFit.contain,
-        //   ),
-        // ),
+        IconButton(
+          onPressed: () => print('Notification button pressed'),
+          // Navigator.of(context).push(
+          //     MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
+          icon: Image.asset(
+            'assets/images/notifications.png',
+            width: 6.width,
+            opacity: AlwaysStoppedAnimation(0),
+            height: 3.height,
+            fit: BoxFit.contain,
+          ),
+        ),
       ],
     );
   }

@@ -8,13 +8,19 @@ import 'package:mana_mana_app/repository/user_repo.dart';
 
 class DashboardVM extends ChangeNotifier {
   static final DashboardVM _instance = DashboardVM._internal();
+  static bool _isInitialized = false;
 
   factory DashboardVM() {
+    if (!_isInitialized) {
+      _isInitialized = true;
+      _instance.fetchUsers();
+    }
     return _instance;
   }
-  DashboardVM._internal() {
-    fetchUsers();
-  }
+  DashboardVM._internal();
+  // DashboardVM._internal() {
+  //   fetchUsers();
+  // }
 
   final UserRepository user_repository = UserRepository();
   final PropertyListRepository ownerPropertyList_repository = PropertyListRepository();
@@ -40,6 +46,7 @@ class DashboardVM extends ChangeNotifier {
   List<User> get users => _users;
 
   Future<void> fetchUsers() async {
+    print("123123");
     _users = await user_repository.getUsers();
     GlobalUserState.instance.setUsers(_users);
     userNameAccount = _users.isNotEmpty ? '${_users.first.firstName} ${_users.first.lastName}' : '';
@@ -51,6 +58,8 @@ class DashboardVM extends ChangeNotifier {
     GlobalOwnerState.instance.setOwnerData(ownerUnits);   
     locationByMonth = await ownerPropertyList_repository.locationByMonth();
     notifyListeners();
+    await Future.delayed(const Duration(seconds: 1)); 
+    _isInitialized = false;
   }
 
   void updateOverallRevenueAmount() {

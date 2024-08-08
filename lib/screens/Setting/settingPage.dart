@@ -78,28 +78,28 @@ class SettingPage extends StatelessWidget {
                   color: Color(0XFF4313E9)),
             ),
             SizedBox(height: 8),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.insert_chart),
-                title: Text('Statements',
-                    style: TextStyle(color: Color(0XFF4313E9))),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  // Handle Statements tap
-                },
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.show_chart),
-                title: Text('Occupancy Figures',
-                    style: TextStyle(color: Color(0XFF4313E9))),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  // Handle Occupancy Figures tap
-                },
-              ),
-            ),
+            // Card(
+            //   child: ListTile(
+            //     leading: Icon(Icons.insert_chart),
+            //     title: Text('Statements',
+            //         style: TextStyle(color: Color(0XFF4313E9))),
+            //     trailing: Icon(Icons.arrow_forward),
+            //     onTap: () {
+            //       // Handle Statements tap
+            //     },
+            //   ),
+            // ),
+            // Card(
+            //   child: ListTile(
+            //     leading: Icon(Icons.show_chart),
+            //     title: Text('Occupancy Figures',
+            //         style: TextStyle(color: Color(0XFF4313E9))),
+            //     trailing: Icon(Icons.arrow_forward),
+            //     onTap: () {
+            //       // Handle Occupancy Figures tap
+            //     },
+            //   ),
+            // ),
             Card(
               child: ListTile(
                 leading: Icon(Icons.calculate),
@@ -145,17 +145,17 @@ class SettingPage extends StatelessWidget {
                 },
               ),
             ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.lock),
-                title: Text('Reset Password',
-                    style: TextStyle(color: Color(0XFF4313E9))),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  // Handle Reset Password tap
-                },
-              ),
-            ),
+            // Card(
+            //   child: ListTile(
+            //     leading: Icon(Icons.lock),
+            //     title: Text('Reset Password',
+            //         style: TextStyle(color: Color(0XFF4313E9))),
+            //     trailing: Icon(Icons.arrow_forward),
+            //     onTap: () {
+            //       // Handle Reset Password tap
+            //     },
+            //   ),
+            // ),
             Spacer(),
             Center(
               child: TextButton(

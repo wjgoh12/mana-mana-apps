@@ -1,11 +1,13 @@
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mana_mana_app/repository/user_repo.dart';
 import '../env_config.dart';
+import 'package:http/http.dart' as http;
 
 class AuthService {
   final FlutterAppAuth _appAuth = FlutterAppAuth();
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
-
+  final UserRepository user_repository = UserRepository();
   Future<bool> authenticate() async {
     try {
       final AuthorizationTokenResponse? result =
@@ -34,6 +36,29 @@ class AuthService {
   }
 
   Future<void> logout() async {
+    String? token = await _secureStorage.read(key: 'refresh_token');
+    final String url = 'http://192.168.0.210:7082/auth/realms/mana/protocol/openid-connect/logout';
+  
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: {
+      'post_logout_redirect_uri': EnvConfig.keycloak_redirectUrl, // Optional: URL to redirect after logout
+      'client_id': EnvConfig.keycloak_clientId, // Optional: Client ID if required
+      'refresh_token': token, // Use the refresh token for the logout
+      'client_secret': EnvConfig.keycloak_clientSecret
+    },
+  );
+
+  if (response.statusCode == 200) {
+    print('Logout successful');
+  } else {
+    print('Failed to logout: ${response.statusCode}');
+    print('Response body: ${response.body}');
+  }
+    await user_repository.logoutFunc();
     await _secureStorage.delete(key: 'access_token');
     await _secureStorage.delete(key: 'refresh_token');
   }
