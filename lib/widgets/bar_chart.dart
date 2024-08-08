@@ -77,11 +77,12 @@ class _BarChartSample7State extends State<BarChartSample7> {
 
   @override
   Widget build(BuildContext context) {
+    DashboardVM model = DashboardVM();
     return ListenableBuilder(
       listenable: DashboardVM(),
       builder: (context, _) {
     final dataList = [
-     _BarData(gradientColor1, DashboardVM().totalByMonth.isEmpty ? 0 : DashboardVM().totalByMonth[0]['total'], 0),
+     _BarData(gradientColor1, model.monthlyBlcOwner.isEmpty ? 0 : model.monthlyBlcOwner[0]['total'], model.monthlyProfitOwner.isEmpty ? 0 : model.monthlyProfitOwner[0]['total']),
     _BarData(gradientColor1, 0, 0),
     _BarData(gradientColor1, 0, 0),
     _BarData(gradientColor1, 0, 0),

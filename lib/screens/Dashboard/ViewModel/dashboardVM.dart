@@ -23,8 +23,11 @@ class DashboardVM extends ChangeNotifier {
   List<Map<String, dynamic>> revenue_dashboard = [];
   List<Map<String, dynamic>> locationByMonth = [];
   List<Map<String, dynamic>> totalByMonth = [];
+  List<Map<String, dynamic>> monthlyBlcOwner = [];
+  List<Map<String, dynamic>> monthlyProfitOwner = [];
 
-  double get totalRevenue => revenue_dashboard.isNotEmpty ? revenue_dashboard.first["total"] : 0.0;
+  double get overallBalance => revenue_dashboard.isNotEmpty ? revenue_dashboard.firstWhere((item) => item["transcode"] == "OWNBAL", orElse: () => {"total": 0.0})["total"] : 0.0;
+  double get overallProfit => revenue_dashboard.isNotEmpty ? revenue_dashboard.firstWhere((item) => item["transcode"] == "NOPROF", orElse: () => {"total": 0.0})["total"] : 0.0;   
   int get currentYear => revenue_dashboard.isNotEmpty ? revenue_dashboard.first["iyear"] : DateTime.now().year;
 
   void updateData(List<Map<String, dynamic>> newData) {
@@ -43,11 +46,11 @@ class DashboardVM extends ChangeNotifier {
     revenue_dashboard = await ownerPropertyList_repository.revenueByYear();
     totalByMonth = await ownerPropertyList_repository.totalByMonth();
     ownerUnits = await ownerPropertyList_repository.getOwnerUnit();
+    monthlyBlcOwner = totalByMonth.where((unit) => unit['transcode'] == "OWNBAL").map((unit) => unit).toList();
+    monthlyProfitOwner = totalByMonth.where((unit) => unit['transcode'] == "NOPROF").map((unit) => unit).toList();
     GlobalOwnerState.instance.setOwnerData(ownerUnits);   
     locationByMonth = await ownerPropertyList_repository.locationByMonth();
-    print(totalByMonth);
     notifyListeners();
-  
   }
 
   void updateOverallRevenueAmount() {

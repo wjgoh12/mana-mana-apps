@@ -31,19 +31,48 @@ class _PersonalMillerzSquare1ScreenState
   bool isClicked = false;
   final List<String> yearItems =
       List.generate(1, (index) => (DateTime.now().year - index).toString());
-  final List<String> monthItems = List.generate(
-      4, (index) => (DateTime.now().month - index).toString());
+  final List<String> monthItems =
+      List.generate(4, (index) => (DateTime.now().month - index).toString());
   String? selectedValue;
   String? selectedYearValue = DateTime.now().year.toString();
   String? selectedMonthValue = DateTime.now().month.toString();
   String? selectedType;
   String? selectedUnitNo;
-  var selectedUnit;
+  var selectedUnitBlc;
+  var selectedUnitPro;
   // widget.lseqid
   void toggleIsClicked() {
     setState(() {
       isClicked = !isClicked;
     });
+  }
+
+  @override
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      String property = widget.locationByMonth[0]['location'];
+      _initializeData(property);
+    });
+  }
+
+  void _initializeData(property) {
+    List<OwnerPropertyList> ownerData =
+        GlobalOwnerState.instance.getOwnerData();
+        // List<String> typeItems = ownerData
+        // .where((types) => types.location == property)
+        // .map((types) => types.type.toString())
+        // .toList();
+    if (ownerData.isNotEmpty) {
+      setState(() {
+        selectedType = ownerData.firstWhere((data) => data.location == property).type.toString();        
+        selectedUnitNo = ownerData.firstWhere((data) => data.location == property).unitno.toString();
+        print("checking2222");
+        print(ownerData.first.type.toString());
+        print(ownerData.first.unitno.toString());
+      });
+    }
   }
 
   @override
@@ -108,7 +137,7 @@ class _PersonalMillerzSquare1ScreenState
       text1: 'Overall Revenue',
       text2: 'RM 9,999.99',
       text3: '100%',
-      text4: 'Overall Rental Income',
+      text4: 'Overall Balance To Owner',
       text5: 'RM 8,888.88',
       text6: '88%',
       color: Color(0XFFFFFFFF),
@@ -122,58 +151,63 @@ class _PersonalMillerzSquare1ScreenState
 
     List<String> typeItems = ownerData
         .where((types) => types.location == property)
-        .map((types) => types.type.toString())
+        .map((types) => '${types.type} ${types.unitno}')
         .toList();
-    selectedType = selectedType == '' ? typeItems.first : selectedType;    
-    List<String> unitNoItems = ownerData
-        .where((types) => types.location == property)
-        .map((types) => types.unitno.toString())
-        .toList();
-    selectedUnitNo = selectedUnitNo == '' ? unitNoItems.first : selectedUnitNo;
+    // List<String> typeItems = ownerData
+    //     .where((types) => types.location == property)
+    //     .map((types) => types.type.toString())
+    //     .toList();
+    selectedType = selectedType == '' ? typeItems.first.split(" ")[0] : selectedType;    
+    selectedUnitNo = selectedUnitNo == '' ? typeItems.first.split(" ")[1] : selectedUnitNo;
+    // List<String> unitNoItems = ownerData
+    //     .where((types) => types.location == property)
+    //     .map((types) => types.unitno.toString())
+    //     .toList();
+    // selectedUnitNo = selectedUnitNo == '' ? unitNoItems.first : selectedUnitNo;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildGradientText('Type'),
-        SizedBox(width: 1.width),
+        _buildGradientText('Unit No'),
+        SizedBox(width: 3.width),
         NewDropdownButton(
           list: typeItems,
           onChanged: (_) {
             setState(() {
-              selectedType = _;
+              selectedType = _?.split(" ")[0];
+              selectedUnitNo = _?.split(" ")[1];
             });
           },
         ),
         const Spacer(),
-        _buildGradientText('Unit'),
-        SizedBox(width: 1.width),
-        NewDropdownButton(
-          list: unitNoItems,
-          onChanged: (_) {
-            List<singleUnitByMonth> _singleUnitByMonth =
-              GlobalUnitByMonthState.instance.getUnitByMonthData();
+        // _buildGradientText('Unit'),
+        // SizedBox(width: 1.width),
+        // NewDropdownButton(
+        //   list: unitNoItems,
+        //   onChanged: (_) {
+        //     List<singleUnitByMonth> _singleUnitByMonth =
+        //         GlobalUnitByMonthState.instance.getUnitByMonthData();
 
-          
-            setState(() {
-              selectedUnitNo = _;
-              var now = DateTime.now();
-             selectedUnit = _singleUnitByMonth.firstWhere(
-            (unit) =>
-                unit.slocation == property &&
-                unit.stype == selectedType &&
-                unit.sunitno == selectedUnitNo &&
-                unit.imonth == now.month &&
-                unit.iyear == now.year,
-            orElse: () => _singleUnitByMonth.firstWhere(
-              (unit) =>
-                  unit.slocation == property &&
-                  unit.stype == selectedType &&
-                  unit.sunitno == selectedUnitNo,
-              orElse: () => singleUnitByMonth(total: 0.00),
-            ),
-          );
-            });
-          },
-        ),
+        //     setState(() {
+        //       selectedUnitNo = _;
+        //       var now = DateTime.now();
+        //       selectedUnit = _singleUnitByMonth.firstWhere(
+        //         (unit) =>
+        //             unit.slocation == property &&
+        //             unit.stype == selectedType &&
+        //             unit.sunitno == selectedUnitNo &&
+        //             unit.imonth == now.month &&
+        //             unit.iyear == now.year,
+        //         orElse: () => _singleUnitByMonth.firstWhere(
+        //           (unit) =>
+        //               unit.slocation == property &&
+        //               unit.stype == selectedType &&
+        //               unit.sunitno == selectedUnitNo,
+        //           orElse: () => singleUnitByMonth(total: 0.00),
+        //         ),
+        //       );
+        //     });
+        //   },
+        // ),
       ],
     );
   }
@@ -195,36 +229,61 @@ class _PersonalMillerzSquare1ScreenState
   }
 
   Widget _buildUnitRevenue(property) {
+    List<singleUnitByMonth> _singleUnitByMonth =
+        GlobalUnitByMonthState.instance.getUnitByMonthData();
     return ListenableBuilder(
         listenable: personalMillerzSquareVM(),
         builder: (context, _) {
-          List<singleUnitByMonth> _singleUnitByMonth =
-              GlobalUnitByMonthState.instance.getUnitByMonthData();
-
           var now = DateTime.now();
-           selectedUnit = _singleUnitByMonth.firstWhere(
+          selectedUnitBlc = _singleUnitByMonth.firstWhere(
             (unit) =>
                 unit.slocation == property &&
                 unit.stype == selectedType &&
                 unit.sunitno == selectedUnitNo &&
                 unit.imonth == now.month &&
-                unit.iyear == now.year,
+                unit.iyear == now.year &&
+                unit.stranscode == 'OWNBAL',
             orElse: () => _singleUnitByMonth.firstWhere(
               (unit) =>
                   unit.slocation == property &&
                   unit.stype == selectedType &&
-                  unit.sunitno == selectedUnitNo,
+                  unit.sunitno == selectedUnitNo &&
+                  unit.stranscode == 'OWNBAL',
               orElse: () => singleUnitByMonth(total: 0.00),
             ),
           );
-
+          selectedUnitPro = _singleUnitByMonth.firstWhere(
+            (unit) =>
+                unit.slocation == property &&
+                unit.stype == selectedType &&
+                unit.sunitno == selectedUnitNo &&
+                unit.imonth == now.month &&
+                unit.iyear == now.year &&
+                unit.stranscode == 'NOPROF',
+            orElse: () => _singleUnitByMonth.firstWhere(
+              (unit) =>
+                  unit.slocation == property &&
+                  unit.stype == selectedType &&
+                  unit.sunitno == selectedUnitNo &&
+                  unit.stranscode == 'NOPROF',
+              orElse: () => singleUnitByMonth(total: 0.00),
+            ),
+          );
+          print("checking");
+          print(selectedUnitBlc.total);
+          print(property);
+          print(selectedType);
+          print(selectedUnitNo);
+          print(now.month);
+          print(now.year);
+          
           return OverallRevenueContainer(
-            text1: 'Unit Revenue',
-            text2: 'RM ${selectedUnit.total?.toStringAsFixed(2) ?? '0.00'}',
-            text3: '100%',
-            text4: 'Unit Rental Income',
-            text5: 'RM 0.00',
-            text6: '0%',
+            text1: 'Balance To Owner',
+            text2: 'RM ${selectedUnitBlc.total?.toStringAsFixed(2) ?? '0.00'}',
+            text3: '',
+            text4: 'Monthly Profit',
+            text5: 'RM ${selectedUnitPro.total?.toStringAsFixed(2) ?? '0.00'}',
+            text6: '',
             color: const Color(0XFF4313E9),
             backgroundColor: const Color(0XFFFFFFFF),
           );
@@ -311,13 +370,6 @@ class _PersonalMillerzSquare1ScreenState
   Widget _buttonDownloadPdf(property) {
     return ElevatedButton(
       onPressed: () async {
-        setState(() {
-    print("checking000");
-    print(selectedYearValue);
-    print(selectedMonthValue);
-    print(selectedType);
-    print(selectedUnitNo);
-  });
         await ownerPropertyList_repository.downloadPdfStatement(
             property,
             selectedYearValue,
@@ -765,7 +817,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
             border: Border.all(color: const Color(0XFF999999)),
             borderRadius: BorderRadius.circular(5),
           ),
-          width: 20.width,
+          width: 21.width,
           height: 3.height,
         ),
         iconStyleData: IconStyleData(

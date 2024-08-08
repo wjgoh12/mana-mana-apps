@@ -128,8 +128,9 @@ class NewDashboardPage extends StatelessWidget {
           ),
         ),
         IconButton(
-          onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
+          onPressed: () => print('Notification button pressed'),
+          // Navigator.of(context).push(
+          //     MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
           icon: Image.asset(
             'assets/images/notifications.png',
             width: 6.width,

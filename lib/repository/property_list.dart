@@ -69,6 +69,7 @@ class PropertyListRepository {
       if (res is List && res.isNotEmpty) {
         return res.map((item) => {
           'total': item['total'] ?? 0.0,
+          'transcode': item['stranscode'] ?? '',
           'year': item['iyear'] ?? 0,
         }).toList();
       }
@@ -81,6 +82,7 @@ class PropertyListRepository {
       if (res is List && res.isNotEmpty) {
         return res.map((item) => {
           'total': item['total'] ?? 0.0,
+          'transcode': item['stranscode'] ?? '',
           'year': item['iyear'] ?? 0,
           'month': item['imonth'] ?? 0,
         }).toList()

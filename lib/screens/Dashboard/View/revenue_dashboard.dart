@@ -10,11 +10,11 @@ class BuildRevenueContainers extends StatelessWidget {
     return Row(
       children: [
         _RevenueContainer(
-            title: 'Overall Revenue',
+            title: 'Overall Balance To Owner',
             icon: Icons.account_balance_wallet_outlined,overallRevenue: true),
         Spacer(),
         _RevenueContainer(
-            title: 'Overall Rental Income', icon: Icons.home_outlined, overallRevenue: false),
+            title: 'Overall Profit', icon: Icons.home_outlined, overallRevenue: false),
       ],
     );
   }
@@ -152,7 +152,7 @@ class _RevenueContainer extends StatelessWidget {
             ),
             SizedBox(width: 1.width),
             Text(
-              overallRevenue ? DashboardVM().totalRevenue.toStringAsFixed(2) : '0.00',              
+              overallRevenue ? DashboardVM().overallBalance.toStringAsFixed(2) : DashboardVM().overallProfit.toStringAsFixed(2),              
                 style: TextStyle(
                 fontFamily: 'Open Sans',
                 fontWeight: FontWeight.w700,

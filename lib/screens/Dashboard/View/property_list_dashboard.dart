@@ -154,7 +154,7 @@ class PropertyImageStack extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        'Total Owner Profit Of The Month',
+                        'Total Owner Balance Of The Month',
                         style: TextStyle(
                           fontFamily: 'Open Sans',
                           fontWeight: FontWeight.w400,

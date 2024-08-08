@@ -65,7 +65,7 @@ class StatisticTable extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _buildLegendItem(gradientColor1, 'Overall Revenue'),
+        _buildLegendItem(gradientColor1, 'Overall overall profit'),
         SizedBox(width: 2.width),
         _buildLegendItem(gradientColor2, 'Overall Rental Revenue'),
       ],
@@ -98,13 +98,14 @@ class StatisticTable extends StatelessWidget {
   }
 
   Widget _buildRevenueTable() {
+    DashboardVM model = DashboardVM();
     return ListenableBuilder(
       listenable: DashboardVM(),
       builder: (context, _) {
     return Column(
       children: [
         _buildTableHeader(),
-        _buildTableRow('May 2024', '${DashboardVM().totalByMonth.isEmpty ? '0.00' : DashboardVM().totalByMonth[0]['total']}', 'RM 0.00'),        
+        _buildTableRow('May 2024', 'RM ${model.monthlyBlcOwner.isEmpty ? '0.00' : model.monthlyBlcOwner[0]['total'].toStringAsFixed(2)}', 'RM ${model.monthlyProfitOwner.isEmpty ? '0.00' : model.monthlyProfitOwner[0]['total'].toStringAsFixed(2)}'),                
         _buildDivider(),
         _buildTableRow('June 2024', 'RM 0.00', 'RM 0.00'),
         _buildDivider(),
@@ -122,11 +123,11 @@ class StatisticTable extends StatelessWidget {
         const Spacer(flex: 4),
         Expanded(
           flex: 4,
-          child: _buildHeaderText('Monthly Revenue'),
+          child: _buildHeaderText('Monthly Balance To Owner'),
         ),
         Expanded(
           flex: 3,
-          child: _buildHeaderText('Monthly Rental Income'),
+          child: _buildHeaderText('Monthly Profit'),
         ),
       ],
     );

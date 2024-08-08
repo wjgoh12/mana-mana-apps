@@ -5,6 +5,7 @@ class singleUnitByMonth{
   String? sunitno;
   int? imonth;
   int? iyear;
+  String? stranscode;
 
   singleUnitByMonth({
     this.total,
@@ -22,5 +23,6 @@ class singleUnitByMonth{
     sunitno = json['sunitno'];
     imonth = json['imonth'];
     iyear = json['iyear'];
+    stranscode = json['stranscode'];
   }
 }
