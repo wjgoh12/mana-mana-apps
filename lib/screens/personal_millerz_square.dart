@@ -31,11 +31,11 @@ class _PersonalMillerzSquare1ScreenState
   bool isClicked = false;
   final List<String> yearItems =
       List.generate(1, (index) => (DateTime.now().year - index).toString());
-  final List<String> monthItems =
-      List.generate(4, (index) => (DateTime.now().month - index).toString());
+  final List<String> monthItems = ['5'];
+      // List.generate(4, (index) => (DateTime.now().month - index).toString());
   String? selectedValue;
   String? selectedYearValue = DateTime.now().year.toString();
-  String? selectedMonthValue = DateTime.now().month.toString();
+  String? selectedMonthValue = '5';
   String? selectedType;
   String? selectedUnitNo;
   var selectedUnitBlc;
@@ -322,12 +322,12 @@ class _PersonalMillerzSquare1ScreenState
           ),
         ),
         const Spacer(),
-        IconButton(
-          onPressed: () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => const StatementPage())),
-          iconSize: 4.height,
-          icon: const Icon(Icons.arrow_right_rounded),
-        ),
+        // IconButton(
+        //   onPressed: () => Navigator.of(context)
+        //       .push(MaterialPageRoute(builder: (_) => const StatementPage())),
+        //   iconSize: 4.height,
+        //   icon: const Icon(Icons.arrow_right_rounded),
+        // ),
         Image.asset(
           'assets/images/patterns.png',
           width: 12.width,

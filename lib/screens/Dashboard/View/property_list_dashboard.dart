@@ -31,14 +31,17 @@ class BuildPropertyList extends StatelessWidget {
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-                          ...model.locationByMonth
-                              .map((property) => PropertyImageStack(
-                                    locationByMonth: [property],
-                                  ))
-                              .toList(),
-                          const SizedBox(width: 5),
-                          const ViewAllProperty(),
-                        ],
+                            ...model.locationByMonth
+                                .expand((property) => [
+                                      PropertyImageStack(
+                                        locationByMonth: [property],
+                                      ),
+                                      const SizedBox(width: 8), // Add SizedBox between items
+                                    ])
+                                .toList(),
+                            const SizedBox(width: 5), // Keeps the last SizedBox with 5 width
+                            const ViewAllProperty(),
+                          ],
                       ),
                     );
         });

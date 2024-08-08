@@ -66,9 +66,9 @@ class NewDashboardPage extends StatelessWidget {
                             SizedBox(height: 2.height),
                             const BuildPropertyList(),
                             SizedBox(height: 2.height),
-                            _buildSectionTitle('Highlights'),
+                            // _buildSectionTitle('Highlights'),
                             SizedBox(height: 2.height),
-                            const BuildHighlights(),
+                            // const BuildHighlights(),
                           ],
                         ),
                       ),
@@ -101,17 +101,17 @@ class NewDashboardPage extends StatelessWidget {
 
   Widget _buildTopBar(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
-          onPressed: () => '',
-          icon: Image.asset(
-            'assets/images/dashboard_menu.png',
-            width: 6.width,
-            height: 3.height,
-            fit: BoxFit.contain,
-          ),
-        ),
+        // IconButton(
+        //   onPressed: () => '',
+        //   icon: Image.asset(
+        //     'assets/images/dashboard_menu.png',
+        //     width: 6.width,
+        //     height: 3.height,
+        //     fit: BoxFit.contain,
+        //   ),
+        // ),
         Text(
           'Main Dashboard',
           style: TextStyle(
@@ -127,17 +127,17 @@ class NewDashboardPage extends StatelessWidget {
             ],
           ),
         ),
-        IconButton(
-          onPressed: () => print('Notification button pressed'),
-          // Navigator.of(context).push(
-          //     MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
-          icon: Image.asset(
-            'assets/images/notifications.png',
-            width: 6.width,
-            height: 3.height,
-            fit: BoxFit.contain,
-          ),
-        ),
+        // IconButton(
+        //   onPressed: () => print('Notification button pressed'),
+        //   // Navigator.of(context).push(
+        //   //     MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
+        //   icon: Image.asset(
+        //     'assets/images/notifications.png',
+        //     width: 6.width,
+        //     height: 3.height,
+        //     fit: BoxFit.contain,
+        //   ),
+        // ),
       ],
     );
   }

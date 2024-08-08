@@ -46,36 +46,43 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
       children: [
         // Tabs
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _showMyInfo = true;
-                });
-              },
-              child: Text(
-                'My Info',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: _showMyInfo ? Color(0XFF4313E9) : Colors.grey,
+            Flexible(
+              child: Center(
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _showMyInfo = true;
+                    });
+                  },
+                  child: Text(
+                    'My Info',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: _showMyInfo ? Color(0XFF4313E9) : Colors.grey,
+                    ),
+                  ),
                 ),
               ),
             ),
-            SizedBox(width: 16),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _showMyInfo = false;
-                });
-              },
-              child: Text(
-                'Banking Info',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: _showMyInfo ? Colors.grey : Color(0XFF4313E9),
+            Flexible(
+              child: Center(
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _showMyInfo = false;
+                    });
+                  },
+                  child: Text(
+                    'Banking Info',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: _showMyInfo ? Colors.grey : Color(0XFF4313E9),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -83,16 +90,22 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
         ),
         Row(
           children: [
-            Expanded(
-              child: Container(
-                height: 2,
-                color: _showMyInfo ? Color(0XFF4313E9) : Colors.grey,
+            Flexible(
+              child: FractionallySizedBox(
+                // widthFactor: 0.5,
+                child: Container(
+                  height: 2,
+                  color: _showMyInfo ? Color(0XFF4313E9) : Colors.grey,
+                ),
               ),
             ),
-            Expanded(
-              child: Container(
-                height: 2,
-                color: _showMyInfo ? Colors.grey : Color(0XFF4313E9),
+            Flexible(
+              child: FractionallySizedBox(
+                // widthFactor: 0.5,
+                child: Container(
+                  height: 2,
+                  color: _showMyInfo ? Colors.grey : Color(0XFF4313E9),
+                ),
               ),
             ),
           ],
@@ -106,8 +119,20 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
               borderRadius: BorderRadius.circular(8.0),
             ),
             elevation: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+            child: Stack(
+                    children: [
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: 10,
+                        child: Image.asset(
+                          'assets/images/patterns_unit_revenue.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+              Padding(
+              padding: const EdgeInsets.only(left: 16.0, bottom: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -115,17 +140,25 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        users.first.ownerFullName ?? '',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        '',
+                        // users.first.ownerFullName ?? '',
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
-                  buildInfoRow(Icons.phone, users.first.ownerContact ?? ''),
-                  buildInfoRow(Icons.email, users.first.ownerEmail ?? ''),
-                  buildInfoRow(Icons.location_on, users.first.ownerAddress ?? ''),
+                  // SizedBox(height: 8),
+                  buildInfoRow(Icons.assignment_ind_outlined, 'Name'),
+                  buildInfoInRow(users.first.ownerFullName.toString()),
+                  buildInfoRow(Icons.phone, 'Contact No.'),
+                  buildInfoInRow(users.first.ownerContact.toString()),
+                  buildInfoRow(Icons.email, 'Email'),
+                  buildInfoInRow(users.first.ownerEmail.toString()),
+                  buildInfoRow(Icons.location_on_outlined, 'Address'),
+                  buildInfoInRow(users.first.ownerAddress.toString()),
                 ],
               ),
+            ),
+                    ],
             ),
           )
         else
@@ -135,8 +168,20 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
               borderRadius: BorderRadius.circular(8.0),
             ),
             elevation: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+            child: Stack(
+                    children: [
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: 10,
+                        child: Image.asset(
+                          'assets/images/patterns_unit_revenue.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0, bottom: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -144,21 +189,60 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Banking Details',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        '',
+                        // users.first.ownerFullName ?? '',
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   SizedBox(height: 8),
-                  buildInfoRow(Icons.account_balance, OwnerProperty.first.bank.toString()),
-                  buildInfoRow(Icons.account_balance_wallet, OwnerProperty.first.accountnumber.toString()),
-                  SizedBox(height: 16),
+                  // OwnerProperty.first.bank.toString()
+                  buildInfoRow(Icons.account_balance, 'Banking Details'),
+                  buildInfoInRow(OwnerProperty.first.bank.toString()),
+                  SizedBox(height: 8),
+                  buildInfoInRow(OwnerProperty.first.accountnumber.toString()),
+                  SizedBox(height: 8),
+                  // buildInfoRow(Icons.account_balance_wallet, 'Membership'),
+                  // buildInfoInRow(OwnerProperty.first.accountnumber.toString()),
+                  // SizedBox(height: 16),
                 ],
               ),
             ),
+                    ]
+            )
           ),
 
         SizedBox(height: 16),
+
+        // All Agreements
+              Text(
+                'All Agreement(s)',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                elevation: 2,
+                child: ListTile(
+                  title: Text('SAMPLE - SCARLETZ -Type_A-11-03 Agreement',style: TextStyle(color: Color(0xFF0044CC),fontSize: 15,fontWeight: FontWeight.w600)),
+                  trailing: Text(
+                    'PDF',
+                    style: TextStyle(color: Color(0xFF0044CC),fontSize: 15,fontWeight: FontWeight.w600),
+                  ),
+                  onTap: () {
+                    // Handle PDF tap
+                  },
+                ),
+              ),
+              SizedBox(height: 32),
+
+              // Payout Overtime
+              // Text(
+              //   'Payout Overtime',
+              //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              // ),
       ],
     ),
   ),
@@ -172,12 +256,28 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Icon(icon, color: Colors.grey),
-          SizedBox(width: 16),
+          Icon(icon, color: Color(0XFF555555),  size: 19),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               info,
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: TextStyle(fontSize: 12, color: Color(0XFF555555)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildInfoInRow(String info) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 1.0).add(EdgeInsets.only(left: 5)),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              info,
+              style: TextStyle(fontSize: 15, color: Color(0XFF4313E9),fontWeight: FontWeight.w600),
             ),
           ),
         ],

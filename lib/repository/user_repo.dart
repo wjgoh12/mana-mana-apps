@@ -15,4 +15,15 @@ class UserRepository {
       }
     });
   }
+
+  Future<List<User>> logout() async {
+    return await _apiService.post(ApiEndpoint.OWNER_USER_DATA).then((res) {
+      try {
+        return [User.fromJson(res)];
+      } catch (e) {
+        print("Error parsing user data: $e");
+        return [];
+      }
+    });
+  }
 }
