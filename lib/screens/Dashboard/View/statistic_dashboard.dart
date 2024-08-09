@@ -9,7 +9,8 @@ class StatisticTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DashboardVM model = DashboardVM();
-  
+    model.monthlyBlcOwner = [];
+    model.monthlyProfitOwner = [];
     return Container(
       decoration: BoxDecoration(
         color: const Color(0XFFFFFFFF),

@@ -24,6 +24,7 @@ class personalMillerzSquareVM extends ChangeNotifier {
     unitByMonth = await ownerPropertyList_repository.getUnitByMonth();
     GlobalUnitByMonthState.instance.setUnitByMonthData(unitByMonth);
     notifyListeners();
+    print('run fetchData');
     await Future.delayed(const Duration(seconds: 1)); 
     // notifyListeners();
     _isInitialized = false;

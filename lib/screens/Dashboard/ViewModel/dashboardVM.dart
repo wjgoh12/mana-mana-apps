@@ -31,9 +31,10 @@ class DashboardVM extends ChangeNotifier {
   List<Map<String, dynamic>> totalByMonth = [];
   List<Map<String, dynamic>> monthlyBlcOwner = [];
   List<Map<String, dynamic>> monthlyProfitOwner = [];
+  
 
-  double get overallBalance => revenue_dashboard.isNotEmpty ? revenue_dashboard.firstWhere((item) => item["transcode"] == "OWNBAL", orElse: () => {"total": 0.0})["total"] : 0.0;
-  double get overallProfit => revenue_dashboard.isNotEmpty ? revenue_dashboard.firstWhere((item) => item["transcode"] == "NOPROF", orElse: () => {"total": 0.0})["total"] : 0.0;   
+  Future get overallBalance => Future.delayed(Duration(milliseconds: 500), () => revenue_dashboard.isNotEmpty ? revenue_dashboard.firstWhere((item) => item["transcode"] == "OWNBAL", orElse: () => {"total": 0.0})["total"] : 0.0).then((value) => value);
+  Future get overallProfit => Future.delayed(Duration(milliseconds: 500), () => revenue_dashboard.isNotEmpty ? revenue_dashboard.firstWhere((item) => item["transcode"] == "NOPROF", orElse: () => {"total": 0.0})["total"] : 0.0).then((value) => value);  
   int get currentYear => revenue_dashboard.isNotEmpty ? revenue_dashboard.first["iyear"] : DateTime.now().year;
 
   void updateData(List<Map<String, dynamic>> newData) {
@@ -46,7 +47,6 @@ class DashboardVM extends ChangeNotifier {
   List<User> get users => _users;
 
   Future<void> fetchUsers() async {
-    print("123123");
     _users = await user_repository.getUsers();
     GlobalUserState.instance.setUsers(_users);
     userNameAccount = _users.isNotEmpty ? '${_users.first.firstName} ${_users.first.lastName}' : '';
@@ -58,6 +58,7 @@ class DashboardVM extends ChangeNotifier {
     GlobalOwnerState.instance.setOwnerData(ownerUnits);   
     locationByMonth = await ownerPropertyList_repository.locationByMonth();
     notifyListeners();
+    print('run fetchUsers');
     await Future.delayed(const Duration(seconds: 1)); 
     _isInitialized = false;
   }

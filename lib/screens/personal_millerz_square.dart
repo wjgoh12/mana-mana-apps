@@ -68,9 +68,6 @@ class _PersonalMillerzSquare1ScreenState
       setState(() {
         selectedType = ownerData.firstWhere((data) => data.location == property).type.toString();        
         selectedUnitNo = ownerData.firstWhere((data) => data.location == property).unitno.toString();
-        print("checking2222");
-        print(ownerData.first.type.toString());
-        print(ownerData.first.unitno.toString());
       });
     }
   }
@@ -87,8 +84,7 @@ class _PersonalMillerzSquare1ScreenState
             backgroundColor: const Color(0XFFFFFFFF),
             appBar: propertyAppBar(
               context,
-              () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => NewDashboardPage())),
+              () => Navigator.of(context).pop(),
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -371,6 +367,7 @@ class _PersonalMillerzSquare1ScreenState
     return ElevatedButton(
       onPressed: () async {
         await ownerPropertyList_repository.downloadPdfStatement(
+          context,
             property,
             selectedYearValue,
             selectedMonthValue,
@@ -399,27 +396,36 @@ class _PersonalMillerzSquare1ScreenState
   }
 
   Widget _buildYearMonthSelection() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            _buildSelectionItem('Year', yearItems),
+            _buildSelectionItem('Month', monthItems),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildSelectionItem(String label, List<String> items) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        _buildGradientText('Year'),
+        _buildGradientText(label),
         SizedBox(width: 2.width),
         NewDropdownButton(
-          list: yearItems,
+          list: items,
           onChanged: (_) {
             setState(() {
-              selectedYearValue = _;
-            });
-          },
-        ),
-        SizedBox(width: 6.width),
-        _buildGradientText('Month'),
-        SizedBox(width: 2.width),
-        NewDropdownButton(
-          list: monthItems,
-          onChanged: (_) {
-            setState(() {
-              selectedMonthValue = _;
+              if (label == 'Year') {
+                selectedYearValue = _;
+              } else if (label == 'Month') {
+                selectedMonthValue = _;
+              }
             });
           },
         ),

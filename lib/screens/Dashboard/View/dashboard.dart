@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
-import 'package:mana_mana_app/screens/Dashboard/View/highlights_dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/property_list_dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/revenue_dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/statistic_dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
 import 'package:mana_mana_app/screens/Setting/settingPage.dart';
-import 'package:mana_mana_app/screens/personal_millerz_square.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class NewDashboardPage extends StatelessWidget {
@@ -14,6 +11,8 @@ class NewDashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DashboardVM().userNameAccount = '';
+
     return Scaffold(
       body: Stack(
         clipBehavior: Clip.none,

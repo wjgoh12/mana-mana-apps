@@ -1,6 +1,7 @@
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
+import 'package:path_provider/path_provider.dart';
 import '../env_config.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,6 +9,7 @@ class AuthService {
   final FlutterAppAuth _appAuth = FlutterAppAuth();
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   final UserRepository user_repository = UserRepository();
+
   Future<bool> authenticate() async {
     try {
       final AuthorizationTokenResponse? result =
@@ -20,13 +22,14 @@ class AuthService {
           scopes: ['openid', 'profile', 'email'],
           preferEphemeralSession: true,
           allowInsecureConnections: true,
-          
         ),
       );
-      
+
       if (result != null) {
-        await _secureStorage.write(key: 'access_token', value: result.accessToken);
-        await _secureStorage.write(key: 'refresh_token', value: result.refreshToken);
+        await _secureStorage.write(
+            key: 'access_token', value: result.accessToken);
+        await _secureStorage.write(
+            key: 'refresh_token', value: result.refreshToken);
         return true;
       }
     } catch (e) {
@@ -35,32 +38,63 @@ class AuthService {
     return false;
   }
 
+  Future<bool> checkToken() async {
+    String? accessToken = await getAccessToken();
+    if (accessToken == null) {
+      return await authenticate();
+    }
+    bool tokenValid = await validateToken(accessToken);
+    if (!tokenValid) {
+      return await refreshToken();
+    }
+    return true;
+  }
+
+  Future<bool> validateToken(String token) async {
+    // Implement token validation logic here
+    return true;
+  }
+
   Future<void> logout() async {
     String? token = await _secureStorage.read(key: 'refresh_token');
-    final String url = 'http://192.168.0.210:7082/auth/realms/mana/protocol/openid-connect/logout';
-  
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: {
-      'post_logout_redirect_uri': EnvConfig.keycloak_redirectUrl, // Optional: URL to redirect after logout
-      'client_id': EnvConfig.keycloak_clientId, // Optional: Client ID if required
-      'refresh_token': token, // Use the refresh token for the logout
-      'client_secret': EnvConfig.keycloak_clientSecret
-    },
-  );
+    final String url =
+        '${EnvConfig.keycloak_baseUrl}/auth/realms/mana/protocol/openid-connect/logout';
 
-  if (response.statusCode == 200) {
-    print('Logout successful');
-  } else {
-    print('Failed to logout: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'post_logout_redirect_uri': EnvConfig
+            .keycloak_redirectUrl, 
+        'client_id':
+            EnvConfig.keycloak_clientId,
+        'refresh_token': token,
+        'client_secret': EnvConfig.keycloak_clientSecret
+      },
+    );
+    print(response.body);
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      print('Logout successful');
+      await _removeAllAppData();
+      // await _secureStorage.delete(key: 'access_token');
+      // await _secureStorage.delete(key: 'refresh_token');
+    } else {
+      print('Failed to logout: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+    
+    
   }
-    await user_repository.logoutFunc();
-    await _secureStorage.delete(key: 'access_token');
-    await _secureStorage.delete(key: 'refresh_token');
+
+  Future<void> _removeAllAppData() async {
+    await _secureStorage.deleteAll();
+     
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
   }
 
   Future<String?> getAccessToken() async {
@@ -69,7 +103,8 @@ class AuthService {
 
   Future<bool> refreshToken() async {
     try {
-      final String? refreshToken = await _secureStorage.read(key: 'refresh_token');
+      final String? refreshToken =
+          await _secureStorage.read(key: 'refresh_token');
       if (refreshToken == null) return false;
 
       final TokenResponse? result = await _appAuth.token(
@@ -84,8 +119,10 @@ class AuthService {
       );
 
       if (result != null) {
-        await _secureStorage.write(key: 'refresh_token', value: result.refreshToken);
-        await _secureStorage.write(key: 'access_token', value: result.accessToken);
+        await _secureStorage.write(
+            key: 'refresh_token', value: result.refreshToken);
+        await _secureStorage.write(
+            key: 'access_token', value: result.accessToken);
         return true;
       }
     } catch (e, s) {

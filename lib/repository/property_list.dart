@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
@@ -11,9 +10,6 @@ import 'package:mana_mana_app/provider/api_service.dart';
 import 'package:mana_mana_app/provider/global_user_state.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PropertyListRepository {
   final ApiService _apiService = ApiService();
@@ -30,7 +26,7 @@ class PropertyListRepository {
     });
   }
 
-  Future<void> downloadPdfStatement(property, selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo) async {
+  Future<void> downloadPdfStatement(BuildContext context, property, selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo) async {
     List<User> users = GlobalUserState.instance.getUsers();    
     final Map<String, dynamic> data = {
       "month": selectedMonthValue,
@@ -43,13 +39,7 @@ class PropertyListRepository {
         "email": users.first.ownerEmail
       }
     };
-    print(selectedYearValue);
-    print(selectedMonthValue);
-    print(selectedType);
-    print(selectedUnitNo);
-    print(property);
-    print(users.first.ownerFullName);
-    
+  
     final res = await _apiService.postWithBytes(ApiEndpoint.DOWNLOAD_PDF_STATEMENT, data: data);
     if (res is Uint8List) {
       final pdfBytes = res;
@@ -57,6 +47,28 @@ class PropertyListRepository {
       final file = File('${tempDir.path}/statement.pdf');
       await file.writeAsBytes(pdfBytes);
       await OpenFile.open(file.path);
+    } else if (res == "Incorrect result size") {
+      // Show pop-up message
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No Record'),
+            content: const Text('No record available for this unit in the selected month.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+            contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+            titlePadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+            actionsPadding: EdgeInsets.fromLTRB(0, 0, 8, 8),
+          );
+        },
+      );
     } else if (res is Map<String, dynamic>) {
       throw Exception('Failed to process PDF data: ${res['error'] ?? 'Unexpected response format'}');
     } else {

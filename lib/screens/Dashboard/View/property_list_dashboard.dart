@@ -12,6 +12,7 @@ class BuildPropertyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DashboardVM model = DashboardVM();
+    model.locationByMonth = [];
     return ListenableBuilder(
         listenable: DashboardVM(),
         builder: (context, _) {
@@ -175,8 +176,6 @@ class PropertyImageStack extends StatelessWidget {
               left: arrowLeft,
               child: GestureDetector(
                 onTap: () {
-                  print("checking1111");
-                  print(locationByMonth);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

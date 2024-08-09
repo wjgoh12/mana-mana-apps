@@ -35,6 +35,8 @@ class _RevenueContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DashboardVM model = DashboardVM();
+    model.monthlyBlcOwner = [];
+    model.monthlyProfitOwner = [];
     return SizedBox(
       width: 40.width,
       child: Stack(
@@ -151,14 +153,32 @@ class _RevenueContainer extends StatelessWidget {
               ),
             ),
             SizedBox(width: 1.width),
-            Text(
-              overallRevenue ? DashboardVM().overallBalance.toStringAsFixed(2) : DashboardVM().overallProfit.toStringAsFixed(2),              
-                style: TextStyle(
-                fontFamily: 'Open Sans',
-                fontWeight: FontWeight.w700,
-                fontSize: 20.fSize,
-                color: const Color(0XFF2900B7),
-              ),
+            FutureBuilder<dynamic>(
+              future: overallRevenue ? DashboardVM().overallBalance : DashboardVM().overallProfit,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return SizedBox(
+                    width: 25,
+                    height: 25,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final value = snapshot.data ?? 0.00;
+                  return Text(
+                    (value is double ? value : 0.00).toStringAsFixed(2),
+                    style: TextStyle(
+                      fontFamily: 'Open Sans',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20.fSize,
+                      color: const Color(0XFF2900B7),
+                    ),
+                  );
+                }
+              },
             ),
           ],
         );

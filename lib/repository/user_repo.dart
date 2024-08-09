@@ -16,6 +16,5 @@ class UserRepository {
     });
   }
 
-  Future<void> logoutFunc() async {
-  }
+  
 }
