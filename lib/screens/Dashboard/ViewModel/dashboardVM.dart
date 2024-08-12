@@ -53,7 +53,13 @@ class DashboardVM extends ChangeNotifier {
     revenue_dashboard = await ownerPropertyList_repository.revenueByYear();
     totalByMonth = await ownerPropertyList_repository.totalByMonth();
     ownerUnits = await ownerPropertyList_repository.getOwnerUnit();
-    monthlyBlcOwner = totalByMonth.where((unit) => unit['transcode'] == "OWNBAL").map((unit) => unit).toList();
+
+    monthlyBlcOwner = totalByMonth
+        .where((unit) => unit['transcode'] == "OWNBAL" && unit['year'] == DateTime.now().year)
+        .toList()
+      ..sort((a, b) => b['month'].compareTo(a['month']));    
+      print("checkingooo");
+      print(monthlyBlcOwner);
     monthlyProfitOwner = totalByMonth.where((unit) => unit['transcode'] == "NOPROF").map((unit) => unit).toList();
     GlobalOwnerState.instance.setOwnerData(ownerUnits);   
     locationByMonth = await ownerPropertyList_repository.locationByMonth();

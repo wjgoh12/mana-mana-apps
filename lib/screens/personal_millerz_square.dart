@@ -149,6 +149,7 @@ class _PersonalMillerzSquare1ScreenState
         .where((types) => types.location == property)
         .map((types) => '${types.type} ${types.unitno}')
         .toList();
+
     // List<String> typeItems = ownerData
     //     .where((types) => types.location == property)
     //     .map((types) => types.type.toString())
@@ -161,7 +162,7 @@ class _PersonalMillerzSquare1ScreenState
     //     .toList();
     // selectedUnitNo = selectedUnitNo == '' ? unitNoItems.first : selectedUnitNo;
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         _buildGradientText('Unit No'),
         SizedBox(width: 3.width),
@@ -174,7 +175,7 @@ class _PersonalMillerzSquare1ScreenState
             });
           },
         ),
-        const Spacer(),
+        // const Spacer(),
         // _buildGradientText('Unit'),
         // SizedBox(width: 1.width),
         // NewDropdownButton(
@@ -792,6 +793,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
             fontSize: 12.fSize,
             fontWeight: FontWeight.w600,
           ),
+          maxLines: 1,
         ),
         items: widget.list
             .map(
@@ -805,6 +807,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
                     fontSize: 12.fSize,
                     fontWeight: FontWeight.w600,
                   ),
+                  maxLines: 1,
                 ),
               ),
             )
@@ -823,7 +826,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
             border: Border.all(color: const Color(0XFF999999)),
             borderRadius: BorderRadius.circular(5),
           ),
-          width: 21.width,
+          width: 25.width,
           height: 3.height,
         ),
         iconStyleData: IconStyleData(

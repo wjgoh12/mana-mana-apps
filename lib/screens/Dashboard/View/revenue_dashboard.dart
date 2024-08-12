@@ -9,13 +9,22 @@ class BuildRevenueContainers extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _RevenueContainer(
-            title: 'Overall Balance To Owner',
-            icon: Icons.account_balance_wallet_outlined,overallRevenue: true),
-        Spacer(),
-        _RevenueContainer(
-            title: 'Overall Profit', icon: Icons.home_outlined, overallRevenue: false),
-      ],
+          Expanded(
+            child: _RevenueContainer(
+              title: 'Overall Balance To Owner',
+              icon: Icons.account_balance_wallet_outlined,
+              overallRevenue: true,
+            ),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: _RevenueContainer(
+              title: 'Overall Profit',
+              icon: Icons.home_outlined,
+              overallRevenue: false,
+            ),
+          ),          
+          ],
     );
   }
 }

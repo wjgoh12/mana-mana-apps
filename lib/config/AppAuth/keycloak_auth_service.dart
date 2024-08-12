@@ -74,7 +74,8 @@ class AuthService {
         'client_secret': EnvConfig.keycloak_clientSecret
       },
     );
-    print(response.body);
+    print('Response status code: ${response.body}');
+
     if (response.statusCode == 200 || response.statusCode == 204) {
       print('Logout successful');
       await _removeAllAppData();

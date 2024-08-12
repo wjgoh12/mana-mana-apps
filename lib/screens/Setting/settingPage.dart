@@ -70,14 +70,14 @@ class SettingPage extends StatelessWidget {
             SizedBox(height: 32),
 
             // My Earnings Section
-            Text(
-              'My Earnings',
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0XFF4313E9)),
-            ),
-            SizedBox(height: 8),
+            // Text(
+            //   'My Earnings',
+            //   style: TextStyle(
+            //       fontSize: 18,
+            //       fontWeight: FontWeight.bold,
+            //       color: Color(0XFF4313E9)),
+            // ),
+            // SizedBox(height: 8),
             // Card(
             //   child: ListTile(
             //     leading: Icon(Icons.insert_chart),
@@ -100,18 +100,18 @@ class SettingPage extends StatelessWidget {
             //     },
             //   ),
             // ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.calculate),
-                title: Text('Estimate ROI Returns',
-                    style: TextStyle(color: Color(0XFF4313E9))),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  // Handle Estimate ROI Returns tap
-                },
-              ),
-            ),
-            SizedBox(height: 32),
+            // Card(
+            //   child: ListTile(
+            //     leading: Icon(Icons.calculate),
+            //     title: Text('Estimate ROI Returns',
+            //         style: TextStyle(color: Color(0XFF4313E9))),
+            //     trailing: Icon(Icons.arrow_forward),
+            //     onTap: () {
+            //       // Handle Estimate ROI Returns tap
+            //     },
+            //   ),
+            // ),
+            // SizedBox(height: 32),
 
             // My Profile Section
             Text(
@@ -125,7 +125,7 @@ class SettingPage extends StatelessWidget {
             Card(
               child: ListTile(
                 leading: Icon(Icons.person),
-                title: Text('Personal and Financial Details',
+                title: Text('Personal Details',
                     style: TextStyle(color: Color(0XFF4313E9))),
                 trailing: Icon(Icons.arrow_forward),
                 onTap: () {
@@ -134,17 +134,17 @@ class SettingPage extends StatelessWidget {
                 },
               ),
             ),
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.help),
-                title: Text('Helpdesk',
-                    style: TextStyle(color: Color(0XFF4313E9))),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  // Handle Helpdesk tap
-                },
-              ),
-            ),
+            // Card(
+            //   child: ListTile(
+            //     leading: Icon(Icons.help),
+            //     title: Text('Helpdesk',
+            //         style: TextStyle(color: Color(0XFF4313E9))),
+            //     trailing: Icon(Icons.arrow_forward),
+            //     onTap: () {
+            //       // Handle Helpdesk tap
+            //     },
+            //   ),
+            // ),
             // Card(
             //   child: ListTile(
             //     leading: Icon(Icons.lock),

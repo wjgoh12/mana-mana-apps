@@ -32,20 +32,8 @@ class BarChartSample7 extends StatefulWidget {
 }
 
 class _BarChartSample7State extends State<BarChartSample7> {
-  final List<String> monthNames = [
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
+  
+  
   BarChartGroupData generateBarGroup(
     int x,
     LinearGradient color,
@@ -82,13 +70,39 @@ class _BarChartSample7State extends State<BarChartSample7> {
       listenable: DashboardVM(),
       builder: (context, _) {
     final dataList = [
-     _BarData(gradientColor1, model.monthlyBlcOwner.isEmpty ? 0 : model.monthlyBlcOwner[0]['total'], model.monthlyProfitOwner.isEmpty ? 0 : model.monthlyProfitOwner[0]['total']),
-    _BarData(gradientColor1, 0, 0),
-    _BarData(gradientColor1, 0, 0),
-    _BarData(gradientColor1, 0, 0),
+      ...List.generate(12, (index) => _BarData(
+        gradientColor1,
+        index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year ? model.monthlyBlcOwner[index]['total'] : 0,
+        index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year ? model.monthlyProfitOwner[index]['total'] : 0      )),  
+    ];
+    
+    final List<String> monthNames = List.generate(12, (index) {
+      String month;
+      if (index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year) {
+        month = model.monthlyBlcOwner[index]['month'].toString();
+      } else if (index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year) {
+        month = model.monthlyProfitOwner[index]['month'].toString();
+      } else {
+        month = '0';
+      }
+      switch (month) {
+        case '1': return 'Jan';
+        case '2': return 'Feb';
+        case '3': return 'Mar';
+        case '4': return 'Apr';
+        case '5': return 'May';
+        case '6': return 'Jun';
+        case '7': return 'Jul';
+        case '8': return 'Aug';
+        case '9': return 'Sep';
+        case '10': return 'Oct';
+        case '11': return 'Nov';
+        case '12': return 'Dec';
+        default: return '';
+      }
+    });    
     // _BarData(gradientColor1, 160, 125),
     // _BarData(gradientColor1, 170, 110),
-  ];
   
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -96,109 +110,103 @@ class _BarChartSample7State extends State<BarChartSample7> {
       height: 15.height,
         child: AspectRatio(
           aspectRatio: 1.4,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceBetween,
-              borderData: FlBorderData(
-                show: true,
-                border: Border.symmetric(
-                  horizontal: BorderSide(
-                    color: const Color(0XFF999999).withOpacity(0.2),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: 700, // Adjust this value as needed
+              child: BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceBetween,
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border.symmetric(
+                      horizontal: BorderSide(
+                        color: const Color(0XFF999999).withOpacity(0.2),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                leftTitles: AxisTitles(
-                  drawBelowEverything: true,
-                  sideTitles: SideTitles(
-                    showTitles: false,
-                    reservedSize: 35.fSize,
-                    getTitlesWidget: (value, meta) {
-                      return Text(
-                        value.toInt().toString(),
-                        textAlign: TextAlign.left,
+                  titlesData: FlTitlesData(
+                    show: true,
+                    leftTitles: AxisTitles(
+                      drawBelowEverything: true,
+                      sideTitles: SideTitles(
+                        showTitles: false,
+                        reservedSize: 35.fSize,
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            textAlign: TextAlign.left,
+                          );
+                        },
+                      ),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 36.fSize,
+                        getTitlesWidget: (double value, TitleMeta meta) {
+                      return ColoredSideTitleWidget(
+                        axisSide: meta.axisSide,
+                        value: value,
+                        monthNames: monthNames,
+                        monthColors: widget.monthColor,
                       );
                     },
-                  ),
-                ),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 36.fSize,
-                    getTitlesWidget: (double value, TitleMeta meta) {
-                  return ColoredSideTitleWidget(
-                    axisSide: meta.axisSide,
-                    value: value,
-                    monthNames: monthNames,
-                    monthColors: widget.monthColor,
-                  );
-                },
-                  ),
-                ),
-                rightTitles: const AxisTitles(),
-                topTitles: const AxisTitles(),
-              ),
-              gridData: FlGridData(
-                show: true,
-                drawVerticalLine: false,
-                getDrawingHorizontalLine: (value) => FlLine(
-                  color: const Color(0XFF999999).withOpacity(0.2),
-                  strokeWidth: 1,
-                ),
-              ),
-              barGroups: dataList.asMap().entries.map((e) {
-                final index = e.key;
-                final data = e.value;
-                return generateBarGroup(
-                  index,
-                  data.color,
-                  data.value,
-                  data.shadowValue,
-                );
-              }).toList(),            
-              barTouchData: BarTouchData(
-                enabled: true,
-                handleBuiltInTouches: false,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipColor: (group) => Colors.transparent,
-                  tooltipMargin: 0,
-                  getTooltipItem: (
-                    BarChartGroupData group,
-                    int groupIndex,
-                    BarChartRodData rod,
-                    int rodIndex,
-                  ) {
-                    return BarTooltipItem(
-                      rod.toY.toString(),
-                      TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: rod.color,
-                        fontFamily: 'Open Sans',
-                        fontSize: 15.fSize,
-                        shadows: const [
-                          Shadow(
-                            color: Colors.black26,
-                            blurRadius: 12,
-                          )
-                        ],
                       ),
+                    ),
+                    rightTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
+                  ),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    getDrawingHorizontalLine: (value) => FlLine(
+                      color: const Color(0XFF999999).withOpacity(0.2),
+                      strokeWidth: 1,
+                    ),
+                  ),
+                  barGroups: dataList.asMap().entries.map((e) {
+                    final index = e.key;
+                    final data = e.value;
+                    return generateBarGroup(
+                      index,
+                      data.color,
+                      data.value,
+                      data.shadowValue,
                     );
-                  },
+                  }).toList(),            
+                  barTouchData: BarTouchData(
+                    enabled: false,
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipColor: (group) => Colors.transparent,
+                      tooltipMargin: 0,
+                      getTooltipItem: (
+                        BarChartGroupData group,
+                        int groupIndex,
+                        BarChartRodData rod,
+                        int rodIndex,
+                      ) {
+                        return BarTooltipItem(
+                          rod.toY.toString(),
+                          TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: rod.color,
+                            fontFamily: 'Open Sans',
+                            fontSize: 15.fSize,
+                            shadows: const [
+                              Shadow(
+                                color: Colors.black26,
+                                blurRadius: 12,
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
-                touchCallback: (event, response) {
-                  if (event.isInterestedForInteractions &&
-                      response != null &&
-                      response.spot != null) {
-                    setState(() {
-                      touchedGroupIndex = response.spot!.touchedBarGroupIndex;
-                    });
-                  } else {
-                    setState(() {
-                      touchedGroupIndex = -1;
-                    });
-                  }
-                },
+                swapAnimationDuration: const Duration(milliseconds: 150),
+                swapAnimationCurve: Curves.linear,
               ),
             ),
           ),

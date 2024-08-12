@@ -11,6 +11,7 @@ class StatisticTable extends StatelessWidget {
     final DashboardVM model = DashboardVM();
     model.monthlyBlcOwner = [];
     model.monthlyProfitOwner = [];
+
     return Container(
       decoration: BoxDecoration(
         color: const Color(0XFFFFFFFF),
@@ -100,22 +101,48 @@ class StatisticTable extends StatelessWidget {
 
   Widget _buildRevenueTable() {
     DashboardVM model = DashboardVM();
+    String getMonthName(int month) {
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  return monthNames[month - 1];
+}
     return ListenableBuilder(
       listenable: DashboardVM(),
       builder: (context, _) {
-    return Column(
-      children: [
-        _buildTableHeader(),
-        _buildTableRow('May 2024', 'RM ${model.monthlyBlcOwner.isEmpty ? '0.00' : model.monthlyBlcOwner[0]['total'].toStringAsFixed(2)}', 'RM ${model.monthlyProfitOwner.isEmpty ? '0.00' : model.monthlyProfitOwner[0]['total'].toStringAsFixed(2)}'),                
-        _buildDivider(),
-        _buildTableRow('June 2024', 'RM 0.00', 'RM 0.00'),
-        _buildDivider(),
-        _buildTableRow('July 2024', 'RM 0.00', 'RM 0.00'),
-        _buildDivider(),
-        _buildTableRow('August 2024', 'RM 0.00', 'RM 0.00'),
-      ],
+        
+        return Column(
+          children: model.monthlyBlcOwner.map((entry) {
+            final year = entry['year'];  // Extract year
+            final month = entry['month'];  // Extract month
+            final totalBlc = entry['total'];  // Extract total balance for the month
+
+            // Find the corresponding profit for the same year and month
+            final profitEntry = model.monthlyProfitOwner.firstWhere(
+              (profit) => profit['year'] == year && profit['month'] == month,
+              orElse: () => {'total': 0.00},
+            );
+            final totalProfit = profitEntry['total'];  // Extract total profit for the month
+
+            // Convert month number to a name (e.g., 5 -> May)
+            final monthName = getMonthName(month);
+
+            return Column(
+              children: [
+                _buildTableHeader(),
+                _buildTableRow(
+                  '$monthName $year',
+                  'RM ${totalBlc.toStringAsFixed(2)}',
+                  'RM ${totalProfit.toStringAsFixed(2)}',
+                ),
+                _buildDivider(),
+              ],
+            );
+          }).toList(),
+        );
+      },
     );
-      });
   }
 
   Widget _buildTableHeader() {
