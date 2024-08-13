@@ -165,7 +165,8 @@ class _RevenueContainer extends StatelessWidget {
             FutureBuilder<dynamic>(
               future: overallRevenue ? DashboardVM().overallBalance : DashboardVM().overallProfit,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (DashboardVM().isLoading) {
+                // if (snapshot.connectionState == ConnectionState.waiting) {
                   return SizedBox(
                     width: 25,
                     height: 25,

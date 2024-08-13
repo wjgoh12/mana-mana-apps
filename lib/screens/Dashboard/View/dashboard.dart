@@ -6,8 +6,39 @@ import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
 import 'package:mana_mana_app/screens/Setting/settingPage.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class NewDashboardPage extends StatelessWidget {
+class NewDashboardPage extends StatefulWidget {
   const NewDashboardPage({Key? key}) : super(key: key);
+
+  @override
+  _NewDashboardPageState createState() => _NewDashboardPageState();
+}
+
+class _NewDashboardPageState extends State<NewDashboardPage> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _initializeData();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // if (state == AppLifecycleState.resumed) {
+    //   // Fetch data again when the app is resumed
+    //   _initializeData();
+    // }
+    _initializeData();
+  }
+
+  void _initializeData() {
+    DashboardVM().fetchUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +96,6 @@ class NewDashboardPage extends StatelessWidget {
                             SizedBox(height: 2.height),
                             const BuildPropertyList(),
                             SizedBox(height: 2.height),
-                            // _buildSectionTitle('Highlights'),
-                            SizedBox(height: 2.height),
-                            // const BuildHighlights(),
                           ],
                         ),
                       ),
@@ -128,8 +156,6 @@ class NewDashboardPage extends StatelessWidget {
         ),
         IconButton(
           onPressed: () => print('Notification button pressed'),
-          // Navigator.of(context).push(
-          //     MaterialPageRoute(builder: (_) => const MillerzSquare1Screen())),
           icon: Image.asset(
             'assets/images/notifications.png',
             width: 6.width,
@@ -146,73 +172,72 @@ class NewDashboardPage extends StatelessWidget {
     return ListenableBuilder(
       listenable: DashboardVM(),
       builder: (context, _) {
-    return Padding(
-      padding: EdgeInsets.only(left: 2.width, bottom: 4.height),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+        return Padding(
+          padding: EdgeInsets.only(left: 2.width, bottom: 4.height),
+          child: Column(
             children: [
-              Image.asset(
-                'assets/images/dashboard_gem.png',
-                width: 8.width,
-                height: 6.height,
-                fit: BoxFit.contain,
-              ),
-              SizedBox(width: 5.width),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    DashboardVM().userNameAccount,
-                    style: TextStyle(
-                      fontFamily: 'Open Sans',
-                      fontSize: 20.fSize,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0XFF4313E9),
-                      // fontStyle: FontStyle.italic,
-                    ),
+                  Image.asset(
+                    'assets/images/dashboard_gem.png',
+                    width: 8.width,
+                    height: 6.height,
+                    fit: BoxFit.contain,
                   ),
-                  Text(
-                    'Property Owner',
-                    style: TextStyle(
-                      fontFamily: 'Open Sans',
-                      fontSize: 15.fSize,
-                      fontWeight: FontWeight.w300,
-                      fontStyle: FontStyle.italic,
-                      color: const Color(0XFF555555),
+                  SizedBox(width: 5.width),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        DashboardVM().userNameAccount,
+                        style: TextStyle(
+                          fontFamily: 'Open Sans',
+                          fontSize: 20.fSize,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0XFF4313E9),
+                        ),
+                      ),
+                      Text(
+                        'Property Owner',
+                        style: TextStyle(
+                          fontFamily: 'Open Sans',
+                          fontSize: 15.fSize,
+                          fontWeight: FontWeight.w300,
+                          fontStyle: FontStyle.italic,
+                          color: const Color(0XFF555555),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const SettingPage()));
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 2.height, right: 2.width),
+                      child: Image.asset(
+                        'assets/images/arrow_button.png',
+                        width: 7.width,
+                        height: 5.height,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SettingPage()));
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(top: 2.height,right: 2.width),
-                  child: Image.asset(
-                    'assets/images/arrow_button.png',
-                    width: 7.width,
-                    height: 5.height,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+              SizedBox(height: 2.height),
+              Container(
+                height: 1,
+                color: Colors.grey[300],
               ),
             ],
           ),
-          SizedBox(height: 2.height),
-          Container(
-            height: 1,
-            color: Colors.grey[300],
-          ),
-        ],
-      ),
+        );
+      },
     );
-      }
-      );
   }
 
   Widget _buildSectionTitle(String title) {

@@ -13,39 +13,56 @@ class BuildPropertyList extends StatelessWidget {
   Widget build(BuildContext context) {
     final DashboardVM model = DashboardVM();
     model.locationByMonth = [];
+    
+
     return ListenableBuilder(
-        listenable: DashboardVM(),
-        builder: (context, _) {
-          return model.locationByMonth.isEmpty
-                  ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: const Center(
-                        child: Text('No properties available'),
-                      ),
-                    )
-                  : SizedBox(
-                      height: 38.height,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                            ...model.locationByMonth
-                                .expand((property) => [
-                                      PropertyImageStack(
-                                        locationByMonth: [property],
-                                      ),
-                                      const SizedBox(width: 8), // Add SizedBox between items
-                                    ])
-                                .toList(),
-                            const SizedBox(width: 5), // Keeps the last SizedBox with 5 width
-                            const ViewAllProperty(),
-                          ],
-                      ),
-                    );
-        });
+  listenable: DashboardVM(),
+  builder: (context, _) {
+    if (model.isLoading) { // Check if data is still loading
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: const Center(
+          child: CircularProgressIndicator(), // Display a loading spinner
+        ),
+      );
+    }
+
+    return model.locationByMonth.isEmpty
+        ? Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: const Center(
+              child: Text('No properties available'),
+            ),
+          )
+        : SizedBox(
+            height: 38.height,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                ...model.locationByMonth
+                    .where((property) => property['year'] == DateTime.now().year && property['month'] == model.unitLatestMonth)
+                    .expand((property) => [
+                          PropertyImageStack(
+                            locationByMonth: [property],
+                          ),
+                          const SizedBox(width: 8),
+                        ])
+                    .toList(),
+                const SizedBox(width: 5),
+                const ViewAllProperty(),
+              ],
+            ),
+          );
+  },
+);
   }
 }
 

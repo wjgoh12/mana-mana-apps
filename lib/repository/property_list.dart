@@ -47,6 +47,7 @@ class PropertyListRepository {
       final file = File('${tempDir.path}/statement.pdf');
       await file.writeAsBytes(pdfBytes);
       await OpenFile.open(file.path);
+      
     } else if (res == "Incorrect result size") {
       // Show pop-up message
       showDialog(
