@@ -48,7 +48,7 @@ class DashboardVM extends ChangeNotifier {
   Future<void> fetchUsers() async {
     _users = await user_repository.getUsers();
     GlobalUserState.instance.setUsers(_users);
-    userNameAccount = _users.isNotEmpty ? '${_users.first.firstName} ${_users.first.lastName}' : '';
+    userNameAccount = _users.isNotEmpty ? '${_users.first.ownerFullName}' : '';
     revenue_dashboard = await ownerPropertyList_repository.revenueByYear();
     totalByMonth = await ownerPropertyList_repository.totalByMonth();
     ownerUnits = await ownerPropertyList_repository.getOwnerUnit();
@@ -64,9 +64,13 @@ class DashboardVM extends ChangeNotifier {
     locationByMonth = await ownerPropertyList_repository.locationByMonth();
 
     unitLatestMonth = locationByMonth
-        .where((unit) => unit['year'] == DateTime.now().year)
-        .map((unit) => unit['month'])
-        .reduce((max, month) => month > max ? month : max); 
+    .where((unit) => unit['year'] == DateTime.now().year)
+    .map((unit) => unit['month'])
+    .fold(0, (max, month) => month > max ? month : max);
+    // unitLatestMonth = locationByMonth
+    //     .where((unit) => unit['year'] == DateTime.now().year)
+    //     .map((unit) => unit['month'])
+    //     .reduce((max, month) => month > max ? month : max); 
     notifyListeners();
     isLoading = false;
     print('run fetchUsers');
