@@ -160,11 +160,7 @@ class SettingPage extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () async {
-                  await AuthService().logout();
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => Splashscreen()),
-                    (Route<dynamic> route) => false,
-                  );
+                  await AuthService().logout(context);
                 },
                 child: Text(
                   'Log Out',

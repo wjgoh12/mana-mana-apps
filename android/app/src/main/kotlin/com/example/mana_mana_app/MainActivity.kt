@@ -1,4 +1,4 @@
-package com.example.mana_mana_app
+package com.dfs.manamanaowners
 
 import io.flutter.embedding.android.FlutterActivity
 
