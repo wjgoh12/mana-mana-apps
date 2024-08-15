@@ -4,7 +4,7 @@ class EnvConfig {
   static void initialize(String env) {
     _env = env;
   }
-
+  static const int tokenExpirationMinutes = 20;
   static String get keycloak_clientId => _env == 'dev' ? 'mana-app' : 'production_client_id';
   static String get keycloak_baseUrl => _env == 'dev' ? 'http://192.168.0.210:7082' : 'production_keycloak_baseUrl';
 

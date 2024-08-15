@@ -8,7 +8,7 @@
 PRODUCT_NAME = mana_mana_app
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.manaManaApp
+PRODUCT_BUNDLE_IDENTIFIER = com.dfs.manamanaowners
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.example. All rights reserved.

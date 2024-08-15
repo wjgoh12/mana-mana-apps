@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
@@ -9,6 +11,9 @@ class AuthService {
   final FlutterAppAuth _appAuth = FlutterAppAuth();
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   final UserRepository user_repository = UserRepository();
+
+  DateTime? _tokenExpiryTime;
+  Timer? _refreshTimer;
 
   Future<bool> authenticate() async {
     try {
@@ -30,6 +35,9 @@ class AuthService {
             key: 'access_token', value: result.accessToken);
         await _secureStorage.write(
             key: 'refresh_token', value: result.refreshToken);
+        // Calculate the token expiration time and start the timer
+        _tokenExpiryTime = DateTime.now().add(Duration(minutes: EnvConfig.tokenExpirationMinutes)); // Set expiry to 20 minutes
+        _startTokenRefreshTimer();
         return true;
       }
     } catch (e) {
@@ -37,6 +45,17 @@ class AuthService {
     }
     return false;
   }
+
+  void _startTokenRefreshTimer() {
+  final timeUntilExpiry = _tokenExpiryTime!.difference(DateTime.now());
+  final refreshTime = timeUntilExpiry - Duration(minutes: 5); // Refresh 5 minutes before expiry
+
+  _refreshTimer?.cancel(); // Cancel any existing timer
+  _refreshTimer = Timer(refreshTime, () {
+    refreshToken();
+  });
+}
+
 
   Future<bool> checkToken() async {
     String? accessToken = await getAccessToken();
@@ -56,8 +75,9 @@ class AuthService {
   }
 
   Future<void> logout() async {
-    String? token = await _secureStorage.read(key: 'refresh_token');
+    _refreshTimer?.cancel(); // Cancel the refresh timer on logout
 
+    String? token = await _secureStorage.read(key: 'refresh_token');
     if (token != null) {
       final String url = '${EnvConfig.api_baseUrl}/mobile/dash/refs/logout?refToken=${token}';
       String? accessToken = await _secureStorage.read(key: 'access_token');
@@ -71,8 +91,7 @@ class AuthService {
         );
 
         if (response.statusCode == 200) {
-          print('api Logout successful');
-          // await _removeAllAppData();
+          print('API Logout successful');
         } else {
           print('Failed to logout: ${response.statusCode}');
           print('Response body: ${response.body}');
@@ -93,32 +112,26 @@ class AuthService {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: {
-        'post_logout_redirect_uri': EnvConfig
-            .keycloak_redirectUrl, 
-        'client_id':
-            EnvConfig.keycloak_clientId,
+        'post_logout_redirect_uri': EnvConfig.keycloak_redirectUrl, 
+        'client_id': EnvConfig.keycloak_clientId,
         'refresh_token': token,
-        'client_secret': EnvConfig.keycloak_clientSecret
+        'client_secret': EnvConfig.keycloak_clientSecret,
       },
     );
     print('Response status code: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 204) {
-      print('Key Cloak Logout successful');
+      print('Keycloak Logout successful');
       await _removeAllAppData();
-      // await _secureStorage.delete(key: 'access_token');
-      // await _secureStorage.delete(key: 'refresh_token');
     } else {
       print('Failed to logout: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
-    
-    
   }
 
   Future<void> _removeAllAppData() async {
     await _secureStorage.deleteAll();
-     
+
     final cacheDir = await getTemporaryDirectory();
     if (cacheDir.existsSync()) {
       cacheDir.deleteSync(recursive: true);
@@ -151,6 +164,9 @@ class AuthService {
             key: 'refresh_token', value: result.refreshToken);
         await _secureStorage.write(
             key: 'access_token', value: result.accessToken);
+        // Update the token expiry time and restart the timer
+        _tokenExpiryTime = DateTime.now().add(Duration(minutes: EnvConfig.tokenExpirationMinutes)); // Reset expiry to 20 minutes
+        _startTokenRefreshTimer();
         return true;
       }
     } catch (e, s) {
