@@ -48,6 +48,7 @@ class PropertyListRepository {
       await file.writeAsBytes(pdfBytes);
       await OpenFile.open(file.path);
       
+      
     } else if (res == "Incorrect result size") {
       // Show pop-up message
       showDialog(

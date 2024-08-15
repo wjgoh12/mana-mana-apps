@@ -57,6 +57,33 @@ class AuthService {
 
   Future<void> logout() async {
     String? token = await _secureStorage.read(key: 'refresh_token');
+
+    if (token != null) {
+      final String url = '${EnvConfig.api_baseUrl}/mobile/dash/refs/logout?refToken=${token}';
+      String? accessToken = await _secureStorage.read(key: 'access_token');
+
+      try {
+        final response = await http.post(
+          Uri.parse(url),
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        );
+
+        if (response.statusCode == 200) {
+          print('api Logout successful');
+          // await _removeAllAppData();
+        } else {
+          print('Failed to logout: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        }
+      } catch (e) {
+        print('Error during logout: $e');
+      }
+    } else {
+      print('No refresh token found');
+    }
+
     final String url =
         '${EnvConfig.keycloak_baseUrl}/auth/realms/mana/protocol/openid-connect/logout';
 
@@ -77,7 +104,7 @@ class AuthService {
     print('Response status code: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 204) {
-      print('Logout successful');
+      print('Key Cloak Logout successful');
       await _removeAllAppData();
       // await _secureStorage.delete(key: 'access_token');
       // await _secureStorage.delete(key: 'refresh_token');

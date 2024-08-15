@@ -12,7 +12,10 @@ class personalMillerzSquareVM extends ChangeNotifier {
   List<String> yearItems = [];
   List<String> monthItems = [];
   bool isLoading = true;
+  bool loadSelectedMonthValue = false;
   static bool _isInitialized = false;
+  bool get isDataLoaded => !isLoading && yearItems.isNotEmpty && monthItems.isNotEmpty;
+
   
   factory personalMillerzSquareVM() {
     if (!_isInitialized) {
@@ -28,7 +31,11 @@ class personalMillerzSquareVM extends ChangeNotifier {
     if (unitByMonth.isNotEmpty){
     GlobalUnitByMonthState.instance.setUnitByMonthData(unitByMonth);
     yearItems = unitByMonth.map((item) => item.iyear.toString()).toSet().toList();   
-    monthItems = unitByMonth.where((item) => item.iyear == DateTime.now().year).map((item) => item.imonth.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a)));   
+    monthItems = unitByMonth.where((item) => item.iyear == DateTime.now().year).map((item) => item.imonth.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a))); 
+    if (loadSelectedMonthValue == false){
+      
+    loadSelectedMonthValue = true;  
+    }
     }else{
       yearItems = ['-'];
       monthItems = ['-'];
