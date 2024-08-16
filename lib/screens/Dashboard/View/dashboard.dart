@@ -92,7 +92,7 @@ class _NewDashboardPageState extends State<NewDashboardPage> with WidgetsBinding
                             SizedBox(height: 2.height),
                             const StatisticTable(),
                             SizedBox(height: 2.height),
-                            _buildSectionTitle('Property(s)'),
+                            _buildSectionTitle('Properties'),
                             SizedBox(height: 2.height),
                             const BuildPropertyList(),
                             SizedBox(height: 2.height),

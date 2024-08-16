@@ -67,9 +67,9 @@ class StatisticTable extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _buildLegendItem(gradientColor1, 'Overall overall profit'),
+        _buildLegendItem(gradientColor1, 'Overall Monthly Profit'),
         SizedBox(width: 2.width),
-        _buildLegendItem(gradientColor2, 'Overall Rental Revenue'),
+        _buildLegendItem(gradientColor2, 'Overall Net After POB'),
       ],
     );
   }

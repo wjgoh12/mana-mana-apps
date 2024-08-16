@@ -9,17 +9,17 @@ class BuildRevenueContainers extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
+          // Expanded(
+          //   child: _RevenueContainer(
+          //     title: 'Overall Balance To Owner',
+          //     icon: Icons.account_balance_wallet_outlined,
+          //     overallRevenue: true,
+          //   ),
+          // ),
+          // SizedBox(width: 10),
           Expanded(
             child: _RevenueContainer(
-              title: 'Overall Balance To Owner',
-              icon: Icons.account_balance_wallet_outlined,
-              overallRevenue: true,
-            ),
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: _RevenueContainer(
-              title: 'Overall Profit',
+              title: '[YEAR] Accumulated Profit​',
               icon: Icons.home_outlined,
               overallRevenue: false,
             ),
@@ -91,13 +91,14 @@ class _RevenueContainer extends StatelessWidget {
   Widget _buildTitleRow() {
     return Row(
       children: [
-        SizedBox(width: 1.width),
+        SizedBox(width: 3.width),
         Text(
           title,
           style: TextStyle(
             fontFamily: 'Open Sans',
             fontWeight: FontWeight.w700,
-            fontSize: 12.fSize,
+            // fontSize: 12.fSize,
+            fontSize: 15.fSize,
             color: const Color(0XFF3E51FF),
           ),
         ),
@@ -119,7 +120,7 @@ class _RevenueContainer extends StatelessWidget {
   Widget _buildContentRow() {
     return Row(
       children: [
-        SizedBox(width: 1.width),
+        SizedBox(width: 3.width),
         Container(
           width: 8.width,
           height: 8.width,

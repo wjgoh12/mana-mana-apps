@@ -40,7 +40,36 @@ class _PersonalMillerzSquare1ScreenState
   String? selectedUnitNo;
   var selectedUnitBlc;
   var selectedUnitPro;
-  // widget.lseqid
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1:
+        return 'Jan';
+      case 2:
+        return 'Feb';
+      case 3:
+        return 'Mar';
+      case 4:
+        return 'Apr';
+      case 5:
+        return 'May';
+      case 6:
+        return 'Jun';
+      case 7:
+        return 'Jul';
+      case 8:
+        return 'Aug';
+      case 9:
+        return 'Sep';
+      case 10:
+        return 'Oct';
+      case 11:
+        return 'Nov';
+      case 12:
+        return 'Dec';
+      default:
+        return '';
+    }
+  }
   void toggleIsClicked() {
     setState(() {
       isClicked = !isClicked;
@@ -189,6 +218,7 @@ class _PersonalMillerzSquare1ScreenState
         _buildGradientText('Unit No'),
         SizedBox(width: 3.width),
         NewDropdownButton(
+          label: 'Unit No',
           list: typeItems,
           onChanged: (_) {
             setState(() {
@@ -250,24 +280,44 @@ class _PersonalMillerzSquare1ScreenState
   Widget _buildUnitRevenue(property) {
     List<singleUnitByMonth> _singleUnitByMonth =
         GlobalUnitByMonthState.instance.getUnitByMonthData();
+
     int unitLatestMonth = 0;
+    int unitLatestYear = 0;
     var now = DateTime.now();
     // unitLatestMonth = _singleUnitByMonth
     //     .where((unit) => unit.iyear == now.year)
     //     .map((unit) => unit.imonth ?? 0)
     //     .reduce((value, element) => value > element ? value : element);
+    
+
+print('All _singleUnitByMonth:');
+for (var unit in _singleUnitByMonth) {
+  print('Location: ${unit.slocation}, Type: ${unit.stype}, Unit No: ${unit.sunitno}, Month: ${unit.imonth}, Year: ${unit.iyear}, Total: ${unit.total}');
+}
+    print(selectedType);
+    print(selectedUnitNo);
+    var filteredYears = _singleUnitByMonth
+        .where((unit) => unit.slocation == property && unit.stype == selectedType && unit.sunitno == selectedUnitNo)
+        .map((unit) => unit.iyear ?? 0)
+        .toList();
+    if (filteredYears.isNotEmpty) {
+    unitLatestYear = filteredYears.reduce((value, element) => value > element ? value : element);
+    }else{
+      unitLatestYear = 0;
+    }
     var filteredMonths = _singleUnitByMonth
-        .where((unit) => unit.iyear == now.year)
+        .where((unit) => unit.slocation == property && unit.stype == selectedType && unit.sunitno == selectedUnitNo && unit.iyear == unitLatestYear)
         .map((unit) => unit.imonth ?? 0)
         .toList();
-
-    if (filteredMonths.isNotEmpty) {
-      unitLatestMonth = filteredMonths
-          .reduce((value, element) => value > element ? value : element);
-    } else {
+    
+            if (filteredMonths.isNotEmpty) {
+                unitLatestMonth = filteredMonths.reduce((value, element) => value > element ? value : element);
+                
+            } else {
       unitLatestMonth = 0; // or handle accordingly
-    }
 
+    }
+    
     return ListenableBuilder(
         listenable: personalMillerzSquareVM(),
         builder: (context, _) {
@@ -278,7 +328,7 @@ class _PersonalMillerzSquare1ScreenState
                   unit.stype == selectedType &&
                   unit.sunitno == selectedUnitNo &&
                   unit.imonth == unitLatestMonth &&
-                  unit.iyear == now.year &&
+                  unit.iyear == unitLatestYear &&
                   unit.stranscode == 'OWNBAL',
               orElse: () => singleUnitByMonth(total: 0.00));
           selectedUnitPro = _singleUnitByMonth.firstWhere(
@@ -287,17 +337,17 @@ class _PersonalMillerzSquare1ScreenState
                   unit.stype == selectedType &&
                   unit.sunitno == selectedUnitNo &&
                   unit.imonth == unitLatestMonth &&
-                  unit.iyear == now.year &&
+                  unit.iyear == unitLatestYear &&
                   unit.stranscode == 'NOPROF',
               orElse: () => singleUnitByMonth(total: 0.00));
 
           return OverallRevenueContainer(
-            text1: 'Balance To Owner',
-            text2: 'RM ${selectedUnitBlc.total?.toStringAsFixed(2) ?? '0.00'}',
-            text3: '',
-            text4: 'Monthly Profit',
-            text5: 'RM ${selectedUnitPro.total?.toStringAsFixed(2) ?? '0.00'}',
-            text6: '',
+            text1: 'Monthly Profit',
+            text2: 'RM ${selectedUnitPro.total?.toStringAsFixed(2) ?? '0.00'}',
+            text3: '${_getMonthName(unitLatestMonth)} ${unitLatestYear}',            
+            text4: 'Net After POB​',
+            text5: 'RM ${selectedUnitBlc.total?.toStringAsFixed(2) ?? '0.00'}',
+            text6: '${_getMonthName(unitLatestMonth)} ${unitLatestYear}',
             color: const Color(0XFF4313E9),
             backgroundColor: const Color(0XFFFFFFFF),
           );
@@ -453,6 +503,7 @@ class _PersonalMillerzSquare1ScreenState
         _buildGradientText(label),
         SizedBox(width: 2.width),
         NewDropdownButton(
+          label: label,
           list: items,
           onChanged: (_) {
             setState(() {
@@ -797,9 +848,10 @@ class _PersonalMillerzSquare1ScreenState
 
 class NewDropdownButton extends StatefulWidget {
   const NewDropdownButton(
-      {super.key, required this.list, required this.onChanged});
+      {super.key, required this.list, required this.onChanged, required this.label});
   final List<String> list;
   final Function(String?) onChanged;
+  final String label;
 
   @override
   State<NewDropdownButton> createState() => _NewDropdownButtonState();
@@ -808,7 +860,36 @@ class NewDropdownButton extends StatefulWidget {
 class _NewDropdownButtonState extends State<NewDropdownButton> {
   String? selectedValue;
   final TextEditingController textEditingController = TextEditingController();
-
+  String _getMonthName(String month) {
+    switch (month) {
+      case '1':
+        return 'Jan';
+      case '2':
+        return 'Feb';
+      case '3':
+        return 'Mar';
+      case '4':
+        return 'Apr';
+      case '5':
+        return 'May';
+      case '6':
+        return 'Jun';
+      case '7':
+        return 'Jul';
+      case '8':
+        return 'Aug';
+      case '9':
+        return 'Sep';
+      case '10':
+        return 'Oct';
+      case '11':
+        return 'Nov';
+      case '12':
+        return 'Dec';
+      default:
+        return '';
+    }
+  }
   @override
   void dispose() {
     textEditingController.dispose();
@@ -817,11 +898,12 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.label);
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
         isExpanded: true,
         hint: Text(
-          widget.list.first,
+          widget.label == "Month" ? _getMonthName(widget.list.first) : widget.list.first,
           style: TextStyle(
             color: const Color(0XFF4313E9),
             fontFamily: 'Open Sans',
@@ -835,7 +917,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
               (String item) => DropdownMenuItem<String>(
                 value: item,
                 child: Text(
-                  item,
+                  widget.label == "Month" ? _getMonthName(item) : item,
                   style: TextStyle(
                     color: const Color(0XFF4313E9),
                     fontFamily: 'Open Sans',

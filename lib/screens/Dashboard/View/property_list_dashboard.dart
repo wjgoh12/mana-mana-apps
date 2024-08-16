@@ -30,7 +30,7 @@ class BuildPropertyList extends StatelessWidget {
         ),
       );
     }
-
+    
     return model.locationByMonth.isEmpty
         ? Container(
             decoration: BoxDecoration(
@@ -48,8 +48,7 @@ class BuildPropertyList extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               children: [
                 ...model.locationByMonth
-                    .where((property) => property['year'] == DateTime.now().year && property['month'] == model.unitLatestMonth)
-                    .expand((property) => [
+                    .where((property) => property['year'] == model.locationByMonth.map((p) => p['year']).reduce((a, b) => a > b ? a : b) && property['month'] == model.unitLatestMonth)                    .expand((property) => [
                           PropertyImageStack(
                             locationByMonth: [property],
                           ),
@@ -86,6 +85,37 @@ class PropertyImageStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(locationByMonth.first['total']);
+  String _getMonthAbbreviation(int month) {
+    switch (month) {
+      case 1:
+        return 'Jan';
+      case 2:
+        return 'Feb';
+      case 3:
+        return 'Mar';
+      case 4:
+        return 'Apr';
+      case 5:
+        return 'May';
+      case 6:
+        return 'Jun';
+      case 7:
+        return 'Jul';
+      case 8:
+        return 'Aug';
+      case 9:
+        return 'Sep';
+      case 10:
+        return 'Oct';
+      case 11:
+        return 'Nov';
+      case 12:
+        return 'Dec';
+      default:
+        return '';
+    }
+  }
+
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
         final isMobile =
@@ -101,7 +131,18 @@ class PropertyImageStack extends StatelessWidget {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            SizedBox(
+            GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PersonalMillerzSquare1Screen(
+                          locationByMonth
+                          ),
+                    ),
+                  );
+                },
+            child: SizedBox(
               width: width,
               height: height,
               child: Image.asset(
@@ -109,8 +150,21 @@ class PropertyImageStack extends StatelessWidget {
                 fit: BoxFit.fill,
               ),
             ),
+            ),
+            
             Positioned(
               top: position,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PersonalMillerzSquare1Screen(
+                          locationByMonth
+                          ),
+                    ),
+                  );
+                },
               child: Container(
                 width: containerWidth,
                 height: containerHeight,
@@ -141,7 +195,7 @@ class PropertyImageStack extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        locationByMonth.first['location'] ?? '',
+                        '${_getMonthAbbreviation(locationByMonth.first['month'])} ${locationByMonth.first['year']}',                        
                         style: TextStyle(
                           fontFamily: 'Open Sans',
                           fontWeight: FontWeight.w300,
@@ -175,7 +229,7 @@ class PropertyImageStack extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        'Total Owner Balance Of The Month',
+                        'Total Net After POB​',
                         style: TextStyle(
                           fontFamily: 'Open Sans',
                           fontWeight: FontWeight.w400,
@@ -186,6 +240,7 @@ class PropertyImageStack extends StatelessWidget {
                     ],
                   ),
                 ),
+              ),
               ),
             ),
             Positioned(
