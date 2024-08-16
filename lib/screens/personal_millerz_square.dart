@@ -62,7 +62,6 @@ class _PersonalMillerzSquare1ScreenState
             : '';
         selectedYearValue = DateTime.now().year.toString();
       }
-      print("9090909090");
 
       _initializeData(property);
     });

@@ -30,12 +30,9 @@ class personalMillerzSquareVM extends ChangeNotifier {
     unitByMonth = await ownerPropertyList_repository.getUnitByMonth();
     if (unitByMonth.isNotEmpty){
     GlobalUnitByMonthState.instance.setUnitByMonthData(unitByMonth);
-    yearItems = unitByMonth.map((item) => item.iyear.toString()).toSet().toList();   
+    yearItems = unitByMonth.map((item) => item.iyear.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a)));       
     monthItems = unitByMonth.where((item) => item.iyear == DateTime.now().year).map((item) => item.imonth.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a))); 
-    if (loadSelectedMonthValue == false){
-      
-    loadSelectedMonthValue = true;  
-    }
+     
     }else{
       yearItems = ['-'];
       monthItems = ['-'];

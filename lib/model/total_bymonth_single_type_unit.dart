@@ -13,7 +13,8 @@ class singleUnitByMonth{
     this.stype,
     this.sunitno,
     this.imonth,
-    this.iyear
+    this.iyear,
+    this.stranscode
   });
 
   singleUnitByMonth.fromJson(Map<String, dynamic> json, int index, String prefix){
