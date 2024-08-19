@@ -19,9 +19,15 @@ class propertyStack extends StatelessWidget {
           height: height,
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+          child: ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            Color(0xFF4313E9).withOpacity(0.2), // Adjust opacity as needed            
+            BlendMode.srcOver,
+          ),
           child: Image.asset(
             'assets/images/$image.png',
             fit: BoxFit.cover,
+          ),
           ),
         ),
       ),

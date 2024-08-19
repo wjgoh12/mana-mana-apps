@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
-import 'package:mana_mana_app/screens/personal_millerz_square.dart';
+import 'package:mana_mana_app/screens/PropertyDetail/propertyDetail.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -12,56 +11,61 @@ class BuildPropertyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DashboardVM model = DashboardVM();
-    model.locationByMonth = [];
-    
 
     return ListenableBuilder(
-  listenable: DashboardVM(),
-  builder: (context, _) {
-    if (model.isLoading) { // Check if data is still loading
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: const Center(
-          child: CircularProgressIndicator(), // Display a loading spinner
-        ),
-      );
-    }
-    
-    return model.locationByMonth.isEmpty
-        ? Container(
+      listenable: DashboardVM(),
+      builder: (context, _) {
+        if (model.isLoading) {
+          // Check if data is still loading
+          return Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
             ),
             padding: const EdgeInsets.all(16),
             child: const Center(
-              child: Text('No properties available'),
-            ),
-          )
-        : SizedBox(
-            height: 38.height,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                ...model.locationByMonth
-                    .where((property) => property['year'] == model.locationByMonth.map((p) => p['year']).reduce((a, b) => a > b ? a : b) && property['month'] == model.unitLatestMonth)                    .expand((property) => [
-                          PropertyImageStack(
-                            locationByMonth: [property],
-                          ),
-                          const SizedBox(width: 8),
-                        ])
-                    .toList(),
-                const SizedBox(width: 5),
-                const ViewAllProperty(),
-              ],
+              child: CircularProgressIndicator(), // Display a loading spinner
             ),
           );
-  },
-);
+        }
+
+        return model.locationByMonth.isEmpty
+            ? Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: const Center(
+                  child: Text('No properties available'),
+                ),
+              )
+            : SizedBox(
+                height: 38.height,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    ...model.locationByMonth
+                        .where((property) =>
+                            property['year'] ==
+                                model.locationByMonth
+                                    .map((p) => p['year'])
+                                    .reduce((a, b) => a > b ? a : b) &&
+                            property['month'] == model.unitLatestMonth)
+                        .expand((property) => [
+                              PropertyImageStack(
+                                locationByMonth: [property],
+                              ),
+                              const SizedBox(width: 20),
+                            ])
+                        .toList(),
+                    const SizedBox(width: 5),
+                    ViewAllProperty(),
+                  ],
+                ),
+              );
+      },
+    );
   }
 }
 
@@ -79,42 +83,42 @@ class PropertyImageStack extends StatelessWidget {
   // final String label;
   // final String location;
   // final String amount;
-  
+
   List<Map<String, dynamic>> locationByMonth;
 
   @override
   Widget build(BuildContext context) {
     print(locationByMonth.first['total']);
-  String _getMonthAbbreviation(int month) {
-    switch (month) {
-      case 1:
-        return 'Jan';
-      case 2:
-        return 'Feb';
-      case 3:
-        return 'Mar';
-      case 4:
-        return 'Apr';
-      case 5:
-        return 'May';
-      case 6:
-        return 'Jun';
-      case 7:
-        return 'Jul';
-      case 8:
-        return 'Aug';
-      case 9:
-        return 'Sep';
-      case 10:
-        return 'Oct';
-      case 11:
-        return 'Nov';
-      case 12:
-        return 'Dec';
-      default:
-        return '';
+    String _getMonthAbbreviation(int month) {
+      switch (month) {
+        case 1:
+          return 'Jan';
+        case 2:
+          return 'Feb';
+        case 3:
+          return 'Mar';
+        case 4:
+          return 'Apr';
+        case 5:
+          return 'May';
+        case 6:
+          return 'Jun';
+        case 7:
+          return 'Jul';
+        case 8:
+          return 'Aug';
+        case 9:
+          return 'Sep';
+        case 10:
+          return 'Oct';
+        case 11:
+          return 'Nov';
+        case 12:
+          return 'Dec';
+        default:
+          return '';
+      }
     }
-  }
 
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
@@ -132,26 +136,23 @@ class PropertyImageStack extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PersonalMillerzSquare1Screen(
-                          locationByMonth
-                          ),
-                    ),
-                  );
-                },
-            child: SizedBox(
-              width: width,
-              height: height,
-              child: Image.asset(
-                'assets/images/${locationByMonth.first['location']}.png',
-                fit: BoxFit.fill,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => propertyDetailScreen(locationByMonth),
+                  ),
+                );
+              },
+              child: SizedBox(
+                width: width,
+                height: height,
+                child: Image.asset(
+                  'assets/images/${locationByMonth.first['location']}.png',
+                  fit: BoxFit.fill,
+                ),
               ),
             ),
-            ),
-            
             Positioned(
               top: position,
               child: GestureDetector(
@@ -159,88 +160,87 @@ class PropertyImageStack extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PersonalMillerzSquare1Screen(
-                          locationByMonth
-                          ),
+                      builder: (context) =>
+                          propertyDetailScreen(locationByMonth),
                     ),
                   );
                 },
-              child: Container(
-                width: containerWidth,
-                height: containerHeight,
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0XFF120051).withOpacity(0.05),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    )
-                  ],
-                  color: const Color(0XFFFFFFFF),
-                  borderRadius:
-                      const BorderRadius.only(bottomLeft: Radius.circular(10)),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(top: 2.height, left: 2.width),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        locationByMonth.first['location'] ?? '',
-                        style: TextStyle(
-                          fontFamily: 'Open Sans',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20.fSize,
-                          color: const Color(0XFF4313E9),
-                        ),
-                      ),
-                      Text(
-                        '${_getMonthAbbreviation(locationByMonth.first['month'])} ${locationByMonth.first['year']}',                        
-                        style: TextStyle(
-                          fontFamily: 'Open Sans',
-                          fontWeight: FontWeight.w300,
-                          fontSize: 10.fSize,
-                          fontStyle: FontStyle.italic,
-                          color: const Color(0XFF4313E9),
-                        ),
-                      ),
-                      SizedBox(height: 2.height),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'RM',
-                            style: TextStyle(
-                              fontFamily: 'Open Sans',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10.fSize,
-                              color: const Color(0XFF4313E9),
-                            ),
-                          ),
-                          Text(
-                            locationByMonth.first['total'].toString(),
-                            style: TextStyle(
-                              fontFamily: 'Open Sans',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20.fSize,
-                              color: const Color(0XFF4313E9),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        'Total Net After POB​',
-                        style: TextStyle(
-                          fontFamily: 'Open Sans',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 8.fSize,
-                          color: const Color(0XFF4313E9),
-                        ),
-                      ),
+                child: Container(
+                  width: containerWidth,
+                  height: containerHeight,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0XFF120051).withOpacity(0.05),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      )
                     ],
+                    color: const Color(0XFFFFFFFF),
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(10)),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 2.height, left: 2.width),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          locationByMonth.first['location'] ?? '',
+                          style: TextStyle(
+                            fontFamily: 'Open Sans',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20.fSize,
+                            color: const Color(0XFF4313E9),
+                          ),
+                        ),
+                        Text(
+                          '${_getMonthAbbreviation(locationByMonth.first['month'])} ${locationByMonth.first['year']}',
+                          style: TextStyle(
+                            fontFamily: 'Open Sans',
+                            fontWeight: FontWeight.w300,
+                            fontSize: 11.fSize,
+                            fontStyle: FontStyle.italic,
+                            color: const Color(0XFF4313E9),
+                          ),
+                        ),
+                        SizedBox(height: 2.height),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'RM',
+                              style: TextStyle(
+                                fontFamily: 'Open Sans',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 10.fSize,
+                                color: const Color(0XFF4313E9),
+                              ),
+                            ),
+                            Text(
+                              locationByMonth.first['total'].toString(),
+                              style: TextStyle(
+                                fontFamily: 'Open Sans',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.fSize,
+                                color: const Color(0XFF4313E9),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          'Total Net After POB​',
+                          style: TextStyle(
+                            fontFamily: 'Open Sans',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 10.fSize,
+                            color: const Color(0XFF4313E9),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
               ),
             ),
             Positioned(
@@ -251,9 +251,8 @@ class PropertyImageStack extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PersonalMillerzSquare1Screen(
-                          locationByMonth
-                          ),
+                      builder: (context) =>
+                          propertyDetailScreen(locationByMonth),
                     ),
                   );
                 },
@@ -286,7 +285,7 @@ class ViewAllProperty extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => MillerzSquare1Screen()));
+            MaterialPageRoute(builder: (context) => allPropertyScreen(locationByMonth: DashboardVM().locationByMonth)));
       },
       child: Container(
         width: 51.width,
@@ -315,7 +314,7 @@ class ViewAllProperty extends StatelessWidget {
               ),
             ),
             Text(
-              '@ Your Property(s)',
+              '@ Your Properties',
               style: TextStyle(
                 fontFamily: 'Open Sans',
                 fontWeight: FontWeight.w300,

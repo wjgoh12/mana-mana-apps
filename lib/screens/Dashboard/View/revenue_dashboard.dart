@@ -48,6 +48,7 @@ class _RevenueContainer extends StatelessWidget {
     model.monthlyProfitOwner = [];
     return SizedBox(
       width: 40.width,
+      height: 11.height,
       child: Stack(
         children: [
           GestureDetector(
@@ -67,8 +68,9 @@ class _RevenueContainer extends StatelessWidget {
               ),
               child: Column(
                 children: [
+                  SizedBox(height: (0.5).height,),
                   _buildTitleRow(),
-                  SizedBox(height: 1.height),
+                  SizedBox(height: (1.5).height),
                   _buildContentRow(),
                 ],
               ),
@@ -98,27 +100,28 @@ class _RevenueContainer extends StatelessWidget {
             fontFamily: 'Open Sans',
             fontWeight: FontWeight.w700,
             // fontSize: 12.fSize,
-            fontSize: 15.fSize,
-            color: const Color(0XFF3E51FF),
-          ),
+            fontSize: 16.fSize,
+            color: const Color(0xFF4313E9),          
+            ),
         ),
         const Spacer(),
-        Container(
-          width: 3.width,
-          height: 3.width,
-          alignment: Alignment.center,
-          child: Icon(
-            Icons.arrow_outward_rounded,
-            color: const Color(0xff3E51FF),
-            size: 3.width,
-          ),
-        ),
+        // Container(
+        //   width: 3.width,
+        //   height: 3.width,
+        //   alignment: Alignment.center,
+        //   child: Icon(
+        //     Icons.arrow_outward_rounded,
+        //     color: const Color(0xff3E51FF),
+        //     size: 3.width,
+        //   ),
+        // ),
       ],
     );
   }
 
   Widget _buildContentRow() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         SizedBox(width: 3.width),
         Container(
@@ -134,12 +137,13 @@ class _RevenueContainer extends StatelessWidget {
             size: 4.width,
           ),
         ),
-        const Spacer(),
+        SizedBox(width: 3.width),
+        // const Spacer(),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             _buildAmountText(),
-            _buildPercentageText(),
+            // _buildPercentageText(),
           ],
         ),
       ],
@@ -158,7 +162,7 @@ class _RevenueContainer extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'Open Sans',
                 fontWeight: FontWeight.w700,
-                fontSize: 12.fSize,
+                fontSize: 15.fSize,
                 color: const Color(0XFF2900B7),
               ),
             ),

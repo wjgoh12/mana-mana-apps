@@ -37,20 +37,21 @@ class StatisticTable extends StatelessWidget {
                   'Monthly Overall Earnings',
                   style: TextStyle(
                     fontFamily: 'Open Sans',
-                    fontSize: 12.fSize,
+                    fontSize: 14.fSize,
                     fontWeight: FontWeight.w700,
                     color: const Color(0XFF2900B7),
                   ),
                 ),
-                Text(
-                  '(Ringgit in thousands)',
-                  style: TextStyle(
-                    fontFamily: 'Open Sans',
-                    fontSize: 6.fSize,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0XFF4313E9),
-                  ),
-                ),
+                SizedBox(height: 1.height),
+                // Text(
+                //   '(Ringgit in thousands)',
+                //   style: TextStyle(
+                //     fontFamily: 'Open Sans',
+                //     fontSize: 6.fSize,
+                //     fontWeight: FontWeight.w600,
+                //     color: const Color(0XFF4313E9),
+                //   ),
+                // ),
                 _buildLegend(),
                 BarChartSample7(),
                 _buildRevenueTable(),
@@ -90,7 +91,7 @@ class StatisticTable extends StatelessWidget {
           text,
           style: TextStyle(
             fontFamily: 'Open Sans',
-            fontSize: 8.fSize,
+            fontSize: 11.fSize,
             fontWeight: FontWeight.w600,
             color: const Color(0XFF888888),
           ),
@@ -113,7 +114,9 @@ class StatisticTable extends StatelessWidget {
       builder: (context, _) {
         
         return Column(
-          children: model.monthlyBlcOwner.map((entry) {
+          children: [
+            _buildTableHeader(),
+            ...model.monthlyBlcOwner.map((entry) {
             final year = entry['year'];  // Extract year
             final month = entry['month'];  // Extract month
             final totalBlc = entry['total'];  // Extract total balance for the month
@@ -130,16 +133,16 @@ class StatisticTable extends StatelessWidget {
 
             return Column(
               children: [
-                _buildTableHeader(),
                 _buildTableRow(
                   '$monthName $year',
-                  'RM ${totalBlc.toStringAsFixed(2)}',
-                  'RM ${totalProfit.toStringAsFixed(2)}',
+                  'RM ${totalBlc.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',                  
+                  'RM ${totalProfit.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                 ),
                 _buildDivider(),
               ],
             );
           }).toList(),
+          ],
         );
       },
     );
@@ -150,12 +153,12 @@ class StatisticTable extends StatelessWidget {
       children: [
         const Spacer(flex: 4),
         Expanded(
-          flex: 4,
-          child: _buildHeaderText('Monthly Balance To Owner'),
+          flex: 5,
+          child: _buildHeaderText('Overall Monthly Profit'),
         ),
         Expanded(
-          flex: 3,
-          child: _buildHeaderText('Monthly Profit'),
+          flex: 4,
+          child: _buildHeaderText('Overall Net After POB'),
         ),
       ],
     );
@@ -166,7 +169,7 @@ class StatisticTable extends StatelessWidget {
       text,
       style: TextStyle(
         color: const Color(0XFF888888),
-        fontSize: 8.fSize,
+        fontSize: 10.fSize,
         fontWeight: FontWeight.w600,
         fontFamily: 'Open Sans',
       ),
@@ -183,17 +186,17 @@ class StatisticTable extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Open Sans',
               fontWeight: FontWeight.w600,
-              fontSize: 12.fSize,
+              fontSize: 15.fSize,
               color: const Color(0XFF888888),
             ),
           ),
         ),
         Expanded(
-          flex: 4,
+          flex: 5,
           child: _buildRevenueText(revenue),
         ),
         Expanded(
-          flex: 3,
+          flex: 4,
           child: _buildRevenueText(rentalIncome),
         ),
       ],
@@ -205,8 +208,8 @@ class StatisticTable extends StatelessWidget {
       text,
       style: TextStyle(
         color: const Color(0XFF4313E9),
-        fontSize: 12.fSize,
-        fontWeight: FontWeight.w400,
+        fontSize: 15.fSize,
+        fontWeight: FontWeight.w600,
         fontFamily: 'Open Sans',
       ),
     );

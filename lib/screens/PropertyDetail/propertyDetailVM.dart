@@ -4,8 +4,8 @@ import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/provider/global_unitByMonth_state.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 
-class personalMillerzSquareVM extends ChangeNotifier {
-  static final personalMillerzSquareVM _instance = personalMillerzSquareVM._internal();
+class propertyDetailVM extends ChangeNotifier {
+  static final propertyDetailVM _instance = propertyDetailVM._internal();
   final PropertyListRepository ownerPropertyList_repository = PropertyListRepository();
   List<OwnerPropertyList> ownerUnits = [];
   List<singleUnitByMonth> unitByMonth = [];
@@ -17,14 +17,14 @@ class personalMillerzSquareVM extends ChangeNotifier {
   bool get isDataLoaded => !isLoading && yearItems.isNotEmpty && monthItems.isNotEmpty;
 
   
-  factory personalMillerzSquareVM() {
+  factory propertyDetailVM() {
     if (!_isInitialized) {
       _isInitialized = true;
       _instance.fetchData();
     }
     return _instance;
   }
-  personalMillerzSquareVM._internal();
+  propertyDetailVM._internal();
 
   Future<void> fetchData() async {
     unitByMonth = await ownerPropertyList_repository.getUnitByMonth();

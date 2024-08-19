@@ -8,24 +8,23 @@ import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/statistic_dashboard.dart';
 import 'package:mana_mana_app/screens/Statement/View/statement.dart';
-import 'package:mana_mana_app/screens/personal_millerz_squareVM.dart';
+import 'package:mana_mana_app/screens/PropertyDetail/propertyDetailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class PersonalMillerzSquare1Screen extends StatefulWidget {
+class propertyDetailScreen extends StatefulWidget {
   List<Map<String, dynamic>> locationByMonth;
-  PersonalMillerzSquare1Screen(this.locationByMonth, {super.key});
+  propertyDetailScreen(this.locationByMonth, {super.key});
 
   @override
-  State<PersonalMillerzSquare1Screen> createState() =>
+  State<propertyDetailScreen> createState() =>
       _PersonalMillerzSquare1ScreenState();
 }
 
-class _PersonalMillerzSquare1ScreenState
-    extends State<PersonalMillerzSquare1Screen> {
+class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
   final PropertyListRepository ownerPropertyList_repository =
       PropertyListRepository();
   bool isClicked = false;
@@ -70,12 +69,13 @@ class _PersonalMillerzSquare1ScreenState
         return '';
     }
   }
+
   void toggleIsClicked() {
     setState(() {
       isClicked = !isClicked;
     });
   }
-  
+
   @override
   void initState() {
     super.initState();
@@ -84,8 +84,8 @@ class _PersonalMillerzSquare1ScreenState
       unitByMonth = await ownerPropertyList_repository.getUnitByMonth();
       if (unitByMonth.isNotEmpty) {
         GlobalUnitByMonthState.instance.setUnitByMonthData(unitByMonth);
-        selectedMonthValue = personalMillerzSquareVM().monthItems.isNotEmpty
-            ? personalMillerzSquareVM()
+        selectedMonthValue = propertyDetailVM().monthItems.isNotEmpty
+            ? propertyDetailVM()
                 .monthItems
                 .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
             : '';
@@ -122,9 +122,9 @@ class _PersonalMillerzSquare1ScreenState
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-        listenable: personalMillerzSquareVM(),
+        listenable: propertyDetailVM(),
         builder: (context, _) {
-          final personalMillerzSquareVM model = personalMillerzSquareVM();
+          final propertyDetailVM model = propertyDetailVM();
           String property = widget.locationByMonth[0]['location'];
 
           return Scaffold(
@@ -166,10 +166,34 @@ class _PersonalMillerzSquare1ScreenState
   }
 
   Widget _buildPropertyHeader(property) {
+    String locationRoad = '';
+    switch (property) {
+      case "Expressionz":
+        locationRoad = "@ Jalan Tun Razak";
+        break;
+      case "Ceylonz":
+        locationRoad = "@ Persiaran Raja Chulan";
+        break;
+      case "Scarletz":
+        locationRoad = "@ Jalan Yap Kwan Seng";
+        break;
+      case "Millerz":
+        locationRoad = "@ Old Klang Road";
+        break;
+      case "Mossaz":
+        locationRoad = "@ Empire City";
+        break;
+      case "Paxtonz":
+        locationRoad = "@ Empire City";
+        break;
+      default:
+        locationRoad = "";
+        break;
+    }
     return propertyStack(
       image: property,
       text1: property,
-      text2: '@ Old Klang Road',
+      text2: locationRoad,
       width: 86.width,
       height: 12.height,
     );
@@ -266,7 +290,7 @@ class _PersonalMillerzSquare1ScreenState
       text: text,
       style: TextStyle(
         fontFamily: 'Open Sans',
-        fontSize: 15.fSize,
+        fontSize: 17.fSize,
         fontWeight: FontWeight.w700,
       ),
       gradient: const LinearGradient(
@@ -288,38 +312,45 @@ class _PersonalMillerzSquare1ScreenState
     //     .where((unit) => unit.iyear == now.year)
     //     .map((unit) => unit.imonth ?? 0)
     //     .reduce((value, element) => value > element ? value : element);
-    
 
-print('All _singleUnitByMonth:');
-for (var unit in _singleUnitByMonth) {
-  print('Location: ${unit.slocation}, Type: ${unit.stype}, Unit No: ${unit.sunitno}, Month: ${unit.imonth}, Year: ${unit.iyear}, Total: ${unit.total}');
-}
+    print('All _singleUnitByMonth:');
+    for (var unit in _singleUnitByMonth) {
+      print(
+          'Location: ${unit.slocation}, Type: ${unit.stype}, Unit No: ${unit.sunitno}, Month: ${unit.imonth}, Year: ${unit.iyear}, Total: ${unit.total}');
+    }
     print(selectedType);
     print(selectedUnitNo);
     var filteredYears = _singleUnitByMonth
-        .where((unit) => unit.slocation == property && unit.stype == selectedType && unit.sunitno == selectedUnitNo)
+        .where((unit) =>
+            unit.slocation == property &&
+            unit.stype == selectedType &&
+            unit.sunitno == selectedUnitNo)
         .map((unit) => unit.iyear ?? 0)
         .toList();
     if (filteredYears.isNotEmpty) {
-    unitLatestYear = filteredYears.reduce((value, element) => value > element ? value : element);
-    }else{
+      unitLatestYear = filteredYears
+          .reduce((value, element) => value > element ? value : element);
+    } else {
       unitLatestYear = 0;
     }
     var filteredMonths = _singleUnitByMonth
-        .where((unit) => unit.slocation == property && unit.stype == selectedType && unit.sunitno == selectedUnitNo && unit.iyear == unitLatestYear)
+        .where((unit) =>
+            unit.slocation == property &&
+            unit.stype == selectedType &&
+            unit.sunitno == selectedUnitNo &&
+            unit.iyear == unitLatestYear)
         .map((unit) => unit.imonth ?? 0)
         .toList();
-    
-            if (filteredMonths.isNotEmpty) {
-                unitLatestMonth = filteredMonths.reduce((value, element) => value > element ? value : element);
-                
-            } else {
-      unitLatestMonth = 0; // or handle accordingly
 
+    if (filteredMonths.isNotEmpty) {
+      unitLatestMonth = filteredMonths
+          .reduce((value, element) => value > element ? value : element);
+    } else {
+      unitLatestMonth = 0; // or handle accordingly
     }
-    
+
     return ListenableBuilder(
-        listenable: personalMillerzSquareVM(),
+        listenable: propertyDetailVM(),
         builder: (context, _) {
           var now = DateTime.now();
           selectedUnitBlc = _singleUnitByMonth.firstWhere(
@@ -344,7 +375,7 @@ for (var unit in _singleUnitByMonth) {
           return OverallRevenueContainer(
             text1: 'Monthly Profit',
             text2: 'RM ${selectedUnitPro.total?.toStringAsFixed(2) ?? '0.00'}',
-            text3: '${_getMonthName(unitLatestMonth)} ${unitLatestYear}',            
+            text3: '${_getMonthName(unitLatestMonth)} ${unitLatestYear}',
             text4: 'Net After POB​',
             text5: 'RM ${selectedUnitBlc.total?.toStringAsFixed(2) ?? '0.00'}',
             text6: '${_getMonthName(unitLatestMonth)} ${unitLatestYear}',
@@ -470,7 +501,7 @@ for (var unit in _singleUnitByMonth) {
   Widget _buildYearMonthSelection() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (personalMillerzSquareVM().isLoading) {
+        if (propertyDetailVM().isLoading) {
           // Check if data is still loading
           return Container(
             decoration: BoxDecoration(
@@ -488,8 +519,8 @@ for (var unit in _singleUnitByMonth) {
           spacing: 10,
           runSpacing: 10,
           children: [
-            _buildSelectionItem('Year', personalMillerzSquareVM().yearItems),
-            _buildSelectionItem('Month', personalMillerzSquareVM().monthItems),
+            _buildSelectionItem('Year', propertyDetailVM().yearItems),
+            _buildSelectionItem('Month', propertyDetailVM().monthItems),
           ],
         );
       },
@@ -848,7 +879,10 @@ for (var unit in _singleUnitByMonth) {
 
 class NewDropdownButton extends StatefulWidget {
   const NewDropdownButton(
-      {super.key, required this.list, required this.onChanged, required this.label});
+      {super.key,
+      required this.list,
+      required this.onChanged,
+      required this.label});
   final List<String> list;
   final Function(String?) onChanged;
   final String label;
@@ -890,6 +924,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
         return '';
     }
   }
+
   @override
   void dispose() {
     textEditingController.dispose();
@@ -903,11 +938,13 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
       child: DropdownButton2<String>(
         isExpanded: true,
         hint: Text(
-          widget.label == "Month" ? _getMonthName(widget.list.first) : widget.list.first,
+          widget.label == "Month"
+              ? _getMonthName(widget.list.first)
+              : widget.list.first,
           style: TextStyle(
             color: const Color(0XFF4313E9),
             fontFamily: 'Open Sans',
-            fontSize: 12.fSize,
+            fontSize: 16.fSize,
             fontWeight: FontWeight.w600,
           ),
           maxLines: 1,
@@ -921,7 +958,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
                   style: TextStyle(
                     color: const Color(0XFF4313E9),
                     fontFamily: 'Open Sans',
-                    fontSize: 12.fSize,
+                    fontSize: 16.fSize,
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
@@ -943,8 +980,8 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
             border: Border.all(color: const Color(0XFF999999)),
             borderRadius: BorderRadius.circular(5),
           ),
-          width: 25.width,
-          height: 3.height,
+          width: widget.label == 'Unit No' ? 35.width : 22.width,
+          height: 4.height,
         ),
         iconStyleData: IconStyleData(
           icon: const Icon(Icons.keyboard_arrow_down_outlined),
