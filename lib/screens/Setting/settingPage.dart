@@ -232,11 +232,65 @@ class SettingPage extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () async {
-                  await AuthService().logout(context);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Confirm Logout'),
+                        content: Text('Are you sure you want to log out?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: Text('Logout'),
+                            onPressed: () async {
+                              await AuthService().logout(context);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: const Text(
                   'Log Out',
-                  style: TextStyle(color: Color(0XFF4313E9)),
+                  style: TextStyle(color: Color(0XFF4313E9), fontSize: 20),
+                ),
+              ),
+            ),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        launchUrl(Uri.parse('https://www.manamanasuites.com/terms-conditions'));
+                      },
+                      child: const Text(
+                        'Terms & Conditions',
+                        style: TextStyle(color: Color(0XFF4313E9), fontSize: 16, decoration: TextDecoration.underline),
+                      ),
+                    ),
+                    Text(
+                      ' | ',
+                      style: TextStyle(color: Color(0XFF4313E9), fontSize: 16),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        launchUrl(Uri.parse('https://www.manamanasuites.com/privacy-policy'));
+                      },
+                      child: const Text(
+                        'Privacy Policy',
+                        style: TextStyle(color: Color(0XFF4313E9), fontSize: 16, decoration: TextDecoration.underline),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

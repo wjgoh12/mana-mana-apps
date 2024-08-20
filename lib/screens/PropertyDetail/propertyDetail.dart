@@ -453,7 +453,7 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
         child: Column(
           children: [
             _buildYearMonthSelection(),
-            SizedBox(height: 2.height),
+            SizedBox(height: 4.height),
             _buttonDownloadPdf(property),
             // _buildMonthlyStatementContent(),
           ],
@@ -490,7 +490,7 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
           'Download PDF',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 14.fSize,
+            fontSize: 16.fSize,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -944,7 +944,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
           style: TextStyle(
             color: const Color(0XFF4313E9),
             fontFamily: 'Open Sans',
-            fontSize: 16.fSize,
+            fontSize: 15.fSize,
             fontWeight: FontWeight.w600,
           ),
           maxLines: 1,
@@ -958,7 +958,7 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
                   style: TextStyle(
                     color: const Color(0XFF4313E9),
                     fontFamily: 'Open Sans',
-                    fontSize: 16.fSize,
+                    fontSize: 15.fSize,
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
@@ -980,8 +980,8 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
             border: Border.all(color: const Color(0XFF999999)),
             borderRadius: BorderRadius.circular(5),
           ),
-          width: widget.label == 'Unit No' ? 35.width : 22.width,
-          height: 4.height,
+          width: widget.label == 'Unit No' ? 34.width : 22.width,
+          height: (3.5).height,
         ),
         iconStyleData: IconStyleData(
           icon: const Icon(Icons.keyboard_arrow_down_outlined),

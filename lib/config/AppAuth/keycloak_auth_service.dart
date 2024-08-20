@@ -141,10 +141,10 @@ class AuthService {
   Future<void> _removeAllAppData() async {
     await _secureStorage.deleteAll();
 
-    final cacheDir = await getTemporaryDirectory();
-    if (cacheDir.existsSync()) {
-      cacheDir.deleteSync(recursive: true);
-    }
+    // final cacheDir = await getTemporaryDirectory();
+    // if (cacheDir.existsSync()) {
+    //   cacheDir.deleteSync(recursive: true);
+    // }
   }
 
   Future<String?> getAccessToken() async {
