@@ -4,7 +4,7 @@ import 'package:mana_mana_app/splashscreen.dart';
 
 void main() {
   // change dev and prod
-  initApp('dev');
+  initApp('prod');
   runApp(const MaterialApp(
     home: Splashscreen(),
   ));
