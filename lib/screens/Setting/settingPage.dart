@@ -14,6 +14,16 @@ class SettingPage extends StatelessWidget {
     List<User> users = GlobalUserState.instance.getUsers();
     return Scaffold(
       appBar: AppBar(
+        leadingWidth: 15.width,
+    centerTitle: true,
+    leading: Padding(
+      padding: EdgeInsets.only(left: 7.width),
+      child: InkWell(
+          onTap: () => Navigator.pop(context),
+          child: Image.asset(
+            'assets/images/return.png',
+          )),
+    ),
         title: Text(
             'Settings',
             style: TextStyle(
@@ -26,15 +36,15 @@ class SettingPage extends StatelessWidget {
                 ).createShader(Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
             ),
           ),
-        centerTitle: true,
-        leading: Padding(
-      padding: EdgeInsets.only(left: 7.width),
-      child: InkWell(
-          onTap: () => Navigator.pop(context),
-          child: Image.asset(
-            'assets/images/return.png',
-          )),
-    ),
+        // centerTitle: true,
+    //     leading: Padding(
+    //   padding: EdgeInsets.only(left: 7.width),
+    //   child: InkWell(
+    //       onTap: () => Navigator.pop(context),
+    //       child: Image.asset(
+    //         'assets/images/return.png',
+    //       )),
+    // ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 30 , left: 20, right: 20),

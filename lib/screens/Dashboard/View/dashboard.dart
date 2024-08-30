@@ -4,6 +4,7 @@ import 'package:mana_mana_app/screens/Dashboard/View/revenue_dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/statistic_dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
 import 'package:mana_mana_app/screens/Setting/settingPage.dart';
+import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class NewDashboardPage extends StatefulWidget {
@@ -54,6 +55,7 @@ class _NewDashboardPageState extends State<NewDashboardPage> with WidgetsBinding
             elevation: 0,
             title: _buildTopBar(context),
             automaticallyImplyLeading: false, // This will remove the back button
+            toolbarHeight: !Responsive.isMobile(context) ? 160 : 50,
           ),
           Positioned(
             top: 14.height,

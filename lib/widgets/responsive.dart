@@ -15,7 +15,7 @@ class Responsive extends StatelessWidget {
 // This size work fine on my design, maybe you need some customization depends on your design
 
   static final _tablet = 1100;
-  static final _phone = 850;
+  static final _phone = 600;
 
   // This isMobile, isTablet, isDesktop help us later
   static bool isMobile(BuildContext context) => measureWidth(context) < _phone;

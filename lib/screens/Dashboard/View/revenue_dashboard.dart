@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
+import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class BuildRevenueContainers extends StatelessWidget {
@@ -54,7 +55,7 @@ class _RevenueContainer extends StatelessWidget {
           GestureDetector(
             onTap: () => model.updateOverallRevenueAmount(),
             child: Container(
-              padding: EdgeInsets.all(1.height),
+              padding: !Responsive.isMobile(context)? EdgeInsets.only(left: 1.height,top: 1.height,right: 1.height) : EdgeInsets.all(1.height),
               decoration: BoxDecoration(
                 color: const Color(0xFFFFFFFF),
                 borderRadius: BorderRadius.circular(10),
