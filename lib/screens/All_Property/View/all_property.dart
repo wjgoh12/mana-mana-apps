@@ -10,8 +10,6 @@ class allPropertyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('all property page');
-    print(locationByMonth);
     return Scaffold(
       backgroundColor: const Color(0XFFFFFFFF),
       appBar: propertyAppBar(
@@ -57,22 +55,22 @@ class allPropertyScreen extends StatelessWidget {
     String locationRoad = '';
     switch (locationByMonth[0]['location']) {
       case "Expressionz":
-        locationRoad = "@ Expressionz KLCC";
+        locationRoad = "@ Jalan Tun Razak";
         break;
       case "Ceylonz":
-        locationRoad = "@ Ceylonz KLCC";
+        locationRoad = "@ Persiaran Raja Chulan";
         break;
       case "Scarletz":
-        locationRoad = "@ Scarletz KLCC";
+        locationRoad = "@ Jalan Yap Kwan Seng";
         break;
       case "Millerz":
         locationRoad = "@ Old Klang Road";
         break;
       case "Mossaz":
-        locationRoad = "@ Mossaz";
+        locationRoad = "@ Empire City";
         break;
       case "Paxtonz":
-        locationRoad = "@ Paxtonz";
+        locationRoad = "@ Empire City";
         break;
       default:
         locationRoad = "";
@@ -90,8 +88,8 @@ class allPropertyScreen extends StatelessWidget {
         image: locationByMonth[0]['location'] ?? '',
         text1: locationByMonth[0]['location'] ?? '',
         text2: locationRoad,
-        width: 90.width,
-        height: 12.height,
+        width: 85.width,
+        height: 13.height,
       ),
     );
   }

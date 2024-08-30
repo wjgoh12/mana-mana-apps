@@ -21,7 +21,7 @@ class propertyStack extends StatelessWidget {
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
           child: ColorFiltered(
           colorFilter: ColorFilter.mode(
-            Color(0xFF4313E9).withOpacity(0.2), // Adjust opacity as needed            
+            Color(0xFF4313E9).withOpacity(0.1), // Adjust opacity as needed            
             BlendMode.srcOver,
           ),
           child: Image.asset(
