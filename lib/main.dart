@@ -6,6 +6,7 @@ void main() {
   // change dev and prod
   initApp('prod');
   runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: Splashscreen(),
   ));
 }
