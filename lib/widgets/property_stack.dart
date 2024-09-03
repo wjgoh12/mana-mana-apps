@@ -25,7 +25,7 @@ class propertyStack extends StatelessWidget {
             BlendMode.srcOver,
           ),
           child: Image.asset(
-            'assets/images/${image.toUpperCase()}.png',
+            'assets/images/${image.toUpperCase()}2.png',
             fit: BoxFit.cover,
           ),
           ),
