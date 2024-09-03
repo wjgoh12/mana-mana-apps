@@ -148,7 +148,7 @@ class PropertyImageStack extends StatelessWidget {
                 width: width,
                 height: height,
                 child: Image.asset(
-                  'assets/images/${locationByMonth.first['location']}.png',
+                  'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
                   fit: BoxFit.fill,
                 ),
               ),

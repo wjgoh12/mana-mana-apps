@@ -53,23 +53,23 @@ class allPropertyScreen extends StatelessWidget {
     required BuildContext context,
   }) {
     String locationRoad = '';
-    switch (locationByMonth[0]['location']) {
-      case "Expressionz":
+    switch (locationByMonth[0]['location'].toUpperCase()) {
+      case "EXPRESSIONZ":
         locationRoad = "@ Jalan Tun Razak";
         break;
-      case "Ceylonz":
+      case "CEYLONZ":
         locationRoad = "@ Persiaran Raja Chulan";
         break;
-      case "Scarletz":
+      case "SCARLETZ":
         locationRoad = "@ Jalan Yap Kwan Seng";
         break;
-      case "Millerz":
+      case "MILLERZ":
         locationRoad = "@ Old Klang Road";
         break;
-      case "Mossaz":
+      case "MOSSAZ":
         locationRoad = "@ Empire City";
         break;
-      case "Paxtonz":
+      case "PAXTONZ":
         locationRoad = "@ Empire City";
         break;
       default:

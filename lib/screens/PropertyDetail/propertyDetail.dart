@@ -167,23 +167,23 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
 
   Widget _buildPropertyHeader(property) {
     String locationRoad = '';
-    switch (property) {
-      case "Expressionz":
+    switch (property.toUpperCase()) {
+      case "EXPRESSIONZ":
         locationRoad = "@ Jalan Tun Razak";
         break;
-      case "Ceylonz":
+      case "CEYLONZ":
         locationRoad = "@ Persiaran Raja Chulan";
         break;
-      case "Scarletz":
+      case "SCARLETZ":
         locationRoad = "@ Jalan Yap Kwan Seng";
         break;
-      case "Millerz":
+      case "MILLERZ":
         locationRoad = "@ Old Klang Road";
         break;
-      case "Mossaz":
+      case "MOSSAZ":
         locationRoad = "@ Empire City";
         break;
-      case "Paxtonz":
+      case "PAXTONZ":
         locationRoad = "@ Empire City";
         break;
       default:
@@ -318,8 +318,7 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
       print(
           'Location: ${unit.slocation}, Type: ${unit.stype}, Unit No: ${unit.sunitno}, Month: ${unit.imonth}, Year: ${unit.iyear}, Total: ${unit.total}');
     }
-    print(selectedType);
-    print(selectedUnitNo);
+
     var filteredYears = _singleUnitByMonth
         .where((unit) =>
             unit.slocation == property &&
@@ -465,6 +464,7 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
   Widget _buttonDownloadPdf(property) {
     return ElevatedButton(
       onPressed: () async {
+        print(property);
         print(selectedYearValue);
         print(selectedMonthValue);
         print(selectedType);
@@ -933,7 +933,6 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.label);
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
         isExpanded: true,
