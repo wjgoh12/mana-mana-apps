@@ -89,7 +89,7 @@ class allPropertyScreen extends StatelessWidget {
         text1: locationByMonth[0]['location'] ?? '',
         text2: locationRoad,
         width: 85.width,
-        height: 13.height,
+        height: 12.height,
       ),
     );
   }
