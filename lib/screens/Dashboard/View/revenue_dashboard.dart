@@ -20,7 +20,7 @@ class BuildRevenueContainers extends StatelessWidget {
           // SizedBox(width: 10),
           Expanded(
             child: _RevenueContainer(
-              title: '[YEAR] Accumulated Profit​',
+              title: '${DateTime.now().year} Accumulated Profit​',
               icon: Icons.home_outlined,
               overallRevenue: false,
             ),
