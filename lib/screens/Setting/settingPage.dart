@@ -182,7 +182,7 @@ class SettingPage extends StatelessWidget {
                     onTap: () {
                       final Uri _emailLaunchUri = Uri(
                         scheme: 'mailto',
-                        path: 'hi@manamanasuites.com',
+                        path: 'admin@manamanasuites.com',
                       );
                       launchUrl(_emailLaunchUri);
                     },
@@ -197,7 +197,7 @@ class SettingPage extends StatelessWidget {
                         style: TextStyle(color: Color(0XFF4313E9), fontWeight: FontWeight.w700)),
                     trailing: CircularArrowButton(),
                     onTap: () {
-                      launchUrl(Uri.parse('tel:+60125508263'));
+                      launchUrl(Uri.parse('tel:+60327795035'));
                     },
                   ),
                   ListTile(
@@ -210,7 +210,7 @@ class SettingPage extends StatelessWidget {
                         style: TextStyle(color: Color(0XFF4313E9), fontWeight: FontWeight.w700)),
                     trailing: CircularArrowButton(),
                     onTap: () {
-                      launchUrl(Uri.parse('https://wa.me/60125508263'));
+                      launchUrl(Uri.parse('https://wa.me/60125626784'));
                     },
                   ),
                 ],
