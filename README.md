@@ -17,3 +17,6 @@ samples, guidance on mobile development, and a full API reference.
 
 From Jason
 Flutter Version : 3.22.2
+Remove .txt before build
+- android/app/key.properties.txt
+- android/app/my-release-key.jks.txt
