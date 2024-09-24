@@ -1,0 +1,4 @@
+storePassword=manamanaDfs1234@
+keyPassword=manamanaDfs1234@
+keyAlias=manamana-alias
+storeFile=my-release-key.jks
