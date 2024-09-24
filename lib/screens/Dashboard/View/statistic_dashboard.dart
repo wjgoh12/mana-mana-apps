@@ -11,7 +11,9 @@ class StatisticTable extends StatelessWidget {
     final DashboardVM model = DashboardVM();
     model.monthlyBlcOwner = [];
     model.monthlyProfitOwner = [];
-
+    return ListenableBuilder(
+      listenable: DashboardVM(),
+      builder: (context, _) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0XFFFFFFFF),
@@ -54,7 +56,26 @@ class StatisticTable extends StatelessWidget {
                 // ),
                 _buildLegend(),
                 BarChartSample7(),
-                _buildRevenueTable(),
+                if (model.monthlyBlcOwner.length > 4)
+                              SizedBox(
+                                height: 22.height,
+                                child: _buildRevenueTable(),
+                              ),
+                              if (model.monthlyBlcOwner.length > 4)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16.0),
+                                  child: Center(
+                                    child: Text(
+                                      "Scroll to view more data",
+                                      style: TextStyle(
+                                        color: Color(0XFF888888),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (model.monthlyBlcOwner.length <= 4)
+                                _buildRevenueTable(),
               ],
             ),
           ),
@@ -62,15 +83,16 @@ class StatisticTable extends StatelessWidget {
         ],
       ),
     );
+      });}
   }
 
   Widget _buildLegend() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _buildLegendItem(gradientColor1, 'Overall Monthly Profit'),
+        _buildLegendItem(gradientColor1, 'Overall Net After POB'),
         SizedBox(width: 2.width),
-        _buildLegendItem(gradientColor2, 'Overall Net After POB'),
+        _buildLegendItem(gradientColor2, 'Overall Monthly Profit'),
       ],
     );
   }
@@ -113,37 +135,38 @@ class StatisticTable extends StatelessWidget {
       listenable: DashboardVM(),
       builder: (context, _) {
         
-        return Column(
-          children: [
-            _buildTableHeader(),
-            ...model.monthlyBlcOwner.map((entry) {
-            final year = entry['year'];  // Extract year
-            final month = entry['month'];  // Extract month
-            final totalBlc = entry['total'];  // Extract total balance for the month
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildTableHeader(),
+              ...model.monthlyBlcOwner.map((entry) {
+              final year = entry['year'];  // Extract year
+              final month = entry['month'];  // Extract month
+              final totalBlc = entry['total'];  // Extract total balance for the month
 
-            // Find the corresponding profit for the same year and month
-            final profitEntry = model.monthlyProfitOwner.firstWhere(
-              (profit) => profit['year'] == year && profit['month'] == month,
-              orElse: () => {'total': 0.00},
-            );
-            final totalProfit = profitEntry['total'];  // Extract total profit for the month
+              // Find the corresponding profit for the same year and month
+              final profitEntry = model.monthlyProfitOwner.firstWhere(
+                (profit) => profit['year'] == year && profit['month'] == month,
+                orElse: () => {'total': 0.00},
+              );
+              final totalProfit = profitEntry['total'];  // Extract total profit for the month
 
-            // Convert month number to a name (e.g., 5 -> May)
-            final monthName = getMonthName(month);
+              // Convert month number to a name (e.g., 5 -> May)
+              final monthName = getMonthName(month);
 
-            return Column(
-              children: [
-                _buildTableRow(
-                  '$monthName $year',
-                  'RM ${totalProfit.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-                  'RM ${totalBlc.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',                  
-                  
-                ),
-                _buildDivider(),
-              ],
-            );
-          }).toList(),
-          ],
+              return Column(
+                children: [
+                  _buildTableRow(
+                    '$monthName $year',
+                    'RM ${totalBlc.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',    
+                    'RM ${totalProfit.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                  ),
+                  _buildDivider(),
+                ],
+              );
+            }).toList(),
+            ],
+          ),
         );
       },
     );
@@ -155,11 +178,11 @@ class StatisticTable extends StatelessWidget {
         const Spacer(flex: 4),
         Expanded(
           flex: 5,
-          child: _buildHeaderText('Overall Monthly Profit'),
+          child: _buildHeaderText('Overall Net After POB'),
         ),
         Expanded(
           flex: 4,
-          child: _buildHeaderText('Overall Net After POB'),
+          child: _buildHeaderText('Overall Monthly Profit'),
         ),
       ],
     );
@@ -251,4 +274,3 @@ class StatisticTable extends StatelessWidget {
       ),
     );
   }
-}
