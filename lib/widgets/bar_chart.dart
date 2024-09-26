@@ -72,8 +72,9 @@ class _BarChartSample7State extends State<BarChartSample7> {
     final dataList = [
       ...List.generate(12, (index) => _BarData(
         gradientColor1,
-        index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year ? model.monthlyBlcOwner[index]['total'] : 0,
-        index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year ? model.monthlyProfitOwner[index]['total'] : 0      )),  
+        index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year ? model.monthlyProfitOwner[index]['total'] : 0,
+        index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year ? model.monthlyBlcOwner[index]['total'] : 0
+              )),  
     ];
     
     final List<String> monthNames = List.generate(12, (index) {

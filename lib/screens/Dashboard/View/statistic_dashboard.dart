@@ -90,9 +90,9 @@ class StatisticTable extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _buildLegendItem(gradientColor1, 'Overall Net After POB'),
+        _buildLegendItem(gradientColor1, 'Overall Monthly Profit'),
         SizedBox(width: 2.width),
-        _buildLegendItem(gradientColor2, 'Overall Monthly Profit'),
+        _buildLegendItem(gradientColor2, 'Overall Net After POB'),
       ],
     );
   }
@@ -158,8 +158,9 @@ class StatisticTable extends StatelessWidget {
                 children: [
                   _buildTableRow(
                     '$monthName $year',
-                    'RM ${totalBlc.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',    
                     'RM ${totalProfit.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                    'RM ${totalBlc.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',    
+                    
                   ),
                   _buildDivider(),
                 ],
@@ -178,11 +179,11 @@ class StatisticTable extends StatelessWidget {
         const Spacer(flex: 4),
         Expanded(
           flex: 5,
-          child: _buildHeaderText('Overall Net After POB'),
+          child: _buildHeaderText('Overall Monthly Profit'),
         ),
         Expanded(
           flex: 4,
-          child: _buildHeaderText('Overall Monthly Profit'),
+          child: _buildHeaderText('Overall Net After POB'),
         ),
       ],
     );
