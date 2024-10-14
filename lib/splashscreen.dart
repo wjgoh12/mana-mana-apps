@@ -49,7 +49,7 @@ class _SplashScreenState extends State<Splashscreen> with SingleTickerProviderSt
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/images/splashscreen.png'),
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
         ),
