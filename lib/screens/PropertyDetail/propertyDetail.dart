@@ -1,13 +1,13 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
+// import 'package:intl/intl.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/provider/global_owner_state.dart';
 import 'package:mana_mana_app/provider/global_unitByMonth_state.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
-import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/statistic_dashboard.dart';
-import 'package:mana_mana_app/screens/Statement/View/statement.dart';
 import 'package:mana_mana_app/screens/PropertyDetail/propertyDetailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
@@ -218,7 +218,7 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
 
     List<String> typeItems = ownerData
         .where((types) => types.location == property)
-        .map((types) => '${types.type} ${types.unitno}')
+        .map((types) => '${types.type} (${types.unitno})')
         .toList();
 
     // List<String> typeItems = ownerData
@@ -227,9 +227,14 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
     //     .toList();
     if (typeItems.isNotEmpty) {
       selectedType =
-          selectedType == '' ? typeItems.first.split(" ")[0] : selectedType;
-      selectedUnitNo =
-          selectedUnitNo == '' ? typeItems.first.split(" ")[1] : selectedUnitNo;
+          selectedType == '' ? typeItems.first.split(" (")[0] : selectedType;
+      selectedUnitNo = selectedUnitNo == ''
+          ? typeItems.first.split(" (")[1].replaceAll(")", "")
+          : selectedUnitNo;
+      // selectedType =
+      //     selectedType == '' ? typeItems.first.split(" ")[0] : selectedType;
+      // selectedUnitNo =
+      //     selectedUnitNo == '' ? typeItems.first.split(" ")[1] : selectedUnitNo;
     }
     // List<String> unitNoItems = ownerData
     //     .where((types) => types.location == property)
@@ -246,8 +251,8 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
           list: typeItems,
           onChanged: (_) {
             setState(() {
-              selectedType = _?.split(" ")[0];
-              selectedUnitNo = _?.split(" ")[1];
+              selectedType = _?.split(" (")[0];
+              selectedUnitNo = _?.split(" (")[1].replaceAll(")", "");
             });
           },
         ),
@@ -373,10 +378,14 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
 
           return OverallRevenueContainer(
             text1: 'Monthly Profit',
-            text2: 'RM ${selectedUnitPro.total?.toStringAsFixed(2) ?? '0.00'}',
+            text2:
+                'RM ${selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+            // text2: 'RM ${selectedUnitPro.total?.toStringAsFixed(2) ?? '0.00'}',
             text3: '${_getMonthName(unitLatestMonth)} ${unitLatestYear}',
             text4: 'Net After POB​',
-            text5: 'RM ${selectedUnitBlc.total?.toStringAsFixed(2) ?? '0.00'}',
+            text5:
+                'RM ${selectedUnitBlc.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+            // text5: 'RM ${selectedUnitBlc.total?.toStringAsFixed(2) ?? '0.00'}',
             text6: '${_getMonthName(unitLatestMonth)} ${unitLatestYear}',
             color: const Color(0XFF4313E9),
             backgroundColor: const Color(0XFFFFFFFF),
@@ -933,6 +942,23 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate max width based on longest text
+    double maxTextWidth = widget.list.fold(0.0, (maxWidth, item) {
+      final textSpan = TextSpan(
+        text: widget.label == "Month" ? _getMonthName(item) : item,
+        style: TextStyle(
+          fontSize: 15.fSize,
+          fontFamily: 'Open Sans',
+          fontWeight: FontWeight.w600,
+        ),
+      );
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: TextDirection.ltr,
+      )..layout();
+      return max(maxWidth, textPainter.width);
+    });
+
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
         isExpanded: true,
@@ -943,10 +969,9 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
           style: TextStyle(
             color: const Color(0XFF4313E9),
             fontFamily: 'Open Sans',
-            fontSize: 15.fSize,
+            fontSize: 14.fSize,
             fontWeight: FontWeight.w600,
           ),
-          maxLines: 1,
         ),
         items: widget.list
             .map(
@@ -957,10 +982,9 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
                   style: TextStyle(
                     color: const Color(0XFF4313E9),
                     fontFamily: 'Open Sans',
-                    fontSize: 15.fSize,
+                    fontSize: 14.fSize,
                     fontWeight: FontWeight.w600,
                   ),
-                  maxLines: 1,
                 ),
               ),
             )
@@ -979,8 +1003,12 @@ class _NewDropdownButtonState extends State<NewDropdownButton> {
             border: Border.all(color: const Color(0XFF999999)),
             borderRadius: BorderRadius.circular(5),
           ),
-          width: widget.label == 'Unit No' ? 34.width : 22.width,
+          width: maxTextWidth + 40, // Add padding for icon and margins
           height: (3.5).height,
+        ),
+        dropdownStyleData: DropdownStyleData(
+          maxHeight: 300,
+          width: maxTextWidth + 40,
         ),
         iconStyleData: IconStyleData(
           icon: const Icon(Icons.keyboard_arrow_down_outlined),

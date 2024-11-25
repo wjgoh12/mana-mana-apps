@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -185,7 +186,8 @@ class _RevenueContainer extends StatelessWidget {
                 } else {
                   final value = snapshot.data ?? 0.00;
                   return Text(
-                    (value is double ? value : 0.00).toStringAsFixed(2),
+                    NumberFormat('#,##0.00').format(value),
+                    // (value is double ? value : 0.00).toStringAsFixed(2),
                     style: TextStyle(
                       fontFamily: 'Open Sans',
                       fontWeight: FontWeight.w700,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
 import 'package:mana_mana_app/screens/PropertyDetail/propertyDetail.dart';
@@ -218,7 +219,8 @@ class PropertyImageStack extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              locationByMonth.first['total'].toString(),
+                              NumberFormat('#,##0.00').format(locationByMonth.first['total']),
+                              // locationByMonth.first['total'].toString(),
                               style: TextStyle(
                                 fontFamily: 'Open Sans',
                                 fontWeight: FontWeight.w600,
