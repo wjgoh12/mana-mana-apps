@@ -21,3 +21,6 @@ Remove .txt before build
 - android/app/key.properties.txt
 - android/app/my-release-key.jks.txt
 - android/key.properties.txt
+
+For Huawei 
+uncommend the following lines in android/app/build.gradle
