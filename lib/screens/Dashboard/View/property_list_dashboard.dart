@@ -60,6 +60,20 @@ class BuildPropertyList extends StatelessWidget {
                               const SizedBox(width: 20),
                             ])
                         .toList(),
+                    // ...model.locationByMonth
+                    //     .where((property) =>
+                    //         property['year'] ==
+                    //             model.locationByMonth
+                    //                 .map((p) => p['year'])
+                    //                 .reduce((a, b) => a > b ? a : b) &&
+                    //         property['month'] == model.unitLatestMonth)
+                    //     .expand((property) => [
+                    //           PropertyImageStack(
+                    //             locationByMonth: [property],
+                    //           ),
+                    //           const SizedBox(width: 20),
+                    //         ])
+                    //     .toList(),
                     const SizedBox(width: 5),
                     ViewAllProperty(),
                   ],
@@ -89,7 +103,6 @@ class PropertyImageStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(locationByMonth.first['total']);
     String _getMonthAbbreviation(int month) {
       switch (month) {
         case 1:

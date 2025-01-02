@@ -67,13 +67,14 @@ class DashboardVM extends ChangeNotifier {
     revenue_dashboard = await ownerPropertyList_repository.revenueByYear();
     totalByMonth = await ownerPropertyList_repository.totalByMonth();
     ownerUnits = await ownerPropertyList_repository.getOwnerUnit();
-      monthlyBlcOwner = totalByMonth
-          .where((unit) => unit['transcode'] == "OWNBAL")
-          .toList()
-        ..sort((a, b) {
-          int yearComparison = a['year'].compareTo(b['year']);
-          return yearComparison != 0 ? yearComparison : a['month'].compareTo(b['month']);
-        });
+    monthlyBlcOwner =
+        totalByMonth.where((unit) => unit['transcode'] == "OWNBAL").toList()
+          ..sort((a, b) {
+            int yearComparison = a['year'].compareTo(b['year']);
+            return yearComparison != 0
+                ? yearComparison
+                : a['month'].compareTo(b['month']);
+          });
     // monthlyBlcOwner = totalByMonth
     //     .where((unit) => unit['transcode'] == "OWNBAL" && unit['year'] == DateTime.now().year)
     //     .toList()
@@ -82,14 +83,20 @@ class DashboardVM extends ChangeNotifier {
         .where((unit) => unit['transcode'] == "NOPROF")
         .map((unit) => unit)
         .toList();
-    
+
     GlobalOwnerState.instance.setOwnerData(ownerUnits);
     locationByMonth = await ownerPropertyList_repository.locationByMonth();
-
     unitLatestMonth = locationByMonth
-        .where((unit) => unit['year'] == DateTime.now().year)
-        .map((unit) => unit['month'])
-        .fold(0, (max, month) => month > max ? month : max);
+        .map((unit) => {'month': unit['month'], 'year': unit['year']})
+        .reduce((max, current) => max['year'] > current['year']
+            ? max
+            : max['year'] == current['year'] && max['month'] > current['month']
+                ? max
+                : current)['month'];
+    // unitLatestMonth = locationByMonth
+    //     .where((unit) => unit['year'] == DateTime.now().year)
+    //     .map((unit) => unit['month'])
+    //     .fold(0, (max, month) => month > max ? month : max);
     // unitLatestMonth = locationByMonth
     //     .where((unit) => unit['year'] == DateTime.now().year)
     //     .map((unit) => unit['month'])
