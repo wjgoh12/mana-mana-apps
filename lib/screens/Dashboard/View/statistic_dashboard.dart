@@ -126,8 +126,8 @@ class StatisticTable extends StatelessWidget {
     DashboardVM model = DashboardVM();
     String getMonthName(int month) {
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
   return monthNames[month - 1];
 }
@@ -140,6 +140,7 @@ class StatisticTable extends StatelessWidget {
             children: [
               _buildTableHeader(),
               ...model.monthlyBlcOwner.map((entry) {
+                
               final year = entry['year'];  // Extract year
               final month = entry['month'];  // Extract month
               final totalBlc = entry['total'];  // Extract total balance for the month
@@ -149,6 +150,7 @@ class StatisticTable extends StatelessWidget {
                 (profit) => profit['year'] == year && profit['month'] == month,
                 orElse: () => {'total': 0.00},
               );
+              
               final totalProfit = profitEntry['total'];  // Extract total profit for the month
 
               // Convert month number to a name (e.g., 5 -> May)

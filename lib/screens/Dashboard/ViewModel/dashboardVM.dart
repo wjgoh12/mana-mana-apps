@@ -23,7 +23,8 @@ class DashboardVM extends ChangeNotifier {
   // }
 
   final UserRepository user_repository = UserRepository();
-  final PropertyListRepository ownerPropertyList_repository = PropertyListRepository();
+  final PropertyListRepository ownerPropertyList_repository =
+      PropertyListRepository();
   List<User> _users = [];
   List<OwnerPropertyList> ownerUnits = [];
   List<Map<String, dynamic>> revenue_dashboard = [];
@@ -32,9 +33,23 @@ class DashboardVM extends ChangeNotifier {
   List<Map<String, dynamic>> monthlyBlcOwner = [];
   List<Map<String, dynamic>> monthlyProfitOwner = [];
   int unitLatestMonth = 0;
-  Future get overallBalance => Future.delayed(Duration(milliseconds: 500), () => revenue_dashboard.isNotEmpty ? revenue_dashboard.firstWhere((item) => item["transcode"] == "OWNBAL", orElse: () => {"total": 0.0})["total"] : 0.0).then((value) => value);
-  Future get overallProfit => Future.delayed(Duration(milliseconds: 500), () => revenue_dashboard.isNotEmpty ? revenue_dashboard.firstWhere((item) => item["transcode"] == "NOPROF", orElse: () => {"total": 0.0})["total"] : 0.0).then((value) => value);  
-  int get currentYear => revenue_dashboard.isNotEmpty ? revenue_dashboard.first["iyear"] : DateTime.now().year;
+  Future get overallBalance => Future.delayed(
+      Duration(milliseconds: 500),
+      () => revenue_dashboard.isNotEmpty
+          ? revenue_dashboard.firstWhere(
+              (item) => item["transcode"] == "OWNBAL",
+              orElse: () => {"total": 0.0})["total"]
+          : 0.0).then((value) => value);
+  Future get overallProfit => Future.delayed(
+      Duration(milliseconds: 500),
+      () => revenue_dashboard.isNotEmpty
+          ? revenue_dashboard.firstWhere(
+              (item) => item["transcode"] == "NOPROF",
+              orElse: () => {"total": 0.0})["total"]
+          : 0.0).then((value) => value);
+  int get currentYear => revenue_dashboard.isNotEmpty
+      ? revenue_dashboard.first["iyear"]
+      : DateTime.now().year;
 
   void updateData(List<Map<String, dynamic>> newData) {
     revenue_dashboard = newData;
@@ -52,27 +67,37 @@ class DashboardVM extends ChangeNotifier {
     revenue_dashboard = await ownerPropertyList_repository.revenueByYear();
     totalByMonth = await ownerPropertyList_repository.totalByMonth();
     ownerUnits = await ownerPropertyList_repository.getOwnerUnit();
-
-    monthlyBlcOwner = totalByMonth
-        .where((unit) => unit['transcode'] == "OWNBAL" && unit['year'] == DateTime.now().year)
-        .toList()
-      ..sort((a, b) => a['month'].compareTo(b['month']));        
-    monthlyProfitOwner = totalByMonth.where((unit) => unit['transcode'] == "NOPROF").map((unit) => unit).toList();
-    GlobalOwnerState.instance.setOwnerData(ownerUnits);   
-    locationByMonth = await ownerPropertyList_repository.locationByMonth();
+      monthlyBlcOwner = totalByMonth
+          .where((unit) => unit['transcode'] == "OWNBAL")
+          .toList()
+        ..sort((a, b) {
+          int yearComparison = a['year'].compareTo(b['year']);
+          return yearComparison != 0 ? yearComparison : a['month'].compareTo(b['month']);
+        });
+    // monthlyBlcOwner = totalByMonth
+    //     .where((unit) => unit['transcode'] == "OWNBAL" && unit['year'] == DateTime.now().year)
+    //     .toList()
+    //   ..sort((a, b) => a['month'].compareTo(b['month']));
+    monthlyProfitOwner = totalByMonth
+        .where((unit) => unit['transcode'] == "NOPROF")
+        .map((unit) => unit)
+        .toList();
     
+    GlobalOwnerState.instance.setOwnerData(ownerUnits);
+    locationByMonth = await ownerPropertyList_repository.locationByMonth();
+
     unitLatestMonth = locationByMonth
-    .where((unit) => unit['year'] == DateTime.now().year)
-    .map((unit) => unit['month'])
-    .fold(0, (max, month) => month > max ? month : max);
+        .where((unit) => unit['year'] == DateTime.now().year)
+        .map((unit) => unit['month'])
+        .fold(0, (max, month) => month > max ? month : max);
     // unitLatestMonth = locationByMonth
     //     .where((unit) => unit['year'] == DateTime.now().year)
     //     .map((unit) => unit['month'])
-    //     .reduce((max, month) => month > max ? month : max); 
+    //     .reduce((max, month) => month > max ? month : max);
     notifyListeners();
     isLoading = false;
     print('run fetchUsers');
-    await Future.delayed(const Duration(seconds: 1)); 
+    await Future.delayed(const Duration(seconds: 1));
     _isInitialized = false;
   }
 
