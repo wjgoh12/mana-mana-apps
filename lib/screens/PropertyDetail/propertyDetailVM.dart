@@ -33,7 +33,7 @@ class propertyDetailVM extends ChangeNotifier {
     GlobalUnitByMonthState.instance.setUnitByMonthData(unitByMonth);
     yearItems = unitByMonth.map((item) => item.iyear.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a)));       
     monthItems = unitByMonth
-    .where((item) => item.iyear == int.parse(yearItems.first))
+    // .where((item) => item.iyear == int.parse(yearItems.first))
     .map((item) => item.imonth.toString())
     .toSet()
     .toList()
