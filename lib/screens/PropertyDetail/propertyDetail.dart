@@ -89,7 +89,11 @@ class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
                 .monthItems
                 .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
             : '';
-        selectedYearValue = DateTime.now().year.toString();
+        selectedYearValue = propertyDetailVM().yearItems.isNotEmpty
+            ? propertyDetailVM()
+                .yearItems
+                .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
+            : '';
       }
 
       _initializeData(property);
