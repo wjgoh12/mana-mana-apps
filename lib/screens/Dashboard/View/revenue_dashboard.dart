@@ -21,11 +21,11 @@ class BuildRevenueContainers extends StatelessWidget {
           // SizedBox(width: 10),
           Expanded(
             child: _RevenueContainer(
-              title: '${DateTime.now().year} Accumulated Profit​',
-              icon: Icons.home_outlined,
+              title: '${DateTime.now().month != 1 ? DateTime.now().year : DateTime.now().year - 1} Accumulated Profit​',              icon: Icons.home_outlined,
               overallRevenue: false,
             ),
-          ),          
+          ),       
+             
           ],
     );
   }
