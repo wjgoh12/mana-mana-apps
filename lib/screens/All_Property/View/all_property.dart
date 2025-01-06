@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/PropertyDetail/propertyDetail.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -80,7 +81,7 @@ class allPropertyScreen extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => propertyDetailScreen(locationByMonth),
+            builder: (context) => PropertyDetail(locationByMonth: locationByMonth),
           ),
         );
       },

@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
-import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
+import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/PropertyDetail/propertyDetail.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-class BuildPropertyList extends StatelessWidget {
-  const BuildPropertyList({Key? key}) : super(key: key);
+class PropertyList extends StatelessWidget {
+  final NewDashboardVM model;
+  const PropertyList({required this.model, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final DashboardVM model = DashboardVM();
-
-    return ListenableBuilder(
-      listenable: DashboardVM(),
-      builder: (context, _) {
         if (model.isLoading) {
           // Check if data is still loading
           return Container(
@@ -75,16 +72,16 @@ class BuildPropertyList extends StatelessWidget {
                     //         ])
                     //     .toList(),
                     const SizedBox(width: 5),
-                    ViewAllProperty(),
+                    ViewAllProperty(model: model),
                   ],
                 ),
               );
-      },
-    );
+      
   }
 }
 
 class PropertyImageStack extends StatelessWidget {
+  List<Map<String, dynamic>> locationByMonth;
   PropertyImageStack({
     Key? key,
     // required this.image,
@@ -99,11 +96,9 @@ class PropertyImageStack extends StatelessWidget {
   // final String location;
   // final String amount;
 
-  List<Map<String, dynamic>> locationByMonth;
-
   @override
   Widget build(BuildContext context) {
-    String _getMonthAbbreviation(int month) {
+    String getMonthAbbreviation(int month) {
       switch (month) {
         case 1:
           return 'Jan';
@@ -154,7 +149,7 @@ class PropertyImageStack extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PropertyDetailScreen(locationByMonth),
+                    builder: (context) => PropertyDetail(locationByMonth: locationByMonth),
                   ),
                 );
               },
@@ -175,7 +170,7 @@ class PropertyImageStack extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          PropertyDetailScreen(locationByMonth),
+                          PropertyDetail(locationByMonth: locationByMonth),
                     ),
                   );
                 },
@@ -209,7 +204,7 @@ class PropertyImageStack extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${_getMonthAbbreviation(locationByMonth.first['month'])} ${locationByMonth.first['year']}',
+                          '${getMonthAbbreviation(locationByMonth.first['month'])} ${locationByMonth.first['year']}',
                           style: TextStyle(
                             fontFamily: 'Open Sans',
                             fontWeight: FontWeight.w300,
@@ -267,7 +262,7 @@ class PropertyImageStack extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          PropertyDetailScreen(locationByMonth),
+                          PropertyDetail(locationByMonth: locationByMonth),
                     ),
                   );
                 },
@@ -293,14 +288,15 @@ class PropertyImageStack extends StatelessWidget {
 }
 
 class ViewAllProperty extends StatelessWidget {
-  const ViewAllProperty({Key? key}) : super(key: key);
+  final NewDashboardVM model;
+  const ViewAllProperty({required this.model, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => allPropertyScreen(locationByMonth: DashboardVM().locationByMonth)));
+            MaterialPageRoute(builder: (context) => allPropertyScreen(locationByMonth: model.locationByMonth)));
       },
       child: Container(
         width: 51.width,

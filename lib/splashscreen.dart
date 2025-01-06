@@ -3,6 +3,7 @@ import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/provider/version_checker.dart';
 import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
 import 'package:mana_mana_app/screens/Login/View/Introduction/owner_welcome_screen.dart';
+import 'package:mana_mana_app/screens/New_Dashboard/View/new_dashboard.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -52,7 +53,7 @@ class _SplashScreenState extends State<Splashscreen>
           if (success) {
             print('Login successful');
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => NewDashboardPage()));
+                MaterialPageRoute(builder: (_) => NewDashboard()));
           } else {
             print('Login failed');
           }
@@ -72,7 +73,7 @@ class _SplashScreenState extends State<Splashscreen>
             // Navigate to home page or show success message
             print('Login successful');
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => NewDashboardPage()));
+                MaterialPageRoute(builder: (_) => NewDashboard()));
           } else {
             // Show error message
             print('Login failed');

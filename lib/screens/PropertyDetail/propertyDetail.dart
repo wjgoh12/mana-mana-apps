@@ -15,16 +15,16 @@ import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class propertyDetailScreen extends StatefulWidget {
+class PropertyDetailScreen extends StatefulWidget {
   List<Map<String, dynamic>> locationByMonth;
-  propertyDetailScreen(this.locationByMonth, {super.key});
+  PropertyDetailScreen(this.locationByMonth, {super.key});
 
   @override
-  State<propertyDetailScreen> createState() =>
+  State<PropertyDetailScreen> createState() =>
       _PersonalMillerzSquare1ScreenState();
 }
 
-class _PersonalMillerzSquare1ScreenState extends State<propertyDetailScreen> {
+class _PersonalMillerzSquare1ScreenState extends State<PropertyDetailScreen> {
   final PropertyListRepository ownerPropertyList_repository =
       PropertyListRepository();
   bool isClicked = false;

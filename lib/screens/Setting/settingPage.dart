@@ -15,39 +15,39 @@ class SettingPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 15.width,
-    centerTitle: true,
-    leading: Padding(
-      padding: EdgeInsets.only(left: 7.width),
-      child: InkWell(
-          onTap: () => Navigator.pop(context),
-          child: Image.asset(
-            'assets/images/return.png',
-          )),
-    ),
+        centerTitle: true,
+        leading: Padding(
+          padding: EdgeInsets.only(left: 7.width),
+          child: InkWell(
+              onTap: () => Navigator.pop(context),
+              child: Image.asset(
+                'assets/images/return.png',
+              )),
+        ),
         title: Text(
-            'Settings',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              foreground: Paint()
-                ..shader = LinearGradient(
-                  colors: [Color(0xFF2900B7), Color(0xFF120051)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ).createShader(Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
-            ),
+          'Settings',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            foreground: Paint()
+              ..shader = LinearGradient(
+                colors: [Color(0xFF2900B7), Color(0xFF120051)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
           ),
+        ),
         // centerTitle: true,
-    //     leading: Padding(
-    //   padding: EdgeInsets.only(left: 7.width),
-    //   child: InkWell(
-    //       onTap: () => Navigator.pop(context),
-    //       child: Image.asset(
-    //         'assets/images/return.png',
-    //       )),
-    // ),
+        //     leading: Padding(
+        //   padding: EdgeInsets.only(left: 7.width),
+        //   child: InkWell(
+        //       onTap: () => Navigator.pop(context),
+        //       child: Image.asset(
+        //         'assets/images/return.png',
+        //       )),
+        // ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 30 , left: 20, right: 20),
+        padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -73,7 +73,10 @@ class SettingPage extends StatelessWidget {
                     ),
                     Text(
                       'Property Owner',
-                      style: TextStyle(color: Color(0xFF555555), fontWeight: FontWeight.w300),                    ),
+                      style: TextStyle(
+                          color: Color(0xFF555555),
+                          fontWeight: FontWeight.w300),
+                    ),
                   ],
                 ),
                 Spacer(),
@@ -142,17 +145,18 @@ class SettingPage extends StatelessWidget {
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF4313E9)),            ),
+                  color: Color(0xFF4313E9)),
+            ),
             SizedBox(height: 8),
             Card(
               color: Colors.white,
               child: ListTile(
                 leading: Image.asset('assets/images/profileIcon.png'),
                 title: Text('Personal and Financial Details',
-                    style: TextStyle(color: Color(0XFF4313E9),fontWeight: FontWeight.w700)),
-                              trailing: CircularArrowButton(),                     
-                              
-                    onTap: () {
+                    style: TextStyle(
+                        color: Color(0XFF4313E9), fontWeight: FontWeight.w700)),
+                trailing: CircularArrowButton(),
+                onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => const OwnerProfileScreen()));
                 },
@@ -164,7 +168,8 @@ class SettingPage extends StatelessWidget {
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF4313E9)),            ),
+                  color: Color(0xFF4313E9)),
+            ),
             SizedBox(height: 8),
             Card(
               color: Colors.white,
@@ -174,10 +179,13 @@ class SettingPage extends StatelessWidget {
                     leading: Container(
                       width: 35,
                       height: 35,
-                      child: Image.asset('assets/images/emailIcon.png', fit: BoxFit.contain),
+                      child: Image.asset('assets/images/emailIcon.png',
+                          fit: BoxFit.contain),
                     ),
                     title: Text('Email',
-                        style: TextStyle(color: Color(0XFF4313E9), fontWeight: FontWeight.w700)),
+                        style: TextStyle(
+                            color: Color(0XFF4313E9),
+                            fontWeight: FontWeight.w700)),
                     trailing: CircularArrowButton(),
                     onTap: () {
                       final Uri _emailLaunchUri = Uri(
@@ -191,10 +199,13 @@ class SettingPage extends StatelessWidget {
                     leading: Container(
                       width: 35,
                       height: 35,
-                      child: Image.asset('assets/images/dialerIcon.png', fit: BoxFit.contain),
+                      child: Image.asset('assets/images/dialerIcon.png',
+                          fit: BoxFit.contain),
                     ),
                     title: Text('Telephone',
-                        style: TextStyle(color: Color(0XFF4313E9), fontWeight: FontWeight.w700)),
+                        style: TextStyle(
+                            color: Color(0XFF4313E9),
+                            fontWeight: FontWeight.w700)),
                     trailing: CircularArrowButton(),
                     onTap: () {
                       launchUrl(Uri.parse('tel:+60327795035'));
@@ -204,10 +215,13 @@ class SettingPage extends StatelessWidget {
                     leading: Container(
                       width: 35,
                       height: 35,
-                      child: Image.asset('assets/images/whatsappIcon.png', fit: BoxFit.contain),
+                      child: Image.asset('assets/images/whatsappIcon.png',
+                          fit: BoxFit.contain),
                     ),
                     title: Text('WhatsApp',
-                        style: TextStyle(color: Color(0XFF4313E9), fontWeight: FontWeight.w700)),
+                        style: TextStyle(
+                            color: Color(0XFF4313E9),
+                            fontWeight: FontWeight.w700)),
                     trailing: CircularArrowButton(),
                     onTap: () {
                       launchUrl(Uri.parse('https://wa.me/60125626784'));
@@ -280,11 +294,15 @@ class SettingPage extends StatelessWidget {
                   children: [
                     TextButton(
                       onPressed: () {
-                        launchUrl(Uri.parse('https://www.manamanasuites.com/terms-conditions'));
+                        launchUrl(Uri.parse(
+                            'https://www.manamanasuites.com/terms-conditions'));
                       },
                       child: const Text(
                         'Terms & Conditions',
-                        style: TextStyle(color: Color(0XFF4313E9), fontSize: 16, decoration: TextDecoration.underline),
+                        style: TextStyle(
+                            color: Color(0XFF4313E9),
+                            fontSize: 16,
+                            decoration: TextDecoration.underline),
                       ),
                     ),
                     Text(
@@ -293,11 +311,15 @@ class SettingPage extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                        launchUrl(Uri.parse('https://www.manamanasuites.com/privacy-policy'));
+                        launchUrl(Uri.parse(
+                            'https://www.manamanasuites.com/privacy-policy'));
                       },
                       child: const Text(
                         'Privacy Policy',
-                        style: TextStyle(color: Color(0XFF4313E9), fontSize: 16, decoration: TextDecoration.underline),
+                        style: TextStyle(
+                            color: Color(0XFF4313E9),
+                            fontSize: 16,
+                            decoration: TextDecoration.underline),
                       ),
                     ),
                   ],

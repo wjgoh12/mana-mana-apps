@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
+import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class BuildRevenueContainers extends StatelessWidget {
-  const BuildRevenueContainers({Key? key}) : super(key: key);
+class RevenueDashboard extends StatelessWidget {
+  final NewDashboardVM model;
+  const RevenueDashboard({required this.model, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,42 +21,40 @@ class BuildRevenueContainers extends StatelessWidget {
         // ),
         // SizedBox(width: 10),
         Expanded(
-          child: _RevenueContainer(
-            title:
-                '${DateTime.now().month != 1 ? DateTime.now().year : DateTime.now().year - 1} Accumulated Profit​',
-            icon: Icons.home_outlined,
-            overallRevenue: false,
-          ),
+          child: RevenueContainer(
+              title:
+                  '${DateTime.now().month != 1 ? DateTime.now().year : DateTime.now().year - 1} Accumulated Profit​',
+              icon: Icons.home_outlined,
+              overallRevenue: false,
+              model: model),
         ),
       ],
     );
   }
 }
 
-class _RevenueContainer extends StatelessWidget {
+class RevenueContainer extends StatelessWidget {
   final String title;
   final IconData icon;
   final bool overallRevenue;
-
-  const _RevenueContainer({
+  final NewDashboardVM model;
+  const RevenueContainer({
     Key? key,
     required this.title,
     required this.icon,
     required this.overallRevenue,
+    required this.model,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final DashboardVM model = DashboardVM();
-    model.monthlyBlcOwner = [];
-    model.monthlyProfitOwner = [];
     return SizedBox(
       width: 40.width,
       height: 11.height,
       child: Stack(
         children: [
           GestureDetector(
-            onTap: () => model.updateOverallRevenueAmount(),
+            // onTap: () => model.updateOverallRevenueAmount(),
             child: Container(
               padding: !Responsive.isMobile(context)
                   ? EdgeInsets.only(
@@ -159,56 +158,39 @@ class _RevenueContainer extends StatelessWidget {
   }
 
   Widget _buildAmountText() {
-    return ListenableBuilder(
-      listenable: DashboardVM(),
-      builder: (context, _) {
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'RM',
-              style: TextStyle(
-                fontFamily: 'Open Sans',
-                fontWeight: FontWeight.w700,
-                fontSize: 15.fSize,
-                color: const Color(0XFF2900B7),
-              ),
-            ),
-            SizedBox(width: 1.width),
-            FutureBuilder<dynamic>(
-              future: overallRevenue
-                  ? DashboardVM().overallBalance
-                  : DashboardVM().overallProfit,
-              builder: (context, snapshot) {
-                if (DashboardVM().isLoading) {
-                  // if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SizedBox(
-                    width: 25,
-                    height: 25,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final value = snapshot.data ?? 0.00;
-                  return Text(
-                    NumberFormat('#,##0.00').format(value),
-                    // (value is double ? value : 0.00).toStringAsFixed(2),
-                    style: TextStyle(
-                      fontFamily: 'Open Sans',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20.fSize,
-                      color: const Color(0XFF2900B7),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
-        );
-      },
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'RM',
+          style: TextStyle(
+            fontFamily: 'Open Sans',
+            fontWeight: FontWeight.w700,
+            fontSize: 15.fSize,
+            color: const Color(0XFF2900B7),
+          ),
+        ),
+        SizedBox(width: 1.width),
+        FutureBuilder<dynamic>(
+          future: overallRevenue ? model.overallBalance : model.overallProfit,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              final value = snapshot.data ?? 0.00;
+              return Text(
+                NumberFormat('#,##0.00').format(value),
+                style: TextStyle(
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20.fSize,
+                  color: const Color(0XFF2900B7),
+                ),
+              );
+            }
+          },
+        ),
+      ],
     );
   }
 

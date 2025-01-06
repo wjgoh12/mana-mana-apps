@@ -41,6 +41,7 @@ class PropertyListRepository {
     };
   
     final res = await _apiService.postWithBytes(ApiEndpoint.DOWNLOAD_PDF_STATEMENT, data: data);
+    
     if (res is Uint8List) {
       final pdfBytes = res;
       final tempDir = await getTemporaryDirectory();
