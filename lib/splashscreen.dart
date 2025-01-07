@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/provider/version_checker.dart';
-import 'package:mana_mana_app/screens/Dashboard/View/dashboard.dart';
-import 'package:mana_mana_app/screens/Login/View/Introduction/owner_welcome_screen.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/new_dashboard.dart';
 
 class Splashscreen extends StatefulWidget {
@@ -14,7 +12,6 @@ class Splashscreen extends StatefulWidget {
 
 class _SplashScreenState extends State<Splashscreen>
     with SingleTickerProviderStateMixin {
-  bool _checkedForUpdates = false;
 
   @override
   void initState() {
@@ -30,15 +27,15 @@ class _SplashScreenState extends State<Splashscreen>
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: Text('Update Available'),
+            title: const Text('Update Available'),
             content:
-                Text('A new version is available. Please update to continue.'),
+                const Text('A new version is available. Please update to continue.'),
             actions: [
               TextButton(
                 onPressed: () {
                   versionChecker.launchUpdate();
                 },
-                child: Text('Update Now'),
+                child: const Text('Update Now'),
               ),
             ],
           ),
@@ -51,11 +48,9 @@ class _SplashScreenState extends State<Splashscreen>
         bool success = await authService.authenticate();
         if (mounted) {
           if (success) {
-            print('Login successful');
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => NewDashboard()));
+                MaterialPageRoute(builder: (_) => const NewDashboard()));
           } else {
-            print('Login failed');
           }
         }
       });
@@ -71,12 +66,10 @@ class _SplashScreenState extends State<Splashscreen>
           bool success = await authService.authenticate();
           if (success) {
             // Navigate to home page or show success message
-            print('Login successful');
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => NewDashboard()));
+                MaterialPageRoute(builder: (_) => const NewDashboard()));
           } else {
             // Show error message
-            print('Login failed');
           }
         },
         child: Container(
@@ -98,15 +91,15 @@ class _SplashScreenState extends State<Splashscreen>
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          title: Text('Update Available'),
+          title: const Text('Update Available'),
           content:
-              Text('A new version is available. Please update to continue.'),
+              const Text('A new version is available. Please update to continue.'),
           actions: [
             TextButton(
               onPressed: () {
                 versionChecker.launchUpdate();
               },
-              child: Text('Update Now'),
+              child: const Text('Update Now'),
             ),
           ],
         ),
