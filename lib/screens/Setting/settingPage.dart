@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_user_state.dart';
-import 'package:mana_mana_app/screens/Profile/OwnerProfileScreen.dart';
+import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,11 +29,11 @@ class SettingPage extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             foreground: Paint()
-              ..shader = LinearGradient(
+              ..shader = const LinearGradient(
                 colors: [Color(0xFF2900B7), Color(0xFF120051)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-              ).createShader(Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
+              ).createShader(const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
           ),
         ),
         // centerTitle: true,
@@ -60,18 +60,18 @@ class SettingPage extends StatelessWidget {
                   height: 60,
                   fit: BoxFit.cover,
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       users.first.ownerFullName ?? '',
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Color(0XFF4313E9)),
                     ),
-                    Text(
+                    const Text(
                       'Property Owner',
                       style: TextStyle(
                           color: Color(0xFF555555),
@@ -79,7 +79,7 @@ class SettingPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                Spacer(),
+                const Spacer(),
                 // Column(
                 //   children: [
                 //     Text('View Details', style: TextStyle(color: Colors.blue)),
@@ -93,7 +93,7 @@ class SettingPage extends StatelessWidget {
                 // ),
               ],
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
 
             // My Earnings Section
             // Text(
@@ -140,89 +140,89 @@ class SettingPage extends StatelessWidget {
             // SizedBox(height: 32),
 
             // My Profile Section
-            Text(
+            const Text(
               'My Profile',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF4313E9)),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Card(
               color: Colors.white,
               child: ListTile(
                 leading: Image.asset('assets/images/profileIcon.png'),
-                title: Text('Personal and Financial Details',
+                title: const Text('Personal and Financial Details',
                     style: TextStyle(
                         color: Color(0XFF4313E9), fontWeight: FontWeight.w700)),
-                trailing: CircularArrowButton(),
+                trailing: const CircularArrowButton(),
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => const OwnerProfileScreen()));
+                      builder: (_) => const OwnerProfile()));
                 },
               ),
             ),
-            SizedBox(height: 32),
-            Text(
+            const SizedBox(height: 32),
+            const Text(
               'Contact Us',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF4313E9)),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Card(
               color: Colors.white,
               child: Column(
                 children: [
                   ListTile(
-                    leading: Container(
+                    leading: SizedBox(
                       width: 35,
                       height: 35,
                       child: Image.asset('assets/images/emailIcon.png',
                           fit: BoxFit.contain),
                     ),
-                    title: Text('Email',
+                    title: const Text('Email',
                         style: TextStyle(
                             color: Color(0XFF4313E9),
                             fontWeight: FontWeight.w700)),
-                    trailing: CircularArrowButton(),
+                    trailing: const CircularArrowButton(),
                     onTap: () {
-                      final Uri _emailLaunchUri = Uri(
+                      final Uri emailLaunchUri = Uri(
                         scheme: 'mailto',
                         path: 'admin@manamanasuites.com',
                       );
-                      launchUrl(_emailLaunchUri);
+                      launchUrl(emailLaunchUri);
                     },
                   ),
                   ListTile(
-                    leading: Container(
+                    leading: SizedBox(
                       width: 35,
                       height: 35,
                       child: Image.asset('assets/images/dialerIcon.png',
                           fit: BoxFit.contain),
                     ),
-                    title: Text('Telephone',
+                    title: const Text('Telephone',
                         style: TextStyle(
                             color: Color(0XFF4313E9),
                             fontWeight: FontWeight.w700)),
-                    trailing: CircularArrowButton(),
+                    trailing: const CircularArrowButton(),
                     onTap: () {
                       launchUrl(Uri.parse('tel:+60327795035'));
                     },
                   ),
                   ListTile(
-                    leading: Container(
+                    leading: SizedBox(
                       width: 35,
                       height: 35,
                       child: Image.asset('assets/images/whatsappIcon.png',
                           fit: BoxFit.contain),
                     ),
-                    title: Text('WhatsApp',
+                    title: const Text('WhatsApp',
                         style: TextStyle(
                             color: Color(0XFF4313E9),
                             fontWeight: FontWeight.w700)),
-                    trailing: CircularArrowButton(),
+                    trailing: const CircularArrowButton(),
                     onTap: () {
                       launchUrl(Uri.parse('https://wa.me/60125626784'));
                     },
@@ -252,7 +252,7 @@ class SettingPage extends StatelessWidget {
             //     },
             //   ),
             // ),
-            Spacer(),
+            const Spacer(),
             Center(
               child: TextButton(
                 onPressed: () async {
@@ -260,17 +260,17 @@ class SettingPage extends StatelessWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Confirm Logout'),
-                        content: Text('Are you sure you want to log out?'),
+                        title: const Text('Confirm Logout'),
+                        content: const Text('Are you sure you want to log out?'),
                         actions: <Widget>[
                           TextButton(
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
                           ),
                           TextButton(
-                            child: Text('Logout'),
+                            child: const Text('Logout'),
                             onPressed: () async {
                               await AuthService().logout(context);
                             },
@@ -288,7 +288,7 @@ class SettingPage extends StatelessWidget {
             ),
             Center(
               child: Padding(
-                padding: EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -305,7 +305,7 @@ class SettingPage extends StatelessWidget {
                             decoration: TextDecoration.underline),
                       ),
                     ),
-                    Text(
+                    const Text(
                       ' | ',
                       style: TextStyle(color: Color(0XFF4313E9), fontSize: 16),
                     ),
@@ -334,6 +334,8 @@ class SettingPage extends StatelessWidget {
 }
 
 class CircularArrowButton extends StatelessWidget {
+  const CircularArrowButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -345,11 +347,11 @@ class CircularArrowButton extends StatelessWidget {
             color: Colors.grey.withOpacity(0.25),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: CircleAvatar(
+      child: const CircleAvatar(
         backgroundColor: Colors.white,
         child: Icon(Icons.arrow_forward, color: Color(0XFF4313E9)),
       ),

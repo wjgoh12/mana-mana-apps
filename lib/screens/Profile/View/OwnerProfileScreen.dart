@@ -26,16 +26,16 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               foreground: Paint()
-                ..shader = LinearGradient(
+                ..shader = const LinearGradient(
                   colors: [Color(0xFF2900B7), Color(0xFF120051)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                ).createShader(Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
+                ).createShader(const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
             ),
           ),
           centerTitle: true,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -100,7 +100,7 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                         // widthFactor: 0.5,
                         child: Container(
                           height: 2,
-                          color: _showMyInfo ? Color(0XFF4313E9) : Colors.grey,
+                          color: _showMyInfo ? const Color(0XFF4313E9) : Colors.grey,
                         ),
                       ),
                     ),
@@ -109,13 +109,13 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                         // widthFactor: 0.5,
                         child: Container(
                           height: 2,
-                          color: _showMyInfo ? Colors.grey : Color(0XFF4313E9),
+                          color: _showMyInfo ? Colors.grey : const Color(0XFF4313E9),
                         ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 if (_showMyInfo)
                   // Info Card
@@ -143,7 +143,7 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              const Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
@@ -215,7 +215,7 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              const Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
@@ -228,7 +228,7 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               // OwnerProperty.first.bank.toString()
                               buildInfoRow(
                                   Icons.account_balance, 'Banking Details'),
@@ -237,7 +237,7 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                                           OwnerProperty.first.bank == null
                                       ? 'No Information'
                                       : OwnerProperty.first.bank.toString()),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               buildInfoInRow(OwnerProperty.first.accountnumber
                                           .toString()
                                           .isEmpty ||
@@ -245,7 +245,7 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                                   ? 'No Information'
                                   : OwnerProperty.first.accountnumber
                                       .toString()),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               // buildInfoRow(Icons.account_balance_wallet, 'Membership'),
                               // buildInfoInRow(OwnerProperty.first.accountnumber.toString()),
                               // SizedBox(height: 16),
@@ -254,7 +254,7 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                         ),
                       ])),
 
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // All Agreements
                 // Text(
@@ -278,7 +278,7 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                 //     },
                 //   ),
                 // ),
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
 
                 // Payout Overtime
                 // Text(
@@ -297,12 +297,12 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
       child: Row(
         children: [
           const SizedBox(width: 4),
-          Icon(icon, color: Color(0XFF555555), size: 19),
+          Icon(icon, color: const Color(0XFF555555), size: 19),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               info,
-              style: TextStyle(fontSize: 12, color: Color(0XFF555555)),
+              style: const TextStyle(fontSize: 12, color: Color(0XFF555555)),
             ),
           ),
         ],
@@ -312,13 +312,13 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
 
   Widget buildInfoInRow(String info) {
     return Padding(
-      padding: EdgeInsets.only(left: 5, bottom: 15),
+      padding: const EdgeInsets.only(left: 5, bottom: 15),
       child: Row(
         children: [
           Expanded(
             child: Text(
               info,
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 15,
                   color: Color(0XFF4313E9),
                   fontWeight: FontWeight.w600),
