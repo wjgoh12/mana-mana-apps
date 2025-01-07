@@ -194,26 +194,26 @@ class RevenueContainer extends StatelessWidget {
     );
   }
 
-  Widget _buildPercentageText() {
-    return Text.rich(
-      TextSpan(
-        text: '-',
-        style: TextStyle(
-          fontFamily: 'Open Sans',
-          fontWeight: FontWeight.w400,
-          fontSize: 10.fSize,
-          color: const Color(0XFF2900B7),
-        ),
-        children: <InlineSpan>[
-          WidgetSpan(
-            child: Icon(
-              Icons.arrow_drop_up,
-              color: const Color(0XFF42C18B),
-              size: 2.height,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildPercentageText() {
+  //   return Text.rich(
+  //     TextSpan(
+  //       text: '-',
+  //       style: TextStyle(
+  //         fontFamily: 'Open Sans',
+  //         fontWeight: FontWeight.w400,
+  //         fontSize: 10.fSize,
+  //         color: const Color(0XFF2900B7),
+  //       ),
+  //       children: <InlineSpan>[
+  //         WidgetSpan(
+  //           child: Icon(
+  //             Icons.arrow_drop_up,
+  //             color: const Color(0XFF42C18B),
+  //             size: 2.height,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

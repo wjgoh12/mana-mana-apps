@@ -4,11 +4,11 @@ import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
 
 class UnitRevenue extends StatelessWidget {
   final PropertyDetailVM model;
-  UnitRevenue({required this.model, Key? key}) : super(key: key);
+  const UnitRevenue({required this.model, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String _getMonthName(int month) {
+    String getMonthName(int month) {
       switch (month) {
         case 1:
           return 'Jan';
@@ -44,12 +44,12 @@ class UnitRevenue extends StatelessWidget {
       text2:
           'RM ${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
       // text2: 'RM ${selectedUnitPro.total?.toStringAsFixed(2) ?? '0.00'}',
-      text3: '${_getMonthName(model.unitLatestMonth)} ${model.unitLatestYear}',
+      text3: '${getMonthName(model.unitLatestMonth)} ${model.unitLatestYear}',
       text4: 'Net After POB​',
       text5:
           'RM ${model.selectedUnitBlc.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
       // text5: 'RM ${selectedUnitBlc.total?.toStringAsFixed(2) ?? '0.00'}',
-      text6: '${_getMonthName(model.unitLatestMonth)} ${model.unitLatestYear}',
+      text6: '${getMonthName(model.unitLatestMonth)} ${model.unitLatestYear}',
       color: const Color(0XFF4313E9),
       backgroundColor: const Color(0XFFFFFFFF),
     );

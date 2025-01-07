@@ -15,7 +15,7 @@ class PropertyListRepository {
   final ApiService _apiService = ApiService();
 
   Future<List<OwnerPropertyList>> getOwnerUnit() async {
-    return await _apiService.post(ApiEndpoint.OWNER_UNITS).then((res) {
+    return await _apiService.post(ApiEndpoint.ownerUnit).then((res) {
       List<dynamic> value = res ?? [];
       List<OwnerPropertyList> _ = [];
       for (int i = 0; i < value.length; i++) {
@@ -40,7 +40,7 @@ class PropertyListRepository {
       }
     };
   
-    final res = await _apiService.postWithBytes(ApiEndpoint.DOWNLOAD_PDF_STATEMENT, data: data);
+    final res = await _apiService.postWithBytes(ApiEndpoint.downloadPdfStatement, data: data);
     
     if (res is Uint8List) {
       final pdfBytes = res;
@@ -66,9 +66,9 @@ class PropertyListRepository {
                 },
               ),
             ],
-            contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
-            titlePadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
-            actionsPadding: EdgeInsets.fromLTRB(0, 0, 8, 8),
+            contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+            titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+            actionsPadding: const EdgeInsets.fromLTRB(0, 0, 8, 8),
           );
         },
       );
@@ -80,7 +80,7 @@ class PropertyListRepository {
   }
   
   Future<List<Map<String, dynamic>>> revenueByYear() async {
-    return await _apiService.post(ApiEndpoint.DASHBOARD_REVENUE_BY_YEAR).then((res) {
+    return await _apiService.post(ApiEndpoint.dashboardReveueByYear).then((res) {
       if (res is List && res.isNotEmpty) {
         return res.map((item) => {
           'total': item['total'] ?? 0.0,
@@ -93,7 +93,7 @@ class PropertyListRepository {
   }
 
   Future<List<Map<String, dynamic>>> totalByMonth() async {
-    return await _apiService.post(ApiEndpoint.DASHBOARD_TOTAL_BY_MONTH).then((res) {
+    return await _apiService.post(ApiEndpoint.dashboardTotalByMonth).then((res) {
       if (res is List && res.isNotEmpty) {
         return res.map((item) => {
           'total': item['total'] ?? 0.0,
@@ -114,7 +114,7 @@ class PropertyListRepository {
   }
 
   Future<List<Map<String, dynamic>>> locationByMonth() async {
-    return await _apiService.post(ApiEndpoint.LOCATION_BY_MONTH).then((res) {
+    return await _apiService.post(ApiEndpoint.locationByMonth).then((res) {
       if (res is List && res.isNotEmpty) {
         return res.map((item) => {
           'total': item['total'] ?? 0.0,
@@ -127,12 +127,12 @@ class PropertyListRepository {
     });
   }
 
-  Future<List<singleUnitByMonth>> getUnitByMonth() async {
-    return await _apiService.post(ApiEndpoint.GET_UNIT_BY_MONTH).then((res) {
+  Future<List<SingleUnitByMonth>> getUnitByMonth() async {
+    return await _apiService.post(ApiEndpoint.getUnitByMonth).then((res) {
       List<dynamic> value = res ?? [];
-      List<singleUnitByMonth> _ = [];
+      List<SingleUnitByMonth> _ = [];
       for (int i = 0; i < value.length; i++) {
-        _.add(singleUnitByMonth.fromJson(value[i], i, _apiService.baseUrl));
+        _.add(SingleUnitByMonth.fromJson(value[i], i, _apiService.baseUrl));
       }
       return _;
     });

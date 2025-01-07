@@ -3,15 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:mana_mana_app/repository/user_repo.dart';
 import 'package:mana_mana_app/splashscreen.dart';
 import '../env_config.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final FlutterAppAuth _appAuth = FlutterAppAuth();
-  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
-  final UserRepository user_repository = UserRepository();
+  final FlutterAppAuth _appAuth = const FlutterAppAuth();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   DateTime? _tokenExpiryTime;
   Timer? _refreshTimer;
@@ -21,10 +19,10 @@ class AuthService {
       final AuthorizationTokenResponse? result =
           await _appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
-          EnvConfig.keycloak_clientId,
-          EnvConfig.keycloak_redirectUrl,
-          discoveryUrl: EnvConfig.keycloak_discoveryUrl,
-          clientSecret: EnvConfig.keycloak_clientSecret,
+          EnvConfig.keycloakClientId,
+          EnvConfig.keycloakRedirectUrl,
+          discoveryUrl: EnvConfig.keycloakDiscoveryUrl,
+          clientSecret: EnvConfig.keycloakClientSecret,
           scopes: ['openid', 'profile', 'email'],
           preferEphemeralSession: true,
           allowInsecureConnections: true,
@@ -44,7 +42,7 @@ class AuthService {
         return true;
       }
     } catch (e) {
-      print('Error during authentication: $e');
+      // print('Error during authentication: $e');
     }
     return false;
   }
@@ -52,7 +50,7 @@ class AuthService {
   void _startTokenRefreshTimer() {
     final timeUntilExpiry = _tokenExpiryTime!.difference(DateTime.now());
     final refreshTime = timeUntilExpiry -
-        Duration(minutes: 5); // Refresh 5 minutes before expiry
+        const Duration(minutes: 5); // Refresh 5 minutes before expiry
 
     _refreshTimer?.cancel(); // Cancel any existing timer
     _refreshTimer = Timer(refreshTime, () {
@@ -83,7 +81,7 @@ class AuthService {
     String? token = await _secureStorage.read(key: 'refresh_token');
     if (token != null) {
       final String url =
-          '${EnvConfig.api_baseUrl}/mobile/dash/refs/logout?refToken=${token}';
+          '${EnvConfig.apiBaseUrl}/mobile/dash/refs/logout?refToken=$token';
       String? accessToken = await _secureStorage.read(key: 'access_token');
 
       try {
@@ -95,20 +93,20 @@ class AuthService {
         );
 
         if (response.statusCode == 200) {
-          print('API Logout successful');
+          // print('API Logout successful');
         } else {
-          print('Failed to logout: ${response.statusCode}');
-          print('Response body: ${response.body}');
+          // print('Failed to logout: ${response.statusCode}');
+          // print('Response body: ${response.body}');
         }
       } catch (e) {
-        print('Error during logout: $e');
+        // print('Error during logout: $e');
       }
     } else {
-      print('No refresh token found');
+      // print('No refresh token found');
     }
 
     final String url =
-        '${EnvConfig.keycloak_baseUrl}/auth/realms/mana/protocol/openid-connect/logout';
+        '${EnvConfig.keycloakBaseUrl}/auth/realms/mana/protocol/openid-connect/logout';
 
     final response = await http.post(
       Uri.parse(url),
@@ -116,24 +114,24 @@ class AuthService {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: {
-        'post_logout_redirect_uri': EnvConfig.keycloak_redirectUrl,
-        'client_id': EnvConfig.keycloak_clientId,
+        'post_logout_redirect_uri': EnvConfig.keycloakRedirectUrl,
+        'client_id': EnvConfig.keycloakClientId,
         'refresh_token': token,
-        'client_secret': EnvConfig.keycloak_clientSecret,
+        'client_secret': EnvConfig.keycloakClientSecret,
       },
     );
-    print('Response status code: ${response.body}');
+    // print('Response status code: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 204) {
-      print('Keycloak Logout successful');
+      // print('Keycloak Logout successful');
       await _removeAllAppData();
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => Splashscreen()),
+        MaterialPageRoute(builder: (_) => const Splashscreen()),
         (Route<dynamic> route) => false,
       );
     } else {
-      print('Failed to logout: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Failed to logout: ${response.statusCode}');
+      // print('Response body: ${response.body}');
     }
   }
 
@@ -158,10 +156,10 @@ class AuthService {
 
       final TokenResponse? result = await _appAuth.token(
         TokenRequest(
-          EnvConfig.keycloak_clientId,
-          EnvConfig.keycloak_redirectUrl,
-          discoveryUrl: EnvConfig.keycloak_discoveryUrl,
-          clientSecret: EnvConfig.keycloak_clientSecret,
+          EnvConfig.keycloakClientId,
+          EnvConfig.keycloakRedirectUrl,
+          discoveryUrl: EnvConfig.keycloakDiscoveryUrl,
+          clientSecret: EnvConfig.keycloakClientSecret,
           refreshToken: refreshToken,
           scopes: ['openid', 'profile', 'email'],
         ),
@@ -173,14 +171,14 @@ class AuthService {
         await _secureStorage.write(
             key: 'access_token', value: result.accessToken);
         // Update the token expiry time and restart the timer
-        _tokenExpiryTime = DateTime.now().add(Duration(
+        _tokenExpiryTime = DateTime.now().add(const Duration(
             minutes: EnvConfig
                 .tokenExpirationMinutes)); // Reset expiry to 20 minutes
         _startTokenRefreshTimer();
         return true;
       }
     } catch (e, s) {
-      print('Refresh token error: $e - stack: $s');
+      // print('Refresh token error: $e - stack: $s');
     }
     return false;
   }

@@ -8,16 +8,16 @@ class OwnerProfileScreen extends StatefulWidget {
   const OwnerProfileScreen({super.key});
 
   @override
-  _OwnerProfileScreenState createState() => _OwnerProfileScreenState();
+  OwnerProfileScreenState createState() => OwnerProfileScreenState();
 }
 
-class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
+class OwnerProfileScreenState extends State<OwnerProfileScreen> {
   bool _showMyInfo = true;
 
   @override
   Widget build(BuildContext context) {
     List<User> users = GlobalUserState.instance.getUsers();
-    List<OwnerPropertyList> OwnerProperty =
+    List<OwnerPropertyList> ownerProperty =
         GlobalOwnerState.instance.getOwnerData();
     return Scaffold(
         appBar: AppBar(
@@ -64,9 +64,10 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w400,
-                              color:
-                                  _showMyInfo ? const Color(0XFF4313E9) : const Color(0xFFBBBCBE),                            
-                                  ),
+                              color: _showMyInfo
+                                  ? const Color(0XFF4313E9)
+                                  : const Color(0xFFBBBCBE),
+                            ),
                           ),
                         ),
                       ),
@@ -84,8 +85,9 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w400,
-                              color:
-                                  _showMyInfo ? const Color(0xFFBBBCBE) : const Color(0XFF4313E9),
+                              color: _showMyInfo
+                                  ? const Color(0xFFBBBCBE)
+                                  : const Color(0XFF4313E9),
                             ),
                           ),
                         ),
@@ -100,7 +102,9 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                         // widthFactor: 0.5,
                         child: Container(
                           height: 2,
-                          color: _showMyInfo ? const Color(0XFF4313E9) : Colors.grey,
+                          color: _showMyInfo
+                              ? const Color(0XFF4313E9)
+                              : Colors.grey,
                         ),
                       ),
                     ),
@@ -109,7 +113,9 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                         // widthFactor: 0.5,
                         child: Container(
                           height: 2,
-                          color: _showMyInfo ? Colors.grey : const Color(0XFF4313E9),
+                          color: _showMyInfo
+                              ? Colors.grey
+                              : const Color(0XFF4313E9),
                         ),
                       ),
                     ),
@@ -193,7 +199,7 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                 else
                   // Banking Info Card (placeholder)
                   Card(
-                    color: Colors.white,
+                      color: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -233,17 +239,17 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                               buildInfoRow(
                                   Icons.account_balance, 'Banking Details'),
                               buildInfoInRow(
-                                  OwnerProperty.first.bank.toString().isEmpty ||
-                                          OwnerProperty.first.bank == null
+                                  ownerProperty.first.bank.toString().isEmpty ||
+                                          ownerProperty.first.bank == null
                                       ? 'No Information'
-                                      : OwnerProperty.first.bank.toString()),
+                                      : ownerProperty.first.bank.toString()),
                               const SizedBox(height: 8),
-                              buildInfoInRow(OwnerProperty.first.accountnumber
+                              buildInfoInRow(ownerProperty.first.accountnumber
                                           .toString()
                                           .isEmpty ||
-                                      OwnerProperty.first.accountnumber == null
+                                      ownerProperty.first.accountnumber == null
                                   ? 'No Information'
-                                  : OwnerProperty.first.accountnumber
+                                  : ownerProperty.first.accountnumber
                                       .toString()),
                               const SizedBox(height: 8),
                               // buildInfoRow(Icons.account_balance_wallet, 'Membership'),

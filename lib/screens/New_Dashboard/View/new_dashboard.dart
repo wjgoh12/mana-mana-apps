@@ -58,7 +58,6 @@ class NewDashboard extends StatelessWidget {
                             child: RefreshIndicator(
                               onRefresh: () async {
                                 await model.refreshData();
-                                
                               },
                               child: SingleChildScrollView(
                                 child: Column(

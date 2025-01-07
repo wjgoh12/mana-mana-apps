@@ -1,4 +1,4 @@
-class singleUnitByMonth{
+class SingleUnitByMonth{
   double? total;
   String? slocation;
   String? stype;
@@ -7,7 +7,7 @@ class singleUnitByMonth{
   int? iyear;
   String? stranscode;
 
-  singleUnitByMonth({
+  SingleUnitByMonth({
     this.total,
     this.slocation,
     this.stype,
@@ -17,7 +17,7 @@ class singleUnitByMonth{
     this.stranscode
   });
 
-  singleUnitByMonth.fromJson(Map<String, dynamic> json, int index, String prefix){
+  SingleUnitByMonth.fromJson(Map<String, dynamic> json, int index, String prefix){
     total = json['total'];
     slocation = json['slocation'];
     stype = json['stype'];

@@ -4,7 +4,6 @@ import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selec
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/unit_revenue.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
-import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';

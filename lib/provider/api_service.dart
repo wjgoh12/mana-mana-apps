@@ -5,7 +5,7 @@ import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/config/env_config.dart';
 
 class ApiService {
-  final String baseUrl = EnvConfig.api_baseUrl;
+  final String baseUrl = EnvConfig.apiBaseUrl;
 
   Future<dynamic> post(String url, {Map<String, dynamic>? data}) async {
     final AuthService authService = AuthService();

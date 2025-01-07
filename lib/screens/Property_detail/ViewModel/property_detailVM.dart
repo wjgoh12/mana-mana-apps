@@ -11,7 +11,7 @@ class PropertyDetailVM extends ChangeNotifier {
   String? selectedType;
   String? selectedUnitNo;
   List<OwnerPropertyList> ownerData = [];
-  List<singleUnitByMonth> unitByMonth = [];
+  List<SingleUnitByMonth> unitByMonth = [];
   List<String> yearItems = [];
   List<String> monthItems = [];
   List<String> typeItems = [];
@@ -118,7 +118,7 @@ class PropertyDetailVM extends ChangeNotifier {
             unit.imonth == unitLatestMonth &&
             unit.iyear == unitLatestYear &&
             unit.stranscode == 'OWNBAL',
-        orElse: () => singleUnitByMonth(total: 0.00));
+        orElse: () => SingleUnitByMonth(total: 0.00));
 
     selectedUnitPro = unitByMonth.firstWhere(
         (unit) =>
@@ -128,7 +128,7 @@ class PropertyDetailVM extends ChangeNotifier {
             unit.imonth == unitLatestMonth &&
             unit.iyear == unitLatestYear &&
             unit.stranscode == 'NOPROF',
-        orElse: () => singleUnitByMonth(total: 0.00));
+        orElse: () => SingleUnitByMonth(total: 0.00));
 
     if (unitByMonth.isNotEmpty) {
       yearItems = unitByMonth
@@ -172,7 +172,7 @@ class PropertyDetailVM extends ChangeNotifier {
             unit.imonth == unitLatestMonth &&
             unit.iyear == unitLatestYear &&
             unit.stranscode == 'OWNBAL',
-        orElse: () => singleUnitByMonth(total: 0.00));
+        orElse: () => SingleUnitByMonth(total: 0.00));
 
     selectedUnitPro = unitByMonth.firstWhere(
         (unit) =>
@@ -182,7 +182,7 @@ class PropertyDetailVM extends ChangeNotifier {
             unit.imonth == unitLatestMonth &&
             unit.iyear == unitLatestYear &&
             unit.stranscode == 'NOPROF',
-        orElse: () => singleUnitByMonth(total: 0.00));
+        orElse: () => SingleUnitByMonth(total: 0.00));
     notifyListeners();
   }
 
@@ -197,11 +197,11 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   Future<void> downloadPdfStatement(BuildContext context) async {
-    print(property);
-    print(selectedYearValue);
-    print(selectedMonthValue);
-    print(selectedType);
-    print(selectedUnitNo);
+    // print(property);
+    // print(selectedYearValue);
+    // print(selectedMonthValue);
+    // print(selectedType);
+    // print(selectedUnitNo);
     await ownerPropertyListRepository.downloadPdfStatement(context, property,
         selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo);
   }

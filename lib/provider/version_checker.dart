@@ -38,16 +38,13 @@ class VersionChecker {
     if (response.statusCode == 200) {
       final RegExp regex = RegExp(r'\[\[\["(\d+\.\d+\.\d+)"\]\]');
       final match = regex.firstMatch(response.body);
-      print('Current app version: $currentVersion');
       if (match != null) {
         final storeVersion = match.group(1)!;
-        print('Store version: $storeVersion');
         return _compareVersions(currentVersion, storeVersion);
       }
     }
-    print('Response status code: ${response.statusCode}');
   } catch (e) {
-    print('Play Store check error: $e');
+    // print('Play Store check error: $e');
   }
   return false;
 }

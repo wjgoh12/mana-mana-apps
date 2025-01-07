@@ -9,13 +9,13 @@ class GlobalUnitByMonthState {
   
   GlobalUnitByMonthState._internal();
   
-  List<singleUnitByMonth> _UnitByMonthData = [];
+  List<SingleUnitByMonth> unitByMonthData = [];
   
-  void setUnitByMonthData(List<singleUnitByMonth> UnitByMonthData) {
-    _UnitByMonthData = UnitByMonthData;
+  void setUnitByMonthData(List<SingleUnitByMonth> unitByMonthDataList) {
+    unitByMonthData = unitByMonthDataList;
   }
   
-  List<singleUnitByMonth> getUnitByMonthData() {
-    return _UnitByMonthData;
+  List<SingleUnitByMonth> getUnitByMonthData() {
+    return unitByMonthData;
   }
 }

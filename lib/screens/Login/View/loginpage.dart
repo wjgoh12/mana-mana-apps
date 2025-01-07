@@ -3,11 +3,13 @@ import 'package:mana_mana_app/screens/Login/View/Introduction/owner_welcome_scre
 import 'package:mana_mana_app/screens/Login/View/Introduction/owner_welcome_screenVM.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -34,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
                     icon: const Icon(Icons.arrow_back),
                     color: const Color(0XFF4313E9),
                     onPressed: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> OnboardingScreen()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> const OnboardingScreen()));
                     },
                   ),
                   SizedBox(height: screenSize.height * 0.03),
