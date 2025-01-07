@@ -5,7 +5,6 @@ import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 import 'package:mana_mana_app/splashscreen.dart';
-import 'package:path_provider/path_provider.dart';
 import '../env_config.dart';
 import 'package:http/http.dart' as http;
 
@@ -38,7 +37,7 @@ class AuthService {
         await _secureStorage.write(
             key: 'refresh_token', value: result.refreshToken);
         // Calculate the token expiration time and start the timer
-        _tokenExpiryTime = DateTime.now().add(Duration(
+        _tokenExpiryTime = DateTime.now().add(const Duration(
             minutes:
                 EnvConfig.tokenExpirationMinutes)); // Set expiry to 20 minutes
         _startTokenRefreshTimer();

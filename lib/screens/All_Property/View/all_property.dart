@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/PropertyDetail/propertyDetail.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class allPropertyScreen extends StatelessWidget {
+class AllPropertyScreen extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
-  allPropertyScreen({required this.locationByMonth, super.key});
+  const AllPropertyScreen({required this.locationByMonth, super.key});
 
   @override
   Widget build(BuildContext context) {

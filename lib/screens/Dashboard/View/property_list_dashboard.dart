@@ -300,7 +300,7 @@ class ViewAllProperty extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => allPropertyScreen(locationByMonth: DashboardVM().locationByMonth)));
+            MaterialPageRoute(builder: (context) => AllPropertyScreen(locationByMonth: DashboardVM().locationByMonth)));
       },
       child: Container(
         width: 51.width,
