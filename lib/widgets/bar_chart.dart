@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/Dashboard/ViewModel/dashboardVM.dart';
+import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
@@ -35,7 +35,7 @@ class BarChartSample7 extends StatefulWidget {
     Colors.black,
   ];
   final monthColor =
-      LinearGradient(colors: [Color(0xFF2900B7), Color(0xFF120051)]);
+      const LinearGradient(colors: [Color(0xFF2900B7), Color(0xFF120051)]);
   @override
   State<BarChartSample7> createState() => _BarChartSample7State();
 }
@@ -72,9 +72,9 @@ class _BarChartSample7State extends State<BarChartSample7> {
 
   @override
   Widget build(BuildContext context) {
-    DashboardVM model = DashboardVM();
+    NewDashboardVM model = NewDashboardVM();
     return ListenableBuilder(
-        listenable: DashboardVM(),
+        listenable: NewDashboardVM(),
         builder: (context, _) {
           final dataList = [
             ...List.generate(
