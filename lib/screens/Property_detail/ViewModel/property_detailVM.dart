@@ -21,6 +21,8 @@ class PropertyDetailVM extends ChangeNotifier {
   int unitLatestYear = 0;
   bool isLoading = true;
   String selectedValue = '';
+  bool _isDownloading = false;
+  bool get isDownloading => _isDownloading;
   // List<singleUnitByMonth> selectedUnitBlc = [];
   var selectedUnitBlc;
   var selectedUnitPro;
@@ -197,6 +199,8 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   Future<void> downloadPdfStatement(BuildContext context) async {
+    _isDownloading = true;
+    notifyListeners();
     // print(property);
     // print(selectedYearValue);
     // print(selectedMonthValue);
@@ -204,6 +208,8 @@ class PropertyDetailVM extends ChangeNotifier {
     // print(selectedUnitNo);
     await ownerPropertyListRepository.downloadPdfStatement(context, property,
         selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo);
+        _isDownloading = false;
+    notifyListeners();
   }
 
   Future<void> refreshData() async {

@@ -210,14 +210,23 @@ class MonthlyStatementContainer extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: 8.width, vertical: 0.5.height),
-                child: Text(
-                  'Download PDF',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.fSize,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                child: model.isDownloading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Text(
+                        'Download PDF',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.fSize,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
             )
             // _buildMonthlyStatementContent(),
