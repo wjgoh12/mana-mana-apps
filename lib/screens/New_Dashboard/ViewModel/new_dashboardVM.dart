@@ -27,15 +27,13 @@ class NewDashboardVM extends ChangeNotifier {
   Future get overallBalance => Future.delayed(
       const Duration(milliseconds: 500),
       () => revenueDashboard.isNotEmpty
-          ? revenueDashboard.firstWhere(
-              (item) => item["transcode"] == "OWNBAL",
+          ? revenueDashboard.firstWhere((item) => item["transcode"] == "OWNBAL",
               orElse: () => {"total": 0.0})["total"]
           : 0.0).then((value) => value);
   Future get overallProfit => Future.delayed(
       const Duration(milliseconds: 500),
       () => revenueDashboard.isNotEmpty
-          ? revenueDashboard.firstWhere(
-              (item) => item["transcode"] == "NOPROF",
+          ? revenueDashboard.firstWhere((item) => item["transcode"] == "NOPROF",
               orElse: () => {"total": 0.0})["total"]
           : 0.0).then((value) => value);
 
@@ -73,6 +71,12 @@ class NewDashboardVM extends ChangeNotifier {
                 : current)['month'];
 
     isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> refreshData() async {
+    await Future.delayed(const Duration(seconds: 1));
+    fetchData();
     notifyListeners();
   }
 }

@@ -205,4 +205,10 @@ class PropertyDetailVM extends ChangeNotifier {
     await ownerPropertyListRepository.downloadPdfStatement(context, property,
         selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo);
   }
+
+  Future<void> refreshData() async {
+    await Future.delayed(const Duration(seconds: 1));
+    fetchData(locationByMonth);
+    notifyListeners();
+  }
 }

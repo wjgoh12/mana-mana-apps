@@ -34,37 +34,43 @@ class PropertyDetail extends StatelessWidget {
                       value: null,
                     ),
                   )
-                : SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 7.width),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 2.height),
-                          propertyStack(
-                            image: model.property,
-                            text1: model.property,
-                            text2: model.locationRoad,
-                            width: 86.width,
-                            height: 12.height,
-                          ),
-                          SizedBox(height: 2.height),
-                          // _buildOverallRevenue(),
-                          // SizedBox(height: 2.height),
-                          TypeUnitSelection(model: model),
-                          SizedBox(height: 2.height),
-                          UnitRevenue(model: model),
-                          // // SizedBox(height: 1.height),
-                          // // _buildStatisticsSection(),
-                          // // SizedBox(height: 5.height),
-                          _buildMonthlyStatementSection(),
-                          SizedBox(height: 1.height),
-                          MonthlyStatementContainer(model: model),
-                          SizedBox(height: 1.height),
-                          // // _buildAgreementsSection(),
-                          // SizedBox(height: 3.height),
-                          // // _buildAgreementContainer(),
-                          // SizedBox(height: 10.height),
-                        ],
+                : RefreshIndicator(
+                    onRefresh: () async {
+                      model.refreshData();
+                    },
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 7.width),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 2.height),
+                            propertyStack(
+                              image: model.property,
+                              text1: model.property,
+                              text2: model.locationRoad,
+                              width: 86.width,
+                              height: 12.height,
+                            ),
+                            SizedBox(height: 2.height),
+                            // _buildOverallRevenue(),
+                            // SizedBox(height: 2.height),
+                            TypeUnitSelection(model: model),
+                            SizedBox(height: 2.height),
+                            UnitRevenue(model: model),
+                            // // SizedBox(height: 1.height),
+                            // // _buildStatisticsSection(),
+                            // // SizedBox(height: 5.height),
+                            _buildMonthlyStatementSection(),
+                            SizedBox(height: 1.height),
+                            MonthlyStatementContainer(model: model),
+                            SizedBox(height: 1.height),
+                            // // _buildAgreementsSection(),
+                            // SizedBox(height: 3.height),
+                            // // _buildAgreementContainer(),
+                            // SizedBox(height: 10.height),
+                          ],
+                        ),
                       ),
                     ),
                   ),

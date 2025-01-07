@@ -55,41 +55,47 @@ class NewDashboard extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(20)),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 100.width,
-                                    padding: EdgeInsets.all(7.width),
-                                    decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color(0XFFFFFFFF),
-                                          Color(0XFFDFD8FF)
-                                        ],
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                await model.refreshData();
+                                
+                              },
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 100.width,
+                                      padding: EdgeInsets.all(7.width),
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Color(0XFFFFFFFF),
+                                            Color(0XFFDFD8FF)
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20)),
                                       ),
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(20)),
+                                      child: Column(
+                                        children: [
+                                          UserInfo(model: model),
+                                          RevenueDashboard(model: model),
+                                          SizedBox(height: 2.height),
+                                          _buildSectionTitle('Statistics'),
+                                          SizedBox(height: 2.height),
+                                          StatisticTable(model: model),
+                                          SizedBox(height: 2.height),
+                                          _buildSectionTitle('Properties'),
+                                          SizedBox(height: 2.height),
+                                          PropertyList(model: model),
+                                          SizedBox(height: 2.height),
+                                        ],
+                                      ),
                                     ),
-                                    child: Column(
-                                      children: [
-                                        UserInfo(model: model),
-                                        RevenueDashboard(model: model),
-                                        SizedBox(height: 2.height),
-                                        _buildSectionTitle('Statistics'),
-                                        SizedBox(height: 2.height),
-                                        StatisticTable(model: model),
-                                        SizedBox(height: 2.height),
-                                        _buildSectionTitle('Properties'),
-                                        SizedBox(height: 2.height),
-                                        PropertyList(model: model),
-                                        SizedBox(height: 2.height),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
