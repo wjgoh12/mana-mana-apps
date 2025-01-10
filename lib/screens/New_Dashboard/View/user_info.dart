@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/screens/Setting/settingPage.dart';
+import 'package:mana_mana_app/screens/Setting/View/settingPage.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class UserInfo extends StatelessWidget {

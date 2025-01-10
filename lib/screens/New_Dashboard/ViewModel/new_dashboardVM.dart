@@ -42,7 +42,7 @@ class NewDashboardVM extends ChangeNotifier {
     GlobalUserState.instance.setUsers(_users);
     ownerUnits = await ownerPropertyListRepository.getOwnerUnit();
     GlobalOwnerState.instance.setOwnerData(ownerUnits);
-    userNameAccount = _users.isNotEmpty ? '${_users.first.ownerFullName}' : '';
+    userNameAccount = _users.isNotEmpty ? '${_users.first.ownerFullName}' : '-';
 
     revenueDashboard = await ownerPropertyListRepository.revenueByYear();
     totalByMonth = await ownerPropertyListRepository.totalByMonth();

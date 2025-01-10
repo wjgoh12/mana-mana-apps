@@ -155,34 +155,14 @@ class OwnerProfile extends StatelessWidget {
                                     // SizedBox(height: 8),
                                     buildInfoRow(
                                         Icons.assignment_ind_outlined, 'Name'),
-                                    buildInfoInRow(model.users.first.ownerFullName
-                                                .toString()
-                                                .isEmpty ||
-                                            model.users.first.ownerFullName == null
-                                        ? 'No Information'
-                                        : model.users.first.ownerFullName.toString()),
+                                    buildInfoInRow(model.getOwnerName()),
                                     buildInfoRow(Icons.phone, 'Contact No.'),
-                                    buildInfoInRow(model.users.first.ownerContact
-                                                .toString()
-                                                .isEmpty ||
-                                            model.users.first.ownerContact == null
-                                        ? 'No Information'
-                                        : model.users.first.ownerContact.toString()),
+                                    buildInfoInRow(model.getOwnerContact()),
                                     buildInfoRow(Icons.email, 'Email'),
-                                    buildInfoInRow(model.users.first.ownerEmail
-                                                .toString()
-                                                .isEmpty ||
-                                            model.users.first.ownerEmail == null
-                                        ? 'No Information'
-                                        : model.users.first.ownerEmail.toString()),
+                                    buildInfoInRow(model.getOwnerEmail()),
                                     buildInfoRow(
                                         Icons.location_on_outlined, 'Address'),
-                                    buildInfoInRow(model.users.first.ownerAddress
-                                                .toString()
-                                                .isEmpty ||
-                                            model.users.first.ownerAddress == null
-                                        ? 'No Information'
-                                        : model.users.first.ownerAddress.toString()),
+                                    buildInfoInRow(model.getOwnerAddress()),
                                   ],
                                 ),
                               ),
@@ -231,22 +211,9 @@ class OwnerProfile extends StatelessWidget {
                                     // OwnerProperty.first.bank.toString()
                                     buildInfoRow(Icons.account_balance,
                                         'Banking Details'),
-                                    buildInfoInRow(model.ownerUnits.first.bank
-                                                .toString()
-                                                .isEmpty ||
-                                            model.ownerUnits.first.bank == null
-                                        ? 'No Information'
-                                        : model.ownerUnits.first.bank.toString()),
+                                    buildInfoInRow(model.getBankInfo()),
                                     const SizedBox(height: 8),
-                                    buildInfoInRow(model.ownerUnits
-                                                .first.accountnumber
-                                                .toString()
-                                                .isEmpty ||
-                                            model.ownerUnits.first.accountnumber ==
-                                                null
-                                        ? 'No Information'
-                                        : model.ownerUnits.first.accountnumber
-                                            .toString()),
+                                    buildInfoInRow(model.getAccountNumber()),
                                     const SizedBox(height: 8),
                                     // buildInfoRow(Icons.account_balance_wallet, 'Membership'),
                                     // buildInfoInRow(OwnerProperty.first.accountnumber.toString()),

@@ -31,15 +31,7 @@ class NewDashboard extends StatelessWidget {
                       false, // This will remove the back button
                   toolbarHeight: !Responsive.isMobile(context) ? 160 : 50,
                 ),
-                model.isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 4.0,
-                          value: null,
-                        ),
-                      )
-                    : Positioned(
+                Positioned(
                         top: 14.height,
                         left: 0,
                         right: 0,
