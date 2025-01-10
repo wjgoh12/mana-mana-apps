@@ -62,13 +62,18 @@ class NewDashboardVM extends ChangeNotifier {
           });
 
     locationByMonth = await ownerPropertyListRepository.locationByMonth();
-    unitLatestMonth = locationByMonth
-        .map((unit) => {'month': unit['month'], 'year': unit['year']})
-        .reduce((max, current) => max['year'] > current['year']
-            ? max
-            : max['year'] == current['year'] && max['month'] > current['month']
-                ? max
-                : current)['month'];
+    try {
+      unitLatestMonth = locationByMonth
+          .map((unit) => {'month': unit['month'], 'year': unit['year']})
+          .reduce((max, current) => max['year'] > current['year']
+              ? max
+              : max['year'] == current['year'] &&
+                      max['month'] > current['month']
+                  ? max
+                  : current)['month'];
+    } catch (e) {
+      unitLatestMonth = 0;
+    }
 
     isLoading = false;
     notifyListeners();

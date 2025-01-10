@@ -39,31 +39,27 @@ class BarChartSample extends StatelessWidget {
       LinearGradient(colors: [Color(0xFF2900B7), Color(0xFF120051)]);
 
   BarChartGroupData generateBarGroup(
-    int x,
-    LinearGradient color,
-    double value,
-    double shadowValue,
-  ) {
-    return BarChartGroupData(
-      x: x,
-      barsSpace: 0.7.width,
-      barRods: [
-        BarChartRodData(
-          toY: value,
-          gradient: color,
-          color: labelColor1,
-          width: 3.width,
-        ),
-        BarChartRodData(
-          toY: shadowValue,
-          gradient: gradientColor2,
-          color: labelColor2,
-          width: 2.width,
-        ),
-      ],
-      showingTooltipIndicators: touchedGroupIndex == x ? [0, 1] : [],
-    );
-  }
+  int x,
+  double value1,
+  double value2,
+) {
+  return BarChartGroupData(
+    x: x,
+    groupVertically: true,  // Stack bars vertically
+    barsSpace: 2,
+    barRods: [
+      BarChartRodData(
+        toY: value1 + value2,  // Combined height
+        width: 20,  // Wider rectangular bars
+        borderRadius: BorderRadius.zero,  // Rectangle shape
+        rodStackItems: [
+          BarChartRodStackItem(0, value1, Colors.blue),  // First value
+          BarChartRodStackItem(value1, value1 + value2, Colors.red),  // Second value
+        ],
+      ),
+    ],
+  );
+}
 
   int touchedGroupIndex = -1;
 
@@ -71,73 +67,72 @@ class BarChartSample extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasData =
         model.monthlyProfitOwner.isNotEmpty || model.monthlyBlcOwner.isNotEmpty;
+          final dataList = [
+            ...List.generate(
+                12,
+                (index) => _BarData(
+                    gradientColor1,
+                    index < model.monthlyProfitOwner.length
+                        ? model.monthlyProfitOwner[index]['total']
+                        : 0,
+                    index < model.monthlyBlcOwner.length
+                        ? model.monthlyBlcOwner[index]['total']
+                        : 0
+                    // index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year ? model.monthlyProfitOwner[index]['total'] : 0,
+                    // index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year ? model.monthlyBlcOwner[index]['total'] : 0
+                    )),
+          ];
 
-    final dataList = [
-      ...List.generate(
-          12,
-          (index) => _BarData(
-              gradientColor1,
-              index < model.monthlyProfitOwner.length
-                  ? model.monthlyProfitOwner[index]['total']
-                  : 0,
-              index < model.monthlyBlcOwner.length
-                  ? model.monthlyBlcOwner[index]['total']
-                  : 0
-              // index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year ? model.monthlyProfitOwner[index]['total'] : 0,
-              // index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year ? model.monthlyBlcOwner[index]['total'] : 0
-              )),
-    ];
+          final List<String> monthNames = List.generate(12, (index) {
+            String month;
+            if (index < model.monthlyBlcOwner.length) {
+              month = model.monthlyBlcOwner[index]['month'].toString();
+            } else if (index < model.monthlyProfitOwner.length) {
+              month = model.monthlyProfitOwner[index]['month'].toString();
+            } else {
+              month = '0';
+            }
+            // if (index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year) {
+            //   month = model.monthlyBlcOwner[index]['month'].toString();
+            // } else if (index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year) {
+            //   month = model.monthlyProfitOwner[index]['month'].toString();
+            // } else {
+            //   month = '0';
+            // }
 
-    final List<String> monthNames = List.generate(12, (index) {
-      String month;
-      if (index < model.monthlyBlcOwner.length) {
-        month = model.monthlyBlcOwner[index]['month'].toString();
-      } else if (index < model.monthlyProfitOwner.length) {
-        month = model.monthlyProfitOwner[index]['month'].toString();
-      } else {
-        month = '0';
-      }
-      // if (index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year) {
-      //   month = model.monthlyBlcOwner[index]['month'].toString();
-      // } else if (index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year) {
-      //   month = model.monthlyProfitOwner[index]['month'].toString();
-      // } else {
-      //   month = '0';
-      // }
+            switch (month) {
+              case '1':
+                return 'Jan';
+              case '2':
+                return 'Feb';
+              case '3':
+                return 'Mar';
+              case '4':
+                return 'Apr';
+              case '5':
+                return 'May';
+              case '6':
+                return 'Jun';
+              case '7':
+                return 'Jul';
+              case '8':
+                return 'Aug';
+              case '9':
+                return 'Sep';
+              case '10':
+                return 'Oct';
+              case '11':
+                return 'Nov';
+              case '12':
+                return 'Dec';
+              default:
+                return '';
+            }
+          });
+          // _BarData(gradientColor1, 160, 125),
+          // _BarData(gradientColor1, 170, 110),
 
-      switch (month) {
-        case '1':
-          return 'Jan';
-        case '2':
-          return 'Feb';
-        case '3':
-          return 'Mar';
-        case '4':
-          return 'Apr';
-        case '5':
-          return 'May';
-        case '6':
-          return 'Jun';
-        case '7':
-          return 'Jul';
-        case '8':
-          return 'Aug';
-        case '9':
-          return 'Sep';
-        case '10':
-          return 'Oct';
-        case '11':
-          return 'Nov';
-        case '12':
-          return 'Dec';
-        default:
-          return '';
-      }
-    });
-    // _BarData(gradientColor1, 160, 125),
-    // _BarData(gradientColor1, 170, 110),
-
-    return Padding(
+          return Padding(
       padding: const EdgeInsets.all(24),
       child: SizedBox(
         width: 80.width,
@@ -147,8 +142,9 @@ class BarChartSample extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: SizedBox(
-                width: hasData ? 500 : 280, // Adjust this value as needed
-                child: Stack(children: [
+              width: 700,
+              child: Stack(
+                children: [
                   BarChart(
                     BarChartData(
                       alignment: BarChartAlignment.spaceBetween,
@@ -167,12 +163,6 @@ class BarChartSample extends StatelessWidget {
                           sideTitles: SideTitles(
                             showTitles: false,
                             reservedSize: 35.fSize,
-                            getTitlesWidget: (value, meta) {
-                              return Text(
-                                value.toInt().toString(),
-                                textAlign: TextAlign.left,
-                              );
-                            },
                           ),
                         ),
                         bottomTitles: AxisTitles(
@@ -205,27 +195,21 @@ class BarChartSample extends StatelessWidget {
                           strokeWidth: 1,
                         ),
                       ),
-                      barGroups: dataList.asMap().entries.map((e) {
-                        final index = e.key;
-                        final data = e.value;
-                        return generateBarGroup(
-                          index,
-                          data.color,
-                          data.value,
-                          data.shadowValue,
-                        );
+                      barGroups: List.generate(12, (index) {
+                        final profit = index < model.monthlyProfitOwner.length
+                            ? model.monthlyProfitOwner[index]['total'].toDouble()
+                            : 0.0;
+                        final blc = index < model.monthlyBlcOwner.length
+                            ? model.monthlyBlcOwner[index]['total'].toDouble()
+                            : 0.0;
+                        return generateBarGroup(index, profit, blc);
                       }).toList(),
                       barTouchData: BarTouchData(
                         enabled: false,
                         touchTooltipData: BarTouchTooltipData(
                           getTooltipColor: (group) => Colors.transparent,
                           tooltipMargin: 0,
-                          getTooltipItem: (
-                            BarChartGroupData group,
-                            int groupIndex,
-                            BarChartRodData rod,
-                            int rodIndex,
-                          ) {
+                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
                             return BarTooltipItem(
                               rod.toY.toString(),
                               TextStyle(
@@ -256,14 +240,16 @@ class BarChartSample extends StatelessWidget {
                           fontSize: 16,
                           color: Colors.grey,
                         ),
-                        textAlign: TextAlign.left,
                       ),
                     ),
-                ])),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     );
+        
   }
 }
 
