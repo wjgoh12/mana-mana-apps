@@ -25,6 +25,8 @@ class PropertyDetailVM extends ChangeNotifier {
   bool isLoading = true;
   String selectedValue = '';
   bool _isDownloading = false;
+  bool _isMonthLoadng = false;
+  bool get isMonthLoadng => _isMonthLoadng;
   bool get isDownloading => _isDownloading;
   // List<singleUnitByMonth> selectedUnitBlc = [];
   var selectedUnitBlc;
@@ -143,21 +145,20 @@ class PropertyDetailVM extends ChangeNotifier {
           .toSet()
           .toList()
         ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+      selectedYearValue = yearItems.isNotEmpty
+          ? yearItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
+          : '';
       monthItems = unitByMonth
-          // .where((item) => item.iyear == int.parse(yearItems.first))
+          .where((item) => item.iyear.toString() == selectedYearValue)
           .map((item) => item.imonth.toString())
           .toSet()
           .toList()
         ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-
-      // yearItems = unitByMonth.map((item) => item.iyear.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-      // monthItems = unitByMonth.where((item) => item.iyear == DateTime.now().year).map((item) => item.imonth.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
       selectedMonthValue = monthItems.isNotEmpty
           ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
           : '';
-      selectedYearValue = yearItems.isNotEmpty
-          ? yearItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
-          : '';
+      // yearItems = unitByMonth.map((item) => item.iyear.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+      // monthItems = unitByMonth.where((item) => item.iyear == DateTime.now().year).map((item) => item.imonth.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
     } else {
       yearItems = ['-'];
       monthItems = ['-'];
@@ -193,8 +194,24 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSelectedYear(String newSelectedYear) {
+  Future<void> updateSelectedYear(String newSelectedYear) async {
+    _isMonthLoadng = true;
+    notifyListeners();
+    // monthItems = ['0','1','2','3','4','5','6','7','8','9','10','11','12'];
+    // selectedYearValue = newSelectedYear;
+    monthItems = unitByMonth
+        .where((item) => item.iyear.toString() == newSelectedYear)
+        .map((item) => item.imonth.toString())
+        .toSet()
+        .toList()
+      ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+    selectedMonthValue = monthItems.isNotEmpty
+        ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
+        : '';
     selectedYearValue = newSelectedYear;
+    await Future.delayed(const Duration(milliseconds: 800));
+    _isMonthLoadng = false;
+
     notifyListeners();
   }
 
@@ -211,9 +228,15 @@ class PropertyDetailVM extends ChangeNotifier {
     // print(selectedMonthValue);
     // print(selectedType);
     // print(selectedUnitNo);
-    await ownerPropertyListRepository.downloadPdfStatement(context, property,
-        selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo, _users);
-        _isDownloading = false;
+    await ownerPropertyListRepository.downloadPdfStatement(
+        context,
+        property,
+        selectedYearValue,
+        selectedMonthValue,
+        selectedType,
+        selectedUnitNo,
+        _users);
+    _isDownloading = false;
     notifyListeners();
   }
 

@@ -171,13 +171,15 @@ class MonthlyStatementContainer extends StatelessWidget {
                       children: [
                         _buildGradientText('Month'),
                         SizedBox(width: 2.width),
-                        TypeUnitSelectionDropdown(
-                          label: 'Month',
-                          list: model.monthItems,
-                          onChanged: (_) {
-                            model.updateSelectedMonth(_!);
-                          },
-                        ),
+                        model.isMonthLoadng
+                            ? const CircularProgressIndicator() // Display a loading spinner
+                            : TypeUnitSelectionDropdown(
+                                label: 'Month',
+                                list: model.monthItems,
+                                onChanged: (_) {
+                                  model.updateSelectedMonth(_!);
+                                },
+                              ),
                       ],
                     )
                   ],
