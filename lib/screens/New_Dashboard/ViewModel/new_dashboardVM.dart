@@ -17,6 +17,7 @@ class NewDashboardVM extends ChangeNotifier {
   List<User> get users => _users;
   int unitLatestMonth = 0;
   List<OwnerPropertyList> ownerUnits = [];
+  String revenueLastestYear = '';
 
   List<Map<String, dynamic>> revenueDashboard = [];
   List<Map<String, dynamic>> monthlyProfitOwner = [];
@@ -25,17 +26,24 @@ class NewDashboardVM extends ChangeNotifier {
   List<Map<String, dynamic>> locationByMonth = [];
 
   Future get overallBalance => Future.delayed(
-      const Duration(milliseconds: 500),
-      () => revenueDashboard.isNotEmpty
-          ? revenueDashboard.firstWhere((item) => item["transcode"] == "OWNBAL",
-              orElse: () => {"total": 0.0})["total"]
-          : 0.0).then((value) => value);
-  Future get overallProfit => Future.delayed(
-      const Duration(milliseconds: 500),
-      () => revenueDashboard.isNotEmpty
-          ? revenueDashboard.firstWhere((item) => item["transcode"] == "NOPROF",
-              orElse: () => {"total": 0.0})["total"]
-          : 0.0).then((value) => value);
+    const Duration(milliseconds: 500),
+    () => revenueDashboard.isNotEmpty
+        ? revenueDashboard.where((item) => 
+            item["transcode"] == "OWNBAL" && 
+            item["year"] == int.parse(revenueLastestYear))
+          .map((item) => item["total"])
+          .first
+        : 0.0).then((value) => value);
+
+Future get overallProfit => Future.delayed(
+    const Duration(milliseconds: 500),
+    () => revenueDashboard.isNotEmpty
+        ? revenueDashboard.where((item) => 
+            item["transcode"] == "NOPROF" && 
+            item["year"] == int.parse(revenueLastestYear))
+          .map((item) => item["total"])
+          .first
+        : 0.0).then((value) => value);
 
   Future<void> fetchData() async {
     _users = await userRepository.getUsers();
@@ -45,6 +53,30 @@ class NewDashboardVM extends ChangeNotifier {
     userNameAccount = _users.isNotEmpty ? '${_users.first.ownerFullName}' : '-';
 
     revenueDashboard = await ownerPropertyListRepository.revenueByYear();
+    // revenueDashboard = [
+    //   {'total': 4461.5, 'transcode': 'NOPROF', 'year': 2024},
+    //   {'total': 4013.48, 'transcode': 'OWNBAL', 'year': 2024},
+    //   {'total': 8000.5, 'transcode': 'NOPROF', 'year': 2025},
+    //   {'total': 8000.48, 'transcode': 'OWNBAL', 'year': 2025}
+    // ];
+    revenueLastestYear = revenueDashboard.isNotEmpty
+    ? revenueDashboard
+        .map((item) => item['year'] as int)
+        .reduce((max, current) => max > current ? max : current)
+        .toString()
+    : DateTime.now().year.toString();
+
+    // revenueLastestYear = revenueDashboard.isNotEmpty
+    // ? revenueDashboard.length > 2 
+    //     ? revenueDashboard
+    //         .map((item) => item['year'] as int)
+    //         .reduce((max, current) => max > current ? max : current)
+    //         .toString()
+    //     : revenueDashboard.first['year'].toString()
+    // : DateTime.now().year.toString();
+
+
+
     totalByMonth = await ownerPropertyListRepository.totalByMonth();
 
     monthlyProfitOwner = totalByMonth

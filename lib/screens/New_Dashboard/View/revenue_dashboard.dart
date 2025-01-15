@@ -23,7 +23,8 @@ class RevenueDashboard extends StatelessWidget {
         Expanded(
           child: RevenueContainer(
               title:
-                  '${DateTime.now().month != 1 ? DateTime.now().year : DateTime.now().year - 1} Accumulated Profit​',
+              '${model.revenueLastestYear} Accumulated Profit​',
+                  // '${DateTime.now().month != 1 ? DateTime.now().year : DateTime.now().year - 1} Accumulated Profit​',
               icon: Icons.home_outlined,
               overallRevenue: false,
               model: model),
