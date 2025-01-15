@@ -26,24 +26,26 @@ class NewDashboardVM extends ChangeNotifier {
   List<Map<String, dynamic>> locationByMonth = [];
 
   Future get overallBalance => Future.delayed(
-    const Duration(milliseconds: 500),
-    () => revenueDashboard.isNotEmpty
-        ? revenueDashboard.where((item) => 
-            item["transcode"] == "OWNBAL" && 
-            item["year"] == int.parse(revenueLastestYear))
-          .map((item) => item["total"])
-          .first
-        : 0.0).then((value) => value);
+      const Duration(milliseconds: 500),
+      () => revenueDashboard.isNotEmpty
+          ? revenueDashboard
+              .where((item) =>
+                  item["transcode"] == "OWNBAL" &&
+                  item["year"] == int.parse(revenueLastestYear))
+              .map((item) => item["total"])
+              .first
+          : 0.0).then((value) => value);
 
-Future get overallProfit => Future.delayed(
-    const Duration(milliseconds: 500),
-    () => revenueDashboard.isNotEmpty
-        ? revenueDashboard.where((item) => 
-            item["transcode"] == "NOPROF" && 
-            item["year"] == int.parse(revenueLastestYear))
-          .map((item) => item["total"])
-          .first
-        : 0.0).then((value) => value);
+  Future get overallProfit => Future.delayed(
+      const Duration(milliseconds: 500),
+      () => revenueDashboard.isNotEmpty
+          ? revenueDashboard
+              .where((item) =>
+                  item["transcode"] == "NOPROF" &&
+                  item["year"] == int.parse(revenueLastestYear))
+              .map((item) => item["total"])
+              .first
+          : 0.0).then((value) => value);
 
   Future<void> fetchData() async {
     _users = await userRepository.getUsers();
@@ -60,14 +62,14 @@ Future get overallProfit => Future.delayed(
     //   {'total': 8000.48, 'transcode': 'OWNBAL', 'year': 2025}
     // ];
     revenueLastestYear = revenueDashboard.isNotEmpty
-    ? revenueDashboard
-        .map((item) => item['year'] as int)
-        .reduce((max, current) => max > current ? max : current)
-        .toString()
-    : DateTime.now().year.toString();
+        ? revenueDashboard
+            .map((item) => item['year'] as int)
+            .reduce((max, current) => max > current ? max : current)
+            .toString()
+        : DateTime.now().year.toString();
 
     // revenueLastestYear = revenueDashboard.isNotEmpty
-    // ? revenueDashboard.length > 2 
+    // ? revenueDashboard.length > 2
     //     ? revenueDashboard
     //         .map((item) => item['year'] as int)
     //         .reduce((max, current) => max > current ? max : current)
@@ -75,9 +77,17 @@ Future get overallProfit => Future.delayed(
     //     : revenueDashboard.first['year'].toString()
     // : DateTime.now().year.toString();
 
-
-
     totalByMonth = await ownerPropertyListRepository.totalByMonth();
+    
+    // totalByMonth = [
+    //   {'total': 4200.31, 'transcode': 'NOPROF', 'month': 5, 'year': 2024},
+    //   {'total': 1842.01, 'transcode': 'OWNBAL', 'month': 5, 'year': 2024},
+    //   {'total': 4200.31, 'transcode': 'NOPROF', 'month': 6, 'year': 2024},
+    //   {'total': 1842.01, 'transcode': 'OWNBAL', 'month': 6, 'year': 2024},
+    //   {'total': 1234.0, 'transcode': 'NOPROF', 'month': 12, 'year': 2024},
+    //   {'total': 2500.01, 'transcode': 'OWNBAL', 'month': 1, 'year': 2025},
+    //   {'total': 2500.0, 'transcode': 'NOPROF', 'month': 1, 'year': 2025}
+    // ];
 
     monthlyProfitOwner = totalByMonth
         .where((unit) => unit['transcode'] == "NOPROF")
@@ -94,6 +104,13 @@ Future get overallProfit => Future.delayed(
           });
 
     locationByMonth = await ownerPropertyListRepository.locationByMonth();
+    // print(locationByMonth.first);
+    // locationByMonth = [
+    //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 5, 'year': 2024},
+    //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 6, 'year': 2024},
+    //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 1, 'year': 2025},
+    //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 2, 'year': 2025}
+    // ];
     try {
       unitLatestMonth = locationByMonth
           .map((unit) => {'month': unit['month'], 'year': unit['year']})
