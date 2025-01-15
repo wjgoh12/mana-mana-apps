@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
+import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
+import 'package:mana_mana_app/repository/user_repo.dart';
 
 class PropertyDetailVM extends ChangeNotifier {
   List<Map<String, dynamic>> locationByMonth = [];
@@ -12,6 +14,7 @@ class PropertyDetailVM extends ChangeNotifier {
   String? selectedUnitNo;
   List<OwnerPropertyList> ownerData = [];
   List<SingleUnitByMonth> unitByMonth = [];
+  List<User> _users = [];
   List<String> yearItems = [];
   List<String> monthItems = [];
   List<String> typeItems = [];
@@ -28,9 +31,11 @@ class PropertyDetailVM extends ChangeNotifier {
   var selectedUnitPro;
   final PropertyListRepository ownerPropertyListRepository =
       PropertyListRepository();
+  final UserRepository userRepository = UserRepository();
 
   Future<void> fetchData(List<Map<String, dynamic>> newLocationByMonth) async {
     locationByMonth = newLocationByMonth;
+    _users = await userRepository.getUsers();
     property = locationByMonth[0]['location'];
 
     switch (property.toUpperCase()) {
@@ -207,7 +212,7 @@ class PropertyDetailVM extends ChangeNotifier {
     // print(selectedType);
     // print(selectedUnitNo);
     await ownerPropertyListRepository.downloadPdfStatement(context, property,
-        selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo);
+        selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo, _users);
         _isDownloading = false;
     notifyListeners();
   }

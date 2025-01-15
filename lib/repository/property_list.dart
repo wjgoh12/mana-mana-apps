@@ -26,8 +26,8 @@ class PropertyListRepository {
     });
   }
 
-  Future<void> downloadPdfStatement(BuildContext context, property, selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo) async {
-    List<User> users = GlobalUserState.instance.getUsers();    
+  Future<void> downloadPdfStatement(BuildContext context, property, selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo, userData) async {
+    // List<User> users = GlobalUserState.instance.getUsers();   
     final Map<String, dynamic> data = {
       "month": selectedMonthValue,
       "year": selectedYearValue,
@@ -35,8 +35,8 @@ class PropertyListRepository {
         "unitNo": selectedUnitNo,
         "type": selectedType,
         "location": property,
-        "ownerName": users.first.ownerFullName,
-        "email": users.first.ownerEmail
+        "ownerName": userData.first.ownerFullName,
+        "email": userData.first.ownerEmail
       }
     };
   

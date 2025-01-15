@@ -39,9 +39,9 @@ class NewDashboardVM extends ChangeNotifier {
 
   Future<void> fetchData() async {
     _users = await userRepository.getUsers();
-    GlobalUserState.instance.setUsers(_users);
+    // GlobalUserState.instance.setUsers(_users);
     ownerUnits = await ownerPropertyListRepository.getOwnerUnit();
-    GlobalOwnerState.instance.setOwnerData(ownerUnits);
+    // GlobalOwnerState.instance.setOwnerData(ownerUnits);
     userNameAccount = _users.isNotEmpty ? '${_users.first.ownerFullName}' : '-';
 
     revenueDashboard = await ownerPropertyListRepository.revenueByYear();
