@@ -26,8 +26,10 @@ class PropertyDetailVM extends ChangeNotifier {
   String selectedValue = '';
   bool _isDownloading = false;
   bool _isMonthLoadng = false;
+  bool _isDateLoading = false;
   bool get isMonthLoadng => _isMonthLoadng;
   bool get isDownloading => _isDownloading;
+  bool get isDateLoading => _isDateLoading;
   // List<singleUnitByMonth> selectedUnitBlc = [];
   var selectedUnitBlc;
   var selectedUnitPro;
@@ -90,6 +92,96 @@ class PropertyDetailVM extends ChangeNotifier {
     }
 
     unitByMonth = await ownerPropertyListRepository.getUnitByMonth();
+    // unitByMonth = [
+    //   SingleUnitByMonth(
+    //       total: 4200.31,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'D',
+    //       stranscode: 'NOPROF',
+    //       sunitno: '45-99.99',
+    //       imonth: 1,
+    //       iyear: 2025),
+    //   SingleUnitByMonth(
+    //       total: 1842.01,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'D',
+    //       stranscode: 'OWNBAL',
+    //       sunitno: '45-99.99',
+    //       imonth: 1,
+    //       iyear: 2025),
+    //   SingleUnitByMonth(
+    //       total: 4200.31,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'D',
+    //       stranscode: 'NOPROF',
+    //       sunitno: '45-99.99',
+    //       imonth: 5,
+    //       iyear: 2024),
+    //   SingleUnitByMonth(
+    //       total: 1842.01,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'D',
+    //       stranscode: 'OWNBAL',
+    //       sunitno: '45-99.99',
+    //       imonth: 5,
+    //       iyear: 2024),
+    //   SingleUnitByMonth(
+    //       total: 4200.31,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'D',
+    //       stranscode: 'NOPROF',
+    //       sunitno: '45-99.99',
+    //       imonth: 6,
+    //       iyear: 2024),
+    //   SingleUnitByMonth(
+    //       total: 1842.01,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'D',
+    //       stranscode: 'OWNBAL',
+    //       sunitno: '45-99.99',
+    //       imonth: 6,
+    //       iyear: 2024),
+    //   SingleUnitByMonth(
+    //       total: 1234.0,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'D',
+    //       stranscode: 'NOPROF',
+    //       sunitno: '45-99.99',
+    //       imonth: 12,
+    //       iyear: 2024),
+    //   SingleUnitByMonth(
+    //       total: 1842.01,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'Premium 2 Bedroom',
+    //       stranscode: 'OWNBAL',
+    //       sunitno: '2000-2100-55',
+    //       imonth: 1,
+    //       iyear: 2025),
+    //   SingleUnitByMonth(
+    //       total: 1234.0,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'Premium 2 Bedroom',
+    //       stranscode: 'NOPROF',
+    //       sunitno: '2000-2100-55',
+    //       imonth: 1,
+    //       iyear: 2025),
+    //   SingleUnitByMonth(
+    //       total: 1842.01,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'Premium 2 Bedroom',
+    //       stranscode: 'OWNBAL',
+    //       sunitno: '2000-2100-55',
+    //       imonth: 11,
+    //       iyear: 2024),
+    //   SingleUnitByMonth(
+    //       total: 1234.0,
+    //       slocation: 'SCARLETZ',
+    //       stype: 'Premium 2 Bedroom',
+    //       stranscode: 'NOPROF',
+    //       sunitno: '2000-2100-55',
+    //       imonth: 11,
+    //       iyear: 2024),
+    // ];
     var filteredYears = unitByMonth
         .where((unit) =>
             unit.slocation == property &&
@@ -141,6 +233,10 @@ class PropertyDetailVM extends ChangeNotifier {
 
     if (unitByMonth.isNotEmpty) {
       yearItems = unitByMonth
+          .where((item) =>
+              item.slocation == property &&
+              item.stype == selectedType &&
+              item.sunitno == selectedUnitNo)
           .map((item) => item.iyear.toString())
           .toSet()
           .toList()
@@ -149,7 +245,11 @@ class PropertyDetailVM extends ChangeNotifier {
           ? yearItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
           : '';
       monthItems = unitByMonth
-          .where((item) => item.iyear.toString() == selectedYearValue)
+          .where((item) =>
+              item.iyear.toString() == selectedYearValue &&
+              item.slocation == property &&
+              item.stype == selectedType &&
+              item.sunitno == selectedUnitNo)
           .map((item) => item.imonth.toString())
           .toSet()
           .toList()
@@ -168,10 +268,37 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSelectedTypeUnit(
-      String newSelectedType, String newSelectedUnitNo) {
+  Future<void> updateSelectedTypeUnit(
+      String newSelectedType, String newSelectedUnitNo) async {
+    _isDateLoading = true;
+    notifyListeners();
     selectedType = newSelectedType;
     selectedUnitNo = newSelectedUnitNo;
+    yearItems = unitByMonth
+        .where((item) =>
+            item.slocation == property &&
+            item.stype == selectedType &&
+            item.sunitno == selectedUnitNo)
+        .map((item) => item.iyear.toString())
+        .toSet()
+        .toList()
+      ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+    selectedYearValue = yearItems.isNotEmpty
+        ? yearItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
+        : '';
+    monthItems = unitByMonth
+        .where((item) =>
+            item.iyear.toString() == selectedYearValue &&
+            item.slocation == property &&
+            item.stype == selectedType &&
+            item.sunitno == selectedUnitNo)
+        .map((item) => item.imonth.toString())
+        .toSet()
+        .toList()
+      ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+    selectedMonthValue = monthItems.isNotEmpty
+        ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
+        : '';
     selectedUnitBlc = unitByMonth.firstWhere(
         (unit) =>
             unit.slocation == property &&
@@ -191,6 +318,8 @@ class PropertyDetailVM extends ChangeNotifier {
             unit.iyear == unitLatestYear &&
             unit.stranscode == 'NOPROF',
         orElse: () => SingleUnitByMonth(total: 0.00));
+    await Future.delayed(const Duration(milliseconds: 1000));
+    _isDateLoading = false;
     notifyListeners();
   }
 
@@ -198,9 +327,13 @@ class PropertyDetailVM extends ChangeNotifier {
     _isMonthLoadng = true;
     notifyListeners();
     // monthItems = ['0','1','2','3','4','5','6','7','8','9','10','11','12'];
-    // selectedYearValue = newSelectedYear;
+    selectedYearValue = newSelectedYear;
     monthItems = unitByMonth
-        .where((item) => item.iyear.toString() == newSelectedYear)
+        .where((item) =>
+            item.iyear.toString() == selectedYearValue &&
+            item.slocation == property &&
+            item.stype == selectedType &&
+            item.sunitno == selectedUnitNo)
         .map((item) => item.imonth.toString())
         .toSet()
         .toList()
@@ -208,8 +341,8 @@ class PropertyDetailVM extends ChangeNotifier {
     selectedMonthValue = monthItems.isNotEmpty
         ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : '';
-    selectedYearValue = newSelectedYear;
-    await Future.delayed(const Duration(milliseconds: 800));
+    // selectedYearValue = newSelectedYear;
+    await Future.delayed(const Duration(milliseconds: 1000));
     _isMonthLoadng = false;
 
     notifyListeners();

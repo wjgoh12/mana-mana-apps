@@ -147,7 +147,7 @@ class MonthlyStatementContainer extends StatelessWidget {
                     ),
                   );
                 }
-                return Wrap(
+                return model.isDateLoading ? const CircularProgressIndicator() : Wrap(
                   alignment: WrapAlignment.center,
                   spacing: 10,
                   runSpacing: 10,
