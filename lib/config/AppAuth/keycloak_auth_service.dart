@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:mana_mana_app/splashscreen.dart';
 import '../env_config.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +12,7 @@ class AuthService {
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  DateTime? _tokenExpiryTime;
+  // DateTime? _tokenExpiryTime;
   Timer? _refreshTimer;
 
   Future<bool> authenticate() async {
@@ -35,10 +36,9 @@ class AuthService {
         await _secureStorage.write(
             key: 'refresh_token', value: result.refreshToken);
         // Calculate the token expiration time and start the timer
-        _tokenExpiryTime = DateTime.now().add(const Duration(
-            minutes:
-                EnvConfig.tokenExpirationMinutes)); // Set expiry to 20 minutes
-        _startTokenRefreshTimer();
+        // _tokenExpiryTime = DateTime.now().add(const Duration(
+        //     minutes:
+        //         EnvConfig.tokenExpirationMinutes)); // Set expiry to 20 minutes
         return true;
       }
     } catch (e) {
@@ -47,19 +47,9 @@ class AuthService {
     return false;
   }
 
-  void _startTokenRefreshTimer() {
-    final timeUntilExpiry = _tokenExpiryTime!.difference(DateTime.now());
-    final refreshTime = timeUntilExpiry -
-        const Duration(minutes: 5); // Refresh 5 minutes before expiry
-
-    _refreshTimer?.cancel(); // Cancel any existing timer
-    _refreshTimer = Timer(refreshTime, () {
-      refreshToken();
-    });
-  }
-
   Future<bool> checkToken() async {
     String? accessToken = await getAccessToken();
+    // print(JwtDecoder.getRemainingTime(accessToken!));
     if (accessToken == null) {
       return await authenticate();
     }
@@ -71,8 +61,21 @@ class AuthService {
   }
 
   Future<bool> validateToken(String token) async {
-    // Implement token validation logic here
-    return true;
+    try {
+      if (!JwtDecoder.isExpired(token)) {
+        // Get remaining time before token expires
+        Duration timeUntilExpiry = JwtDecoder.getRemainingTime(token);
+
+        // If token expires in less than 5 minutes, consider it invalid
+        if (timeUntilExpiry.inMinutes <= 3) {
+          return false;
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<void> logout(BuildContext context) async {
@@ -171,10 +174,9 @@ class AuthService {
         await _secureStorage.write(
             key: 'access_token', value: result.accessToken);
         // Update the token expiry time and restart the timer
-        _tokenExpiryTime = DateTime.now().add(const Duration(
-            minutes: EnvConfig
-                .tokenExpirationMinutes)); // Reset expiry to 20 minutes
-        _startTokenRefreshTimer();
+        // _tokenExpiryTime = DateTime.now().add(const Duration(
+        //     minutes: EnvConfig
+        //         .tokenExpirationMinutes)); // Reset expiry to 20 minutes
         return true;
       }
     } catch (e, s) {

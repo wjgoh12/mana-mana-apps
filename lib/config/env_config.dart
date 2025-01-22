@@ -5,7 +5,7 @@ class EnvConfig {
     _env = env;
   }
 
-  static const int tokenExpirationMinutes = 20;
+  // static const int tokenExpirationMinutes = 20;
   static String get keycloakClientId =>
       _env == 'prod' ? 'mana-app' : 'mana-app';
       
