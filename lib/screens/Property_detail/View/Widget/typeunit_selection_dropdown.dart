@@ -118,12 +118,12 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown> {
             border: Border.all(color: const Color(0XFF999999)),
             borderRadius: BorderRadius.circular(5),
           ),
-          width: maxTextWidth + 40, // Add padding for icon and margins
+          width: maxTextWidth + 60, // Add padding for icon and margins
           height: (3.5).height,
         ),
         dropdownStyleData: DropdownStyleData(
           maxHeight: 300,
-          width: maxTextWidth + 40,
+          width: maxTextWidth + 60,
         ),
         iconStyleData: IconStyleData(
           icon: const Icon(Icons.keyboard_arrow_down_outlined),
