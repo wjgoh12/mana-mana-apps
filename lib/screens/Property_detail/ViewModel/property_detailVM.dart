@@ -4,6 +4,7 @@ import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/PdfViewerScreen.dart';
 
 class PropertyDetailVM extends ChangeNotifier {
   List<Map<String, dynamic>> locationByMonth = [];
@@ -361,7 +362,7 @@ class PropertyDetailVM extends ChangeNotifier {
     // print(selectedMonthValue);
     // print(selectedType);
     // print(selectedUnitNo);
-    await ownerPropertyListRepository.downloadPdfStatement(
+    final bytes = await ownerPropertyListRepository.downloadPdfStatement(
         context,
         property,
         selectedYearValue,
@@ -369,6 +370,21 @@ class PropertyDetailVM extends ChangeNotifier {
         selectedType,
         selectedUnitNo,
         _users);
+    if (bytes != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PdfViewerFromMemory(
+            property : property,
+            year : selectedYearValue,
+            month : selectedMonthValue,
+            unitType : selectedType,
+            unitNo : selectedUnitNo,
+            pdfData: bytes, // Replace with your PDF URL
+          ),
+        ),
+      );
+    }
     _isDownloading = false;
     notifyListeners();
   }
