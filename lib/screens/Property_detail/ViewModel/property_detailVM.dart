@@ -4,6 +4,7 @@ import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/AnnualStatementPdfViewerScreen.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/PdfViewerScreen.dart';
 
 class PropertyDetailVM extends ChangeNotifier {
@@ -21,15 +22,18 @@ class PropertyDetailVM extends ChangeNotifier {
   List<String> typeItems = [];
   String? selectedYearValue;
   String? selectedMonthValue;
+  String? selectedAnnualYearValue;
   int unitLatestMonth = 0;
   int unitLatestYear = 0;
   bool isLoading = true;
   String selectedValue = '';
   bool _isDownloading = false;
+  bool _annual_isDownloading = false;
   bool _isMonthLoadng = false;
   bool _isDateLoading = false;
   bool get isMonthLoadng => _isMonthLoadng;
   bool get isDownloading => _isDownloading;
+  bool get isAnnualDownloading => _annual_isDownloading;
   bool get isDateLoading => _isDateLoading;
   // List<singleUnitByMonth> selectedUnitBlc = [];
   var selectedUnitBlc;
@@ -264,7 +268,7 @@ class PropertyDetailVM extends ChangeNotifier {
       yearItems = ['-'];
       monthItems = ['-'];
     }
-
+    selectedAnnualYearValue = selectedYearValue;
     isLoading = false;
     notifyListeners();
   }
@@ -349,6 +353,11 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateSelectedAnnualYear(String newSelectedYear) async {
+    selectedAnnualYearValue = newSelectedYear;
+    notifyListeners();
+  }
+
   void updateSelectedMonth(String newSelectedMonth) {
     selectedMonthValue = newSelectedMonth;
     notifyListeners();
@@ -375,17 +384,50 @@ class PropertyDetailVM extends ChangeNotifier {
         context,
         MaterialPageRoute(
           builder: (context) => PdfViewerFromMemory(
-            property : property,
-            year : selectedYearValue,
-            month : selectedMonthValue,
-            unitType : selectedType,
-            unitNo : selectedUnitNo,
+            property: property,
+            year: selectedYearValue,
+            month: selectedMonthValue,
+            unitType: selectedType,
+            unitNo: selectedUnitNo,
             pdfData: bytes, // Replace with your PDF URL
           ),
         ),
       );
     }
     _isDownloading = false;
+    notifyListeners();
+  }
+
+  Future<void> downloadAnnualPdfStatement(BuildContext context) async {
+    _annual_isDownloading = true;
+    notifyListeners();
+    // print(property);
+    // print(selectedYearValue);
+    // print(selectedMonthValue);
+    // print(selectedType);
+    // print(selectedUnitNo);
+    final bytes = await ownerPropertyListRepository.downloadPdfAnnualStatement(
+        context,
+        property,
+        selectedAnnualYearValue,
+        selectedType,
+        selectedUnitNo,
+        _users);
+    if (bytes != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AnnualStatementPdfViewerFromMemory(
+            property: property,
+            year: selectedYearValue,
+            unitType: selectedType,
+            unitNo: selectedUnitNo,
+            pdfData: bytes, // Replace with your PDF URL
+          ),
+        ),
+      );
+    }
+    _annual_isDownloading = false;
     notifyListeners();
   }
 

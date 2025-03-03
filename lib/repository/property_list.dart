@@ -25,8 +25,16 @@ class PropertyListRepository {
       return _;
     });
   }
+
   @override
-  Future<Uint8List?> downloadPdfStatement(BuildContext context, property, selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo, userData) async {
+  Future<Uint8List?> downloadPdfStatement(
+      BuildContext context,
+      property,
+      selectedYearValue,
+      selectedMonthValue,
+      selectedType,
+      selectedUnitNo,
+      userData) async {
     final Map<String, dynamic> data = {
       "month": selectedMonthValue,
       "year": selectedYearValue,
@@ -39,7 +47,8 @@ class PropertyListRepository {
       }
     };
 
-    final res = await _apiService.postWithBytes(ApiEndpoint.downloadPdfStatement, data: data);
+    final res = await _apiService
+        .postWithBytes(ApiEndpoint.downloadPdfStatement, data: data);
     if (res is Uint8List) {
       return res;
     } else if (res == "Incorrect result size") {
@@ -49,7 +58,8 @@ class PropertyListRepository {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('No Record'),
-            content: const Text('No record available for this unit in the selected month.'),
+            content: const Text(
+                'No record available for this unit in the selected month.'),
             actions: <Widget>[
               TextButton(
                 child: const Text('OK'),
@@ -66,14 +76,79 @@ class PropertyListRepository {
       );
       return null;
     } else if (res is Map<String, dynamic>) {
-      throw Exception('Failed to process PDF data: ${res['error'] ?? 'Unexpected response format'}');
+      throw Exception(
+          'Failed to process PDF data: ${res['error'] ?? 'Unexpected response format'}');
     } else {
-      throw Exception('Failed to process PDF data: Unexpected response type ${res.runtimeType}');
+      throw Exception(
+          'Failed to process PDF data: Unexpected response type ${res.runtimeType}');
+    }
+  }
+
+  @override
+  Future<Uint8List?> downloadPdfAnnualStatement(BuildContext context, property,
+      selectedYearValue, selectedType, selectedUnitNo, userData) async {
+    final Map<String, dynamic> data = {
+      "year": selectedYearValue,
+      "unitModel": {
+        "unitNo": selectedUnitNo,
+        "type": selectedType,
+        "location": property,
+        // "ownerName": userData.first.ownerFullName,
+        "email": userData.first.ownerEmail
+      }
+    };
+    // final Map<String, dynamic> data = {
+      
+    //     "year": "2024",
+    //     // "month": 8,
+    //     "unitModel": {
+    //       "unitNo": "Q-03-01",
+    //       "type": "STUDIO SIMPLE",
+    //       "location": "MOSSAZ",
+    //       "email": "jeanw@tsitd.com"
+    //     }
+      
+    // };
+
+    final res = await _apiService
+        .postWithBytes(ApiEndpoint.downloadPdfAnnualStatement, data: data);
+    if (res is Uint8List) {
+      return res;
+    } else if (res == "Incorrect result size") {
+      // Show pop-up message
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No Record'),
+            content: const Text(
+                'No record available for this unit in the selected month.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+            contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+            titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+            actionsPadding: const EdgeInsets.fromLTRB(0, 0, 8, 8),
+          );
+        },
+      );
+      return null;
+    } else if (res is Map<String, dynamic>) {
+      throw Exception(
+          'Failed to process PDF data: ${res['error'] ?? 'Unexpected response format'}');
+    } else {
+      throw Exception(
+          'Failed to process PDF data: Unexpected response type ${res.runtimeType}');
     }
   }
 
   // Future<void> downloadPdfStatement(BuildContext context, property, selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo, userData) async {
-  //   // List<User> users = GlobalUserState.instance.getUsers();   
+  //   // List<User> users = GlobalUserState.instance.getUsers();
   //   final Map<String, dynamic> data = {
   //     "month": selectedMonthValue,
   //     "year": selectedYearValue,
@@ -85,17 +160,16 @@ class PropertyListRepository {
   //       "email": userData.first.ownerEmail
   //     }
   //   };
-  
+
   //   final res = await _apiService.postWithBytes(ApiEndpoint.downloadPdfStatement, data: data);
-    
+
   //   if (res is Uint8List) {
   //     final pdfBytes = res;
   //     final tempDir = await getTemporaryDirectory();
   //     final file = File('${tempDir.path}/statement.pdf');
   //     await file.writeAsBytes(pdfBytes);
   //     await OpenFile.open(file.path);
-      
-      
+
   //   } else if (res == "Incorrect result size") {
   //     // Show pop-up message
   //     showDialog(
@@ -124,29 +198,37 @@ class PropertyListRepository {
   //     throw Exception('Failed to process PDF data: Unexpected response type ${res.runtimeType}');
   //   }
   // }
-  
+
   Future<List<Map<String, dynamic>>> revenueByYear() async {
-    return await _apiService.post(ApiEndpoint.dashboardReveueByYear).then((res) {
+    return await _apiService
+        .post(ApiEndpoint.dashboardReveueByYear)
+        .then((res) {
       if (res is List && res.isNotEmpty) {
-        return res.map((item) => {
-          'total': item['total'] ?? 0.0,
-          'transcode': item['stranscode'] ?? '',
-          'year': item['iyear'] ?? 0,
-        }).toList();
+        return res
+            .map((item) => {
+                  'total': item['total'] ?? 0.0,
+                  'transcode': item['stranscode'] ?? '',
+                  'year': item['iyear'] ?? 0,
+                })
+            .toList();
       }
       return [];
     });
   }
 
   Future<List<Map<String, dynamic>>> totalByMonth() async {
-    return await _apiService.post(ApiEndpoint.dashboardTotalByMonth).then((res) {
+    return await _apiService
+        .post(ApiEndpoint.dashboardTotalByMonth)
+        .then((res) {
       if (res is List && res.isNotEmpty) {
-        return res.map((item) => {
-          'total': item['total'] ?? 0.0,
-          'transcode': item['stranscode'] ?? '',
-          'year': item['iyear'] ?? 0,
-          'month': item['imonth'] ?? 0,
-        }).toList()
+        return res
+            .map((item) => {
+                  'total': item['total'] ?? 0.0,
+                  'transcode': item['stranscode'] ?? '',
+                  'year': item['iyear'] ?? 0,
+                  'month': item['imonth'] ?? 0,
+                })
+            .toList()
           ..sort((a, b) {
             int yearComparison = a['year'].compareTo(b['year']);
             if (yearComparison != 0) {
@@ -162,12 +244,14 @@ class PropertyListRepository {
   Future<List<Map<String, dynamic>>> locationByMonth() async {
     return await _apiService.post(ApiEndpoint.locationByMonth).then((res) {
       if (res is List && res.isNotEmpty) {
-        return res.map((item) => {
-          'total': item['total'] ?? 0.0,
-          'year': item['iyear'] ?? 0,
-          'month': item['imonth'] ?? 0,
-          'location': item['slocation'] ?? '',
-        }).toList();
+        return res
+            .map((item) => {
+                  'total': item['total'] ?? 0.0,
+                  'year': item['iyear'] ?? 0,
+                  'month': item['imonth'] ?? 0,
+                  'location': item['slocation'] ?? '',
+                })
+            .toList();
       }
       return [];
     });
@@ -184,4 +268,3 @@ class PropertyListRepository {
     });
   }
 }
-
