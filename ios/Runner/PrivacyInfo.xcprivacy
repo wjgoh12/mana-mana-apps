@@ -1,0 +1,13 @@
+{
+  "NSPrivacyAccessedAPITypes": [
+    {
+      "NSPrivacyAccessedAPIType": "NSUserDefaults"
+    }
+  ],
+  "NSPrivacyCollectedDataTypes": [
+    {
+      "NSPrivacyCollectedDataType": "Device ID",
+      "NSPrivacyCollectedDataTypeUsage": "App Functionality"
+    }
+  ]
+}
