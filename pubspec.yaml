@@ -51,11 +51,11 @@ dependencies:
   device_info_plus: ^10.1.1
   open_file: ^3.2.1
   url_launcher: ^6.3.0
-  package_info_plus: ^4.0.0
+  package_info_plus: ^8.3.0
   huawei_hmsavailability: ^6.11.0-301
   intl: ^0.19.0
   syncfusion_flutter_pdfviewer: ^27.2.5
-  share_plus: ^7.0.2
+  share_plus: ^10.1.4
   jwt_decoder: ^2.0.1
 
 dev_dependencies:
