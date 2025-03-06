@@ -23,7 +23,7 @@ class PdfViewerFromMemory extends StatelessWidget {
 
   void share(RenderBox box) async {
     Directory dir = await getApplicationDocumentsDirectory();
-    File file = File('${dir.absolute.path}/${property}_${unitType}_${unitNo}_${getMonthName(month!)}_$year.pdf');
+    File file = File('${dir.absolute.path}/${property}_${unitNo}_${getMonthName(month!)}_$year.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
     Rect sharePositionOrigin = box.localToGlobal(Offset.zero) & box.size;
@@ -70,7 +70,7 @@ class PdfViewerFromMemory extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('$property $unitType($unitNo) - ${getMonthName(month ?? '')} $year',style: const TextStyle(fontSize: 17),),
+        title: Text('$property $unitNo - ${getMonthName(month ?? '')} $year',style: const TextStyle(fontSize: 17),),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: _shareButton,
