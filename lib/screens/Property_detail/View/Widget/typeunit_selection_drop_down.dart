@@ -79,7 +79,7 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown2> 
         isExpanded: true,
         hint: Text(
           widget.list.isNotEmpty
-              ? (widget.label == "Month" ? _getMonthName(widget.list.first) : widget.list.first)
+              ? (widget.label == "Month" ? _getMonthName(widget.list.first) : widget.list.first.split(" (")[1].replaceAll(")", ""))
               : '',
           style: TextStyle(
             color: const Color(0XFF4313E9),
@@ -93,7 +93,7 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown2> 
               (String item) => DropdownMenuItem<String>(
                 value: item,
                 child: Text(
-                  widget.label == "Month" ? _getMonthName(item) : item,
+                  widget.label == "Month" ? _getMonthName(item) : item.split(" (")[1].replaceAll(")", ""),
                   style: TextStyle(
                     color: const Color(0XFF4313E9),
                     fontFamily: 'Open Sans',

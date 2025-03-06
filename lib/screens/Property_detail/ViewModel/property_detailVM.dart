@@ -88,6 +88,11 @@ class PropertyDetailVM extends ChangeNotifier {
         .where((types) => types.location == property)
         .map((types) => '${types.type} (${types.unitno})')
         .toList();
+    // old data
+    // typeItems = ownerData
+    //     .where((types) => types.location == property)
+    //     .map((types) => '${types.type} (${types.unitno})')
+    //     .toList();
     if (typeItems.isNotEmpty) {
       selectedType =
           selectedType == '' ? typeItems.first.split(" (")[0] : selectedType;
