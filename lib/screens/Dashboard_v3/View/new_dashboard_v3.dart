@@ -7,6 +7,7 @@ import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.da
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/widgets/top_bar.dart';
+import 'package:provider/provider.dart';
 
 class NewDashboardV3 extends StatelessWidget {
   const NewDashboardV3({Key? key}) : super(key: key);
@@ -58,30 +59,90 @@ class NewDashboardV3 extends StatelessWidget {
                                       width: 100.width,
                                       padding: EdgeInsets.all(7.width),
                                       decoration: const BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Color(0XFFFFFFFF),
-                                            Color(0XFFDFD8FF)
-                                          ],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                        ),
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20)),
+                                        color:Color(0xFFFFFFFF),
+                                        // borderRadius: BorderRadius.vertical(
+                                        //     top: Radius.circular(20)),
                                       ),
                                       child: Column(
                                         children: [
-                                          UserInfo(model: model),
-                                          RevenueDashboard(model: model),
+                                          Row(
+                                              mainAxisAlignment:MainAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Hey, ${model.userNameAccount}👋',
+                                                style: TextStyle(
+                                                  fontSize: 16.fSize,
+                                                  fontFamily: 'Open Sans',
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                                ),
+                                              ]
+                                          ),
                                           SizedBox(height: 2.height),
-                                          _buildSectionTitle('Statistics'),
-                                          SizedBox(height: 2.height),
-                                          StatisticTable(model: model),
-                                          SizedBox(height: 2.height),
-                                          _buildSectionTitle('Properties'),
-                                          SizedBox(height: 2.height),
-                                          PropertyList(model: model),
-                                          SizedBox(height: 2.height),
+                                           Row(
+                                             children: [
+                                               ShaderMask(
+                                                shaderCallback: (bounds)=>
+                                                const LinearGradient(
+                                                  colors: 
+                                                  [Color(0xFFB82B7D),Color.fromRGBO(62, 81, 255, 1)],
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  ).createShader(bounds),
+                                                  child: Text(
+                                                    'Simple, Timeless \nAssets Management',
+                                                    style: TextStyle(
+                                                      fontSize: 40.fSize,
+                                                      fontFamily: 'Open Sans',
+                                                      fontWeight: FontWeight.w900,
+                                                      color: const Color(0xFFFFFFFF),
+                                                     ),
+                                                   ),
+                                               ),
+                                             ],
+                                           ),
+                                           SizedBox(height: 4.height),
+                          //search bar
+                         TextField(
+                              decoration: InputDecoration(
+                              prefixIcon: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: Image.asset('assets/images/searchIcon.png'),
+                            ),
+                              hintText: 'Search Your Properties',
+                              hintStyle: TextStyle(
+                                fontSize: 15.fSize,
+                              ),
+                              //put settings button image at the end of the text field
+                              suffixIcon: IconButton(
+                                icon: Image.asset(
+                                  'assets/images/Settingsbutton.png',
+                                width: 20,
+                                height: 20,
+                                ),
+                                onPressed: () {
+                                  // Add your settings button functionality here
+                                },
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0XFFD9D9D9), 
+                                  width: 2
+                                  ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 2.height),
+                          //statistic box is just visualize the summary of data:
+                          //total property, total profit, accummulated profit, occupancy rate
+                          //StatisticBox(model:model),
+
                                         ],
                                       ),
                                     ),
@@ -119,8 +180,21 @@ Widget _buildSectionTitle(String title) {
         fontFamily: 'Open Sans',
         fontSize: 20.fSize,
         fontWeight: FontWeight.w800,
-        color: const Color(0XFF4313E9),
+        color: const Color(0XFF000000),
       ),
     ),
   );
 }
+
+
+ //           UserInfo(model: model),
+                                //           RevenueDashboard(model: model),
+                                //           SizedBox(height: 2.height),
+                                //           _buildSectionTitle('Statistics'),
+                                //           SizedBox(height: 2.height),
+                                //           StatisticTable(model: model),
+                                //           SizedBox(height: 2.height),
+                                //           _buildSectionTitle('Properties'),
+                                //           SizedBox(height: 2.height),
+                                //           PropertyList(model: model),
+                                //           SizedBox(height: 2.height),

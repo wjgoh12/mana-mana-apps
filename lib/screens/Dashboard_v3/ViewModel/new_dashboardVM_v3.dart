@@ -6,7 +6,7 @@ import 'package:mana_mana_app/provider/global_user_state.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 
-class NewDashboardVM extends ChangeNotifier {
+class NewDashboardVM_v3 extends ChangeNotifier {
   bool isLoading = true;
   final UserRepository userRepository = UserRepository();
   final PropertyListRepository ownerPropertyListRepository =

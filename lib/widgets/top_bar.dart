@@ -7,6 +7,8 @@ class TopBar extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    
+
 
     return Row(
      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,25 +42,26 @@ class TopBar extends StatelessWidget {
             fontSize: 25.fSize,
             fontFamily: 'Open Sans',
             fontWeight: FontWeight.w800,
-            color: const Color(0xFFB82B7D),
-            shadows: const [
-              Shadow(
-                  color: Color(0XFFC3B9FF),
-                  blurRadius: 0.5,
-                  offset: Offset(0.25, 0.5))
-            ],
+            color: const Color(0xFFFFFFFF),
+            //shadows: const [
+              //Shadow(
+              //    color: Color(0XFFC3B9FF),
+              //    blurRadius: 0.5,
+             //     offset: Offset(0.25, 0.5))
+           // ],
           ),
         ),
         ),
         
+        //notification button move to right, so use expanded
         const Expanded(child: SizedBox()),
         IconButton(
           onPressed: () => print('Notification button pressed'),
           icon: Image.asset(
             'assets/images/Notification.png',
-            width: 6.width,
+            width: 8.width,
             //opacity: const AlwaysStoppedAnimation(0),
-            height: 6.height,
+            height: 8.height,
             fit: BoxFit.contain,
           ),
         ),
