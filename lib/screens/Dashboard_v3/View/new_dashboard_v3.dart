@@ -139,10 +139,42 @@ class NewDashboardV3 extends StatelessWidget {
                           ),
 
                           SizedBox(height: 2.height),
+                          
+                          Row(
+                              mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                            children: [
+                                _buildSectionTitle('Overview'),
+                                _seeAllButton(),
+                        
+                              
+
+                            ],
+                            
+                          ),
+                          
+
                           //statistic box is just visualize the summary of data:
                           //total property, total profit, accummulated profit, occupancy rate
                           //StatisticBox(model:model),
 
+                          SizedBox(height: 2.height),
+                          Row(
+                            mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildSectionTitle('Your Properties'),
+                              _seeAllButton(),
+                            ],
+                          ),
+
+                          SizedBox(height: 2.height),
+                          Row(
+                            mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildSectionTitle('Newsletter'),
+                              _seeAllButton(),
+                            ],
+                          ),
+                          
                                         ],
                                       ),
                                     ),
@@ -186,8 +218,18 @@ Widget _buildSectionTitle(String title) {
   );
 }
 
+Widget _seeAllButton() {
+  return TextButton(
+    onPressed: () {
+      // Add your see all button functionality here
+    },
+    child: const Text(
+      'See All',
+    ),
+  );
+}
 
- //           UserInfo(model: model),
+                                //           UserInfo(model: model),
                                 //           RevenueDashboard(model: model),
                                 //           SizedBox(height: 2.height),
                                 //           _buildSectionTitle('Statistics'),
