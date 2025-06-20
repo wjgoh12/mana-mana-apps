@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/widgets/new_bar_chart.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class TopBar extends StatelessWidget {
@@ -6,25 +7,40 @@ class TopBar extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () => '',
-          icon: Image.asset(
-            'assets/images/mana2logo.png',
-            width: 10.width,
-            height: 5.height,
-            fit: BoxFit.fill,
-          ),
-        ),
-        Text(
-          'Main Dashboard',
+  onPressed: () => '',
+  icon: Container(
+    width: 10.width,
+    height: 10.height, 
+    decoration: const BoxDecoration(
+      shape: BoxShape.circle,
+      image: DecorationImage(
+        image: AssetImage('assets/images/mana2logo.png'),
+        fit: BoxFit.scaleDown,
+      ),
+    ),
+  ),
+),
+
+        ShaderMask(
+          shaderCallback: (bounds)=>
+          const LinearGradient(
+          colors: 
+        [Color(0xFFB82B7D),Color.fromRGBO(62, 81, 255, 1)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        ).createShader(bounds),
+        child: Text(
+          'Owner\'s Portal',
           style: TextStyle(
-            fontSize: 20.fSize,
-            color: const Color(0xFFC3B9FF),
+            fontSize: 25.fSize,
             fontFamily: 'Open Sans',
             fontWeight: FontWeight.w800,
+            color: const Color(0xFFB82B7D),
             shadows: const [
               Shadow(
                   color: Color(0XFFC3B9FF),
@@ -33,13 +49,16 @@ class TopBar extends StatelessWidget {
             ],
           ),
         ),
+        ),
+        
+        const Expanded(child: SizedBox()),
         IconButton(
           onPressed: () => print('Notification button pressed'),
           icon: Image.asset(
-            'assets/images/notifications.png',
+            'assets/images/Notification.png',
             width: 6.width,
-            opacity: AlwaysStoppedAnimation(0),
-            height: 3.height,
+            //opacity: const AlwaysStoppedAnimation(0),
+            height: 6.height,
             fit: BoxFit.contain,
           ),
         ),
