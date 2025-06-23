@@ -10,18 +10,16 @@ class OverviewWidget extends StatelessWidget {
 @override
   Widget build(BuildContext context) {
 
-    return Container(
-      child:Card(
-        clipBehavior: Clip.hardEdge,
-        child: InkWell(
-          splashColor: Colors.blue.withAlpha(30),
-          onTap: () {
-            debugPrint('Card tapped.');
-          },
-          child: const SizedBox(width: 300, height: 100, child: Text('A card that can be tapped')),
-        ),
-      ),
-    );
+    return const Card(
+        //left blue card
+        color:Color.fromARGB(255, 62, 81, 255),
+        child:SizedBox(
+          width: 100,
+          height: 100,
+        )
+
+        
+      );
 
   }
 

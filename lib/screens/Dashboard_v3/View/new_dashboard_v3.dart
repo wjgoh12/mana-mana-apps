@@ -5,6 +5,7 @@ import 'package:mana_mana_app/screens/New_Dashboard/View/revenue_dashboard.dart'
 import 'package:mana_mana_app/screens/New_Dashboard/View/statistic_table.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/user_info.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/widgets/overview_widget.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/widgets/top_bar.dart';
@@ -46,15 +47,19 @@ class NewDashboardV3 extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       elevation: 0,
                       title: showTitle 
-                          ? Text(
-                              'Dashboard',
-                              style: TextStyle(
-                                fontSize: 20.fSize,
-                                fontFamily: 'Open Sans',
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black,
+                          ? Center(
+                            child: Text(
+                                'Dashboard',
+                                style: 
+                                TextStyle(
+                                  
+                                  fontSize: 20.fSize,
+                                  fontFamily: 'Open Sans',
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black,
+                                ),
                               ),
-                            )
+                          )
                           : const TopBar(),
                       automaticallyImplyLeading: false,
                       toolbarHeight: !Responsive.isMobile(context) ? 160 : 50,
@@ -168,7 +173,7 @@ class NewDashboardV3 extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
                                   color: Color(0XFFD9D9D9), 
-                                  width: 2
+                                  width: 1.5,
                                   ),
                               ),
                             ),
@@ -181,17 +186,13 @@ class NewDashboardV3 extends StatelessWidget {
                             children: [
                                 _buildSectionTitle('Overview'),
                                 _seeAllButton(),
-                        //overview widget here
-                              
 
                             ],
                             
                           ),
+                                                  //overview card widgets here
+                            OverviewWidget(),
                           
-
-                          //statistic box is just visualize the summary of data:
-                          //total property, total profit, accummulated profit, occupancy rate
-                          //StatisticBox(model:model),
 
                           SizedBox(height: 2.height),
                           Row(
@@ -231,6 +232,7 @@ class NewDashboardV3 extends StatelessWidget {
                       )
               ],
             ),
+            //put bottom navigation bar
             bottomNavigationBar: const CustomBottomNavigationBar(),
           );
         });

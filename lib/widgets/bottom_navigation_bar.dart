@@ -61,16 +61,38 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            icon is IconData 
-              ? Icon(
-                  icon,
-                  color: isSelected ? const Color(0xFF4313E9) : Colors.grey,
-                  size: 24.fSize,
-                )
-              : ImageIcon(
-                  AssetImage(icon), // icon is the asset path string
-                  size: 24.fSize,
-                  color: isSelected ? const Color(0xFF4313E9) : Colors.grey,
+            Container(
+                  width:40.fSize,
+                  height:40.fSize,
+                  decoration: isSelected ? const BoxDecoration(
+                    shape:BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors:[
+                        Color(0XFFB82B7D),
+                        Color(0xFF3E51FF),
+                       
+                       
+                    ],
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    
+                    ),
+                    
+                  ) : null,
+                  child: Center(
+                    // Check if icon is IconData or String
+                    child: icon is IconData 
+                      ? Icon( // For regular icons
+                          icon,
+                          size: 24.fSize,
+                          color: isSelected ? Colors.white : Colors.grey,
+                        )
+                      : ImageIcon( // For PNG assets
+                          AssetImage(icon),
+                          size: 24.fSize,
+                          color: isSelected ? Colors.white : Colors.grey,
+                        ),
+                  ),
                 ),
             SizedBox(height: 4.fSize),
             Text(
