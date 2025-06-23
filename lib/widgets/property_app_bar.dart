@@ -16,7 +16,7 @@ PreferredSizeWidget propertyAppBar(context, function) {
           )),
     ),
     title: GradientText1(
-        text: 'Properties',
+        text: 'Property(s)',
         style: TextStyle(
           fontFamily: 'Open Sans',
           fontSize: 20.fSize,
