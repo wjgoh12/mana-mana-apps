@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
@@ -13,7 +15,6 @@ class PropertyListV3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
         if (model.isLoading) {
-          // Check if data is still loading
           return Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -21,7 +22,7 @@ class PropertyListV3 extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(16),
             child: const Center(
-              child: CircularProgressIndicator(), // Display a loading spinner
+              child: CircularProgressIndicator(), 
             ),
           );
         }
@@ -38,7 +39,8 @@ class PropertyListV3 extends StatelessWidget {
                 ),
               )
             : SizedBox(
-                height: 38.height,
+                height: 450.fSize,
+                
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
@@ -53,7 +55,7 @@ class PropertyListV3 extends StatelessWidget {
                               PropertyImageStack(
                                 locationByMonth: [property],
                               ),
-                              const SizedBox(width: 20),
+                              const SizedBox(width: 40),
                             ])
                         .toList(),
                     // ...model.locationByMonth
@@ -132,17 +134,20 @@ class PropertyImageStack extends StatelessWidget {
       builder: (context, sizingInformation) {
         final isMobile =
             sizingInformation.deviceScreenType == DeviceScreenType.mobile;
-        final width = isMobile ? 51.width : 40.width;
-        final height = 30.height;
-        final position = 20.height;
-        final containerWidth = isMobile ? 41.width : 31.width;
-        final containerHeight = 18.height;
-        final arrowTop = 30.height;
-        final arrowLeft = isMobile ? 37.5.width : 27.5.width;
+        final width = isMobile ? 350.fSize : 340.fSize;
+        final height = 207.fSize;
+        final position = 25.height;
+        final containerWidth = isMobile ? 370.fSize : 360.fSize;
+        final containerHeight = 405.fSize;
+        final smallcontainerWidth = isMobile? 100.width:90.width;
+        final smallcontainerHeight = 15.height;
+        //final arrowTop = 30.height;
+        //final arrowLeft = isMobile ? 37.5.width : 27.5.width;
 
         return Stack(
           clipBehavior: Clip.none,
           children: [
+            
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -152,15 +157,107 @@ class PropertyImageStack extends StatelessWidget {
                   ),
                 );
               },
-              child: SizedBox(
-                width: width,
-                height: height,
-                child: Image.asset(
-                  'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
-                  fit: BoxFit.fill,
+              child: Container(
+                width: containerWidth,
+                height: containerHeight,
+                margin: const EdgeInsets.only(left: 5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                  
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Image at top
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: SizedBox(
+                          width: width,
+                          height: height,
+                          child: Image.asset(
+                            'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Group.png and text below image
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 3.width,
+                        top: 3.width,
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/Group.png',
+                            width: 24.fSize,
+                            height: 24.fSize,
+                          ),
+                          SizedBox(width: 2.width), // Space between icon and text
+                          Text(
+                            'Owner(s)',
+                            style: TextStyle(
+                              fontFamily: 'Open Sans',
+                              fontSize: 12.fSize,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  
+                ),
+                
+              ),
+              
+            ),
+            
+            Positioned(
+              top: 5,
+              left: 5,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PropertyDetail(locationByMonth: locationByMonth),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: SizedBox(
+                      width: width,
+                      height: height,
+                      child: Image.asset(
+                        'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
+                        fit: BoxFit.cover,
+                      ),
+                      
+                    ),
+                  
+                  ),
                 ),
               ),
             ),
+            
             Positioned(
               top: position,
               child: GestureDetector(
@@ -173,111 +270,7 @@ class PropertyImageStack extends StatelessWidget {
                     ),
                   );
                 },
-                child: Container(
-                  width: containerWidth,
-                  height: containerHeight,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.05),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      )
-                    ],
-                    color: const Color(0XFFFFFFFF),
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(10)),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 2.height, left: 2.width),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          locationByMonth.first['location'] ?? '',
-                          style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20.fSize,
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                        Text(
-                          '${getMonthAbbreviation(locationByMonth.first['month'])} ${locationByMonth.first['year']}',
-                          style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontWeight: FontWeight.w300,
-                            fontSize: 11.fSize,
-                            fontStyle: FontStyle.italic,
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                        SizedBox(height: 2.height),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'RM',
-                              style: TextStyle(
-                                fontFamily: 'Open Sans',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 10.fSize,
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                              ),
-                            ),
-                            Text(
-                              NumberFormat('#,##0.00').format(locationByMonth.first['total']),
-                              // locationByMonth.first['total'].toString(),
-                              style: TextStyle(
-                                fontFamily: 'Open Sans',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20.fSize,
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Total Net After POB​',
-                          style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 10.fSize,
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: arrowTop,
-              left: arrowLeft,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          PropertyDetail(locationByMonth: locationByMonth),
-                    ),
-                  );
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  width: 12.width,
-                  height: 5.height,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color:const Color.fromARGB(255, 76, 175, 79),
-                      width: 2.0,
-
-                    )
-                  ),
-                  
-                ),
+                
               ),
             )
           ],
@@ -300,7 +293,7 @@ class ViewAllProperty extends StatelessWidget {
       },
       child: Container(
         width: 51.width,
-        height: 30.height,
+        height: 38.height,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.white,

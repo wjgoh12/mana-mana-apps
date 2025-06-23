@@ -17,7 +17,7 @@ class TopBar extends StatelessWidget {
   onPressed: () => '',
   icon: Container(
     width: 10.width,
-    height: 10.height, 
+    height: 8.height, 
     decoration: const BoxDecoration(
       shape: BoxShape.circle,
       image: DecorationImage(

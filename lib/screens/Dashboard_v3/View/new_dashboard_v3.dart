@@ -17,6 +17,19 @@ class NewDashboardV3 extends StatelessWidget {
   Widget build(BuildContext context) {
     final NewDashboardVM model = NewDashboardVM();
     model.fetchData();
+    
+    final ScrollController scrollController = ScrollController();
+    //tracks the scroll position of the scroll view,check how far the user scrolled
+    final ValueNotifier<bool> showDashboardTitle = ValueNotifier<bool>(false);
+    
+    scrollController.addListener(() {
+      if (scrollController.offset > 100) { // Change threshold as needed
+        showDashboardTitle.value = true;
+      } else {
+        showDashboardTitle.value = false;
+      }
+    });
+
     return ListenableBuilder(
         listenable: model,
         builder: (context, child) {
@@ -25,13 +38,27 @@ class NewDashboardV3 extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 _buildBackgroundContainer(),
-                AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  title: const TopBar(),
-                  automaticallyImplyLeading:
-                      false, // This will remove the back button
-                  toolbarHeight: !Responsive.isMobile(context) ? 160 : 50,
+                ValueListenableBuilder<bool>(
+                  valueListenable: showDashboardTitle,
+                  builder: (context, showTitle, child) {
+                    return AppBar(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      title: showTitle 
+                          ? Text(
+                              'Dashboard',
+                              style: TextStyle(
+                                fontSize: 20.fSize,
+                                fontFamily: 'Open Sans',
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black,
+                              ),
+                            )
+                          : const TopBar(),
+                      automaticallyImplyLeading: false,
+                      toolbarHeight: !Responsive.isMobile(context) ? 160 : 50,
+                    );
+                  },
                 ),
                 Positioned(
                         top: 14.height,
@@ -42,7 +69,12 @@ class NewDashboardV3 extends StatelessWidget {
                           onNotification: (scrollNotification) {
                             if (scrollNotification
                                 is ScrollUpdateNotification) {
-                              // You can add additional logic here if needed
+                              // Update scroll position
+                              if (scrollNotification.metrics.pixels > 100) {
+                                showDashboardTitle.value = true;
+                              } else {
+                                showDashboardTitle.value = false;
+                              }
                             }
                             return true;
                           },
@@ -55,6 +87,7 @@ class NewDashboardV3 extends StatelessWidget {
                                 await model.refreshData();
                               },
                               child: SingleChildScrollView(
+                                controller: scrollController,
                                 child: Column(
                                   children: [
                                     Container(
@@ -124,7 +157,7 @@ class NewDashboardV3 extends StatelessWidget {
                                 height: 20,
                                 ),
                                 onPressed: () {
-                                  // Add your settings button functionality here
+                                  
                                 },
                               ),
                               border: OutlineInputBorder(
