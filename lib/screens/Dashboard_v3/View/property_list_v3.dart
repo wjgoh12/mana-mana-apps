@@ -6,9 +6,9 @@ import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart'
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-class PropertyList extends StatelessWidget {
+class PropertyListV3 extends StatelessWidget {
   final NewDashboardVM model;
-  const PropertyList({required this.model, Key? key}) : super(key: key);
+  const PropertyListV3({required this.model, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +179,7 @@ class PropertyImageStack extends StatelessWidget {
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0XFF120051).withOpacity(0.05),
+                        color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.05),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       )
@@ -199,7 +199,7 @@ class PropertyImageStack extends StatelessWidget {
                             fontFamily: 'Open Sans',
                             fontWeight: FontWeight.w700,
                             fontSize: 20.fSize,
-                            color: const Color(0XFF4313E9),
+                            color: const Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                         Text(
@@ -209,7 +209,7 @@ class PropertyImageStack extends StatelessWidget {
                             fontWeight: FontWeight.w300,
                             fontSize: 11.fSize,
                             fontStyle: FontStyle.italic,
-                            color: const Color(0XFF4313E9),
+                            color: const Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                         SizedBox(height: 2.height),
@@ -222,7 +222,7 @@ class PropertyImageStack extends StatelessWidget {
                                 fontFamily: 'Open Sans',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 10.fSize,
-                                color: const Color(0XFF4313E9),
+                                color: const Color.fromARGB(255, 0, 0, 0),
                               ),
                             ),
                             Text(
@@ -232,7 +232,7 @@ class PropertyImageStack extends StatelessWidget {
                                 fontFamily: 'Open Sans',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 20.fSize,
-                                color: const Color(0XFF4313E9),
+                                color: const Color.fromARGB(255, 0, 0, 0),
                               ),
                             ),
                           ],
@@ -243,7 +243,7 @@ class PropertyImageStack extends StatelessWidget {
                             fontFamily: 'Open Sans',
                             fontWeight: FontWeight.w400,
                             fontSize: 10.fSize,
-                            color: const Color(0XFF4313E9),
+                            color: const Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                       ],
@@ -267,15 +267,16 @@ class PropertyImageStack extends StatelessWidget {
                 },
                 child: Container(
                   alignment: Alignment.center,
-                  width: 7.width,
+                  width: 12.width,
                   height: 5.height,
-                  decoration: const BoxDecoration(
-                    color: Color(0XFF4313E9),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color:const Color.fromARGB(255, 76, 175, 79),
+                      width: 2.0,
+
+                    )
                   ),
-                  child: const Icon(
-                    Icons.keyboard_arrow_right_rounded,
-                    color: Colors.white,
-                  ),
+                  
                 ),
               ),
             )
@@ -299,7 +300,7 @@ class ViewAllProperty extends StatelessWidget {
       },
       child: Container(
         width: 51.width,
-        height: 38.height,
+        height: 30.height,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.white,

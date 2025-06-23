@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/View/property_list.dart';
+import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/revenue_dashboard.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/statistic_table.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/user_info.dart';
@@ -46,7 +47,8 @@ class NewDashboardV3 extends StatelessWidget {
                             return true;
                           },
                           child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
+                            borderRadius: 
+                            const BorderRadius.vertical(
                                 top: Radius.circular(20)),
                             child: RefreshIndicator(
                               onRefresh: () async {
@@ -60,8 +62,8 @@ class NewDashboardV3 extends StatelessWidget {
                                       padding: EdgeInsets.all(7.width),
                                       decoration: const BoxDecoration(
                                         color:Color(0xFFFFFFFF),
-                                        // borderRadius: BorderRadius.vertical(
-                                        //     top: Radius.circular(20)),
+                                         borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20)),
                                       ),
                                       child: Column(
                                         children: [
@@ -162,10 +164,18 @@ class NewDashboardV3 extends StatelessWidget {
                             mainAxisAlignment:MainAxisAlignment.spaceBetween,
                             children: [
                               _buildSectionTitle('Your Properties'),
-                              _seeAllButton(),
+                              _seeAllButton(onPressed:(){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: 
+                                  (context) => 
+                                  AllPropertyScreen(locationByMonth: model.locationByMonth)),
+                                  
+                                );
+                              }),
                             ],
                           ),
-
+                          PropertyListV3(model: model),
                           SizedBox(height: 2.height),
                           Row(
                             mainAxisAlignment:MainAxisAlignment.spaceBetween,
@@ -218,15 +228,13 @@ Widget _buildSectionTitle(String title) {
   );
 }
 
-Widget _seeAllButton() {
+Widget _seeAllButton({VoidCallback? onPressed}) {
   return TextButton(
-    onPressed: () {
-      // Add your see all button functionality here
-    },
+  onPressed: onPressed,
     child: const Text(
       'See All',
-    ),
-  );
+      ),
+    );
 }
 
                                 //           UserInfo(model: model),
