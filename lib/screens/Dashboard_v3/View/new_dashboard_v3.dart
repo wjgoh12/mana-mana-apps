@@ -10,7 +10,7 @@ import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/widgets/top_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:mana_mana_app/widgets/bottom_navigation_bar.dart';
+import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 
 class NewDashboardV3 extends StatelessWidget {
   const NewDashboardV3({Key? key}) : super(key: key);
@@ -236,7 +236,7 @@ class NewDashboardV3 extends StatelessWidget {
             ),
 
             floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-            bottomNavigationBar: const CustomBottomNavigationBar(),
+            bottomNavigationBar: const BottomNavBar(),
             extendBody: true,
           );
         });

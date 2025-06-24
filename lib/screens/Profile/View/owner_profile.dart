@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
-
+import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 
 class OwnerProfile extends StatelessWidget {
   const OwnerProfile({super.key});
@@ -29,12 +29,7 @@ class OwnerProfile extends StatelessWidget {
                   ),
                 ),
                 centerTitle: false,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
+                
               ),
               body: SingleChildScrollView(
                 child: Padding(

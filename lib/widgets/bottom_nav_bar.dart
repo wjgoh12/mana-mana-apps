@@ -5,21 +5,21 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
 
-class CustomBottomNavigationBar extends StatefulWidget {
+class BottomNavBar extends StatefulWidget {
   final int currentIndex;
   final Function(int)? onTap;
   
-  const CustomBottomNavigationBar({
+  const BottomNavBar({
     super.key,
     this.currentIndex = 0,// Default index is 0
     this.onTap,
   });
 
   @override
-  State<CustomBottomNavigationBar> createState() => _CustomBottomNavigationBarState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
+class _BottomNavBarState extends State<BottomNavBar> {
   late int _selectedIndex;
 
   @override
@@ -29,7 +29,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   }
 
   @override
-  void didUpdateWidget(CustomBottomNavigationBar oldWidget) {
+  void didUpdateWidget(BottomNavBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.currentIndex != oldWidget.currentIndex) {
       _selectedIndex = widget.currentIndex;
@@ -47,78 +47,43 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         widget.onTap!(index);
       }
       
-      // Navigation logic
-      _navigateToPage(context, index);
+      // // Navigation logic
+      // _navigateToPage(context, index);
       
-      print('Tapped index: $index');
     }
   }
 
-  void _navigateToPage(BuildContext context, int index) {
-    Widget? targetPage;
-    switch (index) {
-      case 0:
-        // Navigate to Home/Dashboard
-        // Navigator.pushNamedAndRemoveUntil(
-        // context, 
-        // 'screens/Dashboard_v3/View/new_dashboard_v3.dart', 
-        // (route) => false,
-        // );
-        targetPage = const NewDashboardV3();
-        break;
-      case 1:
-        // Navigate to Properties
-        Navigator.pushNamedAndRemoveUntil(
-          context, 
-          '/properties', 
-          (route) => false,
-        );
-        break;
-      case 2:
-        // Navigate to Newsletter
-        // Navigator.pushNamedAndRemoveUntil(
-        //   context, 
-        //   '/newsletter', 
-        //   (route) => false,
-        // );
-        break;
-      case 3:
-        // Navigate to Profile
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => 
-          const OwnerProfile()),
-        );
-        break;
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 80.fSize,
-      width: 320.fSize,
-      margin: EdgeInsets.all(16.fSize),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(50),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildNavItem('assets/images/Home.png', 'Home', 0),
-          _buildNavItem('assets/images/Properties.png', 'Properties', 1),
-          _buildNavItem('assets/images/Newsletter.png', 'Newsletter', 2),
-          _buildNavItem(Icons.person, 'Profile', 3),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        height: 80,
+        width: 320.fSize,
+        margin: EdgeInsets.all(16.fSize),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(40),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildNavItem('assets/images/Home.png', 'Home', 0),
+            _buildNavItem('assets/images/Properties.png', 'Properties', 1),
+            _buildNavItem('assets/images/Newsletter.png', 'Newsletter', 2),
+            _buildNavItem('assets/images/Profile.png', 'Profile', 3),
+          ],
+        ),
       ),
     );
   }
@@ -133,7 +98,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         duration: const Duration(milliseconds: 200),
         width: 70.fSize, // Fixed width instead of Expanded
         height: 70.fSize,
-        decoration: isSelected ? const BoxDecoration(
+        decoration: isSelected ? 
+        const BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
             colors: [
@@ -149,23 +115,24 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Icon container
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 24.fSize,
-              height: 24.fSize,
-              child: Center(
-                child: isSelected
-                  ? (icon is IconData 
-                      ? Icon(
-                          icon,
-                          size: 18.fSize,
-                          color: Colors.white,
-                        )
-                      : ImageIcon(
-                          AssetImage(icon),
-                          size: 18.fSize,
-                          color: Colors.white,
-                        ))
+            AnimatedScale(
+              duration: const Duration(milliseconds: 300),
+            scale: isSelected ? 1.2 : 1.0,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 300),
+              opacity: isSelected ? 1.0 : 0.6,
+              child: icon is IconData
+                  ? Icon(
+                      icon,
+                      size: 24.fSize,
+                      color: isSelected ? Colors.white : Colors.white,
+                    )
+                    : isSelected
+            ? ImageIcon(
+                AssetImage(icon),
+                size: 24.fSize,
+                color: Colors.white,
+              )
                   : ShaderMask(
                       shaderCallback: (bounds) => const LinearGradient(
                         colors: [
@@ -175,19 +142,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                         begin: Alignment.bottomLeft,
                         end: Alignment.topRight,
                       ).createShader(bounds),
-                      child: icon is IconData 
-                        ? Icon(
-                            icon,
-                            size: 18.fSize,
-                            color: Colors.white,
-                          )
-                        : ImageIcon(
-                            AssetImage(icon),
-                            size: 18.fSize,
-                            color: Colors.white,
-                          ),
+                      child: ImageIcon(
+                        AssetImage(icon),
+                        size: 24.fSize,
+                        color: Colors.white,
+                      ),
                     ),
-              ),
+            ),
             ),
             
             SizedBox(height: 4.fSize),
@@ -199,7 +160,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 duration: const Duration(milliseconds: 200),
                 style: TextStyle(
                   color: isSelected ? const Color(0xFFFFFFFF) : Colors.transparent,
-                  fontSize: 8.fSize,
+                  fontSize: 10.fSize,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
                 child: isSelected
