@@ -14,20 +14,21 @@ class OwnerProfile extends StatelessWidget {
         builder: (context, child) {
           return Scaffold(
               appBar: AppBar(
+                
                 title: Text(
-                  'Owner\'s Profile',
+                  'Profile',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     foreground: Paint()
                       ..shader = const LinearGradient(
-                        colors: [Color(0xFF2900B7), Color(0xFF120051)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                        colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.topRight,
                       ).createShader(
                           const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
                   ),
                 ),
-                centerTitle: true,
+                centerTitle: false,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
@@ -256,7 +257,9 @@ class OwnerProfile extends StatelessWidget {
                       // ),
                     ],
                   ),
+                  
                 ),
+                
               ));
         });
   }

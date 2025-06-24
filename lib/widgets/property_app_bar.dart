@@ -25,7 +25,7 @@ PreferredSizeWidget propertyAppBar(context, function) {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [Color(0xFF2900B7), Color(0xFF120051)],
+          colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
         )),
   );
 }

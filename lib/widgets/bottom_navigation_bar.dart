@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
-import 'package:mana_mana_app/screens/Profile/View/OwnerProfileScreen.dart';
+import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final int currentIndex;
@@ -11,7 +11,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
   
   const CustomBottomNavigationBar({
     super.key,
-    this.currentIndex = 0,
+    this.currentIndex = 0,// Default index is 0
     this.onTap,
   });
 
@@ -84,12 +84,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         break;
       case 3:
         // Navigate to Profile
-        Navigator.pushNamedAndRemoveUntil(
-          context, 
-          'screens/Profile/View/OwnerProfileScreen', 
-          (route) => false,
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => 
+          const OwnerProfile()),
         );
-         targetPage = const OwnerProfile();
         break;
     }
   }

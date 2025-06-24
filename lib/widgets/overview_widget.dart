@@ -1,27 +1,69 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class OverviewWidget extends StatelessWidget {
   const OverviewWidget({super.key});
 
-
-@override
+  @override
   Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15), // 15px screen margin
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Left Column
+          Flexible(
+            child: Column(
+              children: [
+                Card(
+                  
+                  margin: const EdgeInsets.only(bottom: 20),
+                  color: const Color(0xFF5092FF),
+                  child: SizedBox(
+                    width: 190.fSize,
+                    height: 130.fSize,
+                  ),
+                  
+                ),
+                Card(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  color: const Color(0xFFFFE7B8),
+                  child: SizedBox(
+                    width: 190.fSize,
+                    height: 83.fSize,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-    return const Card(
-        //left blue card
-        color:Color.fromARGB(255, 62, 81, 255),
-        child:SizedBox(
-          width: 100,
-          height: 100,
-        )
+          SizedBox(width: 20), // spacing between columns
 
-        
-      );
-
+          // Right Column
+          Flexible(
+            child: Column(
+              children: [
+                Card(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  color: const Color(0xFF9EEAFF),
+                  child: SizedBox(
+                    width: 190.fSize,
+                    height: 83.fSize,
+                  ),
+                ),
+                Card(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  color: const Color(0xFFDBC7FF),
+                  child: SizedBox(
+                    width: 190.fSize,
+                    height: 130.fSize,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
-
-
 }
