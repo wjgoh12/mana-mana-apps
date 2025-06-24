@@ -43,26 +43,28 @@ class NewDashboardV3 extends StatelessWidget {
                 ValueListenableBuilder<bool>(
                   valueListenable: showDashboardTitle,
                   builder: (context, showTitle, child) {
-                    return AppBar(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      title: showTitle 
-                          ? Center(
-                            child: Text(
-                                'Dashboard',
-                                style: 
-                                TextStyle(
-                                  
-                                  fontSize: 20.fSize,
-                                  fontFamily: 'Open Sans',
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.black,
-                                ),
-                              ),
-                          )
-                          : const TopBar(),
-                      automaticallyImplyLeading: false,
-                      toolbarHeight: !Responsive.isMobile(context) ? 160 : 50,
+                    return PreferredSize(
+                      preferredSize: const Size.fromHeight(48),
+                      child: AppBar(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        title: showTitle 
+                            ? Center(
+                                child: Text(
+                                    'Dashboard',
+                                    style: 
+                                    TextStyle(
+                                      
+                                      fontSize: 18.fSize,
+                                      fontFamily: 'Open Sans',
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                              )
+                            : const TopBar(),
+                        automaticallyImplyLeading: false,
+                      ),
                     );
                   },
                 ),
@@ -219,7 +221,12 @@ class NewDashboardV3 extends StatelessWidget {
                               _seeAllButton(),
                             ],
                           ),
-                          
+
+                          Container(
+                            height: 200,
+                            
+                          ),
+                          SizedBox(height: 120.fSize),
                                         ],
                                       ),
                                     ),
@@ -232,8 +239,9 @@ class NewDashboardV3 extends StatelessWidget {
                       )
               ],
             ),
-            //put bottom navigation bar
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: const CustomBottomNavigationBar(),
+            extendBody: true,
           );
         });
   }

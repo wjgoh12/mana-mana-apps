@@ -210,7 +210,7 @@ class PropertyImageStack extends StatelessWidget {
                             'Owner(s)',
                             style: TextStyle(
                               fontFamily: 'Open Sans',
-                              fontSize: 12.fSize,
+                              fontSize: 15.fSize,
                               fontWeight: FontWeight.w500,
                               color: Colors.black,
                             ),
@@ -218,12 +218,34 @@ class PropertyImageStack extends StatelessWidget {
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12, top: 8),
+
+
+
+
+
+
+
+
+
+
+                      child: Text(
+                        locationByMonth.first['location'] ?? '',
+                        style: const TextStyle(
+                          fontFamily: 'Open Sans',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
                   ],
-                  
+
                 ),
-                
+
               ),
-              
+
             ),
             
             Positioned(
@@ -250,9 +272,9 @@ class PropertyImageStack extends StatelessWidget {
                         'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
                         fit: BoxFit.cover,
                       ),
-                      
+
                     ),
-                  
+
                   ),
                 ),
               ),
@@ -260,17 +282,29 @@ class PropertyImageStack extends StatelessWidget {
             
             Positioned(
               top: position,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          PropertyDetail(locationByMonth: locationByMonth),
-                    ),
-                  );
-                },
-                
+
+
+
+
+
+
+
+
+
+
+
+              child: Flexible(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            PropertyDetail(locationByMonth: locationByMonth),
+                      ),
+                    );
+                  },
+                ),
               ),
             )
           ],
@@ -278,8 +312,8 @@ class PropertyImageStack extends StatelessWidget {
       },
     );
   }
-}
 
+}
 class ViewAllProperty extends StatelessWidget {
   final NewDashboardVM model;
   const ViewAllProperty({required this.model, Key? key}) : super(key: key);
