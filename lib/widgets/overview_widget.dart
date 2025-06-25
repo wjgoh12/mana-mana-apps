@@ -33,11 +33,13 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     
 
     return Row(
+      
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Left Column
-          Flexible(
+          Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, 
               children: [
                 Card(
                   
@@ -51,52 +53,56 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       
-                      Stack(
-                        children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 10),
-                          child:Image.asset('assets/images/Bulat.png',
-                          width:40,
-                          height:40,
-                          ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        
-                        children: [
-                          Padding(
-                            padding:const EdgeInsets.only(left:10),
-                              child:Text(
-                                
-                                '$totalUnits',
-                                style: const TextStyle(
-                                  fontSize: 50,
-                                  
-                                  color: Colors.white,
-                                ),
-                              ),
-                        
-                          ),
-                          const SizedBox(width: 1), // spacing between text and image
-                          Padding(
-                            padding: const EdgeInsets.only(top: 1),
-                            child: Image.asset(
-                              'assets/images/OverviewProperty.png',
-                              width: 40,
-                              height: 40,
+                      Expanded(
+                        child: Stack(
+                          children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, top: 10),
+                            child:Image.asset('assets/images/Bulat.png',
+                            width:35,
+                            height:35,
                             ),
-                          ),
-                        ],
-                      )
-                        ]
+                        ),
+                        Padding(
+                              padding: const EdgeInsets.only(left: 18, top: 15),
+                              child: Image.asset(
+                                'assets/images/OverviewProperty.png',
+                                width: 20,
+                                height: 26,
+                              ),
+                            ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          
+                          children: [
+                            
+                            Padding(
+                              padding:const EdgeInsets.only(right:5),
+                                child:Text(
+                                  
+                                  '$totalUnits',
+                                  style: const TextStyle(
+                                    fontSize: 50,
+                                    
+                                    color: Colors.white,
+                                  ),
+                                ),
+                          
+                            ),
+                            const SizedBox(width: 1), // spacing between text and image
+                            
+                          ],
+                        )
+                          ]
+                        ),
                       ),
                       Padding(
-                        padding:EdgeInsets.only(left: 10),
+                        padding:EdgeInsets.only(left: 10,),
                       child:Text(
                         'Total Properties', 
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12.fSize,
+                          fontSize: 10.fSize,
                           ),
                       ),
                       ),
@@ -106,7 +112,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                         'Managed: ', 
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 18.fSize,
+                          fontSize: 15.fSize,
                           fontWeight: FontWeight.bold,
                           ),
                       ),
@@ -128,36 +134,58 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                     width: 190.fSize,
                     height: 83.fSize,
                     child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                     crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Stack(
-                          
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft, // Vertically center, left-aligned
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 10,top:10),
-                                child: Image.asset(
-                                  'assets/images/Bulat.png',
-                                  width: 50,
-                                  height: 50,
+                        Expanded(
+                          child: Stack(
+                            
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft, // Vertically center, left-aligned
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 10,top:10),
+                                  child: Image.asset(
+                                    'assets/images/Bulat.png',
+                                    width: 40,
+                                    height: 40,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const Padding(
-                          padding: EdgeInsets.only(left: 16, top: 20),
-                          child: Image(
-                            image: AssetImage('assets/images/OverviewOccupancy.png'),
-                            width: 35,
-                            height: 25,
-                          )
+                              const Padding(
+                            padding: EdgeInsets.only(left: 16,top:16),
+                            child: Image(
+                              image: AssetImage('assets/images/OverviewOccupancy.png'),
+                              width: 30,
+                              height: 20,
+                            )
+                          ),
+                            ],
+                          ),
                         ),
-                          ],
-                        )
-                        
+                        const Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+
+                          children: [
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Text(
+                                
+                                'Occupancy Rate',
+                                style: TextStyle(
+                                  fontSize: 10.0,
+                                  fontStyle: FontStyle.normal
+                                ),
+                                                      ),
+                            )
+
                       ],
-                    )
+                      
+
+                    ),
+                      ],
+                     
                   ),
+                ),
                 ),
               ],
             ),
@@ -175,6 +203,12 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                   child: SizedBox(
                     width: 190.fSize,
                     height: 83.fSize,
+                    child: const Expanded(
+                      child: Stack(
+                        
+
+                      ),
+                    )
                   ),
                 ),
                 Card(
@@ -183,6 +217,8 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                   child: SizedBox(
                     width: 190.fSize,
                     height: 130.fSize,
+
+                    
                   ),
                 ),
               ],

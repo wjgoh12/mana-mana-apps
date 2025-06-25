@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/revenue_dashboard.dart';
@@ -49,9 +50,14 @@ class NewDashboardV3 extends StatelessWidget {
                     return PreferredSize(
                       preferredSize: const Size.fromHeight(20),
                       child: AppBar(
-                        backgroundColor: Colors.transparent,
+                        systemOverlayStyle: const SystemUiOverlayStyle(
+                          statusBarColor: Colors.white,
+                          statusBarIconBrightness: Brightness.dark,
+                          ),
+                        backgroundColor: Colors.white,
                         elevation: 0,
-                        title: showTitle 
+                        title: 
+                        showTitle 
                             ? Center(
                                 child: Text(
                                     'Dashboard',
@@ -92,9 +98,9 @@ class NewDashboardV3 extends StatelessWidget {
                             return true;
                           },
                           child: ClipRRect(
-                            borderRadius: 
-                            const BorderRadius.vertical(
-                                top: Radius.circular(20)),
+                            // borderRadius: 
+                            // const BorderRadius.vertical(
+                            //     top: Radius.circular(20)),
                             child: RefreshIndicator(
                               onRefresh: () async {
                                 await model.refreshData();
@@ -108,8 +114,8 @@ class NewDashboardV3 extends StatelessWidget {
                                       padding: EdgeInsets.all(7.width),
                                       decoration: const BoxDecoration(
                                         color:Color(0xFFFFFFFF),
-                                         borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20)),
+                                        //  borderRadius: BorderRadius.vertical(
+                                        //     top: Radius.circular(20)),
                                       ),
                                       child: Column(
                                         children: [
