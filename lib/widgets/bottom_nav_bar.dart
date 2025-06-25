@@ -1,13 +1,19 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
+import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
 
 class BottomNavBar extends StatefulWidget {
+  
   final int currentIndex;
   final Function(int)? onTap;
+
+
   
   const BottomNavBar({
     super.key,
@@ -21,6 +27,9 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   late int _selectedIndex;
+  final NewDashboardVM model = NewDashboardVM();
+  
+    
 
   @override
   void initState() {
@@ -37,19 +46,54 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   void _onItemTapped(int index) {
+      final List<Map<String, dynamic>> locationByMonth;
+  
     if (_selectedIndex != index) {
       setState(() {
         _selectedIndex = index;
       });
       
-      // Call the callback if provided
-      if (widget.onTap != null) {
-        widget.onTap!(index);
-      }
-      
-      // // Navigation logic
-      // _navigateToPage(context, index);
-      
+      switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NewDashboardV3()),
+      //   ).then((_) {
+      // setState(() {
+      //   _selectedIndex = 0;
+      // });
+      // }
+      );
+        break;
+        
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>AllPropertyScreen(locationByMonth: model.locationByMonth,) ),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Newsletter()),
+      //   ).then((_) {
+      // setState(() {
+      //   _selectedIndex = 2;
+      // });
+      // }
+      );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OwnerProfile()),
+        ).then((_) {
+      setState(() {
+        _selectedIndex = 3;
+      });
+      });;
+        break;
+    }
     }
   }
 

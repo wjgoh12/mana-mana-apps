@@ -35,8 +35,11 @@ class NewDashboardV3 extends StatelessWidget {
     return ListenableBuilder(
         listenable: model,
         builder: (context, child) {
+          
           return Scaffold(
+            backgroundColor: Colors.white,
             body: Stack(
+              
               clipBehavior: Clip.none,
               children: [
                 _buildBackgroundContainer(),
@@ -62,14 +65,16 @@ class NewDashboardV3 extends StatelessWidget {
                                     ),
                                   ),
                               )
-                            : const TopBar(),
+                            : topBar(context,
+        () => Navigator.of(context).pop(),
+        ),
                         automaticallyImplyLeading: false,
                       ),
                     );
                   },
                 ),
                 Positioned(
-                        top: 14.height,
+                        top: 10.height,
                         left: 0,
                         right: 0,
                         bottom: 0,
@@ -135,7 +140,7 @@ class NewDashboardV3 extends StatelessWidget {
                                                   child: Text(
                                                     'Simple, Timeless \nAssets Management',
                                                     style: TextStyle(
-                                                      fontSize: 40.fSize,
+                                                      fontSize: 33.fSize,
                                                       fontFamily: 'Open Sans',
                                                       fontWeight: FontWeight.w900,
                                                       color: const Color(0xFFFFFFFF),
@@ -187,13 +192,20 @@ class NewDashboardV3 extends StatelessWidget {
                               mainAxisAlignment:MainAxisAlignment.spaceBetween,
                             children: [
                                 _buildSectionTitle('Overview'),
-                                _seeAllButton(),
+                                _seeAllButton(//onPressed: (){
+                                //   Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(builder: (context) => ),
+                                //   );
+                                // }
+                                  
+                                ),
 
                             ],
                             
                           ),
                                                   //overview card widgets here
-                            OverviewWidget(),
+                           const OverviewWidget(),
                           
 
                           SizedBox(height: 2.height),
@@ -214,12 +226,30 @@ class NewDashboardV3 extends StatelessWidget {
                           ),
                           PropertyListV3(model: model),
                           SizedBox(height: 2.height),
-                          Row(
+                          SizedBox(
+                            height: 200.fSize,
+                          child:Column(
                             mainAxisAlignment:MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildSectionTitle('Newsletter'),
-                              _seeAllButton(),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: _buildSectionTitle('Newsletter'),
+                              ),
+                               
+                              _seeAllButton(//onPressed: (){
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => ),
+                                //   );
+                                // }
+                            
+                              ),
+                             //height 200
+                             
+
+                             
                             ],
+                          ),
                           ),
                           
                                         ],
@@ -236,7 +266,7 @@ class NewDashboardV3 extends StatelessWidget {
             ),
 
             floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-            bottomNavigationBar: const BottomNavBar(),
+            bottomNavigationBar: const BottomNavBar(currentIndex: 0,),
             extendBody: true,
           );
         });

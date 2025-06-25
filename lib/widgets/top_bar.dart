@@ -2,33 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/new_bar_chart.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class TopBar extends StatelessWidget {
-  const TopBar({Key? key}) : super(key: key);
-  
-  @override
-  Widget build(BuildContext context) {
+PreferredSizeWidget topBar(context, function) {
+
+  return AppBar(
+    backgroundColor: Colors.white,
+    leadingWidth: 3.width,
+    toolbarHeight: 60.0,
+    leading:IconButton(
+      onPressed:() => print('Pressed'),
     
-
-
-    return Row(
-     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-  onPressed: () => '',
-  icon: Container(
-    width: 10.width,
-    height: 10.height, 
+      icon:Container(
+        alignment: Alignment.topLeft,
+        width: 50.fSize,
+        height: 50.fSize, 
     decoration: const BoxDecoration(
       shape: BoxShape.circle,
       image: DecorationImage(
         image: AssetImage('assets/images/mana2logo.png'),
-        fit: BoxFit.scaleDown,
+         fit: BoxFit.fill,
       ),
     ),
-  ),
-),
+    ),
+    ),
 
-        ShaderMask(
+    title:ShaderMask(
           shaderCallback: (bounds)=>
           const LinearGradient(
           colors: 
@@ -54,7 +51,8 @@ class TopBar extends StatelessWidget {
         ),
         
         //notification button move to right, so use expanded
-        const Expanded(child: SizedBox()),
+        centerTitle: false,
+        actions:[
         IconButton(
           onPressed: () => print('Notification button pressed'),
           icon: Image.asset(
@@ -65,7 +63,11 @@ class TopBar extends StatelessWidget {
             fit: BoxFit.contain,
           ),
         ),
-      ],
-    );
-  }
+        ],
+      toolbarOpacity: 1.0,
+      titleSpacing: 0,
+
+  );
+
 }
+  

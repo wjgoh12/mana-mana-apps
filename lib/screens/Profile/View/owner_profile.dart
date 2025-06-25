@@ -14,7 +14,6 @@ class OwnerProfile extends StatelessWidget {
         builder: (context, child) {
           return Scaffold(
               appBar: AppBar(
-                
                 title: Text(
                   'Profile',
                   style: TextStyle(
@@ -251,11 +250,14 @@ class OwnerProfile extends StatelessWidget {
                       //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       // ),
                     ],
+                    
                   ),
                   
                 ),
                 
-              ));
+              ),
+              bottomNavigationBar: const BottomNavBar(currentIndex: 3),
+              );
         });
   }
 }

@@ -65,7 +65,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                         
                         children: [
                           Padding(
-                            padding:const EdgeInsets.only(left:30),
+                            padding:const EdgeInsets.only(left:10),
                               child:Text(
                                 
                                 '$totalUnits',
@@ -77,9 +77,9 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                               ),
                         
                           ),
-                          const SizedBox(width: 10), // spacing between text and image
+                          const SizedBox(width: 1), // spacing between text and image
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: const EdgeInsets.only(top: 1),
                             child: Image.asset(
                               'assets/images/OverviewProperty.png',
                               width: 40,
@@ -91,7 +91,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                         ]
                       ),
                       Padding(
-                        padding:EdgeInsets.only(left: 10, top: 10),
+                        padding:EdgeInsets.only(left: 10),
                       child:Text(
                         'Total Properties', 
                         style: TextStyle(
@@ -101,7 +101,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                       ),
                       ),
                       Padding(
-                        padding:EdgeInsets.only(left: 10, top: 10),
+                        padding:EdgeInsets.only(left: 10),
                       child:Text(
                         'Managed: ', 
                         style: TextStyle(

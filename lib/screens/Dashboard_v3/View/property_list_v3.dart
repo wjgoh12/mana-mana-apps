@@ -39,44 +39,41 @@ class PropertyListV3 extends StatelessWidget {
                 ),
               )
             : SizedBox(
-                height: 450.fSize,
-                
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    ...model.locationByMonth
-                        .where((property) =>
-                            property['year'] ==
-                                model.locationByMonth
-                                    .map((p) => p['year'])
-                                    .reduce((a, b) => a > b ? a : b) &&
-                            property['month'] == model.unitLatestMonth)
-                        .expand((property) => [
-                              PropertyImageStack(
-                                locationByMonth: [property],
-                              ),
-                              const SizedBox(width: 40),
-                            ])
-                        .toList(),
-                    // ...model.locationByMonth
-                    //     .where((property) =>
-                    //         property['year'] ==
-                    //             model.locationByMonth
-                    //                 .map((p) => p['year'])
-                    //                 .reduce((a, b) => a > b ? a : b) &&
-                    //         property['month'] == model.unitLatestMonth)
-                    //     .expand((property) => [
-                    //           PropertyImageStack(
-                    //             locationByMonth: [property],
-                    //           ),
-                    //           const SizedBox(width: 20),
-                    //         ])
-                    //     .toList(),
-                    const SizedBox(width: 5),
-                    ViewAllProperty(model: model),
-                  ],
-                ),
-              );
+  height: 450.fSize,
+  child: NotificationListener<ScrollNotification>(
+    onNotification: (notif) {
+      if (notif is ScrollStartNotification &&
+          notif.metrics.axis == Axis.horizontal) {
+        // e.g. disable outer scroll if needed
+      }
+      return false; // allow notifications to continue
+    },
+    child: ListView(
+      scrollDirection: Axis.horizontal,
+      shrinkWrap: true,
+      physics: const BouncingScrollPhysics(),
+      children: [
+        ...model.locationByMonth
+            .where((property) =>
+                property['year'] ==
+                    model.locationByMonth
+                        .map((p) => p['year'])
+                        .reduce((a, b) => a > b ? a : b) &&
+                property['month'] == model.unitLatestMonth)
+            .expand((property) => [
+                  PropertyImageStack(
+                    locationByMonth: [property],
+                  ),
+                  const SizedBox(width: 40),
+                ])
+            .toList(),
+        const SizedBox(width: 5),
+        ViewAllProperty(model: model),
+      ],
+    ),
+  ),
+);
+
       
   }
 }
@@ -145,170 +142,144 @@ class PropertyImageStack extends StatelessWidget {
         //final arrowLeft = isMobile ? 37.5.width : 27.5.width;
 
         return Stack(
-          clipBehavior: Clip.none,
+  clipBehavior: Clip.none,
+  children: [
+    GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                PropertyDetail(locationByMonth: locationByMonth),
+          ),
+        );
+      },
+      child: Container(
+        width: containerWidth,
+        height: containerHeight,
+        margin: const EdgeInsets.only(left: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PropertyDetail(locationByMonth: locationByMonth),
-                  ),
-                );
-              },
-              child: Container(
-                width: containerWidth,
-                height: containerHeight,
-                margin: const EdgeInsets.only(left: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ]
-                  
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Image at top
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: SizedBox(
-                          width: width,
-                          height: height,
-                          child: Image.asset(
-                            'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Group.png and text below image
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: 3.width,
-                        top: 3.width,
-                      ),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            'assets/images/Group.png',
-                            width: 24.fSize,
-                            height: 24.fSize,
-                          ),
-                          SizedBox(width: 2.width), // Space between icon and text
-                          Text(
-                            'Owner(s)',
-                            style: TextStyle(
-                              fontFamily: 'Open Sans',
-                              fontSize: 15.fSize,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12, top: 8),
-
-
-
-
-
-
-
-
-
-
-                      child: Text(
-                        locationByMonth.first['location'] ?? '',
-                        style: const TextStyle(
-                          fontFamily: 'Open Sans',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    )
-                  ],
-
-                ),
-
-              ),
-
-            ),
-            
-            Positioned(
-              top: 5,
-              left: 5,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          PropertyDetail(locationByMonth: locationByMonth),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: SizedBox(
-                      width: width,
-                      height: height,
-                      child: Image.asset(
-                        'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
-                        fit: BoxFit.cover,
-                      ),
-
-                    ),
-
+            // Image at top
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: SizedBox(
+                  width: width,
+                  height: height,
+                  child: Image.asset(
+                    'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
-            
-            Positioned(
-              top: position,
-
-
-
-
-
-
-
-
-
-
-
-              child: Flexible(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            PropertyDetail(locationByMonth: locationByMonth),
-                      ),
-                    );
-                  },
+            // Group icon and text
+            Padding(
+              padding: EdgeInsets.only(left: 3.width, top: 3.width),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/images/Group.png',
+                    width: 24.fSize,
+                    height: 24.fSize,
+                  ),
+                  SizedBox(width: 2.width),
+                  Text(
+                    'Owner(s)',
+                    style: TextStyle(
+                      fontFamily: 'Open Sans',
+                      fontSize: 15.fSize,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 8),
+              child: Text(
+                locationByMonth.first['location'] ?? '',
+                style: const TextStyle(
+                  fontFamily: 'Open Sans',
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
                 ),
               ),
             )
           ],
-        );
+        ),
+      ),
+    ),
+
+    // Overlayed image (if necessary)
+    Positioned(
+      top: 5,
+      left: 5,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  PropertyDetail(locationByMonth: locationByMonth),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: SizedBox(
+              width: width,
+              height: height,
+              child: Image.asset(
+                'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+
+    // Placeholder or optional overlay
+    Positioned(
+      top: position,
+      left: 0,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  PropertyDetail(locationByMonth: locationByMonth),
+            ),
+          );
+        },
+        child: Container(), // Empty or add additional info
+      ),
+    ),
+  ],
+);
+
+
       },
     );
   }
