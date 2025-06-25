@@ -133,17 +133,16 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                   child: SizedBox(
                     width: 190.fSize,
                     height: 83.fSize,
-                    child: Column(
+                    child: Row(
                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Stack(
+                         Stack(
                             
                             children: [
                               Align(
                                 alignment: Alignment.centerLeft, // Vertically center, left-aligned
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 10,top:10),
+                                  padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
                                   child: Image.asset(
                                     'assets/images/Bulat.png',
                                     width: 40,
@@ -152,7 +151,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                                 ),
                               ),
                               const Padding(
-                            padding: EdgeInsets.only(left: 16,top:16),
+                            padding: EdgeInsets.only(left: 16,top:30),
                             child: Image(
                               image: AssetImage('assets/images/OverviewOccupancy.png'),
                               width: 30,
@@ -160,28 +159,25 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                             )
                           ),
                             ],
-                          ),
+                          
                         ),
-                        const Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                    //     const Column(
+                    //       mainAxisAlignment: MainAxisAlignment.end,
+                    //       children: [
+                    //         Padding(
+                    //             padding: EdgeInsets.only(right:10),
+                    //             child: Text(
+                                  
+                    //               'Occupancy Rate',
+                    //               style: TextStyle(
+                    //                 fontSize: 10.0,
+                    //                 fontStyle: FontStyle.normal
+                    //               ),
+                    //           ),
+                    //         )
 
-                          children: [
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Text(
-                                
-                                'Occupancy Rate',
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontStyle: FontStyle.normal
-                                ),
-                                                      ),
-                            )
-
-                      ],
-                      
-
-                    ),
+                    //   ],
+                    // ),
                       ],
                      
                   ),
@@ -204,9 +200,55 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                     width: 190.fSize,
                     height: 83.fSize,
                     child: const Expanded(
-                      child: Stack(
-                        
-
+                      child: Row(
+                        children: [
+                          Stack(
+                            children: [
+                              Padding(
+                                    padding: EdgeInsets.only(left: 10, top: 10),
+                                    child: Image(
+                                      image: AssetImage('assets/images/Bulat.png'),
+                                      width:40,
+                                      height:40,
+                                      ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 15, top: 15),
+                                    child: Image(
+                                      image: AssetImage('assets/images/OverviewMonthlyProfit.png'),
+                                      width:26,
+                                      height:26,
+                                      ),
+                                  ),
+                              
+                            ],
+                          
+                          ),
+                          Column(
+                          
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 15, top: 15),
+                                child: Text(
+                                  'Monthly Profit',
+                                  style: TextStyle(
+                                    fontSize: 10.0,
+                                    fontStyle: FontStyle.normal
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding:EdgeInsets.only(left: 15, top: 10),
+                               child: Text(
+                                'RM',
+                                style: TextStyle(
+                                  fontSize:18,
+                              ),
+                               ),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                     )
                   ),
@@ -217,8 +259,58 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                   child: SizedBox(
                     width: 190.fSize,
                     height: 130.fSize,
+                    child: const Expanded(
+                      child:Column(
+                        
+                      children:[
+                        Padding(
+                          padding: EdgeInsets.only(left: 5, top: 10),
+                          child: Text('2025 Accumulated Profit',
+                          style: TextStyle(fontSize: 12),)
+                          ),
 
-                    
+                          Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Text('RM',
+                          style: TextStyle(fontSize: 18),)
+                          ),
+                          Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Text('monthyear',
+                          style: TextStyle(fontSize: 12),)
+                          ),
+                        
+                        Stack(
+                          children: [
+                            
+                             Align(
+                              alignment: Alignment.bottomRight,
+                                child: Padding(
+                                      padding: EdgeInsets.only(right: 10, top: 5),
+                                      child: Image(
+                                        image: AssetImage('assets/images/Bulat.png'),
+                                        width:40,
+                                        height:40,
+                                        ),
+                                    ),
+                              ),
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child:Padding(
+                                    padding: EdgeInsets.only(right: 15, top: 12),
+                                    child: Image(
+                                      image: AssetImage('assets/images/OverviewAccumulatedProfit.png'),
+                                      width:26,
+                                      height:26,
+                                      ),
+                                  ),
+                                  ),
+                              
+                            ],
+                      ),
+                      ]
+                    ),
+                    ),
                   ),
                 ),
               ],
