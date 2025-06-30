@@ -1,0 +1,128 @@
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
+import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
+import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
+import 'package:mana_mana_app/widgets/size_utils.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
+import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
+
+class BottomNavBar extends StatelessWidget {
+  final int currentIndex;
+  final Function(int)? onTap;
+
+  const BottomNavBar({
+    Key? key,
+    this.currentIndex = 0,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80,
+      width: 320.fSize,
+      margin: EdgeInsets.all(16.fSize),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildNavItem('assets/images/Home.png', 'Home', 0),
+          _buildNavItem('assets/images/Properties.png', 'Properties', 1),
+          _buildNavItem('assets/images/Newsletter.png', 'Newsletter', 2),
+          _buildNavItem('assets/images/Profile.png', 'Profile', 3),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(dynamic icon, String label, int index) {
+    bool isSelected = currentIndex == index;
+
+    return GestureDetector(
+      onTap: () => onTap?.call(index),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 70.fSize,
+        height: 70.fSize,
+        decoration: isSelected
+            ? const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0XFFB82B7D),
+                    Color(0xFF3E51FF),
+                  ],
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                ),
+              )
+            : null,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedScale(
+              duration: const Duration(milliseconds: 300),
+              scale: isSelected ? 1.2 : 1.0,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 300),
+                opacity: isSelected ? 1.0 : 0.6,
+                child: icon is IconData
+                    ? Icon(icon, size: 24.fSize, color: Colors.white)
+                    : isSelected
+                        ? ImageIcon(AssetImage(icon), size: 24.fSize, color: Colors.white)
+                        : ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              colors: [Color(0XFFB82B7D), Color(0xFF3E51FF)],
+                              begin: Alignment.bottomLeft,
+                              end: Alignment.topRight,
+                            ).createShader(bounds),
+                            child: ImageIcon(AssetImage(icon), size: 24.fSize, color: Colors.white),
+                          ),
+              ),
+            ),
+            SizedBox(height: 4.fSize),
+            SizedBox(
+              width: 70.fSize,
+              child: AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 200),
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  fontSize: 10.fSize,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                child: isSelected
+                    ? Text(label, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis)
+                    : ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [Color(0XFFB82B7D), Color(0xFF3E51FF)],
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                        ).createShader(bounds),
+                        child: Text(
+                          label,
+                          style: const TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -174,9 +174,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       color: isSelected ? Colors.white : Colors.white,
                     )
                     : isSelected
-            ? ImageIcon(
-                AssetImage(icon),
-                size: 24.fSize,
+            ? Image.asset(
+                icon,
+                width: 24.fSize,
+                height: 24.fSize,
                 color: Colors.white,
               )
                   : ShaderMask(
@@ -188,10 +189,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         begin: Alignment.bottomLeft,
                         end: Alignment.topRight,
                       ).createShader(bounds),
-                      child: ImageIcon(
-                        AssetImage(icon),
-                        size: 24.fSize,
-                        color: Colors.white,
+                      blendMode: BlendMode.srcIn,
+                      child: Image.asset(
+                        icon,
+                        width: 24.fSize,
+                        height: 24.fSize,
+                        
                       ),
                     ),
             ),

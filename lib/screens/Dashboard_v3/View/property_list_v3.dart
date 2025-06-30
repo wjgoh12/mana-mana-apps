@@ -136,8 +136,8 @@ class PropertyImageStack extends StatelessWidget {
         final position = 25.height;
         final containerWidth = isMobile ? 370.fSize : 360.fSize;
         final containerHeight = 405.fSize;
-        final smallcontainerWidth = isMobile? 100.width:90.width;
-        final smallcontainerHeight = 15.height;
+        final smallcontainerWidth = isMobile? 180.fSize:90.width;
+        final smallcontainerHeight = 35.fSize;
         //final arrowTop = 30.height;
         //final arrowLeft = isMobile ? 37.5.width : 27.5.width;
 
@@ -174,23 +174,59 @@ class PropertyImageStack extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image at top
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: SizedBox(
-                  width: width,
-                  height: height,
-                  child: Image.asset(
-                    'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+            Stack(
+  children: [
+    Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Image.asset(
+            'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    ),
+
+    // Overlay small label on pic
+    Positioned(
+      top: (containerHeight-smallcontainerHeight)/2 ,
+      left: (containerWidth-smallcontainerWidth)/2,
+      
+      child: Container(
+        
+        width: smallcontainerWidth,
+        height: smallcontainerHeight,
+        padding: const EdgeInsets.only(left:10),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(1),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+
+          children: [
+            Image.asset(
+              'assets/images/PropertiesGroup.png',
+              width: 17.fSize,
+              height: 17.fSize,
             ),
+            SizedBox(width: 2.width),
+            Text('${locationByMonth.length} Total'),
+          ],
+        ),
+      ),
+    ),
+  ],
+),
+
+
             // Group icon and text
             Padding(
-              padding: EdgeInsets.only(left: 3.width, top: 3.width),
+              padding: EdgeInsets.only(left:10, top: 15),
               child: Row(
                 children: [
                   Image.asset(
@@ -242,20 +278,20 @@ class PropertyImageStack extends StatelessWidget {
             ),
           );
         },
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: SizedBox(
-              width: width,
-              height: height,
-              child: Image.asset(
-                'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
+        // child: Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: ClipRRect(
+        //     borderRadius: BorderRadius.circular(6),
+        //     child: SizedBox(
+        //       width: width,
+        //       height: height,
+        //       child: Image.asset(
+        //         'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
+        //         fit: BoxFit.cover,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ),
     ),
 
@@ -310,40 +346,40 @@ class ViewAllProperty extends StatelessWidget {
             )
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'VIEW ALL',
-              style: TextStyle(
-                fontFamily: 'Open Sans',
-                fontWeight: FontWeight.w700,
-                fontSize: 20.fSize,
-                color: const Color(0XFF4313E9),
-              ),
-            ),
-            Text(
-              '@ Your Properties',
-              style: TextStyle(
-                fontFamily: 'Open Sans',
-                fontWeight: FontWeight.w300,
-                fontSize: 10.fSize,
-                fontStyle: FontStyle.italic,
-                color: const Color(0XFF4313E9),
-              ),
-            ),
-            SizedBox(height: 2.height),
-            Container(
-              width: 7.width,
-              height: 7.width,
-              decoration: const BoxDecoration(color: Color(0XFF4313E9)),
-              child: const Icon(
-                Icons.keyboard_arrow_right_rounded,
-                color: Colors.white,
-              ),
-            )
-          ],
-        ),
+        // child: Column(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     Text(
+        //       'VIEW ALL',
+        //       style: TextStyle(
+        //         fontFamily: 'Open Sans',
+        //         fontWeight: FontWeight.w700,
+        //         fontSize: 20.fSize,
+        //         color: const Color(0XFF4313E9),
+        //       ),
+        //     ),
+        //     Text(
+        //       '@ Your Properties',
+        //       style: TextStyle(
+        //         fontFamily: 'Open Sans',
+        //         fontWeight: FontWeight.w300,
+        //         fontSize: 10.fSize,
+        //         fontStyle: FontStyle.italic,
+        //         color: const Color(0XFF4313E9),
+        //       ),
+        //     ),
+        //     SizedBox(height: 2.height),
+        //     Container(
+        //       width: 7.width,
+        //       height: 7.width,
+        //       decoration: const BoxDecoration(color: Color(0XFF4313E9)),
+        //       child: const Icon(
+        //         Icons.keyboard_arrow_right_rounded,
+        //         color: Colors.white,
+        //       ),
+        //     )
+        //   ],
+        // ),
       ),
     );
   }
