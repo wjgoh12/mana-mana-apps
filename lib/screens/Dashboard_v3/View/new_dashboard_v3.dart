@@ -6,6 +6,7 @@ import 'package:mana_mana_app/screens/New_Dashboard/View/revenue_dashboard.dart'
 import 'package:mana_mana_app/screens/New_Dashboard/View/statistic_table.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/user_info.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 import 'package:mana_mana_app/widgets/overview_widget.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -234,22 +235,24 @@ class NewDashboardV3 extends StatelessWidget {
                           SizedBox(height: 2.height),
                           SizedBox(
                             height: 200.fSize,
-                          child:Column(
+                          child:Row(
                             mainAxisAlignment:MainAxisAlignment.spaceBetween,
                             children: [
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: _buildSectionTitle('Newsletter'),
                               ),
-                               
-                              _seeAllButton(//onPressed: (){
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(builder: (context) => ),
-                                //   );
-                                // }
+                              _seeAllButton(
+                                onPressed: (){
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => 
+                                    Newsletter()),
+                                  );
+                                }
                             
                               ),
+                              
                              //height 200
                              
 
@@ -257,6 +260,7 @@ class NewDashboardV3 extends StatelessWidget {
                             ],
                           ),
                           ),
+                          SizedBox(height: 20,),
                           
                                         ],
                                       ),

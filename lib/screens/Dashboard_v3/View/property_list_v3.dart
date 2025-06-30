@@ -68,13 +68,12 @@ class PropertyListV3 extends StatelessWidget {
                 ])
             .toList(),
         const SizedBox(width: 5),
-        ViewAllProperty(model: model),
+       // ViewAllProperty(model: model),
       ],
     ),
   ),
 );
 
-      
   }
 }
 
@@ -144,17 +143,7 @@ class PropertyImageStack extends StatelessWidget {
         return Stack(
   clipBehavior: Clip.none,
   children: [
-    GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                PropertyDetail(locationByMonth: locationByMonth),
-          ),
-        );
-      },
-      child: Container(
+Container(
         width: containerWidth,
         height: containerHeight,
         margin: const EdgeInsets.only(left: 5),
@@ -223,7 +212,6 @@ class PropertyImageStack extends StatelessWidget {
   ],
 ),
 
-
             // Group icon and text
             Padding(
               padding: EdgeInsets.only(left:10, top: 15),
@@ -258,60 +246,65 @@ class PropertyImageStack extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left:10),
+              child: Row(
+                
+               children: [  
+                Image.asset(
+                  'assets/images/map_pin.png',
+                 width: 14.fSize, 
+                 height: 17.fSize
+                 ),
+                 Text('hi'),
+               ]
+              ),
+            ),
+
+            //divider
+            Container(
+            height: 1,
+            color: Colors.grey,
+            margin: EdgeInsets.only(left:10, right: 10, top:10),
+          ),
+          Padding(
+            padding:EdgeInsets.only(left:10),
+            child: Row(
+              
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top:5),
+                  child: Image.asset('assets/images/Wallet.png', width: 45.fSize, height: 45.fSize),
+                ),
+
+                SizedBox(width: 5.fSize),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Net After POB',
+                    style: TextStyle(fontSize:15.fSize
+                    ),
+                    ),
+                    Text('RM888888.88',
+                    style: TextStyle(
+                      fontSize:15.fSize,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    ),//totalNetAfterPob
+                  ],
+                ),
+                //after pressed button, it will navigate to property detail page
+                // TextButton(onPressed: () => ,)
+              ]
             )
+          )
           ],
         ),
       ),
-    ),
-
-    // Overlayed image (if necessary)
-    Positioned(
-      top: 5,
-      left: 5,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  PropertyDetail(locationByMonth: locationByMonth),
-            ),
-          );
-        },
-        // child: Padding(
-        //   padding: const EdgeInsets.all(8.0),
-        //   child: ClipRRect(
-        //     borderRadius: BorderRadius.circular(6),
-        //     child: SizedBox(
-        //       width: width,
-        //       height: height,
-        //       child: Image.asset(
-        //         'assets/images/${locationByMonth.first['location'].toUpperCase()}.png',
-        //         fit: BoxFit.cover,
-        //       ),
-        //     ),
-        //   ),
-        // ),
-      ),
-    ),
-
-    // Placeholder or optional overlay
-    Positioned(
-      top: position,
-      left: 0,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  PropertyDetail(locationByMonth: locationByMonth),
-            ),
-          );
-        },
-        child: Container(), // Empty or add additional info
-      ),
-    ),
+    
   ],
 );
 
@@ -321,18 +314,19 @@ class PropertyImageStack extends StatelessWidget {
   }
 
 }
+
 class ViewAllProperty extends StatelessWidget {
   final NewDashboardVM model;
   const ViewAllProperty({required this.model, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => AllPropertyScreen(locationByMonth: model.locationByMonth)));
-      },
-      child: Container(
+    // return GestureDetector(
+    //   onTap: () {
+    //     Navigator.push(context,
+    //         MaterialPageRoute(builder: (context) => AllPropertyScreen(locationByMonth: model.locationByMonth)));
+    //   },
+      return Container(
         width: 51.width,
         height: 38.height,
         alignment: Alignment.center,
@@ -380,7 +374,7 @@ class ViewAllProperty extends StatelessWidget {
         //     )
         //   ],
         // ),
-      ),
+      // ),
     );
   }
 }

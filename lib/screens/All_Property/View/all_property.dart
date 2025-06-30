@@ -90,8 +90,8 @@ class AllPropertyScreen extends StatelessWidget {
         image: locationByMonth[0]['location'] ?? '',
         text1: locationByMonth[0]['location'] ?? '',
         text2: locationRoad,
-        width: 85.width,
-        height: 12.height,
+        // width: 85.width,
+        // height: 12.height,
       ),
     );
   }
