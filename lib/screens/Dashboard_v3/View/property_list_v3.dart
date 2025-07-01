@@ -1,10 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -78,8 +73,8 @@ class PropertyListV3 extends StatelessWidget {
 }
 
 class PropertyImageStack extends StatelessWidget {
-  List<Map<String, dynamic>> locationByMonth;
-  PropertyImageStack({
+  final List<Map<String, dynamic>> locationByMonth;
+  const PropertyImageStack({
     Key? key,
     // required this.image,
     // required this.label,
@@ -95,44 +90,13 @@ class PropertyImageStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String getMonthAbbreviation(int month) {
-      switch (month) {
-        case 1:
-          return 'Jan';
-        case 2:
-          return 'Feb';
-        case 3:
-          return 'Mar';
-        case 4:
-          return 'Apr';
-        case 5:
-          return 'May';
-        case 6:
-          return 'Jun';
-        case 7:
-          return 'Jul';
-        case 8:
-          return 'Aug';
-        case 9:
-          return 'Sep';
-        case 10:
-          return 'Oct';
-        case 11:
-          return 'Nov';
-        case 12:
-          return 'Dec';
-        default:
-          return '';
-      }
-    }
-
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
         final isMobile =
             sizingInformation.deviceScreenType == DeviceScreenType.mobile;
         final width = isMobile ? 350.fSize : 340.fSize;
         final height = 207.fSize;
-        final position = 25.height;
+       // final position = 25.height;
         final containerWidth = isMobile ? 370.fSize : 360.fSize;
         final containerHeight = 405.fSize;
         final smallcontainerWidth = isMobile? 180.fSize:90.width;
@@ -214,7 +178,7 @@ Container(
 
             // Group icon and text
             Padding(
-              padding: EdgeInsets.only(left:10, top: 15),
+              padding: const EdgeInsets.only(left:10, top: 15),
               child: Row(
                 children: [
                   Image.asset(
@@ -257,7 +221,7 @@ Container(
                  width: 14.fSize, 
                  height: 17.fSize
                  ),
-                 Text('hi'),
+                 const Text('hi'),
                ]
               ),
             ),
@@ -266,83 +230,86 @@ Container(
             Container(
             height: 1,
             color: Colors.grey,
-            margin: EdgeInsets.only(left:10, right: 10, top:10),
+            margin: const EdgeInsets.only(left:10, right: 10, top:10),
           ),
           Padding(
-  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.end,
-    children: [
-      Padding(
-  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.end,
-    children: [
-      // Wallet image
-      Padding(
-        padding: const EdgeInsets.only(top: 5),
-        child: Image.asset(
-          'assets/images/Wallet.png',
-          width: 45.fSize,
-          height: 45.fSize,
-        ),
-      ),
-      SizedBox(width: 5.fSize),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Total Net After POB',
-              style: TextStyle(fontSize: 15.fSize),
-            ),
-            Text(
-              'RM888888.88',
-              style: TextStyle(
-                fontSize: 15.fSize,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-      // Green bordered "Details" button
-      TextButton.icon(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  PropertyDetail(locationByMonth: locationByMonth),
-            ),
-          );
-        },
-        icon: Icon(Icons.arrow_forward, size: 16.fSize, color: Color(0xFF4CAF50)),
-        label: Text(
-          'Details',
-          style: TextStyle(
-            fontSize: 14.fSize,
-            color: Color(0xFF4CAF50),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        style: TextButton.styleFrom(
-          side: BorderSide(color: Color(0xFF4CAF50)),
-          padding: EdgeInsets.symmetric(horizontal: 10.fSize, vertical: 6.fSize),
-          minimumSize: Size(0, 0), // allows size to shrink
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
-      ),
-    ],
-  ),
-),
+            padding:const EdgeInsets.only(left:10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top:5),
+                  child: Image.asset('assets/images/Wallet.png', width: 45.fSize, height: 45.fSize),
+                ),
 
+                const SizedBox(width: 5),
+                const Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Net After POB',
+                    style: TextStyle(fontSize:15
+                    ),
+                    ),
+                    Text('RM888888.88',
+                    style: TextStyle(
+                      fontSize:15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    ),//totalNetAfterPob
+                  ],
+                ),
+                const Spacer(),
+                //after pressed button, it will navigate to property detail page
+                Container(
+                  margin: const EdgeInsets.only(right: 10,bottom:8),
+                   child: TextButton(
+                    
+                      onPressed: (){},
+                      style:ButtonStyle(
+                        minimumSize: WidgetStateProperty.all(const Size(20,30)),
+                        side: WidgetStateProperty.all(const BorderSide(color: Color(0xFF4CAF50))),
+                      ),
+                      child: Row(
+                        
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                         Text(
+                           'Details',
+                           style: TextStyle(
+                            fontSize: 15.fSize,
+                            color: Colors.black
+                            ),
+                         ),
+                         
+                         const SizedBox(width: 5),
+                         Column(
+                           mainAxisSize: MainAxisSize.min,
+                           children: [
+                             Image.asset(
+                              'assets/images/arrow.png',
+                              width:15.fSize,
+                              height: 11.fSize,
+                             ),
+                             Text(
+                               'Jom',
+                               style: TextStyle(fontSize: 9.fSize),
+                             ),
+                           ],
+                         ),
+                    ],
+                     ),
+                   ),
+                 ),
+              ]
+            )
+          )
           ],
         ),
       ),
     
   ],
-        ),
 );
 
 

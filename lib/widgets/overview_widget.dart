@@ -253,9 +253,9 @@ String getTotalProfit() {
                                child: RichText(
                                 text: TextSpan(
                                   children: [
-                                    TextSpan(
-                                      text:'RM ${profit}',
-                                      style: const TextStyle(
+                                    const TextSpan(
+                                      text:'RMprofit',
+                                      style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 10.0,
                                         fontStyle: FontStyle.normal
@@ -266,7 +266,7 @@ String getTotalProfit() {
                                         offset: const Offset(2, -4),
                                         ),
                                         ),
-                                        TextSpan(
+                                        const TextSpan(
                                           text: '',
                                           style: TextStyle(
                                             color: Colors.black,
