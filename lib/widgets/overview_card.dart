@@ -4,14 +4,14 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/statistic_table_v3.dart';
 
-class OverviewWidget extends StatefulWidget {
-  const OverviewWidget({super.key});
+class OverviewCard extends StatefulWidget {
+  const OverviewCard({super.key});
 
   @override
-  State<OverviewWidget> createState() => _OverviewWidgetState();
+  State<OverviewCard> createState() => _OverviewCardState();
 }
 
-class _OverviewWidgetState extends State<OverviewWidget> {
+class _OverviewCardState extends State<OverviewCard> {
   final NewDashboardVM_v3 model = NewDashboardVM_v3();
   
   int totalUnits = 0;

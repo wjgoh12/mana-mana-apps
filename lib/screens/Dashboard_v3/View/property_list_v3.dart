@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -221,7 +222,7 @@ Container(
                  width: 14.fSize, 
                  height: 17.fSize
                  ),
-                 const Text('hi'),
+                 Text('${locationByMonth.first['locationRoad']}'),
                ]
               ),
             ),
@@ -266,7 +267,11 @@ Container(
                   margin: const EdgeInsets.only(right: 10,bottom:8),
                    child: TextButton(
                     
-                      onPressed: (){},
+                      onPressed: (){
+                         Navigator.push(context,
+                         MaterialPageRoute(builder: (context) => PropertyDetail(locationByMonth: [locationByMonth.first]),
+                         ));
+                      },
                       style:ButtonStyle(
                         minimumSize: WidgetStateProperty.all(const Size(20,30)),
                         side: WidgetStateProperty.all(const BorderSide(color: Color(0xFF4CAF50))),

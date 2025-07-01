@@ -14,6 +14,7 @@ class PropertyDetailVM extends ChangeNotifier {
 
   String? selectedType;
   String? selectedUnitNo;
+  String selectedView = 'Overview'; // Default to Overview
   List<OwnerPropertyList> ownerData = [];
   List<SingleUnitByMonth> unitByMonth = [];
   List<User> _users = [];
@@ -365,6 +366,11 @@ class PropertyDetailVM extends ChangeNotifier {
 
   void updateSelectedMonth(String newSelectedMonth) {
     selectedMonthValue = newSelectedMonth;
+    notifyListeners();
+  }
+
+  void updateSelectedView(String newView) {
+    selectedView = newView;
     notifyListeners();
   }
 

@@ -7,7 +7,7 @@ import 'package:mana_mana_app/screens/New_Dashboard/View/statistic_table.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/user_info.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
-import 'package:mana_mana_app/widgets/overview_widget.dart';
+import 'package:mana_mana_app/widgets/overview_card.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/widgets/top_bar.dart';
@@ -212,10 +212,10 @@ class NewDashboardV3 extends StatelessWidget {
                             
                           ),
                                                   //overview card widgets here
-                           const OverviewWidget(),
+                           const OverviewCard(),
                           
 
-                          SizedBox(height: 2.height),
+                          //SizedBox(height: 2.height),
                           Row(
                             mainAxisAlignment:MainAxisAlignment.spaceBetween,
                             children: [
@@ -234,7 +234,7 @@ class NewDashboardV3 extends StatelessWidget {
                           PropertyListV3(model: model),
                           SizedBox(height: 2.height),
                           SizedBox(
-                            height: 200.fSize,
+                            height: 40.fSize,
                           child:Row(
                             mainAxisAlignment:MainAxisAlignment.spaceBetween,
                             children: [
@@ -260,7 +260,7 @@ class NewDashboardV3 extends StatelessWidget {
                             ],
                           ),
                           ),
-                          SizedBox(height: 20,),
+                          SizedBox(height: 100),
                           
                                         ],
                                       ),
