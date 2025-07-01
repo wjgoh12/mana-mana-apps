@@ -269,43 +269,80 @@ Container(
             margin: EdgeInsets.only(left:10, right: 10, top:10),
           ),
           Padding(
-            padding:EdgeInsets.only(left:10),
-            child: Row(
-              
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top:5),
-                  child: Image.asset('assets/images/Wallet.png', width: 45.fSize, height: 45.fSize),
-                ),
+  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.end,
+    children: [
+      Padding(
+  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.end,
+    children: [
+      // Wallet image
+      Padding(
+        padding: const EdgeInsets.only(top: 5),
+        child: Image.asset(
+          'assets/images/Wallet.png',
+          width: 45.fSize,
+          height: 45.fSize,
+        ),
+      ),
+      SizedBox(width: 5.fSize),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Total Net After POB',
+              style: TextStyle(fontSize: 15.fSize),
+            ),
+            Text(
+              'RM888888.88',
+              style: TextStyle(
+                fontSize: 15.fSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+      // Green bordered "Details" button
+      TextButton.icon(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  PropertyDetail(locationByMonth: locationByMonth),
+            ),
+          );
+        },
+        icon: Icon(Icons.arrow_forward, size: 16.fSize, color: Color(0xFF4CAF50)),
+        label: Text(
+          'Details',
+          style: TextStyle(
+            fontSize: 14.fSize,
+            color: Color(0xFF4CAF50),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        style: TextButton.styleFrom(
+          side: BorderSide(color: Color(0xFF4CAF50)),
+          padding: EdgeInsets.symmetric(horizontal: 10.fSize, vertical: 6.fSize),
+          minimumSize: Size(0, 0), // allows size to shrink
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+      ),
+    ],
+  ),
+),
 
-                SizedBox(width: 5.fSize),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Total Net After POB',
-                    style: TextStyle(fontSize:15.fSize
-                    ),
-                    ),
-                    Text('RM888888.88',
-                    style: TextStyle(
-                      fontSize:15.fSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    ),//totalNetAfterPob
-                  ],
-                ),
-                //after pressed button, it will navigate to property detail page
-                // TextButton(onPressed: () => ,)
-              ]
-            )
-          )
           ],
         ),
       ),
     
   ],
+        ),
 );
 
 
