@@ -166,12 +166,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
             scale: isSelected ? 1.2 : 1.0,
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 300),
-              opacity: isSelected ? 1.0 : 0.6,
+              opacity: isSelected ? 1.0 : 1.0,
               child: icon is IconData
                   ? Icon(
                       icon,
                       size: 24.fSize,
-                      color: isSelected ? Colors.white : Colors.white,
+                      color: isSelected ? Colors.white : Colors.grey,
                     )
                     : isSelected
             ? Image.asset(

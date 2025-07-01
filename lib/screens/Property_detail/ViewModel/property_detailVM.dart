@@ -18,6 +18,7 @@ class PropertyDetailVM extends ChangeNotifier {
   List<OwnerPropertyList> ownerData = [];
   List<SingleUnitByMonth> unitByMonth = [];
   List<User> _users = [];
+  List<User> get users => _users;
   List<String> yearItems = [];
   List<String> monthItems = [];
   List<String> typeItems = [];
@@ -285,6 +286,7 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
     selectedType = newSelectedType;
     selectedUnitNo = newSelectedUnitNo;
+    selectedView = 'Unit'; // Update view to show unit details
     yearItems = unitByMonth
         .where((item) =>
             item.slocation == property &&

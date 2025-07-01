@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -161,7 +162,7 @@ String getTotalProfit() {
                                 ),
                               ),
                               const Padding(
-                            padding: EdgeInsets.only(left: 16,top:30),
+                            padding: EdgeInsets.only(left: 16,top:28),
                             child: Image(
                               image: AssetImage('assets/images/OverviewOccupancy.png'),
                               width: 30,
@@ -171,9 +172,10 @@ String getTotalProfit() {
                             ],
                           
                         ),
-                        const Column(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
+                            const Padding(
                                 padding: EdgeInsets.only(left:8,top:15),
                                 child: Text(
                                   
@@ -183,8 +185,29 @@ String getTotalProfit() {
                                     fontStyle: FontStyle.normal
                                   ),
                               ),
-                            )
-
+                            ),
+                            //hard coded
+                            const Padding(
+                              padding: EdgeInsets.only(left:8),
+                              child: Text(
+                                '75% Active',
+                                style:TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                )
+                              ),
+                            ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(
+                                  DateFormat('MMMM yyyy').format(DateTime.now(),
+                                  
+                                ),
+                                style:const  TextStyle(
+                                    fontSize: 10.0,
+                                    fontStyle: FontStyle.normal
+                                  ),
+                                ),
+                              ),
                       ],
                     ),
                       ],
@@ -223,7 +246,7 @@ String getTotalProfit() {
                                       ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(left: 15, top: 15),
+                                    padding: EdgeInsets.only(left: 17, top: 17),
                                     child: Image(
                                       image: AssetImage('assets/images/OverviewMonthlyProfit.png'),
                                       width:20,
@@ -235,7 +258,8 @@ String getTotalProfit() {
                           
                           ),
                           Column(
-                          
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Padding(
                                 padding: EdgeInsets.only(left: 15, top: 15),
@@ -249,33 +273,40 @@ String getTotalProfit() {
                                 ),
                               ),
                               Padding(
-                                padding:const EdgeInsets.only(top: 10),
-                               child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    const TextSpan(
-                                      text:'RMprofit',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 10.0,
-                                        fontStyle: FontStyle.normal
-                                      )
-                                    ),
-                                    WidgetSpan(
-                                      child: Transform.translate(
-                                        offset: const Offset(2, -4),
-                                        ),
-                                        ),
-                                        const TextSpan(
-                                          text: '',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 10.0,
-                                            fontStyle: FontStyle.normal
-                                          )
-                                        ),
-                                  ]
+                                padding: const EdgeInsets.only(left:15),
+                                child: RichText(
+                                text: const TextSpan(
+                                children: [
+                                TextSpan(
+                                text:'RM ',
+                                style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 8.0,
+                                fontWeight: FontWeight.bold,
+                                )
                                 ),
+                                TextSpan(
+                                text: 'overallProfit',
+                                style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.bold,
+                                )
+                                ),
+                                ]
+                                ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 15),
+                                child: Text(
+                                  DateFormat('MMMM yyyy').format(DateTime.now(),
+                                  
+                                ),
+                                style:const  TextStyle(
+                                    fontSize: 10.0,
+                                    fontStyle: FontStyle.normal
+                                  ),
                                 ),
                               ),
                             ],
