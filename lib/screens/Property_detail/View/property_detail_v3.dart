@@ -74,6 +74,7 @@ class PropertyDetail extends StatelessWidget {
 
                           SizedBox(height: 10.fSize),
                           Container(
+                            
                             width: 370.fSize,
                             decoration: BoxDecoration(
                               border: Border.all(
@@ -89,9 +90,18 @@ class PropertyDetail extends StatelessWidget {
                               underline: const SizedBox(),
                               dropdownStyleData: DropdownStyleData(
                                 width: 370.fSize,
+                                offset: const Offset(-12.5, -1),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(4),
+                                  border: const Border(
+                                    left: BorderSide(color: Colors.grey, width: 0.5),
+                                    right: BorderSide(color: Colors.grey, width: 0.5),
+                                    bottom: BorderSide(color: Colors.grey, width: 0.5),
+                                  ),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(4),
+                                    bottomRight: Radius.circular(4),
+                                  ),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.1),
@@ -114,9 +124,9 @@ class PropertyDetail extends StatelessWidget {
                                     const EdgeInsets.symmetric(horizontal: 16),
                                 overlayColor:
                                     WidgetStateProperty.resolveWith<Color?>(
-                                  (Set<MaterialState> states) {
+                                  (Set<WidgetState> states) {
                                     if (states
-                                        .contains(MaterialState.hovered)) {
+                                        .contains(WidgetState.hovered)) {
                                       return Colors.blue.withOpacity(0.1);
                                     }
                                     return null;
@@ -652,9 +662,68 @@ class ContractDetailsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 400,
+      width: 400.fSize,
       height: 50,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(50.fSize),
+        border: Border.all(color: const Color(0xFF5092FF)),
+      ),
+      child: Row(
+        children: [
+           const Padding(
+            padding: EdgeInsets.only(left: 20, top: 15, bottom: 10),
+            child: Text('Contract Type',
+            style:TextStyle(
+              fontSize: 12,
+              ),
+            ),
+            
+          ),
+          const Padding(
+            padding: EdgeInsets.only(left:5,top: 15, bottom: 10),
+            //hard code
+            child: Text('A',
+            style:TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color:Color(0xFF5092FF),
+            )
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SizedBox(
+              
+              width: 1,
+              height: 30,
+              child: Container(
+                color:  const Color(0xFF5092FF),
+              ),
+            ),
+          ),
+          const Padding(
+            padding:EdgeInsets.only( top: 15, bottom: 10),
+            child: Text('Contract End Date',
+            style:TextStyle(
+              fontSize: 12,
+            )
+            ),
+          ),
+          Padding(
+            padding:const EdgeInsets.only( left:5,top: 15, bottom: 10),
+            child: Text(
+              DateFormat(DateFormat.YEAR_ABBR_MONTH_DAY).format(DateTime.now(),),
+            style:const TextStyle(
+              fontSize: 16,
+              color:Color(0xFF5092FF),
+              fontWeight: FontWeight.bold,
+            )
+            ),
+          ),
+        ],
+      ),
     );
+
   }
 }
 
@@ -664,27 +733,48 @@ class UnitDetailsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 90.width,
-      decoration: BoxDecoration(
-        color: const Color(0XFFFFFFFF),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0XFF120051).withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-            spreadRadius: -1.0,
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(6.width, 3.height, 5.width, 3.height),
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [],
+    return Column(
+      children: [
+        ContractDetailsContainer(model: model),
+        Row(
+          children: [
+
+
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left:15,top:25),
+                  child: Image.asset(
+                    'assets/images/Group.png',
+                    width:50,
+                    height:50,
+                    ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 15, top: 1),
+                  child:Text('Owner(s)',
+                  style:TextStyle(
+                    fontSize: 12,
+                  )),
+                )
+              ],
+            ),
+
+
+            Column(
+              //owners name and icon
+              //how to list out all owners name 
+            ),
+
+          ],
         ),
-      ),
+
+
+
+
+        //occupancy, monthly profit, net after POB container
+
+      ],
     );
   }
 }
