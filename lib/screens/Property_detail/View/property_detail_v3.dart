@@ -656,6 +656,92 @@ class PropertyOverviewContainer extends StatelessWidget {
   }
 }
 
+
+class UnitDetailsContainer extends StatelessWidget {
+  final PropertyDetailVM model;
+  const UnitDetailsContainer({super.key, required this.model});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ContractDetailsContainer(model: model),
+        Row(
+          children: [
+
+
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left:15,top:25),
+                  child: Image.asset(
+                    'assets/images/Group.png',
+                    width:50,
+                    height:50,
+                    ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 15, top: 1),
+                  child:Text('Owner(s)',
+                  style:TextStyle(
+                    fontSize: 12,
+                  )),
+                )
+              ],
+            ),
+
+
+Expanded(
+  child: Padding(
+    padding: const EdgeInsets.only(top: 25, left: 15),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ...model.ownerData
+            .where((owner) => owner.location == model.property)
+            .map((owner) => owner.accountname)
+            .toSet() // Remove duplicates
+            .map((ownerName) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.person,
+                        size: 16,
+                        color: Colors.grey[600],
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          ownerName ?? 'Unknown Owner',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ))
+            .toList(),
+      ],
+    ),
+  ),
+),
+
+          ],
+        ),
+
+
+
+
+        //occupancy, monthly profit, net after POB container
+
+      ],
+    );
+  }
+}
+
 class ContractDetailsContainer extends StatelessWidget {
   final PropertyDetailVM model;
   const ContractDetailsContainer({super.key, required this.model});
@@ -727,55 +813,28 @@ class ContractDetailsContainer extends StatelessWidget {
   }
 }
 
-class UnitDetailsContainer extends StatelessWidget {
+class UnitOverviewDetailsContainer extends StatelessWidget {
   final PropertyDetailVM model;
-  const UnitDetailsContainer({super.key, required this.model});
-
+  const UnitOverviewDetailsContainer({super.key, required this.model});
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ContractDetailsContainer(model: model),
-        Row(
-          children: [
-
-
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left:15,top:25),
-                  child: Image.asset(
-                    'assets/images/Group.png',
-                    width:50,
-                    height:50,
-                    ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 15, top: 1),
-                  child:Text('Owner(s)',
-                  style:TextStyle(
-                    fontSize: 12,
-                  )),
-                )
-              ],
+    return Container(
+      child:
+      const Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 10, top: 10)
             ),
-
-
-            Column(
-              //owners name and icon
-              //how to list out all owners name 
+          Padding(
+            padding: EdgeInsets.only(left: 10, top: 10)
             ),
-
-          ],
-        ),
-
-
-
-
-        //occupancy, monthly profit, net after POB container
-
-      ],
+          Padding(
+            padding: EdgeInsets.only(left: 10, top: 10)
+            ),
+        ]
+      )
     );
+      
   }
 }
 

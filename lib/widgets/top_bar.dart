@@ -2,34 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/new_bar_chart.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-PreferredSizeWidget topBar(context, function) {
+Widget topBar(context, function) {
 
   return PreferredSize(
-    preferredSize: Size.fromHeight(60),
+    preferredSize: Size(MediaQuery.of(context).size.width,60),
     child: ClipRRect(
       child: AppBar(
         
          backgroundColor: Colors.white,
          elevation: 0,  
-        leadingWidth: 85,
+        leadingWidth: 80,
         // leadingWidth: 3.width,
         toolbarHeight: 60.0,
-        leading:IconButton(
-          onPressed:() => print('Pressed'),
-        
-          icon:Container(
-            alignment: Alignment.topLeft,
-            width: 50.fSize,
-            height: 50.fSize, 
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            image: AssetImage('assets/images/mana2logo.png'),
-             fit: BoxFit.fill,
-          ),
-        ),
-        ),
-        ),
+        leading: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: CircleAvatar(
+             radius: 22.fSize, // or tweak size as needed
+             backgroundImage: AssetImage(
+              'assets/images/mana2logo.png',),
+             backgroundColor: Colors.transparent,
+             ),
+),
       
         title:ShaderMask(
               shaderCallback: (bounds)=>
