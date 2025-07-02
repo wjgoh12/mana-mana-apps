@@ -18,6 +18,7 @@ class AllPropertyScreen extends StatelessWidget {
         () => Navigator.of(context).pop(),
       ),
       body: Center(
+        
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 5),
           children: [
@@ -86,10 +87,11 @@ class AllPropertyScreen extends StatelessWidget {
           ),
         );
       },
-      child: propertyStack(
+      child: PropertyStack(
         image: locationByMonth[0]['location'] ?? '',
         text1: locationByMonth[0]['location'] ?? '',
         text2: locationRoad,
+        text3: locationByMonth[0]['totalUnits'] ?? '',
         // width: 85.width,
         // height: 12.height,
       ),

@@ -68,10 +68,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
         
       case 1:
         Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) =>AllPropertyScreen(locationByMonth: model.locationByMonth,
-          ),
-           ),
+           context,
+           MaterialPageRoute(builder: 
+           (context) => 
+           AllPropertyScreen(locationByMonth: model.locationByMonth)),
         );
         break;
       case 2:

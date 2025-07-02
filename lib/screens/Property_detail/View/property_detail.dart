@@ -44,13 +44,14 @@ class PropertyDetail extends StatelessWidget {
                         child: Column(
                           children: [
                             SizedBox(height: 2.height),
-                            propertyStack(
-                              image: model.property,
-                              text1: model.property,
-                              text2: model.locationRoad,
-                              // width: 86.width,
-                              // height: 12.height,
-                            ),
+                            // PropertyStack(
+                            //   locationByMonth: locationByMonth,
+                            //   // image: model.property,
+                            //   // text1: model.property,
+                            //   // text2: model.locationRoad,
+                            //   // width: 86.width,
+                            //   // height: 12.height,
+                            // ),
                             SizedBox(height: 2.height),
                             // _buildOverallRevenue(),
                             // SizedBox(height: 2.height),

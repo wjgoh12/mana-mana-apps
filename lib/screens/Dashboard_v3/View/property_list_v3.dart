@@ -105,77 +105,78 @@ class PropertyImageStack extends StatelessWidget {
         //final arrowTop = 30.height;
         //final arrowLeft = isMobile ? 37.5.width : 27.5.width;
 
-        return Stack(
-  clipBehavior: Clip.none,
-  children: [
-Container(
-        width: containerWidth,
-        height: containerHeight,
-        margin: const EdgeInsets.only(left: 5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image at top
-            Stack(
-  children: [
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(6),
-        child: SizedBox(
-          width: width,
-          height: height,
-          child: Image.asset(
-            'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
-            fit: BoxFit.cover,
+          return Stack(
+    clipBehavior: Clip.none,
+    children: [
+    Container
+    (
+          width: containerWidth,
+          height: containerHeight,
+          margin: const EdgeInsets.only(left: 5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
-        ),
-      ),
-    ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+                      // Image at top
+                      Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: SizedBox(
+                    width: width,
+                    height: height,
+                    child: Image.asset(
+                      'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
 
-    // Overlay small label on pic
-    Positioned(
-      top: (containerHeight-smallcontainerHeight)/2 ,
-      left: (containerWidth-smallcontainerWidth)/2,
-      
-      child: Container(
-        
-        width: smallcontainerWidth,
-        height: smallcontainerHeight,
-        padding: const EdgeInsets.only(left:10),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(1),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+                // Overlay small label on pic
+                Positioned(
+                  top: (containerHeight-smallcontainerHeight)/2 ,
+                  left: (containerWidth-smallcontainerWidth)/2,
+                  
+                  child: Container(
+                    
+                    width: smallcontainerWidth,
+                    height: smallcontainerHeight,
+                    padding: const EdgeInsets.only(left:10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(1),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
 
-          children: [
-            Image.asset(
-              'assets/images/PropertiesGroup.png',
-              width: 17.fSize,
-              height: 17.fSize,
+                      children: [
+                        Image.asset(
+                          'assets/images/PropertiesGroup.png',
+                          width: 17.fSize,
+                          height: 17.fSize,
+                        ),
+                        SizedBox(width: 2.width),
+                        Text('${locationByMonth.length} Total'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(width: 2.width),
-            Text('${locationByMonth.length} Total'),
-          ],
-        ),
-      ),
-    ),
-  ],
-),
 
             // Group icon and text
             Padding(
@@ -232,21 +233,21 @@ Container(
             height: 1,
             color: Colors.grey,
             margin: const EdgeInsets.only(left:10, right: 10, top:10),
-          ),
-          Padding(
-            padding:const EdgeInsets.only(left:10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top:5),
-                  child: Image.asset('assets/images/Wallet.png', width: 45.fSize, height: 45.fSize),
-                ),
+           ),
+            Padding(
+              padding:const EdgeInsets.only(left:10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top:5),
+                    child: Image.asset('assets/images/Wallet.png', width: 45.fSize, height: 45.fSize),
+                  ),
 
-                const SizedBox(width: 5),
-                const Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(width: 5),
+                  const Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Total Net After POB',
