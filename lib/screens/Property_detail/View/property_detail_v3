@@ -6,7 +6,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
-import 'package:mana_mana_app/widgets/old_top_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
@@ -18,241 +17,218 @@ class PropertyDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = PropertyDetailVM();
+    final PropertyDetailVM model = PropertyDetailVM();
     model.fetchData(locationByMonth);
 
-    final ScrollController scrollController = ScrollController();
-    bool isCollapsed = false;
-
     return ListenableBuilder(
-      listenable: model,
-      builder: (context, child) {
-        return Scaffold(
-          
-  body: Stack(
-    children: [
-     NotificationListener<ScrollNotification>(
-      onNotification: (scrollInfo) {
-      final collapsedHeight = 290.fSize - kToolbarHeight;
-      isCollapsed = scrollInfo.metrics.pixels > collapsedHeight;
-      return false;
-    },
-      child: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            expandedHeight: 290.fSize,
-            pinned: true,
-            backgroundColor: Colors.white,
-            flexibleSpace: Stack(
-              children:[ FlexibleSpaceBar(
-                
-                background: Image.asset(
-                  'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
-                  fit: BoxFit.cover,
-                ),
-                
-              ),
-              Positioned(
-                top: 30,
-                left: 10,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: Image.asset('assets/images/GroupBack.png'),
-                ),
-              )
-              ]
+        listenable: model,
+        builder: (context, _) {
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.light,
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(40)),
-                color: Colors.white,
-              ),
-              padding: EdgeInsets.only(top: 30.fSize),
-              child: Column(
+            child: Scaffold(
+              backgroundColor: const Color(0XFFFFFFFF),
+              body: Stack(
                 children: [
-                  Text(locationByMonth.first['location'] ?? '', style: TextStyle(fontSize: 30)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
                     children: [
-                      Image.asset('assets/images/map_pin.png',
-                          width: 14.fSize, height: 17.fSize),
-                      Text(model.locationRoad),
+                      Image.asset(
+                        'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
+                        width: 450.fSize,
+                        height: 290.fSize,
+                        fit: BoxFit.cover,
+                      ),
+                      SizedBox(height: 25.fSize),
                     ],
                   ),
-                  SizedBox(height: 10.fSize),
-      
-                  Container(             
-                   width: 370.fSize,
-                   decoration: BoxDecoration(
-                    border: Border.all(
-                     color: Colors.grey,
-                      width: 0.5,
-                     ),
-                       borderRadius: BorderRadius.circular(4),
-                     ),
-                       padding: const EdgeInsets.symmetric(
-                       horizontal: 12, vertical: 4),
-                    
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      underline: const SizedBox(),
-                       dropdownStyleData: DropdownStyleData(
-                                        width: 370.fSize,
-                                        offset: const Offset(-12.5, -1),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: const Border(
-                                            left: BorderSide(color: Colors.grey, width: 0.5),
-                                            right: BorderSide(color: Colors.grey, width: 0.5),
-                                            bottom: BorderSide(color: Colors.grey, width: 0.5),
-                                          ),
-                                          borderRadius: const BorderRadius.only(
-                                            bottomLeft: Radius.circular(4),
-                                            bottomRight: Radius.circular(4),
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 4),
-                                            ),
-                                          ],
-                                        ),
-                                        maxHeight: 300,
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(40),
-                                          thickness: WidgetStateProperty.all(6),
-                                          thumbVisibility:
-                                              WidgetStateProperty.all(true),
-                                        ),
+                  Positioned(
+                    top: 250.fSize,
+                    left: 0,
+                    right: 0,
+                    child: SingleChildScrollView(
+                      child: Container(
+                        width: 450.fSize,
+                        height: MediaQuery.of(context).size.height,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          color: const Color(0XFFFFFFFF),
+                          //overlay with the image on top of it about 10 percent
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 30.fSize),
+                            Text(
+                              locationByMonth.first['location'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 30,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/map_pin.png',
+                                    width: 14.fSize, height: 17.fSize),
+                                Text(model.locationRoad),
+                              ],
+                            ),
+                      
+                            SizedBox(height: 10.fSize),
+                            Container(
+                              
+                              width: 370.fSize,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 0.5,
+                                ),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                underline: const SizedBox(),
+
+                                dropdownStyleData: DropdownStyleData(
+                                  width: 370.fSize,
+                                  offset: const Offset(-12.5, -1),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: const Border(
+                                      left: BorderSide(color: Colors.grey, width: 0.5),
+                                      right: BorderSide(color: Colors.grey, width: 0.5),
+                                      bottom: BorderSide(color: Colors.grey, width: 0.5),
+                                    ),
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(4),
+                                      bottomRight: Radius.circular(4),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
                                       ),
-                    
-                                      menuItemStyleData: MenuItemStyleData(
-                                        height: 50,
-                                        padding:
-                                            const EdgeInsets.symmetric(horizontal: 16),
-                                        overlayColor:
-                                            WidgetStateProperty.resolveWith<Color?>(
-                                          (Set<WidgetState> states) {
-                                            if (states
-                                                .contains(WidgetState.hovered)) {
-                                              return Colors.blue.withOpacity(0.1);
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                    
-                                      iconStyleData: const IconStyleData(
-                                        icon: Icon(Icons.keyboard_arrow_down),
-                                        iconSize: 24,
-                                      ),
-                    
-                                      buttonStyleData: const ButtonStyleData(
-                                        padding: EdgeInsets.zero,
-                                        decoration: BoxDecoration(
-                                          color: Colors.transparent,
-                                        ),
-                                      ),
-                    items: [
-                          const DropdownMenuItem<String>(
-                          value: 'Overview',
-                          child: Text('Overview'),
-                       ),
-                          ...model.typeItems
-                          .map<DropdownMenuItem<String>>(
-                           (String value) {
-                             return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                               );
-                             }).toList(),
-                          ],
-                    
-                          onChanged: (String? newValue) {
-                           if (newValue != null) {
-                             if (newValue == 'Overview') {
-                                  model.updateSelectedView('Overview');
-                                   } else {
+                                    ],
+                                  ),
+                                  maxHeight: 300,
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: WidgetStateProperty.all(6),
+                                    thumbVisibility:
+                                        WidgetStateProperty.all(true),
+                                  ),
+                                ),
+
+                                menuItemStyleData: MenuItemStyleData(
+                                  height: 50,
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 16),
+                                  overlayColor:
+                                      WidgetStateProperty.resolveWith<Color?>(
+                                    (Set<WidgetState> states) {
+                                      if (states
+                                          .contains(WidgetState.hovered)) {
+                                        return Colors.blue.withOpacity(0.1);
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(Icons.keyboard_arrow_down),
+                                  iconSize: 24,
+                                ),
+
+                                buttonStyleData: const ButtonStyleData(
+                                  padding: EdgeInsets.zero,
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+
+                                items: [
+                                  const DropdownMenuItem<String>(
+                                    value: 'Overview',
+                                    child: Text('Overview'),
+                                  ),
+                                  ...model.typeItems
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                ],
+
+                                onChanged: (String? newValue) {
+                                  if (newValue != null) {
+                                    if (newValue == 'Overview') {
+                                      model.updateSelectedView('Overview');
+                                    } else {
+                                      
                                       // String type = newValue.split(" (")[0];
-                                     // String unitNo = newValue
-                                     //     .split(" (")[1]
-                                     //     .replaceAll(")", "");
+                                      // String unitNo = newValue
+                                      //     .split(" (")[1]
+                                      //     .replaceAll(")", "");
                                       final parts = newValue.split(' (');
                                       final type = parts[0];
                                       final unit = parts[1].replaceAll(')', '');
                                       model.updateSelectedTypeUnit(type, unit);
-                                           
+                                     
                                     }
                                   }
                                 },
                                 hint: const Text('Select Unit'),
-                                      value: model.selectedView == 'Overview'
-                                          ? 'Overview'
-                                          : (model.selectedType != null && model.selectedUnitNo != null)
-                                          ? '${model.selectedType} (${model.selectedUnitNo})'
-                                          : null,
-                          
-                    
+                                value: model.selectedView == 'Overview'
+                                    ? 'Overview'
+                                    : (model.selectedType != null && model.selectedUnitNo != null)
+                                    ? '${model.selectedType} (${model.selectedUnitNo})'
+                                    : null,
+                                    // : (model.selectedType != null &&
+                                    //         model.selectedUnitNo != null
+                                    //     ? '${model.selectedType} (${model.selectedUnitNo})'
+                                    //     : null),
+                              ),
+                            ),
+                      
+                            SizedBox(height: 20.fSize),
+                      
+                            // Show different content based on selection
+                            if (model.selectedView == 'Overview')
+                              PropertyOverviewContainer(
+                                  model: model, locationByMonth: locationByMonth)
+                            else
+                              Column(
+                                children: [
+                                  UnitDetailsContainer(model: model),
+                                  SizedBox(height: 20.fSize),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 40,
+                    left: 10,
+                    child: IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Image.asset('assets/images/GroupBack.png'),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          SliverFillRemaining(
-            hasScrollBody: model.selectedView != 'Overview',
-            child: model.selectedView == 'Overview'
-              ? PropertyOverviewContainer(model: model, locationByMonth: locationByMonth)
-              : SingleChildScrollView(
-                  child: UnitDetailsContainer(model: model),
-                ),
-          ),
-        ],
-      ),
-    ),
-if (isCollapsed)
-  Positioned(
-    top: 0,
-    left: 0,
-    right: 0,
-    child: Container(
-      height: 85.fSize,
-      color: Colors.white,
-      alignment: Alignment.centerLeft,
-      child: SafeArea(
-        bottom: false, // avoid extra padding at bottom
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Image.asset('assets/images/GroupBack.png'),
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              'Property(s)',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-    ),
-  ),
-
-    ]
-  ),
-);
-
-      }   
           );
-        
-      }
-    
+        });
   }
-
+}
 
 class MonthlyStatementContainer extends StatelessWidget {
   final PropertyDetailVM model;
@@ -368,7 +344,6 @@ class MonthlyStatementContainer extends StatelessWidget {
                         child: CircularProgressIndicator(
                           color: Colors.white,
                           strokeWidth: 2,
-                          
                         ),
                       )
                     : Text(
@@ -519,13 +494,6 @@ class AnnualStatementContainer extends StatelessWidget {
       ),
     );
   }
-}
-
-class PropertyTopBar extends StatelessWidget{
-  Widget build(BuildContext context) {
-    return Container();
-  }
-  
 }
 
 class PropertyOverviewContainer extends StatelessWidget {
@@ -862,7 +830,6 @@ class UnitDetailsContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height:25.fSize),
         ContractDetailsContainer(model: model, locationByMonth: model.locationByMonth),
         Row(
           children: [
@@ -1147,7 +1114,7 @@ class UnitDetailsContainer extends StatelessWidget {
           
         ),
 
-        StickyEstatementBar(onBack: () => Navigator.pop(context)),
+        //stick below the
         
       ],
     );
@@ -1192,52 +1159,6 @@ class EStatementContainer extends StatelessWidget {
       ],
     );
     }
-}
-
-class StickyEstatementBar extends StatelessWidget {
-  final VoidCallback onBack;
-  const StickyEstatementBar({required this.onBack, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: 0, left: 0, right: 0,
-      child: Container(
-        height: 85.fSize,
-        color: Colors.white,
-        alignment: Alignment.centerLeft,
-        child: SafeArea(
-          bottom: false,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const SizedBox(width: 8),
-              const Text(
-                'eStatements',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const Expanded(
-                child: SizedBox(),
-              ),
-              const Text('Year'),
-              const SizedBox(width: 8),
-              DropdownButton<String>(items: const [
-                DropdownMenuItem(value: '2022', child: Text('2022')),
-                DropdownMenuItem(value: '2023', child: Text('2023')),
-                DropdownMenuItem(value: '2024', child: Text('2024')),
-                DropdownMenuItem(value: '2025', child: Text('2025')),
-              ], onChanged: (value) {},
-              hint: const Text('Select Year'),
-              ),
-              const SizedBox(width: 8),
-              ],
-              ),
-            
-          )
-        ),
-      
-    );
-  }
 }
 
 Widget _buildGradientText(String text) {
