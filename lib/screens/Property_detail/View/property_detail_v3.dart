@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
-
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
@@ -14,11 +13,13 @@ class PropertyDetail extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
   const PropertyDetail({required this.locationByMonth, Key? key})
       : super(key: key);
+      
 
   @override
   Widget build(BuildContext context) {
     final PropertyDetailVM model = PropertyDetailVM();
     model.fetchData(locationByMonth);
+
     return ListenableBuilder(
         listenable: model,
         builder: (context, _) {
@@ -487,6 +488,8 @@ class PropertyOverviewContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -522,7 +525,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                         fontSize:12,
                       ),
                       ),
-                    Text('${locationByMonth.first['totalUnits'] ?? ''}'),
+                    Text('${locationByMonth.first['unitByMonth'] ?? ''}'),
                     Text(
                       DateFormat('MMMM yyyy').format(DateTime.now()),
                       style: const TextStyle(
@@ -599,7 +602,35 @@ class PropertyOverviewContainer extends StatelessWidget {
                         const Text('Monthly Profit',style:TextStyle(
                           fontSize:12,
                         ),),
-                        Text('${locationByMonth.first['totalAssets'] ?? ''}'),
+                        RichText(
+                                text: TextSpan(
+                                  children: [
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: Transform.translate(
+                                        offset: const Offset(0, -4), // adjust this value
+                                        child: const Text(
+                                          'RM',
+                                          style: TextStyle(
+                                            fontSize: 12, // smaller size
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '${model.locationByMonth.first['total'] ?? ''}',
+                                      style: const TextStyle(
+                                        fontSize: 16,               // Larger for the amount
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                         Text(
                           DateFormat('MMMM yyyy').format(DateTime.now()),
                           style: const TextStyle(
@@ -636,7 +667,35 @@ class PropertyOverviewContainer extends StatelessWidget {
                           fontSize:12,
                         ),
                         ),
-                        Text('${locationByMonth.first['totalAssets'] ?? ''}'),
+                        RichText(
+                                text: TextSpan(
+                                  children: [
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: Transform.translate(
+                                        offset: const Offset(0, -4), // adjust this value
+                                        child: const Text(
+                                          'RM',
+                                          style: TextStyle(
+                                            fontSize: 12, // smaller size
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '${model.locationByMonth.first['total'] ?? ''}',
+                                      style: const TextStyle(
+                                        fontSize: 16,               // Larger for the amount
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                         Text(
                           DateFormat('MMMM yyyy').format(DateTime.now()),
                           style: const TextStyle(
@@ -658,9 +717,26 @@ class PropertyOverviewContainer extends StatelessWidget {
 
 class ContractDetailsContainer extends StatelessWidget {
   final PropertyDetailVM model;
-  const ContractDetailsContainer({super.key, required this.model});
+  final List<Map<String, dynamic>> locationByMonth;
+
+  const ContractDetailsContainer({
+    super.key, 
+    required this.model,
+    required this.locationByMonth
+  });
+  
+
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: model.fetchData(locationByMonth),
+      builder: (context, snapshot) {
+        final hasData = snapshot.connectionState == ConnectionState.done;
+        final unitType = hasData && model.locationByMonth.isNotEmpty
+            ? model.locationByMonth.first['unitType'] as String?
+            : '';
+
+
     return Container(
       width: 400.fSize,
       height: 50,
@@ -679,17 +755,17 @@ class ContractDetailsContainer extends StatelessWidget {
             ),
             
           ),
-          const Padding(
-            padding: EdgeInsets.only(left:5,top: 15, bottom: 10),
-            //hard code
-            child: Text('A',
-            style:TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color:Color(0xFF5092FF),
-            )
-            ),
+      Padding(
+        padding: const EdgeInsets.only(left: 5, top: 15, bottom: 10),
+        child: Text(
+          unitType.toString() ?? '',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Color(0xFF5092FF),
           ),
+        ),
+      ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SizedBox(
@@ -722,6 +798,9 @@ class ContractDetailsContainer extends StatelessWidget {
           ),
         ],
       ),
+      );
+    
+      },
     );
 
   }
@@ -735,7 +814,7 @@ class UnitDetailsContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ContractDetailsContainer(model: model),
+        ContractDetailsContainer(model: model, locationByMonth: model.locationByMonth),
         Row(
           children: [
 
@@ -801,32 +880,267 @@ class UnitDetailsContainer extends StatelessWidget {
 
           ],
         ),
+        SizedBox(height: 2.height),
 
+        Container(
+          height: 125,
+          color: Colors.white,
+          child:Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: 125,
+                  height: 125,
+                  
+                  child: Container(
+                    decoration:  BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      boxShadow:[
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                      blurRadius: 3,
+                      offset: const Offset(0, 3),
+                        )
+                      ]
+                    ),
+                    child: Card(
+                       elevation: 0,
+                       color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top:15),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/PropertyOverview2.png',
+                              width:39.fSize,
+                              height:22.fSize,
+                              ),
+                              const SizedBox(height: 15),
+                              const Text('Occupancy Rate',
+                      style:TextStyle(
+                          fontSize:12,
+                        ),),
+                      
+                      Text(
+                        '${model.locationByMonth.first['occupancy']?? ''}% Active',
+                        style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          )
+                      ),
+                      Text(DateFormat('MMMM yyyy').format(DateTime.now(),
+                      ),
+                      style: const TextStyle(
+                            fontSize: 10,
+                          )
+                      ),
+                        ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                
+                 SizedBox(
+                  width: 125,
+                  height: 125,
+                  
+                  child: Container(
+                    decoration:  BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      boxShadow:[
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                      blurRadius: 3,
+                      offset: const Offset(0, 3),
+                        )
+                      ]
+                    ),
+                    child: Card(
+                       elevation: 0,
+                       color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top:15),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/PropertyOverview3.png',
+                              width:30.fSize,
+                              height:30.fSize,
+                              ),
+                              const SizedBox(height: 15),
+                              const Text('Monthly Profit',
+                      style:TextStyle(
+                          fontSize:12,
+                        ),),
+                      
+                      RichText(
+                                text: TextSpan(
+                                  children: [
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: Transform.translate(
+                                        offset: const Offset(0, -4), // adjust this value
+                                        child: const Text(
+                                          'RM',
+                                          style: TextStyle(
+                                            fontSize: 12, // smaller size
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '${model.locationByMonth.first['total'] ?? ''}',
+                                      style: const TextStyle(
+                                        fontSize: 16,               // Larger for the amount
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                      Text(DateFormat('MMMM yyyy').format(DateTime.now(),
+                      ),
+                      style: const TextStyle(
+                            fontSize: 10,
+                          )
+                      ),
+                        ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+             
+               SizedBox(
+                  width: 125,
+                  height: 125,
+                  
+                  child: Container(
+                    decoration:  BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      boxShadow:[
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                      blurRadius: 3,
+                      offset: const Offset(0, 3),
+                        )
+                      ]
+                    ),
+                    child: Card(
+                       elevation: 0,
+                       color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top:15),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/PropertyOverview4.png',
+                              width:30.fSize,
+                              height:30.fSize,
+                              ),
+                              const SizedBox(height: 15),
+                              const Text('Net After POB',
+                              style:TextStyle(
+                                  fontSize:12,
+                                ),),
+                              
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: Transform.translate(
+                                        offset: const Offset(0, -4), // adjust this value
+                                        child: const Text(
+                                          'RM',
+                                          style: TextStyle(
+                                            fontSize: 12, // smaller size
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '${model.locationByMonth.first['total'] ?? ''}',
+                                      style: const TextStyle(
+                                        fontSize: 16,               // Larger for the amount
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(DateFormat('MMMM yyyy').format(DateTime.now(),
+                              ),
+                              style: const TextStyle(
+                                    fontSize: 10,
+                                  )
+                              ),
+                        ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ]
+            ),
+          ),
+          
+        ),
 
-
-
-        //occupancy, monthly profit, net after POB container
-
+        //stick below the above contents first, the when scroll up will create 
+        //EStatementContainer(model:model),
       ],
     );
   }
 }
 
-class UnitOverviewDetailsContainer extends StatelessWidget {
+class EStatementContainer extends StatelessWidget {
   final PropertyDetailVM model;
-  const UnitOverviewDetailsContainer({super.key, required this.model});
+  const EStatementContainer({Key? key, required this.model});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child:
-      const Row(
-        children: [
-          
-        ]
-      )
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('E‑Statement', style: Theme.of(context).textTheme.titleLarge),
+              Icon(Icons.arrow_drop_down),
+            ],
+          ),
+        ),
+
+        // 🚧 Scrollable list part
+        Expanded(
+          child: ListView.builder(
+            itemCount: model.unitByMonth.length,
+            itemBuilder: (context, i) {
+              final u = model.unitByMonth[i];
+              return ListTile(
+                title: Text('${u.stype} - ${u.sunitno}'),
+                subtitle: Text('Month ${u.imonth}/${u.iyear}'),
+                trailing: Text('RM ${u.total?.toStringAsFixed(2) ?? '0.00'}'),
+              );
+            },
+          ),
+        ),
+      ],
     );
-      
-  }
+    }
 }
 
 Widget _buildGradientText(String text) {

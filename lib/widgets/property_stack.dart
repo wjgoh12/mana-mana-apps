@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -14,13 +14,15 @@ class PropertyStack extends StatelessWidget {
     required this.image,
     required this.text1,
     required this.text2,
-    required this.text3
+    required this.text3,
+    required this.total,
     });
   
   final String image;
   final String text1;
   final String text2;
   final String text3;
+  final double total;
   // final double width;
   // final double height;
 
@@ -215,17 +217,17 @@ class PropertyStack extends StatelessWidget {
                   ),
 
                   const SizedBox(width: 5),
-                  const Column(
+                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Total Net After POB',
                     style: TextStyle(fontSize:15
                     ),
                     ),
-                    Text('RM888888.88',
-                    style: TextStyle(
+                    Text('RM$total',
+                    style: const TextStyle(
                       fontSize:15,
                       fontWeight: FontWeight.bold,
                     ),
@@ -240,7 +242,7 @@ class PropertyStack extends StatelessWidget {
                     
                       onPressed: (){
                          Navigator.push(context,
-                         MaterialPageRoute(builder: (context) => PropertyDetail(locationByMonth: [locationByMonth],),
+                         MaterialPageRoute(builder: (context) => PropertyDetail(locationByMonth: [locationByMonth]),
                          ));
                       },
                       style:ButtonStyle(

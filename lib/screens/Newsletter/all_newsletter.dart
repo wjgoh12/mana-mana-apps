@@ -36,9 +36,6 @@ class AllNewsletter extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Image.asset(
-                    'assets/images/return.png',
-                  ),
                 ),
               ],
             ),

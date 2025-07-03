@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
@@ -11,41 +11,42 @@ class AllPropertyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const _isActive = true;
+    const _isNotActive = false;
+    //to identify if active or inactive property to do the logic for organizing types of properties(active/contract ended)
+
     return Scaffold(
       backgroundColor: const Color(0XFFFFFFFF),
       appBar: propertyAppBar(
         context,
         () => Navigator.of(context).pop(),
       ),
-      body: Center(
-        
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          children: [
-            GestureDetector(
-              child: Column(
-                children: locationByMonth
-                    .map((property) => property['location'])
-                    .toSet()
-                    .map((uniqueLocation) {
-                  final property = locationByMonth
-                      .firstWhere((p) => p['location'] == uniqueLocation);
-                  return Column(
-                    children: [
-                      GestureDetector(
-                        child: _buildPropertyStack(
-                          locationByMonth: [property],
-                          context: context,
-                        ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        children: [
+          GestureDetector(
+            child: Column(
+              children: locationByMonth
+                  .map((property) => property['location'])
+                  .toSet()
+                  .map((uniqueLocation) {
+                final property = locationByMonth
+                    .firstWhere((p) => p['location'] == uniqueLocation);
+                return Column(
+                  children: [
+                    GestureDetector(
+                      child: _buildPropertyStack(
+                        locationByMonth: [property],
+                        context: context,
                       ),
-                      const SizedBox(height: 20),
-                    ],
-                  );
-                }).toList(),
-              ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                );
+              }).toList(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: const BottomNavBar(currentIndex: 1,),
     );
@@ -81,17 +82,18 @@ class AllPropertyScreen extends StatelessWidget {
     }
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => PropertyDetail(locationByMonth: locationByMonth),
-          ),
-        );
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => PropertyDetail(locationByMonth: locationByMonth),
+        //   ),
+        // );
       },
       child: PropertyStack(
         image: locationByMonth[0]['location'] ?? '',
         text1: locationByMonth[0]['location'] ?? '',
         text2: locationRoad,
         text3: locationByMonth[0]['totalUnits'] ?? '',
+        total:locationByMonth[0]['total'] ?? '',
         // width: 85.width,
         // height: 12.height,
       ),

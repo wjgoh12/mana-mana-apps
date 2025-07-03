@@ -8,17 +8,17 @@ Widget topBar(context, function) {
     preferredSize: Size(MediaQuery.of(context).size.width,60),
     child: ClipRRect(
       child: AppBar(
-        
+        automaticallyImplyLeading: false,
          backgroundColor: Colors.white,
          elevation: 0,  
         leadingWidth: 80,
         // leadingWidth: 3.width,
-        toolbarHeight: 60.0,
+        toolbarHeight: 50.0,
         leading: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: CircleAvatar(
              radius: 22.fSize, // or tweak size as needed
-             backgroundImage: AssetImage(
+             backgroundImage: const AssetImage(
               'assets/images/mana2logo.png',),
              backgroundColor: Colors.transparent,
              ),

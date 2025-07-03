@@ -57,6 +57,7 @@ class NewDashboardV3 extends StatelessWidget {
       children: [
         if (showTitle)
           AppBar(
+            automaticallyImplyLeading: false,
             systemOverlayStyle: const SystemUiOverlayStyle(
               statusBarColor: Colors.white,
               statusBarIconBrightness: Brightness.dark,

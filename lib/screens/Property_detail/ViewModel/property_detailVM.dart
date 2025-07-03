@@ -44,6 +44,8 @@ class PropertyDetailVM extends ChangeNotifier {
       PropertyListRepository();
   final UserRepository userRepository = UserRepository();
 
+  get contractType => null;
+
   Future<void> fetchData(List<Map<String, dynamic>> newLocationByMonth) async {
     locationByMonth = newLocationByMonth;
     _users = await userRepository.getUsers();

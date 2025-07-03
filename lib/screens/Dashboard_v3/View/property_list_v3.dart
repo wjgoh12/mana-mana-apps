@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -10,6 +11,8 @@ class PropertyListV3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const AllPropertyScreen allPropertyScreen = AllPropertyScreen(locationByMonth: [],);
+    
         if (model.isLoading) {
           return Container(
             decoration: BoxDecoration(
@@ -91,6 +94,7 @@ class PropertyImageStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
         final isMobile =
@@ -223,7 +227,7 @@ class PropertyImageStack extends StatelessWidget {
                  width: 14.fSize, 
                  height: 17.fSize
                  ),
-                 Text('${locationByMonth.first['locationRoad']}'),
+                 Text('${locationByMonth.first['location']}'),
                ]
               ),
             ),
@@ -245,17 +249,17 @@ class PropertyImageStack extends StatelessWidget {
                   ),
 
                   const SizedBox(width: 5),
-                  const Column(
+                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Total Net After POB',
                     style: TextStyle(fontSize:15
                     ),
                     ),
-                    Text('RM888888.88',
-                    style: TextStyle(
+                    Text('RM ${locationByMonth.first['total']}',
+                    style: const TextStyle(
                       fontSize:15,
                       fontWeight: FontWeight.bold,
                     ),
