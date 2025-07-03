@@ -1148,6 +1148,7 @@ class UnitDetailsContainer extends StatelessWidget {
         ),
 
         StickyEstatementBar(onBack: () => Navigator.pop(context)),
+        //EStatementContainer(model: model),
         
       ],
     );
@@ -1160,36 +1161,10 @@ class EStatementContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
-        
-        Container(
-          height: 150,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('E‑Statement', style: Theme.of(context).textTheme.titleLarge),
-              Icon(Icons.arrow_drop_down),
-            ],
-          ),
-        ),
-
-        // 🚧 Scrollable list part
-        Expanded(
-          child: ListView.builder(
-            itemCount: model.unitByMonth.length,
-            itemBuilder: (context, i) {
-              final u = model.unitByMonth[i];
-              return ListTile(
-                title: Text('${u.stype} - ${u.sunitno}'),
-                subtitle: Text('Month ${u.imonth}/${u.iyear}'),
-                trailing: Text('RM ${u.total?.toStringAsFixed(2) ?? '0.00'}'),
-              );
-            },
-          ),
-        ),
-      ],
+      children: [ //e-statements list
+          ]
+      
+    
     );
     }
 }
@@ -1239,6 +1214,7 @@ class StickyEstatementBar extends StatelessWidget {
     );
   }
 }
+
 
 Widget _buildGradientText(String text) {
   return GradientText1(

@@ -7,6 +7,8 @@ import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
+import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {
   
@@ -29,6 +31,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
   late int _selectedIndex;
   final NewDashboardVM model = NewDashboardVM();
   
+
+  
+  
     
 
   @override
@@ -46,7 +51,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   void _onItemTapped(int index) {
-      final List<Map<String, dynamic>> locationByMonth;
+      
+      print('Tap Item $index');
+      
   
     if (_selectedIndex != index) {
       setState(() {
@@ -67,11 +74,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
         break;
         
       case 1:
+      final newDashboardVM =context.read<NewDashboardVM>();
         Navigator.push(
            context,
-           MaterialPageRoute(builder: 
-           (context) => 
-           AllPropertyScreen(locationByMonth: model.locationByMonth)),
+           MaterialPageRoute(
+            builder: 
+           (_) => 
+           AllPropertyScreen(locationByMonth: newDashboardVM.locationByMonth)),
         );
         break;
       case 2:

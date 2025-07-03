@@ -19,9 +19,15 @@ class NewDashboardV3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NewDashboardVM model = NewDashboardVM();
-    model.fetchData();
-    
+  return ChangeNotifierProvider(
+    create: (_) {
+      final model = NewDashboardVM();
+      model.fetchData();
+      return model;
+    },
+    child: Consumer<NewDashboardVM>(
+      builder: (context, model, child) {
+
     final ScrollController scrollController = ScrollController();
     //tracks the scroll position of the scroll view,check how far the user scrolled
     final ValueNotifier<bool> showDashboardTitle = ValueNotifier<bool>(false);
@@ -281,7 +287,11 @@ class NewDashboardV3 extends StatelessWidget {
               extendBody: true,
             ),
           );
-        });
+        }
+        );
+      }
+      ),
+    );
   }
 }
 
@@ -319,15 +329,3 @@ Widget _seeAllButton({VoidCallback? onPressed}) {
       ),
     );
 }
-
-                                //           UserInfo(model: model),
-                                //           RevenueDashboard(model: model),
-                                //           SizedBox(height: 2.height),
-                                //           _buildSectionTitle('Statistics'),
-                                //           SizedBox(height: 2.height),
-                                //           StatisticTable(model: model),
-                                //           SizedBox(height: 2.height),
-                                //           _buildSectionTitle('Properties'),
-                                //           SizedBox(height: 2.height),
-                                //           PropertyList(model: model),
-                                //           SizedBox(height: 2.height),

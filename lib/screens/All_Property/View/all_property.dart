@@ -15,6 +15,7 @@ class AllPropertyScreen extends StatelessWidget {
     const _isNotActive = false;
     //to identify if active or inactive property to do the logic for organizing types of properties(active/contract ended)
 
+
     return Scaffold(
       backgroundColor: const Color(0XFFFFFFFF),
       appBar: propertyAppBar(
