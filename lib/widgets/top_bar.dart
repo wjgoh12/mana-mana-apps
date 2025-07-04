@@ -10,6 +10,7 @@ Widget topBar(context, function) {
       child: AppBar(
         automaticallyImplyLeading: false,
          backgroundColor: Colors.white,
+         foregroundColor: Colors.white,
          elevation: 0,  
         leadingWidth: 80,
         // leadingWidth: 3.width,

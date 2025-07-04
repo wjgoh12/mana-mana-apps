@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
-import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
+import 'package:mana_mana_app/screens/Profile/View/owner_profile_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
