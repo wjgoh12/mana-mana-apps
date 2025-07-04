@@ -1174,7 +1174,6 @@ class UnitDetailsContainer extends StatelessWidget {
   }
 }
 
-/*************  ✨ Windsurf Command 🌟  *************/
 class EStatementContainer extends StatelessWidget {
   final PropertyDetailVM model;
   const EStatementContainer({Key? key, required this.model}) : super(key: key);

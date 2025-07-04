@@ -7,8 +7,21 @@ class FinancialDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Financial Details'),
+      appBar:  AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Image.asset('assets/images/personal_info_back.png'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Personal Information',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        )
       ),
       body: Container(),
     );

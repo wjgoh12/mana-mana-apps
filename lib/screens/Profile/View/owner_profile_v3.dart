@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
 import 'package:mana_mana_app/screens/Profile/View/personal_information.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
@@ -168,11 +169,11 @@ class OwnerProfile_v3 extends StatelessWidget {
                     const SizedBox(height: 12),
                     InkWell(
                       //this widget responds to touch actions
-                      // onTap: () {
-                      //   Navigator.of(context).push(
-                      //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
-                      //   );
-                      // },
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => FinancialDetails()),
+                        );
+                      },
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
