@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Profile/View/personal_information.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
+import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class OwnerProfile_v3 extends StatelessWidget {
   const OwnerProfile_v3({super.key});
@@ -14,248 +16,389 @@ class OwnerProfile_v3 extends StatelessWidget {
         builder: (context, child) {
           return Scaffold(
               appBar: AppBar(
-                title: Text(
-                  'Profile',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    foreground: Paint()
-                      ..shader = const LinearGradient(
-                        colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                      ).createShader(
-                          const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
+                automaticallyImplyLeading: false,
+                title: Row(
+                  children:[ 
+                    CircleAvatar(
+                    radius: 23.fSize, 
+                    backgroundImage: const AssetImage(
+                      'assets/images/mana2logo.png',),
+                    backgroundColor: Colors.white,
+                    ),
+                    SizedBox(width: 10.fSize),
+                   Text(
+                    'Profile',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      foreground: Paint()
+                        ..shader = const LinearGradient(
+                          colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                        ).createShader(
+                            const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
+                    ),
                   ),
+                  ]
                 ),
                 centerTitle: false,
                 
               ),
               body: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child:Padding(padding: const EdgeInsets.only(left:10,top:15),
+                child:Column(
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 30, // circle radius
+                          backgroundColor: const Color(0xFFF5F5FF),
+                          child: Image.asset(
+                            'assets/images/Group.png',
+                            width: 42.fSize,
+                            height: 42.fSize,
+                          ),
+                        ),
+                        SizedBox(width: 10.fSize),
+                        
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            model.users.isNotEmpty
+                            ? Text(
+                              textAlign: TextAlign.left,
+                              model.users.first.firstName ?? '',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                foreground: Paint()
+                        ..shader = const LinearGradient(
+                          colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                        ).createShader(
+                            const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
+                                ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            ):const Text('Loading...'),
+
+                            model.users.isNotEmpty
+                            ? Text(
+                              model.users.first.ownerFullName ?? '',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                foreground: Paint()
+                        ..shader = const LinearGradient(
+                          colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                        ).createShader(
+                            const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
+                                ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            ):const Text('Loading...'),
+
+                            model.users.isNotEmpty
+                            ? Text(model.users.first.role ?? ''):const Text('Loading...'),
+
+                        ],
+                        ),
+
+                      ],
+
+
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'My Profile',
+                            textAlign: TextAlign.left,
+                            style:TextStyle(
+                              fontSize: 18.fSize,
+                              fontWeight: FontWeight.bold,
+                              
+                            )),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.fSize),
+
+                    InkWell(
+                      //this widget responds to touch actions
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => PersonalInformation()),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: const Color(0xFFF9F8FF),
+                              child: Image.asset(
+                                'assets/images/profile_person_outline.png',
+                                width: 42.fSize,
+                                height: 42.fSize,
+                              ),
+                            ),
+                            SizedBox(width: 20.fSize),
+                            Text(
+                              'Personal Information',
+                              style: TextStyle(
+                                fontSize: 16.fSize,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    InkWell(
+                      //this widget responds to touch actions
+                      // onTap: () {
+                      //   Navigator.of(context).push(
+                      //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
+                      //   );
+                      // },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: const Color(0xFFFFF2E0),
+                              child: Image.asset(
+                                'assets/images/profile_financial_details.png',
+                                width: 42.fSize,
+                                height: 42.fSize,
+                              ),
+                            ),
+                            SizedBox(width: 20.fSize),
+                            Text(
+                              'Financial Details',
+                              style: TextStyle(
+                                fontSize: 16.fSize,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 25.fSize),
+                    Row(
+
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Contact Us',
+                            textAlign: TextAlign.left,
+                            style:TextStyle(
+                              fontSize: 18.fSize,
+                              fontWeight: FontWeight.bold,
+                              
+                            )),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.fSize),
+
+                    InkWell(
+                      //this widget responds to touch actions
+                      // onTap: () {
+                      //   Navigator.of(context).push(
+                      //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
+                      //   );
+                      // },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: const Color(0xFFE9F6FF),
+                              child: Image.asset(
+                                'assets/images/profile_email.png',
+                                width: 42.fSize,
+                                height: 42.fSize,
+                              ),
+                            ),
+                            SizedBox(width: 20.fSize),
+                            Text(
+                              'Email',
+                              style: TextStyle(
+                                fontSize: 16.fSize,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12.fSize),
+
+                    InkWell(
+                      //this widget responds to touch actions
+                      // onTap: () {
+                      //   Navigator.of(context).push(
+                      //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
+                      //   );
+                      // },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: const Color(0xFFFBF6FE),
+                              child: Image.asset(
+                                'assets/images/profile_telephone.png',
+                                width: 42.fSize,
+                                height: 42.fSize,
+                              ),
+                            ),
+                            SizedBox(width: 20.fSize),
+                            Text(
+                              'Telephone',
+                              style: TextStyle(
+                                fontSize: 16.fSize,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12.fSize),
+
+                    InkWell(
+                      //this widget responds to touch actions
+                      // onTap: () {
+                      //   Navigator.of(context).push(
+                      //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
+                      //   );
+                      // },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: const Color(0xFFE9FFEB),
+                              child: Image.asset(
+                                'assets/images/profile_whatsapp.png',
+                                width: 42.fSize,
+                                height: 42.fSize,
+                              ),
+                            ),
+                            SizedBox(width: 20.fSize),
+                            Text(
+                              'Whatsapp',
+                              style: TextStyle(
+                                fontSize: 16.fSize,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 65.fSize),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextButton
+                        (
+                          onPressed: (){}, 
+                          child: Text('Logout'),
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(const Color(0xFFF2F2F2)),
+
+                          )
+                           ),
+
+                      ],
+                    ),
+
+                   SizedBox(height: 40.fSize),
+
+                   //terms and conditions and privacy policy
+                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Tabs
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Center(
-                              child: TextButton(
-                                onPressed: () {
-                                  model.updateShowMyInfo(true);
-                                },
-                                child: Text(
-                                  'My Info',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w400,
-                                    color: model.showMyInfo
-                                        ? const Color(0XFF4313E9)
-                                        : const Color(0xFFBBBCBE),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            child: Center(
-                              child: TextButton(
-                                onPressed: () {
-                                  model.updateShowMyInfo(false);
-                                },
-                                child: Text(
-                                  'Banking Info',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w400,
-                                    color: model.showMyInfo
-                                        ? const Color(0xFFBBBCBE)
-                                        : const Color(0XFF4313E9),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      TextButton(onPressed: (){
+                      //Style
+                       style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                      );
+
+                      }, 
+                      child: Text('Terms and Conditions',
+                      style: TextStyle(
+                        fontSize: 14.fSize,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF3E51FF),
                       ),
-                      Row(
-                        children: [
-                          Flexible(
-                            child: FractionallySizedBox(
-                              // widthFactor: 0.5,
-                              child: Container(
-                                height: 2,
-                                color: model.showMyInfo
-                                    ? const Color(0XFF4313E9)
-                                    : Colors.grey,
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            child: FractionallySizedBox(
-                              // widthFactor: 0.5,
-                              child: Container(
-                                height: 2,
-                                color: model.showMyInfo
-                                    ? Colors.grey
-                                    : const Color(0XFF4313E9),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
-                      const SizedBox(height: 16),
+                      ),
 
-                      if (model.showMyInfo)
-                        // Info Card
-                        Card(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          elevation: 2,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 0,
-                                top: 0,
-                                bottom: 0,
-                                width: 10,
-                                child: Image.asset(
-                                  'assets/images/patterns_unit_revenue.png',
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16.0, bottom: 20.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '',
-                                          // users.first.ownerFullName ?? '',
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                    // SizedBox(height: 8),
-                                    buildInfoRow(
-                                        Icons.assignment_ind_outlined, 'Name'),
-                                    buildInfoInRow(model.getOwnerName()),
-                                    buildInfoRow(Icons.phone, 'Contact No.'),
-                                    buildInfoInRow(model.getOwnerContact()),
-                                    buildInfoRow(Icons.email, 'Email'),
-                                    buildInfoInRow(model.getOwnerEmail()),
-                                    buildInfoRow(
-                                        Icons.location_on_outlined, 'Address'),
-                                    buildInfoInRow(model.getOwnerAddress()),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      else
-                        // Banking Info Card (placeholder)
-                        Card(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            elevation: 2,
-                            child: Stack(children: [
-                              Positioned(
-                                left: 0,
-                                top: 0,
-                                bottom: 0,
-                                width: 10,
-                                child: Image.asset(
-                                  'assets/images/patterns_unit_revenue.png',
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16.0, bottom: 20.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '',
-                                          // users.first.ownerFullName ?? '',
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    // OwnerProperty.first.bank.toString()
-                                    buildInfoRow(Icons.account_balance,
-                                        'Banking Details'),
-                                    buildInfoInRow(model.getBankInfo()),
-                                    const SizedBox(height: 8),
-                                    buildInfoInRow(model.getAccountNumber()),
-                                    const SizedBox(height: 8),
-                                    // buildInfoRow(Icons.account_balance_wallet, 'Membership'),
-                                    // buildInfoInRow(OwnerProperty.first.accountnumber.toString()),
-                                    // SizedBox(height: 16),
-                                  ],
-                                ),
-                              ),
-                            ])),
+                      TextButton(onPressed: (){
+                      //Style
+                       style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                      );
 
-                      const SizedBox(height: 16),
-
-                      // All Agreements
-                      // Text(
-                      //   'All Agreement(s)',
-                      //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      // ),
-                      // SizedBox(height: 8),
-                      // Card(
-                      //   shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(8.0),
-                      //   ),
-                      //   elevation: 2,
-                      //   child: ListTile(
-                      //     title: Text('SAMPLE - SCARLETZ -Type_A-11-03 Agreement',style: TextStyle(color: Color(0xFF0044CC),fontSize: 15,fontWeight: FontWeight.w600)),
-                      //     trailing: Text(
-                      //       'PDF',
-                      //       style: TextStyle(color: Color(0xFF0044CC),fontSize: 15,fontWeight: FontWeight.w600),
-                      //     ),
-                      //     onTap: () {
-                      //       // Handle PDF tap
-                      //     },
-                      //   ),
-                      // ),
-                      const SizedBox(height: 32),
-
-                      // Payout Overtime
-                      // Text(
-                      //   'Payout Overtime',
-                      //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      // ),
+                      }, 
+                      child: Text('Privacy Policy',
+                      style: TextStyle(
+                        fontSize: 14.fSize,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF3E51FF),
+                      ),
+                      ),
+                      ),
                     ],
+                   ),
+
+
                     
+
+
+                  ]
+                ),
+                )
+
                   ),
                   
-                ),
-                
-              ),
+              
               bottomNavigationBar: const BottomNavBar(currentIndex: 3),
               );
         });

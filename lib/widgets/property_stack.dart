@@ -246,7 +246,7 @@ class PropertyStack extends StatelessWidget {
                     
                       onPressed: (){
                          Navigator.push(context,
-                         MaterialPageRoute(builder: (context) => PropertyDetail(locationByMonth: [locationByMonth]),
+                         MaterialPageRoute(builder: (context) => PropertyDetail(locationByMonth: model.locationByMonth),
                          ));
                       },
                       style:ButtonStyle(
