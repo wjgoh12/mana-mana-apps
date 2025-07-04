@@ -32,7 +32,7 @@ String getTotalProfit() {
 }
 
   Future<void> fetchOwnerUnits() async {
-    final units = await model.ownerPropertyListRepository.getOwnerUnit(); // ← make sure this method exists
+    final units = await model.ownerPropertyListRepository.getOwnerUnit(); 
     setState(() {
       totalUnits = units.length;
       isLoading = false;
@@ -49,52 +49,52 @@ String getTotalProfit() {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Left Column
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, 
-                children: [
-                  //1st 
-                  Card(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start, 
+              children: [
+                //1st 
+                Card(
+                  
+                  margin: const EdgeInsets.only(bottom: 20),
+                  color: const Color(0xFF5092FF),
+                  child: SizedBox(
+                    width: 190.fSize,
+                    height: 130.fSize,
+                   child: Column(
                     
-                    margin: const EdgeInsets.only(bottom: 20),
-                    color: const Color(0xFF5092FF),
-                    child: SizedBox(
-                      width: 190.fSize,
-                      height: 130.fSize,
-                     child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      Expanded(
+                        child: Stack(
+                          children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15, top: 15),
+                            child:Image.asset('assets/images/Bulat.png',
+                            width:35,
+                            height:35,
+                            ),
+                        ),
+                        Padding(
+                              padding: const EdgeInsets.only(left: 25 ,top: 20),
+                              child: Image.asset(
+                                'assets/images/OverviewProperty.png',
+                                width: 14,
+                                height: 26,
+                              ),
+                            ),
                         Expanded(
-                          child: Stack(
-                            children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15, top: 15),
-                              child:Image.asset('assets/images/Bulat.png',
-                              width:35,
-                              height:35,
-                              ),
-                          ),
-                          Padding(
-                                padding: const EdgeInsets.only(left: 25 ,top: 20),
-                                child: Image.asset(
-                                  'assets/images/OverviewProperty.png',
-                                  width: 14,
-                                  height: 26,
-                                ),
-                              ),
-                          Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             
                             children: [
                               
                               Padding(
-                                padding:const EdgeInsets.only(right:22),
+                                padding:const EdgeInsets.only(right:15),
                                   child:Text(
                                     '$totalUnits',
                                     style: const TextStyle(
-                                      fontSize: 50,
+                                      fontSize: 45,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -103,122 +103,123 @@ String getTotalProfit() {
                               const SizedBox(width: 1), // spacing between text and image
                               
                             ],
-                          )
-                            ]
                           ),
+                        )
+                          ]
                         ),
-                        Padding(
-                          padding:const EdgeInsets.only(left: 10,),
-                        child:Text(
-                          'Total Properties', 
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.fSize,
-                            ),
-                        ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10,bottom:15),
-                        child:Text(
-                          'Managed: ', 
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.fSize,
-                            fontWeight: FontWeight.bold,
-                            ),
-                        ),
-                        ),
-      
-                         
-                        
-                        
-                      ]
-                     ),
-                    ),
-                    
-                  ),
-      
-                  //2nd
-                  Card(
-                    
-                    margin: const EdgeInsets.only(bottom: 20),
-                    color: const Color(0xFFFFE7B8),
-                    child: SizedBox(
-                      width: 190.fSize,
-                      height: 83.fSize,
-                      child: Row(
-                       crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                           Stack(
-                              
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft, // Vertically center, left-aligned
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
-                                    child: Image.asset(
-                                      'assets/images/Bulat.png',
-                                      width: 40,
-                                      height: 40,
-                                    ),
-                                  ),
-                                ),
-                                const Padding(
-                              padding: EdgeInsets.only(left: 16,top:28),
-                              child: Image(
-                                image: AssetImage('assets/images/OverviewOccupancy.png'),
-                                width: 30,
-                                height: 20,
-                              )
-                            ),
-                              ],
-                            
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                  padding: EdgeInsets.only(left:8,top:15),
-                                  child: Text(
-                                    
-                                    'Occupancy Rate',
-                                    style: TextStyle(
-                                      fontSize: 10.0,
-                                      fontStyle: FontStyle.normal
-                                    ),
-                                ),
-                              ),
-                              //hard coded
-                              const Padding(
-                                padding: EdgeInsets.only(left:8),
-                                child: Text(
-                                  '75% Active',
-                                  style:TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  )
-                                ),
-                              ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Text(
-                                    DateFormat('MMMM yyyy').format(DateTime.now(),
-                                    
-                                  ),
-                                  style:const  TextStyle(
-                                      fontSize: 10.0,
-                                      fontStyle: FontStyle.normal
-                                    ),
-                                  ),
-                                ),
-                        ],
                       ),
-                        ],
+                      Padding(
+                        padding:const EdgeInsets.only(left: 10),
+                      child:Text(
+                        'Total Properties', 
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.fSize,
+                          ),
+                      ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10,bottom:15),
+                      child:Text(
+                        'Managed: ', 
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.fSize,
+                          fontWeight: FontWeight.bold,
+                          ),
+                      ),
+                      ),
+                  
                        
+                      
+                      
+                    ]
+                   ),
+                  ),
+                  
+                ),
+                  
+                //2nd
+                Card(
+                  
+                  margin: const EdgeInsets.only(bottom: 20),
+                  color: const Color(0xFFFFE7B8),
+                  child: SizedBox(
+                    width: 190.fSize,
+                    height: 83.fSize,
+                    child: Row(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                         Stack(
+                            
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft, // Vertically center, left-aligned
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
+                                  child: Image.asset(
+                                    'assets/images/Bulat.png',
+                                    width: 35,
+                                    height: 35,
+                                  ),
+                                ),
+                              ),
+                              const Padding(
+                            padding: EdgeInsets.only(left: 15,top:25),
+                            child: Image(
+                              image: AssetImage('assets/images/OverviewOccupancy.png'),
+                              width: 25,
+                              height: 15,
+                            )
+                          ),
+                            ],
+                          
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                                padding: EdgeInsets.only(left:8,top:10),
+                                child: Text(
+                                  
+                                  'Occupancy Rate',
+                                  style: TextStyle(
+                                    fontSize: 8.0,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                              ),
+                            ),
+                            //hard coded
+                            const Padding(
+                              padding: EdgeInsets.only(left:8),
+                              child: Text(
+                                '75% Active',
+                                style:TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                )
+                              ),
+                            ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(
+                                  DateFormat('MMMM yyyy').format(DateTime.now(),
+                                  
+                                ),
+                                style:const  TextStyle(
+                                    fontSize: 8.0,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                      ],
                     ),
+                      ],
+                     
                   ),
-                  ),
-                ],
-              ),
+                ),
+                ),
+              ],
             ),
       
             const SizedBox(width: 20), // spacing between columns
@@ -264,40 +265,47 @@ String getTotalProfit() {
                             crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Padding(
-                                  padding: EdgeInsets.only(left: 15, top: 15),
+                                  padding: EdgeInsets.only(left: 10, top: 10),
                                   child: Text(
                                     'Monthly Profit',
                                     style: TextStyle(
                                       
                                       fontSize: 10.0,
-                                      fontStyle: FontStyle.normal
+                                      fontWeight: FontWeight.normal
                                     ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(left:15),
+                                  padding: const EdgeInsets.only(left:10),
                                   child: RichText(
-                                  text: const TextSpan(
+                                text: TextSpan(
                                   children: [
-                                  TextSpan(
-                                  text:'RM ',
-                                  style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 8.0,
-                                  fontWeight: FontWeight.bold,
-                                  )
-                                  ),
-                                  TextSpan(
-                                  text: 'overallProfit',
-                                  style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.bold,
-                                  )
-                                  ),
-                                  ]
-                                  ),
-                                  ),
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: Transform.translate(
+                                        offset: const Offset(0, -4),
+                                        child: const Text(
+                                          'RM',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const TextSpan(
+                                      text: '88888.88',
+                                      style: TextStyle(
+                                        fontSize: 14,   
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 15),
@@ -306,7 +314,7 @@ String getTotalProfit() {
                                     
                                   ),
                                   style:const  TextStyle(
-                                      fontSize: 10.0,
+                                      fontSize: 8.0,
                                       fontStyle: FontStyle.normal
                                     ),
                                   ),
@@ -326,31 +334,56 @@ String getTotalProfit() {
                     child: SizedBox(
                       width: 190.fSize,
                       height: 130.fSize,
-                      child: Expanded(
-                        child:Column(
+                      child: SingleChildScrollView(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           
-                        children:[
+                        children:
+                        [
                           Padding(
-                            padding: const EdgeInsets.only(left:25,top: 13),
+                            padding: const EdgeInsets.only(left:20,top: 13),
                             child: Text('${DateTime.now().year} Accumulated Profit',
-                            style: const TextStyle(fontSize: 10),)
+                            style: const TextStyle(fontSize: 8),)
                             ),
-      
-                            const Padding(
-                            padding: EdgeInsets.only(left: 25),
-                            child: Text('RM',
-                            style: TextStyle(
-                              fontSize: 15,
-                            ),
-                            ),
+                              
+                            Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: Transform.translate(
+                                        offset: const Offset(0, -4),
+                                        child: const Text(
+                                          'RM',
+                                          style: TextStyle(
+                                            fontSize: 11, 
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const TextSpan(
+                                      text: '88888.88',
+                                      style: const TextStyle(
+                                        fontSize: 15.0,            
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             
                             ),
                             Padding(
-                            padding: const EdgeInsets.only(left: 25),
+                            padding: const EdgeInsets.only(left: 20),
                             child: Text(
                               DateFormat('MMMM yyyy').format(DateTime.now()),
-                            style: const TextStyle(fontSize: 10),)
+                            style: const TextStyle(fontSize: 8),)
                             ),
                           
                           const Stack(
@@ -359,7 +392,7 @@ String getTotalProfit() {
                                Align(
                                 alignment: Alignment.bottomRight,
                                   child: Padding(
-                                        padding: EdgeInsets.only(right: 10, top: 5),
+                                        padding: EdgeInsets.only(right: 10),
                                         child: Image(
                                           image: AssetImage('assets/images/Bulat.png'),
                                           width:40,
@@ -370,7 +403,7 @@ String getTotalProfit() {
                                     Align(
                                       alignment: Alignment.bottomRight,
                                       child:Padding(
-                                      padding: EdgeInsets.only(right: 15, top: 12),
+                                      padding: EdgeInsets.only(right: 15, top: 7),
                                       child: Image(
                                         image: AssetImage('assets/images/OverviewAccumulatedProfit.png'),
                                         width:26,
@@ -382,7 +415,7 @@ String getTotalProfit() {
                               ],
                         ),
                         ]
-                      ),
+                                              ),
                       ),
                     ),
                   ),

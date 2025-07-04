@@ -539,86 +539,92 @@ class PropertyOverviewContainer extends StatelessWidget {
 
     
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(7),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            SizedBox(
-              width: 175,
-              height: 175,
-              child: Card(
-                color: const Color(0XFFFFFFFF),
-                elevation: 5,
-                shadowColor: Colors.grey.withOpacity(0.8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top:30),
-                      child: Image.asset(
-                        'assets/images/PropertyOverview1.png',
-                        width: 67.fSize,
-                        height: 59.fSize,
+            Padding(
+              padding: const EdgeInsets.only(top:10),
+              child: SizedBox(
+                width: 175,
+                height: 175,
+                child: Card(
+                  color: const Color(0XFFFFFFFF),
+                  elevation: 5,
+                  shadowColor: Colors.grey.withOpacity(0.8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+              
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top:30),
+                        child: Image.asset(
+                          'assets/images/PropertyOverview1.png',
+                          width: 67.fSize,
+                          height: 59.fSize,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 5.fSize),
-                    const Text(
-                      'Total Assets',
-                      style:TextStyle(
-                        fontSize:12,
+                      SizedBox(height: 5.fSize),
+                      const Text(
+                        'Total Assets',
+                        style:TextStyle(
+                          fontSize:12,
+                        ),
+                        ),
+                      Text('${locationByMonth.first['unitByMonth'] ?? ''}'),
+                      Text(
+                        DateFormat('MMMM yyyy').format(DateTime.now()),
+                        style: const TextStyle(
+                              fontSize: 10,
+                            ),
                       ),
-                      ),
-                    Text('${locationByMonth.first['unitByMonth'] ?? ''}'),
-                    Text(
-                      DateFormat('MMMM yyyy').format(DateTime.now()),
-                      style: const TextStyle(
-                            fontSize: 10,
-                          ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
             SizedBox(width: 21.fSize),
-            SizedBox(
-              width: 175,
-              height: 175,
-              child: Card(
-                color: const Color(0XFFFFFFFF),
-                elevation: 5,
-                shadowColor: Colors.grey.withOpacity(0.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top:45),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 5.fSize),
-                      Image.asset(
-                        'assets/images/PropertyOverview2.png',
-                        width: 65.fSize,
-                        height: 38.fSize,
-                      ),
-                      SizedBox(height:5.fSize),
-                      const Text('Occupancy Rate',
-                      style:TextStyle(
-                          fontSize:12,
-                        ),),
-                      
-                      Text('${locationByMonth.first['totalAssets'] ?? ''}'),
-                      Text(DateFormat('MMMM yyyy').format(DateTime.now(),
-                      ),
-                      style: const TextStyle(
-                            fontSize: 10,
-                          )
-                      ),
-                    ],
+            Padding(
+              padding: const EdgeInsets.only(top:10),
+              child: SizedBox(
+                width: 175,
+                height: 175,
+                child: Card(
+                  color: const Color(0XFFFFFFFF),
+                  elevation: 5,
+                  shadowColor: Colors.grey.withOpacity(0.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top:45),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 5.fSize),
+                        Image.asset(
+                          'assets/images/PropertyOverview2.png',
+                          width: 65.fSize,
+                          height: 38.fSize,
+                        ),
+                        SizedBox(height:5.fSize),
+                        const Text('Occupancy Rate',
+                        style:TextStyle(
+                            fontSize:12,
+                          ),),
+                        
+                        Text('${locationByMonth.first['totalAssets'] ?? ''}'),
+                        Text(DateFormat('MMMM yyyy').format(DateTime.now(),
+                        ),
+                        style: const TextStyle(
+                              fontSize: 10,
+                            )
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -795,27 +801,26 @@ class ContractDetailsContainer extends StatelessWidget {
       child: Row(
         children: [
            const Padding(
-            padding: EdgeInsets.only(left: 20, top: 15, bottom: 10),
+            padding: EdgeInsets.only(left: 5, top: 15, bottom: 10),
             child: Text('Contract Type',
             style:TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               ),
             ),
             
           ),
-      Padding(
-        padding: const EdgeInsets.only(left: 5, top: 15, bottom: 10),
-        child: Text(
-          unitType.toString() ?? '',
-          style: const TextStyle(
+      const Padding(
+        padding: EdgeInsets.only(left: 5, top: 15, bottom: 10),
+        child: Text('A',
+          style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 12,
             color: Color(0xFF5092FF),
           ),
         ),
       ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
             child: SizedBox(
               
               width: 1,
@@ -829,16 +834,16 @@ class ContractDetailsContainer extends StatelessWidget {
             padding:EdgeInsets.only( top: 15, bottom: 10),
             child: Text('Contract End Date',
             style:TextStyle(
-              fontSize: 12,
+              fontSize: 10,
             )
             ),
           ),
           Padding(
-            padding:const EdgeInsets.only( left:5,top: 15, bottom: 10),
+            padding:const EdgeInsets.only( left:3,top: 15, bottom: 10),
             child: Text(
               DateFormat(DateFormat.YEAR_ABBR_MONTH_DAY).format(DateTime.now(),),
             style:const TextStyle(
-              fontSize: 16,
+              fontSize: 12,
               color:Color(0xFF5092FF),
               fontWeight: FontWeight.bold,
             )
@@ -891,7 +896,7 @@ class UnitDetailsContainer extends StatelessWidget {
 
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 25, left: 15),
+                  padding: const EdgeInsets.only(top: 25),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -935,7 +940,7 @@ class UnitDetailsContainer extends StatelessWidget {
           height: 125,
           color: Colors.white,
           child:Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 3),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -948,7 +953,7 @@ class UnitDetailsContainer extends StatelessWidget {
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       boxShadow:[
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withOpacity(0.1),
                       blurRadius: 3,
                       offset: const Offset(0, 3),
                         )
@@ -969,13 +974,13 @@ class UnitDetailsContainer extends StatelessWidget {
                               const SizedBox(height: 15),
                               const Text('Occupancy Rate',
                       style:TextStyle(
-                          fontSize:12,
+                          fontSize:10,
                         ),),
                       
                       Text(
                         '${model.locationByMonth.first['occupancy']?? ''}% Active',
                         style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 15,
                             fontWeight: FontWeight.bold,
                           )
                       ),
@@ -1001,7 +1006,7 @@ class UnitDetailsContainer extends StatelessWidget {
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       boxShadow:[
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withOpacity(0.1),
                       blurRadius: 3,
                       offset: const Offset(0, 3),
                         )
@@ -1019,10 +1024,10 @@ class UnitDetailsContainer extends StatelessWidget {
                               width:30.fSize,
                               height:30.fSize,
                               ),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 13),
                               const Text('Monthly Profit',
                       style:TextStyle(
-                          fontSize:12,
+                          fontSize:10,
                         ),),
                       
                       RichText(
@@ -1036,7 +1041,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                         child: const Text(
                                           'RM',
                                           style: TextStyle(
-                                            fontSize: 12, // smaller size
+                                            fontSize: 10, // smaller size
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
                                           ),
@@ -1046,7 +1051,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                     TextSpan(
                                       text: '${model.locationByMonth.first['total'] ?? ''}',
                                       style: const TextStyle(
-                                        fontSize: 16,               // Larger for the amount
+                                        fontSize: 15,               // Larger for the amount
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
@@ -1078,7 +1083,7 @@ class UnitDetailsContainer extends StatelessWidget {
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.2),
                       blurRadius: 3,
-                      offset: const Offset(0, 3),
+                      offset: const Offset(0, 1),
                         )
                       ]
                     ),
@@ -1097,7 +1102,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               const SizedBox(height: 15),
                               const Text('Net After POB',
                               style:TextStyle(
-                                  fontSize:12,
+                                  fontSize:9,
                                 ),),
                               
                               RichText(
@@ -1111,7 +1116,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                         child: const Text(
                                           'RM',
                                           style: TextStyle(
-                                            fontSize: 12, // smaller size
+                                            fontSize: 10, // smaller size
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
                                           ),
@@ -1121,7 +1126,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                     TextSpan(
                                       text: '${model.locationByMonth.first['total'] ?? ''}',
                                       style: const TextStyle(
-                                        fontSize: 16,               // Larger for the amount
+                                        fontSize: 15,               // Larger for the amount
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),

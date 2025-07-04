@@ -136,7 +136,7 @@ class PropertyStack extends StatelessWidget {
                            ),
                            Text(text2,
                            style:const TextStyle(
-                            fontSize: 12),
+                            fontSize: 9),
                             ),
                             SizedBox
                             (
@@ -155,7 +155,11 @@ class PropertyStack extends StatelessWidget {
                           height: 17.fSize,
                         ),
                         SizedBox(width: 2.width),
-                        Text('${text3.toString()} Total'),
+                        Text(
+                          '${text3.toString()} Total'
+                          ,style:const TextStyle(
+                            fontSize: 9),
+                          ),
                       ],
 
                     ),
@@ -166,7 +170,7 @@ class PropertyStack extends StatelessWidget {
 
             // Group icon and text
             Padding(
-              padding: const EdgeInsets.only(left:10, top: 15),
+              padding: const EdgeInsets.only(left:10, top: 10),
               child: Row(
                 children: [
                   Image.asset(
@@ -188,12 +192,12 @@ class PropertyStack extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 12, top: 8),
+              padding: const EdgeInsets.only(left: 12, top: 5),
               child: Text(
                 text1.toString() ?? '',
                 style: const TextStyle(
                   fontFamily: 'Open Sans',
-                  fontSize: 25,
+                  fontSize: 21,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
                 ),
@@ -204,7 +208,7 @@ class PropertyStack extends StatelessWidget {
             Container(
             height: 1,
             color: Colors.grey,
-            margin: const EdgeInsets.only(left:10, right: 10, top:10),
+            margin: const EdgeInsets.only(left:10, right: 10),
            ),
             Padding(
               padding:const EdgeInsets.only(left:10),
@@ -212,7 +216,7 @@ class PropertyStack extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top:5),
+                    padding: const EdgeInsets.only(top:1),
                     child: Image.asset('assets/images/Wallet.png', width: 45.fSize, height: 45.fSize),
                   ),
 
@@ -223,7 +227,7 @@ class PropertyStack extends StatelessWidget {
                   children: [
                     const Text(
                       'Total Net After POB',
-                    style: TextStyle(fontSize:15
+                    style: TextStyle(fontSize:11,
                     ),
                     ),
                     Text('RM$total',

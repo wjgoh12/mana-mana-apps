@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
@@ -103,7 +104,7 @@ class PropertyImageStack extends StatelessWidget {
         final height = 207.fSize;
        // final position = 25.height;
         final containerWidth = isMobile ? 370.fSize : 360.fSize;
-        final containerHeight = 405.fSize;
+        final containerHeight = 410.fSize;
         final smallcontainerWidth = isMobile? 180.fSize:90.width;
         final smallcontainerHeight = 35.fSize;
         //final arrowTop = 30.height;
@@ -159,7 +160,7 @@ class PropertyImageStack extends StatelessWidget {
                     
                     width: smallcontainerWidth,
                     height: smallcontainerHeight,
-                    padding: const EdgeInsets.only(left:10),
+                    padding: const EdgeInsets.only(left:8),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(1),
                       borderRadius: BorderRadius.circular(5),
@@ -174,7 +175,12 @@ class PropertyImageStack extends StatelessWidget {
                           height: 17.fSize,
                         ),
                         SizedBox(width: 2.width),
-                        Text('${locationByMonth.length} Total'),
+                        Text(
+                          '${locationByMonth.length} Total(${locationByMonth.first['occupancy']?? ''}% Occupancy)',
+                          style:const TextStyle(
+                            fontSize: 8,
+                          )
+                        ),
                       ],
                     ),
                   ),
@@ -184,7 +190,7 @@ class PropertyImageStack extends StatelessWidget {
 
             // Group icon and text
             Padding(
-              padding: const EdgeInsets.only(left:10, top: 15),
+              padding: const EdgeInsets.only(left:10, top: 5),
               child: Row(
                 children: [
                   Image.asset(
@@ -197,7 +203,7 @@ class PropertyImageStack extends StatelessWidget {
                     'Owner(s)',
                     style: TextStyle(
                       fontFamily: 'Open Sans',
-                      fontSize: 15.fSize,
+                      fontSize: 13.fSize,
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
@@ -206,12 +212,11 @@ class PropertyImageStack extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 12, top: 8),
+              padding: const EdgeInsets.only(left: 12, top: 5),
               child: Text(
                 locationByMonth.first['location'] ?? '',
                 style: const TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontSize: 25,
+                  fontSize: 21,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
                 ),
@@ -227,7 +232,14 @@ class PropertyImageStack extends StatelessWidget {
                  width: 14.fSize, 
                  height: 17.fSize
                  ),
-                 Text('${locationByMonth.first['location']}'),
+                 const SizedBox(width: 2),
+                 Text(
+                  '${locationByMonth.first['location']}',
+                  style:
+                  const TextStyle(
+                    fontSize: 10,
+                  ),
+                  ),
                ]
               ),
             ),
@@ -236,7 +248,7 @@ class PropertyImageStack extends StatelessWidget {
             Container(
             height: 1,
             color: Colors.grey,
-            margin: const EdgeInsets.only(left:10, right: 10, top:10),
+            margin: const EdgeInsets.only(left:10, right: 10,top:2),
            ),
             Padding(
               padding:const EdgeInsets.only(left:10),
@@ -248,19 +260,19 @@ class PropertyImageStack extends StatelessWidget {
                     child: Image.asset('assets/images/Wallet.png', width: 45.fSize, height: 45.fSize),
                   ),
 
-                  const SizedBox(width: 5),
+                  const SizedBox(width: 2),
                    Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       'Total Net After POB',
-                    style: TextStyle(fontSize:15
+                    style: TextStyle(fontSize:11,
                     ),
                     ),
                     Text('RM ${locationByMonth.first['total']}',
                     style: const TextStyle(
-                      fontSize:15,
+                      fontSize:12,
                       fontWeight: FontWeight.bold,
                     ),
                     ),//totalNetAfterPob
