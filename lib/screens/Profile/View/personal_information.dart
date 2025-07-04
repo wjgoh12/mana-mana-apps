@@ -50,28 +50,35 @@ class _PersonalInformationState extends State<PersonalInformation> {
                  children: [
                    _buildRow(icon: 'personal_info_name.png', label: 'Name'),
                    const SizedBox(width: 10),
-                   Text('${model.users.first.ownerFullName}'),
+                   model.users.isNotEmpty
+                      ? _buildData(data:model.users.first.ownerFullName ?? '')
+                      :const Text('Loading...'),
                  ],
                ),
                Row(
                   children: [
                     _buildRow(icon: 'personal_info_contact.png', label: 'Contact No.'),
                     const SizedBox(width: 10),
-                    Text('${model.users.first.ownerAltContact}'),
+                    model.users.isNotEmpty
+                     ? _buildData(data:model.users.first.ownerContact ?? '')
+                    :const Text('Loading...'),
                   ],
                 ),
                 Row(
                   children: [
                     _buildRow(icon: 'personal_info_email.png', label: 'Email'),
                     const SizedBox(width: 10),
-                    Text('${model.users.first.email}'), 
+                    model.users.isNotEmpty
+                            ? _buildData(data:model.users.first.email ?? ''):const Text('Loading...'),
                   ],
                 ),
                 Row(
                   children: [
                     _buildRow(icon: 'personal_info_address.png', label: 'Address'),
                     const SizedBox(width: 10),
-                    Text('${model.users.first.ownerAddress}'), 
+                    model.users.isNotEmpty
+                         ? _buildData(data:model.users.first.ownerAddress ?? '')
+                         :const Text('Loading...'),
                   ],
                 ),
 
@@ -97,11 +104,21 @@ class _PersonalInformationState extends State<PersonalInformation> {
       
             Image.asset('assets/images/$icon'),
             const SizedBox(width: 10),
-            Text(label),
+            Text(label,
+            style: const TextStyle(fontSize: 14),
+            ),
             
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildData({required String data}){
+  return Text(data,
+  style: const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold),
+  );
 }

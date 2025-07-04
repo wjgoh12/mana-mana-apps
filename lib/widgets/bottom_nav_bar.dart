@@ -6,7 +6,7 @@ import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
-// import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
+import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:provider/provider.dart';
 
@@ -87,11 +87,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Newsletter()),
-      //   ).then((_) {
-      // setState(() {
-      //   _selectedIndex = 2;
-      // });
-      // }
+
       );
         break;
       case 3:
