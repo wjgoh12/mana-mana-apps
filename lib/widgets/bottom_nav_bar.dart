@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -86,14 +87,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Newsletter()),
+          MaterialPageRoute(builder: (context) => const AllNewsletter()),
 
       );
         break;
       case 3:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => OwnerProfile_v3()),
+          MaterialPageRoute(builder: (context) => const OwnerProfile_v3()),
         ).then((_) {
       setState(() {
         _selectedIndex = 3;

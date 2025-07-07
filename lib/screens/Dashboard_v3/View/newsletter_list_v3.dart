@@ -102,6 +102,8 @@ class NewsletterImageStack extends StatelessWidget {
        // final position = 25.height;
         final containerWidth = isMobile ? 370.fSize : 360.fSize;
         final containerHeight = 360.fSize;
+        final smallcontainerWidth = isMobile? 40.fSize: 30.fSize;
+        final smallcontainerHeight = 50.fSize;
 
           return Stack(
             clipBehavior: Clip.none,
@@ -143,6 +145,39 @@ class NewsletterImageStack extends StatelessWidget {
                 ),
               ),
 
+              //date container
+              Positioned(
+                left:20,
+                bottom:20,
+                child: Container(
+                  width: smallcontainerWidth,
+                  height: smallcontainerHeight,
+                  decoration: const BoxDecoration(
+                    color: Color(0XFF3E51FF),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(DateTime.now().day.toString(),
+                      style:TextStyle(
+                        color: Colors.white,
+                        fontSize: 23.fSize
+                      )
+                      ),
+                     Text(
+                        [
+                          'January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'
+                        ][DateTime.now().month - 1],
+                      style:TextStyle(
+                        color: Colors.white,
+                        fontSize: 11.fSize
+                        ),
+                      )
+                    ]
+                         ),
+                )
+
+              )
                 
               ],
             ),
@@ -186,9 +221,9 @@ class NewsletterImageStack extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('60 Views'),
+                  const Text('60 Views'),
                   
-                  Text('10 Comments'),
+                  const Text('10 Comments'),
 
                   //like button
                   PostLike(),
