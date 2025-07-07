@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Login/View/loginpage.dart';
 import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
 import 'package:mana_mana_app/screens/Profile/View/personal_information.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
+// ignore: depend_on_referenced_packages
+import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 
 class OwnerProfile_v3 extends StatelessWidget {
   const OwnerProfile_v3({super.key});
 
   @override
   Widget build(BuildContext context) {
+    
     final OwnerProfileVM model = OwnerProfileVM();
     model.fetchData();
     return ListenableBuilder(
@@ -171,7 +175,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                       //this widget responds to touch actions
                       onTap: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => FinancialDetails()),
+                          MaterialPageRoute(builder: (_) => const FinancialDetails()),
                         );
                       },
                       borderRadius: BorderRadius.circular(8),
@@ -304,7 +308,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                       // },
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Row(
                           children: [
                             CircleAvatar(
@@ -337,18 +341,22 @@ class OwnerProfile_v3 extends StatelessWidget {
                       children: [
                         TextButton
                         (
-                          onPressed: (){}, 
-                          child: Text('Logout'),
+                          onPressed: (){
+                            //logout
+                            final authService = AuthService();
+                            authService.logout(context);
+                          },
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all(const Color(0xFFF2F2F2)),
 
-                          )
+                          ), 
+                          child: const Text('Logout')
                            ),
 
                       ],
                     ),
 
-                   SizedBox(height: 40.fSize),
+                   SizedBox(height: 35.fSize),
 
                    //terms and conditions and privacy policy
                    Row(
@@ -356,8 +364,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextButton(onPressed: (){
-                      //Style
-                       style: ButtonStyle(
+                      
+                       ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(Colors.transparent),
                       );
 

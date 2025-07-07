@@ -233,13 +233,13 @@ class PropertyImageStack extends StatelessWidget {
                  height: 17.fSize
                  ),
                  const SizedBox(width: 2),
-                 Text(
-                  '${locationByMonth.first['location']}',
+                 const Text(
+                  'yeahroad',
                   style:
-                  const TextStyle(
+                  TextStyle(
                     fontSize: 10,
                   ),
-                  ),
+                ),
                ]
               ),
             ),
