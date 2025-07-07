@@ -901,41 +901,37 @@ class UnitDetailsContainer extends StatelessWidget {
               ),
       
       
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 25),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ...model.ownerData
-                            .where((owner) => owner.location == model.property)
-                            .map((owner) => owner.accountname)
-                            .toSet() // Remove duplicates
-                            .map((ownerName) => Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 2),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.person,
-                                        size: 16,
-                                        color: Colors.grey[600],
+                Padding(
+                  padding: const EdgeInsets.only(top: 25),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ...model.ownerData
+                          .where((owner) => owner.location == model.property)
+                          .map((owner) => owner.accountname)
+                          .toSet() // Remove duplicates
+                          .map((ownerName) => Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.person,
+                                      size: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      ownerName ?? 'Unknown Owner',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[700],
                                       ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          ownerName ?? 'Unknown Owner',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey[700],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ))
-                            .toList(),
-                      ],
-                    ),
+                                    ),
+                                  ],
+                                ),
+                              ))
+                          .toList(),
+                    ],
                   ),
                 ),
       

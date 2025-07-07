@@ -856,7 +856,6 @@ class UnitDetailsContainer extends StatelessWidget {
             ),
 
 
-              Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 25, left: 15),
                   child: Column(
@@ -892,7 +891,7 @@ class UnitDetailsContainer extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
+            
 
           ],
         ),

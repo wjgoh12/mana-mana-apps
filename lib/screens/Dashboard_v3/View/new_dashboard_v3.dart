@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/revenue_dashboard.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/statistic_table.dart';
@@ -13,6 +14,7 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/widgets/top_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class NewDashboardV3 extends StatelessWidget {
   const NewDashboardV3({Key? key}) : super(key: key);
@@ -31,6 +33,7 @@ class NewDashboardV3 extends StatelessWidget {
     final ScrollController scrollController = ScrollController();
     //tracks the scroll position of the scroll view,check how far the user scrolled
     final ValueNotifier<bool> showDashboardTitle = ValueNotifier<bool>(false);
+    final ValueNotifier<bool> isRefreshing= ValueNotifier(false);
     
     scrollController.addListener(() {
       if (scrollController.offset > 100) { // Change threshold as needed
@@ -159,11 +162,21 @@ class NewDashboardV3 extends StatelessWidget {
                                                         fontWeight: FontWeight.w900,
                                                         color: const Color(0xFFFFFFFF),
                                                        ),
-                                                     ),
+                                                     ).animate(
+                                                      onPlay: (controller) {
+                                                        if(isRefreshing.value) {
+                                                          controller.repeat();
+                                                        } else {
+                                                          controller.stop();
+                                                        }
+                                                      },
+
+                                                     )
                                                  ),
                                                ],
                                              ),
                                              SizedBox(height: 4.height),
+
                             //search bar
                            TextField(
                                 decoration: InputDecoration(
@@ -259,16 +272,14 @@ class NewDashboardV3 extends StatelessWidget {
                                   }
                               
                                 ),
-                                
-                               //height 200
-                               
-            
-                               
+
+        
                               ],
                             ),
                             ),
-                            SizedBox(height: 100),
                             
+                                NewsletterListV3(model: model),
+                               const SizedBox(height:30),
                                           ],
                                         ),
                                       ),
@@ -326,6 +337,9 @@ Widget _seeAllButton({VoidCallback? onPressed}) {
   onPressed: onPressed,
     child: const Text(
       'See All',
+      style: TextStyle(
+        fontSize: 12,
+      ),
       ),
     );
 }

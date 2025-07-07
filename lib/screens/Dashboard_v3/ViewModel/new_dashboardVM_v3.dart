@@ -5,6 +5,7 @@ import 'package:mana_mana_app/provider/global_owner_state.dart';
 import 'package:mana_mana_app/provider/global_user_state.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
+import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 
 class NewDashboardVM_v3 extends ChangeNotifier {
   bool isLoading = true;
@@ -18,10 +19,13 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   int unitLatestMonth = 0;
   List<OwnerPropertyList> ownerUnits = [];
   String revenueLastestYear = '';
+  List<Newsletter> _newsletter = [];
+  List<Newsletter> get newsletter => _newsletter;
 
   List<Map<String, dynamic>> revenueDashboard = [];
   List<Map<String, dynamic>> monthlyProfitOwner = [];
   List<Map<String, dynamic>> totalByMonth = [];
+  List<Map<String, dynamic>> newsletters = [];
   List<Map<String, dynamic>> monthlyBlcOwner = [];
   List<Map<String, dynamic>> locationByMonth = [];
 
@@ -124,8 +128,12 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       unitLatestMonth = 0;
     }
 
+    //_newsletters = await newsletterRepository.getNewsletters();
+    
+
     isLoading = false;
     notifyListeners();
+
   }
 
   Future<void> refreshData() async {
