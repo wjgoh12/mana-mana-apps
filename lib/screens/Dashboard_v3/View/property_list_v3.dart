@@ -79,6 +79,7 @@ class PropertyListV3 extends StatelessWidget {
 
 class PropertyImageStack extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
+  
   const PropertyImageStack({
     Key? key,
     // required this.image,
@@ -93,8 +94,36 @@ class PropertyImageStack extends StatelessWidget {
   // final String location;
   // final String amount;
 
+  
+
   @override
   Widget build(BuildContext context) {
+    String locationRoad = '';
+    switch (locationByMonth[0]['location'].toUpperCase()) {
+      case "EXPRESSIONZ":
+        locationRoad = "Jalan Tun Razak";
+        break;
+      case "CEYLONZ":
+        locationRoad = "Persiaran Raja Chulan";
+        break;
+      case "SCARLETZ":
+        locationRoad = "Jalan Yap Kwan Seng";
+        break;
+      case "MILLERZ":
+        locationRoad = "Old Klang Road";
+        break;
+      case "MOSSAZ":
+        locationRoad = "Empire City";
+        break;
+      case "PAXTONZ":
+        locationRoad = "Empire City";
+        break;
+      default:
+        locationRoad = "";
+        break;
+    }
+    final NewDashboardVM model=NewDashboardVM();
+    model.fetchData();
     
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
@@ -233,13 +262,13 @@ class PropertyImageStack extends StatelessWidget {
                  height: 17.fSize
                  ),
                  const SizedBox(width: 2),
-                 const Text(
-                  'yeahroad',
+                 Text(
+                  '$locationRoad',
                   style:
-                  TextStyle(
+                  const TextStyle(
                     fontSize: 10,
                   ),
-                ),
+                  ),
                ]
               ),
             ),
@@ -334,7 +363,6 @@ class PropertyImageStack extends StatelessWidget {
   ],
 );
 
-
       },
     );
   }
@@ -366,41 +394,6 @@ class ViewAllProperty extends StatelessWidget {
             )
           ],
         ),
-        // child: Column(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     Text(
-        //       'VIEW ALL',
-        //       style: TextStyle(
-        //         fontFamily: 'Open Sans',
-        //         fontWeight: FontWeight.w700,
-        //         fontSize: 20.fSize,
-        //         color: const Color(0XFF4313E9),
-        //       ),
-        //     ),
-        //     Text(
-        //       '@ Your Properties',
-        //       style: TextStyle(
-        //         fontFamily: 'Open Sans',
-        //         fontWeight: FontWeight.w300,
-        //         fontSize: 10.fSize,
-        //         fontStyle: FontStyle.italic,
-        //         color: const Color(0XFF4313E9),
-        //       ),
-        //     ),
-        //     SizedBox(height: 2.height),
-        //     Container(
-        //       width: 7.width,
-        //       height: 7.width,
-        //       decoration: const BoxDecoration(color: Color(0XFF4313E9)),
-        //       child: const Icon(
-        //         Icons.keyboard_arrow_right_rounded,
-        //         color: Colors.white,
-        //       ),
-        //     )
-        //   ],
-        // ),
-      // ),
     );
   }
 }

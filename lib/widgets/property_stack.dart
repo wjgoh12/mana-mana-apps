@@ -4,9 +4,7 @@ import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.da
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-
 class PropertyStack extends StatelessWidget {
-  
   
   const PropertyStack
   ({
@@ -23,41 +21,12 @@ class PropertyStack extends StatelessWidget {
   final String text2;
   final String text3;
   final double total;
-  // final double width;
-  // final double height;
-
   
   @override
   Widget build(BuildContext context) {
     final NewDashboardVM model=NewDashboardVM();
     model.fetchData();
 
-    //  if (model.isLoading) {
-    //       return Container(
-    //         decoration: BoxDecoration(
-    //           color: Colors.white,
-    //           borderRadius: BorderRadius.circular(8),
-    //         ),
-    //         padding: const EdgeInsets.all(16),
-    //         child: const Center(
-    //           child: CircularProgressIndicator(), 
-    //         ),
-    //       );
-    //     }
-
-        // if(model.locationByMonth.isEmpty) {
-        //   return Container(
-        //         decoration: BoxDecoration(
-        //           color: Colors.white,
-        //           borderRadius: BorderRadius.circular(8),
-        //         ),
-        //         padding: const EdgeInsets.all(16),
-        //         child: const Center(
-        //           child: Text('No properties available'),
-        //         ),
-        //       );
-        // } 
-        // else{
               return ResponsiveBuilder(
      builder: (context, sizingInformation) {
       final isMobile =
@@ -69,7 +38,7 @@ class PropertyStack extends StatelessWidget {
         final containerHeight = 405.fSize;
         final smallcontainerWidth = isMobile? 320.fSize:90.width;
         final smallcontainerHeight = 35.fSize;
-         final Map<String,int> locationByMonth = {};
+
        return Stack(
         clipBehavior: Clip.none,
         children: [
@@ -92,8 +61,8 @@ class PropertyStack extends StatelessWidget {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-                      // Image at top
-                      Stack(
+               // Image at top
+                 Stack(
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -117,7 +86,6 @@ class PropertyStack extends StatelessWidget {
                   left: (containerWidth-smallcontainerWidth)/2,
                   
                   child: Container(
-                    
                     width: smallcontainerWidth,
                     height: smallcontainerHeight,
                     padding: const EdgeInsets.only(left:10),
@@ -146,7 +114,6 @@ class PropertyStack extends StatelessWidget {
                             const VerticalDivider(
                               color: Colors.grey,
                               thickness: 1,
-
                             ),
 
                         Image.asset(
@@ -161,7 +128,6 @@ class PropertyStack extends StatelessWidget {
                             fontSize: 9),
                           ),
                       ],
-
                     ),
                   ),
                 ),
@@ -290,82 +256,9 @@ class PropertyStack extends StatelessWidget {
           ],
         ),
           )
-          
         ],
-        
          );
      }
    );
-              }
+   }
   }
-// }
-
-
-
-
-// children: [
-//       Align(
-//         alignment: Alignment.center,
-//         child: Container(
-//           width: width,
-//           height: height,
-//           clipBehavior: Clip.hardEdge,
-//           decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-//           child: ColorFiltered(
-//           colorFilter: ColorFilter.mode(
-//             Color(0xFF4313E9).withOpacity(0.2), // Adjust opacity as needed            
-//             BlendMode.srcOver,
-//           ),
-//           child: Image.asset(
-//             'assets/images/${image.toUpperCase()}2.png',
-//             fit: BoxFit.cover,
-//           ),
-//           ),
-//         ),
-//       ),
-//       Center(
-//         child: Column(
-//           children: [
-//             SizedBox(
-//               height: 2.height,
-//             ),
-//             Text(
-//               '$text1',
-//               style: TextStyle(
-//                   color: const Color(0XFFFFFFFF),
-//                   fontFamily: 'Open Sans',
-//                   fontWeight: FontWeight.w800,
-//                   shadows: [
-//                     Shadow(
-//                         blurRadius: 6,
-//                         offset: const Offset(0, 3),
-//                         color: const Color(0XFF120051).withOpacity(0.75))
-//                   ],
-//                   fontSize: 30.fSize),
-//             ),
-//             const SizedBox(
-//               height: 5,
-//             ),
-//             Text(
-//               '$text2',
-//               style: TextStyle(
-//                   color: const Color(0XFFFFFFFF),
-//                   fontFamily: 'Open Sans',
-//                   fontStyle: FontStyle.italic,
-//                   fontWeight: FontWeight.w600,
-//                   shadows: [
-//                     Shadow(
-//                         blurRadius: 6,
-//                         offset: const Offset(0, 3),
-//                         color: const Color(0XFF120051).withOpacity(0.75))
-//                   ],
-//                   fontSize: 15.fSize),
-//             ),
-//             // const SizedBox(
-//             //   height: 10,
-//             // ),
-//             // const TypeDropdownButton()
-//           ],
-//         ),
-//       ),
-//     ],

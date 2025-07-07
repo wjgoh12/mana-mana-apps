@@ -94,7 +94,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       case 3:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const OwnerProfile_v3()),
+          MaterialPageRoute(builder: (context) => OwnerProfile_v3()),
         ).then((_) {
       setState(() {
         _selectedIndex = 3;

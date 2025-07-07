@@ -211,7 +211,9 @@ class NewsletterImageStack extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.black,
+                  
                 ),
+                maxLines: 2,
               ),
             ),
 

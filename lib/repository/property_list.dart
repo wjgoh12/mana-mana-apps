@@ -250,6 +250,7 @@ class PropertyListRepository {
                   'year': item['iyear'] ?? 0,
                   'month': item['imonth'] ?? 0,
                   'location': item['slocation'] ?? '',
+                  'locationRoad': item['slocationRoad'] ?? '',
                 })
             .toList();
       }

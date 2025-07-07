@@ -30,7 +30,7 @@ class newsletterStack extends StatelessWidget {
         final containerHeight = 170.fSize;
         final smallcontainerWidth = isMobile? 40.fSize: 30.width;
         final smallcontainerHeight = 50.fSize;
-         final Map<String,int> locationByMonth = {};
+        
        return Stack(
         clipBehavior: Clip.none,
         children: [
