@@ -1,43 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/statistic_table_v3.dart';
 
-class OverviewCard extends StatefulWidget {
-  const OverviewCard({super.key});
+class OverviewCard extends StatelessWidget {
+  final NewDashboardVM model;
+  const OverviewCard({required this.model, super.key});
 
-  @override
-  State<OverviewCard> createState() => _OverviewCardState();
-}
 
-class _OverviewCardState extends State<OverviewCard> {
-  final NewDashboardVM_v3 model = NewDashboardVM_v3();
-  
-  int totalUnits = 0;
-  bool isLoading = true;
-  String profit = '';
-  
-
-  @override
-  void initState() {
-    super.initState();
-    fetchOwnerUnits();
-  }
 
 String getTotalProfit() {
   final profit = model.overallProfit.toString();
   return profit;
 }
-
-  Future<void> fetchOwnerUnits() async {
-    final units = await model.ownerPropertyListRepository.getOwnerUnit(); 
-    setState(() {
-      totalUnits = units.length;
-      isLoading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,13 +69,9 @@ String getTotalProfit() {
                               
                               Padding(
                                 padding:const EdgeInsets.only(right:15),
-                                  child:Text(
-                                    '$totalUnits',
-                                    style: const TextStyle(
-                                      fontSize: 45,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                                  child:
+                                  Text('${model.ownerUnits.length}',
+                                  )
                             
                               ),
                               const SizedBox(width: 1), // spacing between text and image
@@ -129,9 +103,6 @@ String getTotalProfit() {
                           ),
                       ),
                       ),
-                  
-                       
-                      
                       
                     ]
                    ),
@@ -254,11 +225,9 @@ String getTotalProfit() {
                                         image: AssetImage('assets/images/OverviewMonthlyProfit.png'),
                                         width:20,
                                         height:19,
-                                        ),
+                                       ),
                                     ),
-                                
                               ],
-                            
                             ),
                             Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -269,49 +238,63 @@ String getTotalProfit() {
                                   child: Text(
                                     'Monthly Profit',
                                     style: TextStyle(
-                                      
                                       fontSize: 10.0,
                                       fontWeight: FontWeight.normal
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left:10),
+                                ...model.monthlyBlcOwner.map((entry) {
+                                final year = entry['year'];
+                                final month = entry['month'];
+                                final profitEntry = model.monthlyProfitOwner.firstWhere(
+                                  (profit) =>
+                                      profit['year'] == year &&
+                                      profit['month'] == month,
+                                  orElse: () => {'total': 0.00},
+                                );
+                                final totalProfit = profitEntry['total'];
+                                final formatted = totalProfit
+                                    .toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                                      (m) => '${m[1]},',
+                                    );
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 20),
                                   child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                      alignment: PlaceholderAlignment.baseline,
-                                      baseline: TextBaseline.alphabetic,
-                                      child: Transform.translate(
-                                        offset: const Offset(0, -4),
-                                        child: const Text(
-                                          'RM',
-                                          style: TextStyle(
-                                            fontSize: 11,
+                                    text: TextSpan(
+                                      children: [
+                                        WidgetSpan(
+                                          alignment: PlaceholderAlignment.baseline,
+                                          baseline: TextBaseline.alphabetic,
+                                          child: Transform.translate(
+                                            offset: const Offset(0, -4),
+                                            child: const Text(
+                                              'RM',
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: formatted,
+                                          style: const TextStyle(
+                                            fontSize: 15,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
                                           ),
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                    const TextSpan(
-                                      text: '88888.88',
-                                      style: TextStyle(
-                                        fontSize: 14,   
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                                ),
+                                  ),
+                                );
+                              }).toList(),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 15),
                                   child: Text(
                                     DateFormat('MMMM yyyy').format(DateTime.now(),
-                                    
                                   ),
                                   style:const  TextStyle(
                                       fontSize: 8.0,

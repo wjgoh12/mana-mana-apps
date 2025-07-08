@@ -19,8 +19,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   int unitLatestMonth = 0;
   List<OwnerPropertyList> ownerUnits = [];
   String revenueLastestYear = '';
-  List<Newsletter> _newsletter = [];
-  List<Newsletter> get newsletter => _newsletter;
+  
 
   List<Map<String, dynamic>> revenueDashboard = [];
   List<Map<String, dynamic>> monthlyProfitOwner = [];

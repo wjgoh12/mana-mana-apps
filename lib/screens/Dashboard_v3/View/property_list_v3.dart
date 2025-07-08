@@ -12,7 +12,6 @@ class PropertyListV3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const AllPropertyScreen allPropertyScreen = AllPropertyScreen(locationByMonth: [],);
     
         if (model.isLoading) {
           return Container(

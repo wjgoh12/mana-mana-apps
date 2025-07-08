@@ -32,10 +32,6 @@ class NewsletterListV3 extends StatelessWidget {
             ),
           );
         }
-
-
-        
-
     
         return model.locationByMonth.isEmpty
             ? Container(
@@ -54,7 +50,6 @@ class NewsletterListV3 extends StatelessWidget {
     onNotification: (notif) {
       if (notif is ScrollStartNotification &&
           notif.metrics.axis == Axis.horizontal) {
-        // e.g. disable outer scroll if needed
       }
       return false; // allow notifications to continue
     },
@@ -82,8 +77,7 @@ class NewsletterListV3 extends StatelessWidget {
       ],
     ),
   ),
-
-              );
+   );
   }
 }
 
@@ -239,7 +233,7 @@ class NewsletterImageStack extends StatelessWidget {
                     
                       onPressed: (){
                          Navigator.push(context,
-                         MaterialPageRoute(builder: (context) => NewsletterReadDetails(locationByMonth: [locationByMonth.first]),
+                         MaterialPageRoute(builder: (context) => NewsletterReadDetails(Newsletter: [],),
                          ));
                       },
                       

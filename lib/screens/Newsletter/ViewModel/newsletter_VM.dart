@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 
-class NewsletterViewModel extends ChangeNotifier {
+class NewsletterVM extends ChangeNotifier {
+  List <Map<String, dynamic>> _newsletter = [];
+  List<Map<String, dynamic>> get newsletter => _newsletter;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   
+  
   String newsletterTitle ='';
   String selectedDate = '';
-  
+  String newsletterDescription = '';
+  String newsletterContent = '';
+
 
   void setLoading(bool value) {
     _isLoading = value;
@@ -25,8 +30,9 @@ class NewsletterViewModel extends ChangeNotifier {
     try {
       setLoading(true);
       setErrorMessage(null);
-      // TODO: Implement newsletter subscription logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      
+      await Future.delayed(const Duration(seconds: 2)); 
+      // Simulate API call
       setLoading(false);
     } catch (e) {
       setLoading(false);

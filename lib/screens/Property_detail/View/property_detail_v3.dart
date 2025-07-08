@@ -74,7 +74,7 @@ class PropertyDetail extends StatelessWidget {
               padding: EdgeInsets.only(top: 30.fSize),
               child: Column(
                 children: [
-                  Text(locationByMonth.first['location'] ?? '', style: TextStyle(fontSize: 30)),
+                  Text(locationByMonth.first['location'] ?? '', style: const TextStyle(fontSize: 30)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -178,10 +178,6 @@ class PropertyDetail extends StatelessWidget {
                              if (newValue == 'Overview') {
                                   model.updateSelectedView('Overview');
                                    } else {
-                                      // String type = newValue.split(" (")[0];
-                                     // String unitNo = newValue
-                                     //     .split(" (")[1]
-                                     //     .replaceAll(")", "");
                                       final parts = newValue.split(' (');
                                       final type = parts[0];
                                       final unit = parts[1].replaceAll(')', '');

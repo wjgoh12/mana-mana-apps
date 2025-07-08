@@ -16,8 +16,6 @@ class BottomNavBar extends StatefulWidget {
   final int currentIndex;
   final Function(int)? onTap;
 
-
-  
   const BottomNavBar({
     super.key,
     this.currentIndex = 0,// Default index is 0
@@ -31,11 +29,6 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   late int _selectedIndex;
   final NewDashboardVM model = NewDashboardVM();
-  
-
-  
-  
-    
 
   @override
   void initState() {

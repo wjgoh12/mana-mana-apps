@@ -7,6 +7,7 @@ import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 // ignore: depend_on_referenced_packages
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OwnerProfile_v3 extends StatelessWidget {
   const OwnerProfile_v3({super.key});
@@ -69,24 +70,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            model.users.isNotEmpty
-                            ? Text(
-                              textAlign: TextAlign.left,
-                              model.users.first.firstName ?? '',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                foreground: Paint()
-                        ..shader = const LinearGradient(
-                          colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                        ).createShader(
-                            const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
-                                ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            ):const Text('Loading...'),
+                            
 
                             model.users.isNotEmpty
                             ? Text(
@@ -106,15 +90,15 @@ class OwnerProfile_v3 extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             ):const Text('Loading...'),
 
-                            model.users.isNotEmpty
-                            ? Text(model.users.first.role ?? ''):const Text('Loading...'),
-
+                            const Text('Property Owner',
+                              style: TextStyle(
+                                fontSize: 14
+                              ),
+                            ),
                         ],
                         ),
 
                       ],
-
-
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -227,11 +211,17 @@ class OwnerProfile_v3 extends StatelessWidget {
 
                     InkWell(
                       //this widget responds to touch actions
-                      // onTap: () {
+                       onTap: () {
                       //   Navigator.of(context).push(
                       //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
                       //   );
-                      // },
+                      final Uri emailLaunchUri = Uri(
+                              scheme: 'mailto',
+                              path: 'admin@manamanasuites.com',
+                            );
+                            launchUrl(emailLaunchUri);
+
+                      },
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -264,11 +254,9 @@ class OwnerProfile_v3 extends StatelessWidget {
 
                     InkWell(
                       //this widget responds to touch actions
-                      // onTap: () {
-                      //   Navigator.of(context).push(
-                      //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
-                      //   );
-                      // },
+                      onTap: () {
+                       launchUrl(Uri.parse('tel:+60327795035'));
+                      },
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -301,11 +289,10 @@ class OwnerProfile_v3 extends StatelessWidget {
 
                     InkWell(
                       //this widget responds to touch actions
-                      // onTap: () {
-                      //   Navigator.of(context).push(
-                      //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
-                      //   );
-                      // },
+                      onTap: () {
+                        launchUrl(Uri.parse('https://wa.me/60125626784'));
+                      
+                      },
                       borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -364,6 +351,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextButton(onPressed: (){
+                        launchUrl(Uri.parse(
+                                  'https://www.manamanasuites.com/terms-conditions'));
                       
                        ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(Colors.transparent),
@@ -380,7 +369,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                       ),
 
                       TextButton(onPressed: (){
-                      //Style
+                       launchUrl(Uri.parse(
+                                  'https://www.manamanasuites.com/privacy-policy'));
                        style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(Colors.transparent),
                       );

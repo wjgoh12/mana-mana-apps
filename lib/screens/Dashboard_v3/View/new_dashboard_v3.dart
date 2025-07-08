@@ -232,7 +232,7 @@ class NewDashboardV3 extends StatelessWidget {
                               
                             ),
                                                     //overview card widgets here
-                             const OverviewCard(),
+                              OverviewCard(model: model),
                             
             
                             //SizedBox(height: 2.height),
