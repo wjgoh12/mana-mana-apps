@@ -10,13 +10,10 @@ class OverviewCard extends StatelessWidget {
   final NewDashboardVM model;
   const OverviewCard({required this.model, super.key});
 
-
-
 String getTotalProfit() {
   final profit = model.overallProfit.toString();
   return profit;
 }
-
   @override
   Widget build(BuildContext context) {
 
@@ -46,21 +43,19 @@ String getTotalProfit() {
                       Expanded(
                         child: Stack(
                           children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15, top: 15),
-                            child:Image.asset('assets/images/Bulat.png',
-                            width:35,
-                            height:35,
+                        Positioned(
+                          left: 10,
+                          top: 10,
+                          child: CircleAvatar(
+                            radius: 23.fSize,
+                            backgroundColor: Colors.white,
+                            child: Image.asset(
+                              'assets/images/OverviewProperty.png',
+                              width: 20.fSize,
+                              height: 26.fSize,
                             ),
+                          ),
                         ),
-                        Padding(
-                              padding: const EdgeInsets.only(left: 25 ,top: 20),
-                              child: Image.asset(
-                                'assets/images/OverviewProperty.png',
-                                width: 14,
-                                height: 26,
-                              ),
-                            ),
                         Expanded(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -70,7 +65,13 @@ String getTotalProfit() {
                               Padding(
                                 padding:const EdgeInsets.only(right:15),
                                   child:
-                                  Text('${model.ownerUnits.length}',
+                                  Text(
+                                    '${model.ownerUnits.length}',
+                                    style: TextStyle(
+                                      fontSize: 50.fSize,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   )
                             
                               ),
@@ -103,11 +104,9 @@ String getTotalProfit() {
                           ),
                       ),
                       ),
-                      
                     ]
                    ),
                   ),
-                  
                 ),
                   
                 //2nd
@@ -122,27 +121,22 @@ String getTotalProfit() {
                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                          Stack(
-                            
                             children: [
                               Align(
                                 alignment: Alignment.centerLeft, // Vertically center, left-aligned
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
+                                  child: CircleAvatar(
+                                  radius: 23.fSize, 
+                                  backgroundColor: Colors.white,
                                   child: Image.asset(
-                                    'assets/images/Bulat.png',
-                                    width: 35,
-                                    height: 35,
+                                    'assets/images/OverviewOccupancy.png',
+                                    width:35.fSize,
+                                    height:25.fSize,
+                                    ),
                                   ),
                                 ),
                               ),
-                              const Padding(
-                            padding: EdgeInsets.only(left: 15,top:25),
-                            child: Image(
-                              image: AssetImage('assets/images/OverviewOccupancy.png'),
-                              width: 25,
-                              height: 15,
-                            )
-                          ),
                             ],
                           
                         ),
@@ -183,8 +177,8 @@ String getTotalProfit() {
                                   ),
                                 ),
                               ),
-                      ],
-                    ),
+                            ],
+                          ),
                       ],
                      
                   ),
@@ -209,26 +203,19 @@ String getTotalProfit() {
                       child: Expanded(
                         child: Row(
                           children: [
-                            const Stack(
-                              children: [
                                 Padding(
-                                      padding: EdgeInsets.only(left: 10, top: 10),
-                                      child: Image(
-                                        image: AssetImage('assets/images/Bulat.png'),
-                                        width:35,
-                                        height:35,
-                                        ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 17, top: 17),
-                                      child: Image(
-                                        image: AssetImage('assets/images/OverviewMonthlyProfit.png'),
-                                        width:20,
-                                        height:19,
-                                       ),
-                                    ),
-                              ],
-                            ),
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: CircleAvatar(
+                                    radius: 23.fSize,
+                                    backgroundColor: Colors.white,
+                                    child:Image.asset(
+                                      'assets/images/OverviewMonthlyProfit.png',
+                                      width: 30.fSize,
+                                      height: 28.fSize,
+                                    )
+                                  ),
+                                ),
+                                    
                             Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,9 +244,8 @@ String getTotalProfit() {
                                     .toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
                                       (m) => '${m[1]},',
                                     );
-
                                 return Padding(
-                                  padding: const EdgeInsets.only(left: 20),
+                                  padding: const EdgeInsets.only(left: 10),
                                   child: RichText(
                                     text: TextSpan(
                                       children: [
@@ -292,7 +278,7 @@ String getTotalProfit() {
                                 );
                               }).toList(),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 15),
+                                  padding: const EdgeInsets.only(left: 10),
                                   child: Text(
                                     DateFormat('MMMM yyyy').format(DateTime.now(),
                                   ),
@@ -328,7 +314,6 @@ String getTotalProfit() {
                             child: Text('${DateTime.now().year} Accumulated Profit',
                             style: const TextStyle(fontSize: 8),)
                             ),
-                              
                             Padding(
                             padding: const EdgeInsets.only(left: 20),
                             child: RichText(
@@ -368,37 +353,23 @@ String getTotalProfit() {
                               DateFormat('MMMM yyyy').format(DateTime.now()),
                             style: const TextStyle(fontSize: 8),)
                             ),
-                          
-                          const Stack(
-                            children: [
-                              
-                               Align(
-                                alignment: Alignment.bottomRight,
-                                  child: Padding(
-                                        padding: EdgeInsets.only(right: 10),
-                                        child: Image(
-                                          image: AssetImage('assets/images/Bulat.png'),
-                                          width:40,
-                                          height:40,
-                                          ),
-                                      ),
-                                ),
+
                                     Align(
                                       alignment: Alignment.bottomRight,
                                       child:Padding(
                                       padding: EdgeInsets.only(right: 15, top: 7),
-                                      child: Image(
-                                        image: AssetImage('assets/images/OverviewAccumulatedProfit.png'),
-                                        width:26,
-                                        height:26,
-                                        ),
-                                    ),
-                                    ),
-                                
-                              ],
-                        ),
-                        ]
-                                              ),
+                                      child: CircleAvatar(
+                                        radius:23.fSize,
+                                        backgroundColor: Colors.white,
+                                        child:Image.asset('assets/images/OverviewAccumulatedProfit.png',
+                                         width:26,
+                                         height:28.5
+                                        )
+                                      )
+                                   ),
+                                 ),
+                               ]
+                            ),
                       ),
                     ),
                   ),

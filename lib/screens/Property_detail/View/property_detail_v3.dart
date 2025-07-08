@@ -15,7 +15,6 @@ class PropertyDetail extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
   const PropertyDetail({required this.locationByMonth, Key? key})
       : super(key: key);
-      
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +38,7 @@ class PropertyDetail extends StatelessWidget {
       return false;
     },
       child: CustomScrollView(
+        
         slivers: [
           SliverAppBar(
             automaticallyImplyLeading: false,
@@ -46,13 +46,13 @@ class PropertyDetail extends StatelessWidget {
             pinned: true,
             backgroundColor: Colors.white,
             flexibleSpace: Stack(
-              children:[ FlexibleSpaceBar(
+              children:[ 
+                FlexibleSpaceBar(
                 
                 background: Image.asset(
                   'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
                   fit: BoxFit.cover,
                 ),
-                
               ),
               Positioned(
                 top: 30,
@@ -68,7 +68,7 @@ class PropertyDetail extends StatelessWidget {
           SliverToBoxAdapter(
             child: Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(40)),
+                borderRadius: BorderRadius.vertical(top:Radius.circular(20)),
                 color: Colors.white,
               ),
               padding: EdgeInsets.only(top: 30.fSize),
@@ -85,7 +85,7 @@ class PropertyDetail extends StatelessWidget {
                   ),
                   SizedBox(height: 10.fSize),
       
-                  Container(             
+                  Container(
                    width: 370.fSize,
                    decoration: BoxDecoration(
                     border: Border.all(
@@ -138,26 +138,24 @@ class PropertyDetail extends StatelessWidget {
                                         overlayColor:
                                             WidgetStateProperty.resolveWith<Color?>(
                                           (Set<WidgetState> states) {
-                                            if (states
-                                                .contains(WidgetState.hovered)) {
-                                              return Colors.blue.withOpacity(0.1);
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
+                                            if (states.contains(WidgetState.hovered)) {
+                                     return Colors.blue.withOpacity(0.1);
+                                   }
+                                   return null;
+                                  },
+                                ),
+                              ),
                     
-                                      iconStyleData: const IconStyleData(
-                                        icon: Icon(Icons.keyboard_arrow_down),
-                                        iconSize: 24,
-                                      ),
-                    
-                                      buttonStyleData: const ButtonStyleData(
-                                        padding: EdgeInsets.zero,
-                                        decoration: BoxDecoration(
-                                          color: Colors.transparent,
-                                        ),
-                                      ),
+                               iconStyleData: const IconStyleData(
+                               icon: Icon(Icons.keyboard_arrow_down),
+                               iconSize: 24,
+                              ),
+                               buttonStyleData: const ButtonStyleData(
+                               padding: EdgeInsets.zero,
+                               decoration: BoxDecoration(
+                               color: Colors.transparent,
+                            ),
+                          ),
                     items: [
                           const DropdownMenuItem<String>(
                           value: 'Overview',
@@ -182,7 +180,6 @@ class PropertyDetail extends StatelessWidget {
                                       final type = parts[0];
                                       final unit = parts[1].replaceAll(')', '');
                                       model.updateSelectedTypeUnit(type, unit);
-                                           
                                     }
                                   }
                                 },
@@ -192,8 +189,6 @@ class PropertyDetail extends StatelessWidget {
                                           : (model.selectedType != null && model.selectedUnitNo != null)
                                           ? '${model.selectedType} (${model.selectedUnitNo})'
                                           : null,
-                          
-                    
                     ),
                   ),
                 ],
@@ -787,7 +782,6 @@ class ContractDetailsContainer extends StatelessWidget {
             ? model.locationByMonth.first['unitType'] as String?
             : '';
 
-
     return Container(
       width: 400.fSize,
       height: 50,
@@ -808,10 +802,10 @@ class ContractDetailsContainer extends StatelessWidget {
               ),
               
             ),
-        const Padding(
-          padding: EdgeInsets.only(left: 5, top: 15, bottom: 10),
-          child: Text('A',
-            style: TextStyle(
+        Padding(
+          padding: const EdgeInsets.only(left: 5, top: 15, bottom: 10),
+          child: Text( unitType.toString() ?? '',
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 12,
               color: Color(0xFF5092FF),
@@ -1048,7 +1042,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: '${model.locationByMonth.first['total'] ?? ''}',
+                                        text: '${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
                                         style: const TextStyle(
                                           fontSize: 15,               // Larger for the amount
                                           fontWeight: FontWeight.bold,
@@ -1123,7 +1117,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: '${model.locationByMonth.first['total'] ?? ''}',
+                                        text: '${model.selectedUnitBlc.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
                                         style: const TextStyle(
                                           fontSize: 15,               // Larger for the amount
                                           fontWeight: FontWeight.bold,

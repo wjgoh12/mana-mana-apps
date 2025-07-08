@@ -236,6 +236,26 @@ class PropertyImageStack extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
+                //Circle avatar showing owner initials
+                 Row(
+                  children: [
+                       for (var owner in locationByMonth.first['owners'] ?? [])
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: CircleAvatar(
+                            radius: 15,
+                            backgroundColor: Colors.blue,
+                            child: Text(
+                              getInitials(owner['name'] ?? ''),
+                               style: const TextStyle(
+                               color: Colors.white,
+                               fontSize: 12,
+                              ),
+                             ),
+                            ),
+                           ),
+                          ],
+                        ),
                 ],
               ),
             ),
@@ -311,11 +331,11 @@ class PropertyImageStack extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(right: 10,bottom:8),
                    child: TextButton(
-                    
                       onPressed: (){
                          Navigator.push(context,
                          MaterialPageRoute(builder: (context) => PropertyDetail(locationByMonth: [locationByMonth.first]),
-                         ));
+                         )
+                         );
                       },
                       style:ButtonStyle(
                         minimumSize: WidgetStateProperty.all(const Size(20,30)),
@@ -358,14 +378,20 @@ class PropertyImageStack extends StatelessWidget {
           ],
         ),
       ),
-    
   ],
 );
-
       },
     );
   }
 
+}
+String getInitials(String name) {
+  if (name.isEmpty) return '';
+
+  List<String> words = name.split(' ');
+  List<String> initials = words.map((word) => word[0].toUpperCase()).toList();
+
+  return initials.join('');
 }
 
 class ViewAllProperty extends StatelessWidget {
@@ -374,11 +400,7 @@ class ViewAllProperty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return GestureDetector(
-    //   onTap: () {
-    //     Navigator.push(context,
-    //         MaterialPageRoute(builder: (context) => AllPropertyScreen(locationByMonth: model.locationByMonth)));
-    //   },
+
       return Container(
         width: 51.width,
         height: 38.height,

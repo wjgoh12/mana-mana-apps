@@ -233,7 +233,7 @@ class NewsletterImageStack extends StatelessWidget {
                     
                       onPressed: (){
                          Navigator.push(context,
-                         MaterialPageRoute(builder: (context) => NewsletterReadDetails(Newsletter: [],),
+                         MaterialPageRoute(builder: (context) =>const NewsletterReadDetails(),
                          ));
                       },
                       
