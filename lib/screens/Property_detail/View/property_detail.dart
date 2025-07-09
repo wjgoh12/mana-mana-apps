@@ -147,7 +147,7 @@ class MonthlyStatementContainer extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     child: const Center(
                       child:
-                          CircularProgressIndicator(), // Display a loading spinner
+                          CircularProgressIndicator(),
                     ),
                   );
                 }

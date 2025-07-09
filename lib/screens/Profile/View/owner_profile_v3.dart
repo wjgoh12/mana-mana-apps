@@ -334,7 +334,13 @@ class OwnerProfile_v3 extends StatelessWidget {
                             authService.logout(context);
                           },
                           style: ButtonStyle(
+                            
                             backgroundColor: WidgetStateProperty.all(const Color(0xFFF2F2F2)),
+                            shape:WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              )
+                            )
 
                           ), 
                           child: const Text('Logout')

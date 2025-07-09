@@ -45,25 +45,27 @@ class PropertyDetail extends StatelessWidget {
             expandedHeight: 290.fSize,
             pinned: true,
             backgroundColor: Colors.white,
-            flexibleSpace: Stack(
-              children:[ 
-                FlexibleSpaceBar(
-                
-                background: Image.asset(
+            flexibleSpace: FlexibleSpaceBar(
+            background: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.asset(
                   'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
                   fit: BoxFit.cover,
                 ),
-              ),
-              Positioned(
-                top: 30,
-                left: 10,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: Image.asset('assets/images/GroupBack.png'),
+                Positioned(
+                  top: 30,
+                  left: 10,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Image.asset('assets/images/GroupBack.png'),
+                  ),
                 ),
-              )
-              ]
+              ],
             ),
+          ),
+
+            
           ),
           SliverToBoxAdapter(
             child: Container(
@@ -199,19 +201,13 @@ class PropertyDetail extends StatelessWidget {
             hasScrollBody: model.selectedView != 'Overview',
             child: model.selectedView == 'Overview'
               ? PropertyOverviewContainer(model: model, locationByMonth: locationByMonth)
-              : SingleChildScrollView(
-                  child: UnitDetailsContainer(model: model),
-                ),
+              : UnitDetailsContainer(model: model),
           ),
         ],
       ),
     ),
 if (isCollapsed)
-  Positioned(
-    top: 0,
-    left: 0,
-    right: 0,
-    child: Container(
+   Container(
       height: 85.fSize,
       color: Colors.white,
       alignment: Alignment.centerLeft,
@@ -230,7 +226,7 @@ if (isCollapsed)
             ),
           ],
         ),
-      ),
+      
     ),
   ),
 
@@ -1179,12 +1175,12 @@ return CustomScrollView(
     SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, i) {
-          final unit = items[i];
-          return ListTile(
-            title: Text('${unit.stype} - ${unit.sunitno}'),
-            subtitle: Text('Month ${unit.imonth}/${unit.iyear}'),
-            trailing: Text('RM ${unit.total?.toStringAsFixed(2) ?? '0.00'}'),
-          );
+          final item= items[i];
+          return Row(children: [
+            InkWell(
+          onTap: () => model.downloadPdfStatement(context),
+            )
+          ],);
         },
         childCount: items.length,
       ),
@@ -1213,9 +1209,8 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 0, left: 0, right: 0,
-      child: Container(
+
+      return Container(
         height: 85.fSize,
         color: Colors.white,
         alignment: Alignment.centerLeft,
@@ -1251,8 +1246,6 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
               ),
             
           )
-        ),
-      
     );
   }
 }

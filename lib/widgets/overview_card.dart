@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/statistic_table_v3.dart';
@@ -76,7 +77,6 @@ String getTotalProfit() {
                             
                               ),
                               const SizedBox(width: 1), // spacing between text and image
-                              
                             ],
                           ),
                         )
@@ -111,7 +111,6 @@ String getTotalProfit() {
                   
                 //2nd
                 Card(
-                  
                   margin: const EdgeInsets.only(bottom: 20),
                   color: const Color(0xFFFFE7B8),
                   child: SizedBox(
@@ -146,7 +145,6 @@ String getTotalProfit() {
                             const Padding(
                                 padding: EdgeInsets.only(left:8,top:10),
                                 child: Text(
-                                  
                                   'Occupancy Rate',
                                   style: TextStyle(
                                     fontSize: 8.0,
@@ -158,9 +156,10 @@ String getTotalProfit() {
                             const Padding(
                               padding: EdgeInsets.only(left:8),
                               child: Text(
-                                '75% Active',
+                                '% Active',
                                 style:TextStyle(
                                   fontSize: 12,
+                                  fontFamily: 'Open Sans',
                                   fontWeight: FontWeight.bold,
                                 )
                               ),
@@ -173,6 +172,7 @@ String getTotalProfit() {
                                 ),
                                 style:const  TextStyle(
                                     fontSize: 8.0,
+                                    fontFamily: 'Open Sans',
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
@@ -226,6 +226,7 @@ String getTotalProfit() {
                                     'Monthly Profit',
                                     style: TextStyle(
                                       fontSize: 10.0,
+                                      fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.normal
                                     ),
                                   ),
@@ -258,6 +259,7 @@ String getTotalProfit() {
                                               'RM',
                                               style: TextStyle(
                                                 fontSize: 11,
+                                                fontFamily: 'Open Sans',
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black,
                                               ),
@@ -268,6 +270,7 @@ String getTotalProfit() {
                                           text: formatted,
                                           style: const TextStyle(
                                             fontSize: 15,
+                                            fontFamily: 'Open Sans',
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
                                           ),
@@ -304,72 +307,22 @@ String getTotalProfit() {
                       width: 190.fSize,
                       height: 130.fSize,
                       child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          
-                        children:
-                        [
-                          Padding(
-                            padding: const EdgeInsets.only(left:20,top: 13),
-                            child: Text('${DateTime.now().year} Accumulated Profit',
-                            style: const TextStyle(fontSize: 8),)
-                            ),
-                            Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                      alignment: PlaceholderAlignment.baseline,
-                                      baseline: TextBaseline.alphabetic,
-                                      child: Transform.translate(
-                                        offset: const Offset(0, -4),
-                                        child: const Text(
-                                          'RM',
-                                          style: TextStyle(
-                                            fontSize: 11, 
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: '88888.88',
-                                      style: const TextStyle(
-                                        fontSize: 15.0,            
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            
-                            ),
-                            Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Text(
-                              DateFormat('MMMM yyyy').format(DateTime.now()),
-                            style: const TextStyle(fontSize: 8),)
-                            ),
-
-                                    Align(
-                                      alignment: Alignment.bottomRight,
-                                      child:Padding(
-                                      padding: EdgeInsets.only(right: 15, top: 7),
-                                      child: CircleAvatar(
-                                        radius:23.fSize,
-                                        backgroundColor: Colors.white,
-                                        child:Image.asset('assets/images/OverviewAccumulatedProfit.png',
-                                         width:26,
-                                         height:28.5
-                                        )
-                                      )
-                                   ),
-                                 ),
-                               ]
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:5),
+                          child: Column(
+                            children: [
+                            RevenueContainer(
+                              title:
+                              '${model.revenueLastestYear} Accumulated Profit​',
+                              icon: Icons.home_outlined,
+                              overallRevenue: false,
+                              model: model),
+                              
+                                        
+                                        
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -380,4 +333,174 @@ String getTotalProfit() {
       ),
     );
   }
+}
+
+
+class RevenueContainer extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final bool overallRevenue;
+  final NewDashboardVM model;
+  const RevenueContainer({
+    Key? key,
+    required this.title,
+    required this.icon,
+    required this.overallRevenue,
+    required this.model,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 190.fSize,
+      height: 130.fSize,
+      child: Stack(
+        children: [
+          GestureDetector(
+            // onTap: () => model.updateOverallRevenueAmount(),
+            child: Container(
+              padding: !Responsive.isMobile(context)
+                  ? EdgeInsets.only(
+                      left: 1.height, top: 1.height, right: 1.height)
+                  : EdgeInsets.all(1.height),
+
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: (0.5).height,
+                  ),
+                  _buildTitleRow(),
+                  //SizedBox(height: (1.5).height),
+                  _buildAmountText(),
+                  _buildDateRow(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    
+                    children: [
+                        CircleAvatar(
+                          radius: 23.fSize,
+                          backgroundColor: Colors.white,
+                          child:Image.asset('assets/images/OverviewAccumulatedProfit.png',
+                          width: 30.fSize,
+                          height: 28.fSize,
+                          )
+                          ),
+                       
+                        ],
+                        ),
+                ],
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitleRow() {
+    return Row(
+      children: [
+        // SizedBox(width: 3.width),
+        Text(
+          title,
+          style: TextStyle(
+            fontFamily: 'Open Sans',
+            // fontSize: 12.fSize,
+            fontSize: 12.fSize,
+            
+          ),
+        ),
+        const Spacer(),
+        // Container(
+        //   width: 3.width,
+        //   height: 3.width,
+        //   alignment: Alignment.center,
+        //   child: Icon(
+        //     Icons.arrow_outward_rounded,
+        //     color: const Color(0xff3E51FF),
+        //     size: 3.width,
+        //   ),
+        // ),
+      ],
+    );
+  }
+
+  Widget _buildDateRow() {
+    return Row(
+      children: [
+        Text(
+          DateFormat('MMMM yyyy').format(DateTime.now()),
+          style: TextStyle(
+            fontFamily: 'Open Sans',
+            fontSize: 10.fSize,
+            fontWeight: FontWeight.w400,
+            color: Colors.black,
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  Widget _buildAmountText() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text.rich(
+        TextSpan(
+       children: [
+          WidgetSpan(
+            alignment: PlaceholderAlignment.baseline,
+            baseline: TextBaseline.alphabetic,
+            child: Transform.translate(
+              offset: const Offset(0, -4),
+               child: const Text(
+                'RM',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  ),
+                  ),
+                   ),
+                   ),
+       ]
+        ),
+        ),
+        SizedBox(width: 1.width),
+        FutureBuilder<dynamic>(
+          future: overallRevenue ? model.overallBalance : model.overallProfit,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              final value = snapshot.data ?? 0.00;
+              return Text(
+                NumberFormat('#,##0.00').format(value),
+                style: TextStyle(
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.fSize,
+                ),
+              );
+            }
+          },
+        ),
+      ],
+    );
+  }
+}
+
+Widget _buildCardIcon(String image){
+  return CircleAvatar(
+    radius: 23.fSize,
+    backgroundColor: Colors.white,
+    child:Image.asset(image,//input of image that i want to call
+      width: 30.fSize,
+      height: 28.fSize,
+      )
+      );
+
 }
