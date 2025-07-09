@@ -203,12 +203,12 @@ class PropertyImageStack extends StatelessWidget {
                           height: 17.fSize,
                         ),
                         SizedBox(width: 2.width),
-                        // Text(
-                        //   '${locationByMonth.length} Total(${locationByMonth.first['occupancy']?? ''}% Occupancy)',
-                        //   style:const TextStyle(
-                        //     fontSize: 8,
-                        //   )
-                        // ),
+                        Text(
+                          '${locationByMonth.length} Total(${locationByMonth.first['occupancy']?? ''}% Occupancy)',
+                          style:const TextStyle(
+                            fontSize: 8,
+                          )
+                        ),
                       ],
                     ),
                   ),

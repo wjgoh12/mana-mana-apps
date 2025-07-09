@@ -174,6 +174,7 @@ class PropertyDetail extends StatelessWidget {
                           ],
                     
                           onChanged: (String? newValue) {
+                            print('Selected value: $newValue');
                            if (newValue != null) {
                              if (newValue == 'Overview') {
                                   model.updateSelectedView('Overview');
@@ -189,7 +190,7 @@ class PropertyDetail extends StatelessWidget {
                                       value: model.selectedView == 'Overview'
                                           ? 'Overview'
                                           : (model.selectedType != null && model.selectedUnitNo != null)
-                                          ? '${model.selectedType} (${model.selectedUnitNo})'
+                                          ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
                                           : null,
                     ),
                   ),
@@ -1144,11 +1145,7 @@ class UnitDetailsContainer extends StatelessWidget {
           StickyEstatementBar(onBack: () => Navigator.pop(context),
           yearOptions: model.yearItems),
           //EStatementContainer(model: model),
-          Column(
-            children: [
-            EStatementContainer(model: model),
-          ]
-          )
+          EStatementContainer(model: model)
           
         ],
       ),
@@ -1166,27 +1163,48 @@ class EStatementContainer extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final items = model.unitByMonth; // Assuming `unitByMonth` contains the statement data
+    final items = model.unitByMonth;
+    String monthNumberToName(int month) {
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  if (month >= 1 && month <= 12) {
+    return months[month - 1];
+  } else {
+    return 'Unknown';
+  }
+}
+
   
 
-return CustomScrollView(
-  slivers: [
-    
-    SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, i) {
-          final item= items[i];
-          return Row(children: [
-            InkWell(
-          onTap: () => model.downloadPdfStatement(context),
-            )
-          ],);
+
+    return SingleChildScrollView(
+      child: ListView.builder(
+        itemCount: items.length,
+        shrinkWrap: true, // ✅ Important when inside Column
+        physics: const NeverScrollableScrollPhysics(), // ✅ Prevents nested scrolling
+        itemBuilder: (context, i) {
+          final item = items[i];
+          return Row(
+            children: [
+              InkWell(
+                onTap: () => model.downloadPdfStatement(context),
+                child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          children: [
+                          Text(monthNumberToName(item.imonth ?? 0)),
+                          ],
+                        ),
+                      ),
+                
+              )
+            ],
+          );
         },
-        childCount: items.length,
       ),
-    ),
-  ],
-);
+    );
 
   }
 }

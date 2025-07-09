@@ -51,54 +51,60 @@ class OwnerProfile_v3 extends StatelessWidget {
                 
               ),
               body: SingleChildScrollView(
-                child:Padding(padding: const EdgeInsets.only(left:10,top:15),
+                child:Padding(
+                  padding: const EdgeInsets.only(left:10,top:15),
                 child:Column(
                   children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 30, // circle radius
-                          backgroundColor: const Color(0xFFF5F5FF),
-                          child: Image.asset(
-                            'assets/images/Group.png',
-                            width: 42.fSize,
-                            height: 42.fSize,
-                          ),
-                        ),
-                        SizedBox(width: 10.fSize),
-                        
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            
-
-                            model.users.isNotEmpty
-                            ? Text(
-                              model.users.first.ownerFullName ?? '',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                foreground: Paint()
-                        ..shader = const LinearGradient(
-                          colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                        ).createShader(
-                            const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
-                                ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            ):const Text('Loading...'),
-
-                            const Text('Property Owner',
-                              style: TextStyle(
-                                fontSize: 14
-                              ),
+                    DecoratedBox(
+                      decoration:BoxDecoration(
+                        color:Colors.white,
+                      ),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30, // circle radius
+                            backgroundColor: const Color(0xFFF5F5FF),
+                            child: Image.asset(
+                              'assets/images/Group.png',
+                              width: 42.fSize,
+                              height: 42.fSize,
                             ),
+                          ),
+                          SizedBox(width: 10.fSize),
+                          
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              
+                      
+                              model.users.isNotEmpty
+                              ? Text(
+                                model.users.first.ownerFullName ?? '',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  foreground: Paint()
+                          ..shader = const LinearGradient(
+                            colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                          ).createShader(
+                              const Rect.fromLTWH(0.0, 0.0, 300.0, 100.0)),
+                                  ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              ):const Text('Loading...'),
+                      
+                              const Text('Property Owner',
+                                style: TextStyle(
+                                  fontSize: 14
+                                ),
+                              ),
+                          ],
+                          ),
+                      
                         ],
-                        ),
-
-                      ],
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -120,13 +126,13 @@ class OwnerProfile_v3 extends StatelessWidget {
                     SizedBox(height: 12.fSize),
 
                     InkWell(
+                      highlightColor: Colors.transparent,
                       //this widget responds to touch actions
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => PersonalInformation()),
                         );
                       },
-                      borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Row(
@@ -162,7 +168,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                           MaterialPageRoute(builder: (_) => const FinancialDetails()),
                         );
                       },
-                      borderRadius: BorderRadius.circular(8),
+                      highlightColor: Colors.transparent,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Row(
@@ -210,6 +216,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                     SizedBox(height: 12.fSize),
 
                     InkWell(
+                      focusColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
                       //this widget responds to touch actions
                        onTap: () {
                       //   Navigator.of(context).push(
@@ -222,7 +230,6 @@ class OwnerProfile_v3 extends StatelessWidget {
                             launchUrl(emailLaunchUri);
 
                       },
-                      borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Row(
@@ -253,11 +260,10 @@ class OwnerProfile_v3 extends StatelessWidget {
                     SizedBox(height: 12.fSize),
 
                     InkWell(
-                      //this widget responds to touch actions
+                      highlightColor: Colors.transparent,
                       onTap: () {
                        launchUrl(Uri.parse('tel:+60327795035'));
                       },
-                      borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Row(
@@ -288,12 +294,11 @@ class OwnerProfile_v3 extends StatelessWidget {
                     SizedBox(height: 12.fSize),
 
                     InkWell(
-                      //this widget responds to touch actions
+                      highlightColor: Colors.transparent,
                       onTap: () {
                         launchUrl(Uri.parse('https://wa.me/60125626784'));
                       
                       },
-                      borderRadius: BorderRadius.circular(8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Row(
@@ -356,12 +361,18 @@ class OwnerProfile_v3 extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      TextButton(onPressed: (){
+                      TextButton(
+                        
+                        
+                        onPressed: (){
                         launchUrl(Uri.parse(
                                   'https://www.manamanasuites.com/terms-conditions'));
                       
                        ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
+                      foregroundColor: WidgetStateProperty.all(Colors.transparent),
+                      shadowColor: WidgetStateProperty.all(Colors.transparent),
                       );
 
                       }, 
@@ -379,6 +390,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                                   'https://www.manamanasuites.com/privacy-policy'));
                        style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
                       );
 
                       }, 
