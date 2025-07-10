@@ -18,6 +18,14 @@ String getTotalProfit() {
   @override
   Widget build(BuildContext context) {
 
+    final uniqueLocations = model.totalByMonth
+    .map((e) => e['slocation'])   
+    .toSet()                      
+    .toList();
+
+final locationCount = uniqueLocations.length;
+
+
     return SizedBox(
       width: double.infinity,
       child: Row(
@@ -67,7 +75,10 @@ String getTotalProfit() {
                                 padding:const EdgeInsets.only(right:15),
                                   child:
                                   Text(
-                                    '${model.ownerUnits.length}',
+                                    '$locationCount',
+                                    //call total number of locations
+                                    //total Properties
+
                                     style: TextStyle(
                                       fontSize: 50.fSize,
                                       fontWeight: FontWeight.bold,

@@ -794,7 +794,7 @@ class ContractDetailsContainer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
              const Padding(
-              padding: EdgeInsets.only(left: 5, top: 15, bottom: 10),
+              padding: EdgeInsets.only(left: 5, top: 5, bottom: 10),
               child: Text('Contract Type',
               style:TextStyle(
                 fontSize: 10,
@@ -803,8 +803,8 @@ class ContractDetailsContainer extends StatelessWidget {
               
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 5, top: 15, bottom: 10),
-              child: Text( model.selectedType.toString(),
+              padding: const EdgeInsets.only(left: 5, top: 5, bottom: 10),
+              child: Text( model.unitByMonth.first.stype ?? '',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
@@ -824,7 +824,7 @@ class ContractDetailsContainer extends StatelessWidget {
               ),
             ),
             const Padding(
-              padding:EdgeInsets.only( top: 15, bottom: 10),
+              padding:EdgeInsets.only( top: 5, bottom: 10),
               child: Text('Contract End Date',
               style:TextStyle(
                 fontSize: 10,
@@ -832,7 +832,7 @@ class ContractDetailsContainer extends StatelessWidget {
               ),
             ),
             Padding(
-              padding:const EdgeInsets.only( left:3,top: 15, bottom: 10),
+              padding:const EdgeInsets.only( left:3,top: 5, bottom: 10),
               child: Text(
                 DateFormat(DateFormat.YEAR_ABBR_MONTH_DAY).format(DateTime.now(),),
               style:const TextStyle(
@@ -889,7 +889,6 @@ class UnitDetailsContainer extends StatelessWidget {
                   )
                 ],
               ),
-      
       
                 Padding(
                   padding: const EdgeInsets.only(top: 25),

@@ -82,16 +82,15 @@ class PropertyStack extends StatelessWidget {
               Positioned(
                 top:30,
                 right:30,
-                child:Container(
-                  width:50,
-                  height:30,
-                  decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/Pin.png'),
-                    fit: BoxFit.cover,
+                child:SizedBox(
+                  child:InkWell(
+                    
+                    //_togglePin(),
+                    child:Image.asset('images/assets/Pin.png'),
+                
                   ),
-                ),
-                ),
+                  
+                )
               ),
 
                 // Overlay small label on pic
