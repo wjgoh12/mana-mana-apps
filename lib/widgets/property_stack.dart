@@ -79,6 +79,20 @@ class PropertyStack extends StatelessWidget {
                   ),
                 ),
               ),
+              Positioned(
+                top:30,
+                right:30,
+                child:Container(
+                  width:50,
+                  height:30,
+                  decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/Pin.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                ),
+              ),
 
                 // Overlay small label on pic
                 Positioned(

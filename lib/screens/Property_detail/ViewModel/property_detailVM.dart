@@ -50,6 +50,14 @@ class PropertyDetailVM extends ChangeNotifier {
     locationByMonth = newLocationByMonth;
     _users = await userRepository.getUsers();
     property = locationByMonth[0]['location'];
+    if (selectedView == null || selectedView!.isEmpty) {
+    selectedView = unitByMonth.first.stype.toString();
+    selectedType = unitByMonth.first.stype.toString();
+    selectedUnitNo = unitByMonth.first.sunitno;
+    }
+  notifyListeners();
+
+
 
     switch (property.toUpperCase()) {
       case "EXPRESSIONZ":
@@ -289,7 +297,7 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
     selectedType = newSelectedType;
     selectedUnitNo = newSelectedUnitNo;
-    selectedView = 'Unit'; // Update view to show unit details
+    selectedView = '$selectedType($selectedUnitNo)'; // Update view to show unit details
     yearItems = unitByMonth
         .where((item) =>
             item.slocation == property &&

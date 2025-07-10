@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:sliver_tools/sliver_tools.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
-import 'package:mana_mana_app/widgets/old_top_bar.dart';
-import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class PropertyDetail extends StatelessWidget {
@@ -20,15 +16,16 @@ class PropertyDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = PropertyDetailVM();
     model.fetchData(locationByMonth);
+    
+                  
 
-    final ScrollController scrollController = ScrollController();
+    //final ScrollController scrollController = ScrollController();
     bool isCollapsed = false;
 
     return ListenableBuilder(
       listenable: model,
       builder: (context, child) {
         return Scaffold(
-          
   body: Stack(
     children: [
      NotificationListener<ScrollNotification>(
@@ -38,7 +35,6 @@ class PropertyDetail extends StatelessWidget {
       return false;
     },
       child: CustomScrollView(
-        
         slivers: [
           SliverAppBar(
             automaticallyImplyLeading: false,
@@ -174,11 +170,12 @@ class PropertyDetail extends StatelessWidget {
                           ],
                     
                           onChanged: (String? newValue) {
-                            print('Selected value: $newValue');
+
                            if (newValue != null) {
                              if (newValue == 'Overview') {
                                   model.updateSelectedView('Overview');
                                    } else {
+                                      model.updateSelectedView(newValue);
                                       final parts = newValue.split(' (');
                                       final type = parts[0];
                                       final unit = parts[1].replaceAll(')', '');
@@ -196,13 +193,16 @@ class PropertyDetail extends StatelessWidget {
                   ),
                 ],
               ),
+              
             ),
           ),
           SliverFillRemaining(
             hasScrollBody: model.selectedView != 'Overview',
-            child: model.selectedView == 'Overview'
-              ? PropertyOverviewContainer(model: model, locationByMonth: locationByMonth)
-              : UnitDetailsContainer(model: model),
+            child: SingleChildScrollView(
+              child: model.selectedView == 'Overview'
+                ? PropertyOverviewContainer(model: model, locationByMonth: locationByMonth)
+                : UnitDetailsContainer(model: model),
+            ),
           ),
         ],
       ),
@@ -233,6 +233,7 @@ if (isCollapsed)
 
     ]
   ),
+  
 );
 
       }   
@@ -241,7 +242,6 @@ if (isCollapsed)
       }
     
   }
-
 
 class MonthlyStatementContainer extends StatelessWidget {
   final PropertyDetailVM model;
@@ -511,6 +511,8 @@ class AnnualStatementContainer extends StatelessWidget {
 }
 
 class PropertyTopBar extends StatelessWidget{
+  const PropertyTopBar({super.key});
+
   Widget build(BuildContext context) {
     return Container();
   }
@@ -781,7 +783,7 @@ class ContractDetailsContainer extends StatelessWidget {
 
     return Container(
       width: 400.fSize,
-      height: 50,
+      height: 50.fSize,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50.fSize),
         border: Border.all(color: const Color(0xFF5092FF)),
@@ -789,6 +791,7 @@ class ContractDetailsContainer extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
              const Padding(
               padding: EdgeInsets.only(left: 5, top: 15, bottom: 10),
@@ -799,16 +802,16 @@ class ContractDetailsContainer extends StatelessWidget {
               ),
               
             ),
-        Padding(
-          padding: const EdgeInsets.only(left: 5, top: 15, bottom: 10),
-          child: Text( unitType.toString() ?? '',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              color: Color(0xFF5092FF),
+            Padding(
+              padding: const EdgeInsets.only(left: 5, top: 15, bottom: 10),
+              child: Text( model.selectedType.toString(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  color: Color(0xFF5092FF),
+                ),
+              ),
             ),
-          ),
-        ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: SizedBox(
@@ -1166,8 +1169,8 @@ class EStatementContainer extends StatelessWidget {
     final items = model.unitByMonth;
     String monthNumberToName(int month) {
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
   ];
   if (month >= 1 && month <= 12) {
     return months[month - 1];
@@ -1182,22 +1185,28 @@ class EStatementContainer extends StatelessWidget {
     return SingleChildScrollView(
       child: ListView.builder(
         itemCount: items.length,
-        shrinkWrap: true, // ✅ Important when inside Column
-        physics: const NeverScrollableScrollPhysics(), // ✅ Prevents nested scrolling
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(), 
         itemBuilder: (context, i) {
           final item = items[i];
           return Row(
             children: [
               InkWell(
+                
                 onTap: () => model.downloadPdfStatement(context),
-                child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Row(
-                          children: [
-                          Text(monthNumberToName(item.imonth ?? 0)),
-                          ],
+
+                child: SizedBox(
+                  height: 50.fSize,
+                  
+                  child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                        Text('${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
+                            ],
+                          ),
                         ),
-                      ),
+                ),
                 
               )
             ],
@@ -1219,6 +1228,7 @@ final List<String> yearOptions;
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _StickyEstatementBarState createState() => _StickyEstatementBarState();
 }
 
@@ -1267,7 +1277,6 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
     );
   }
 }
-
 
 Widget _buildGradientText(String text) {
   return GradientText1(
