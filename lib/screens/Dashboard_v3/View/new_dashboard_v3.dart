@@ -277,6 +277,7 @@ class NewDashboardV3 extends StatelessWidget {
                               ],
                             ),
                             ),
+                            const SizedBox(height:10),
                             
                                 NewsletterListV3(model: model),
                                const SizedBox(height:30),

@@ -16,8 +16,7 @@ class newsletterStack extends StatelessWidget {
   // final double height;
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-   return Stack(
+    return Stack(
     children: [
       ResponsiveBuilder(
      builder: (context, sizingInformation) {
@@ -25,11 +24,10 @@ class newsletterStack extends StatelessWidget {
             sizingInformation.deviceScreenType == DeviceScreenType.mobile;
       final width = isMobile ? 150.fSize : 140.fSize;
         final height = 150.fSize;
-       // final position = 25.height;
         final containerWidth = isMobile ? 400.fSize : 390.fSize;
         final containerHeight = 170.fSize;
-        final smallcontainerWidth = isMobile? 40.fSize: 30.width;
-        final smallcontainerHeight = 50.fSize;
+        final smallcontainerWidth = isMobile? 50.fSize: 40.width;
+        final smallcontainerHeight = 60.fSize;
         
        return Stack(
         clipBehavior: Clip.none,
@@ -53,7 +51,6 @@ class newsletterStack extends StatelessWidget {
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-                      // Image at top
                       Stack(
             children: [
               Padding(
@@ -72,8 +69,8 @@ class newsletterStack extends StatelessWidget {
               ),
 
               Positioned(
-                left:20,
-                bottom:20,
+                left:15,
+                bottom:15,
                 child:Container(
                   width: smallcontainerWidth,
                   height: smallcontainerHeight,
@@ -85,13 +82,13 @@ class newsletterStack extends StatelessWidget {
                       Text(DateTime.now().day.toString(),
                       style:TextStyle(
                         color: Colors.white,
-                        fontSize: 23.fSize
+                        fontSize: 20.fSize
                       )
                       ),
                      Text(
                         [
-                          'January', 'February', 'March', 'April', 'May', 'June',
-                          'July', 'August', 'September', 'October', 'November', 'December'
+                          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                         ][DateTime.now().month - 1],
                       style:TextStyle(
                         color: Colors.white,
@@ -103,8 +100,6 @@ class newsletterStack extends StatelessWidget {
                 ),
                 
                  )
-
-              
               ],
             ),
             Column(
@@ -114,7 +109,6 @@ class newsletterStack extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top:10 ),
                   child: Row(
-
                    children:[
                     Image.asset(
                     'assets/images/newsletter_icon.png',
@@ -134,52 +128,57 @@ class newsletterStack extends StatelessWidget {
                 ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 225.fSize, maxHeight: 50.fSize),
                   child: const Text(
-                    'Scarletz Suites: Your Chic Urban Stay in the Heart of Kuala Lump...',
+                    'Scarletz Suites: Your Chic Urban Stay in the Heart of Kuala Lumpur with a Touch of Luxury',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                  ),
                 ),
 
-
-                Container(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: (){}, 
-                    child: Row(
-                      mainAxisAlignment:  MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('Read More',
-                        style: TextStyle(
-                          fontSize: 15.fSize,
+                SizedBox(
+                  width: 220.fSize,
+                  height:37,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: (){},
+                        child: Row(
+                          children: [
+                            Text('Read More',
+                            style: TextStyle(
+                              fontSize: 11.fSize,
+                              color:Colors.black,
+                            ),
+                            ),
+                            const SizedBox(width: 5),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                 'assets/images/arrow.png',
+                                 width:15.fSize,
+                                 height: 9.fSize,
+                                ),
+                                Text(
+                                  'Jom',
+                                  style: TextStyle(
+                                    fontSize: 9.fSize,
+                                    color:Colors.black,
+                                    ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        ),
-                        
-                         const SizedBox(width: 5),
-                         Column(
-                           mainAxisSize: MainAxisSize.min,
-                           children: [
-                             Image.asset(
-                              'assets/images/arrow.png',
-                              width:15.fSize,
-                              height: 11.fSize,
-                             ),
-                             Text(
-                               'Jom',
-                               style: TextStyle(fontSize: 9.fSize),
-                             ),
-                           ],
-                         ),
-                      ],
-                    ),
-                    ),
+                      ),
+                    ],
+                  ),
                 ),
-                //divider
                 Container(
-                  height: 1,
+                  height: 0.5,
                   width:215.fSize,
                   color: Colors.grey,
                 ),
@@ -190,39 +189,31 @@ class newsletterStack extends StatelessWidget {
                   const Text(
                     '60 Views',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 10,
                     )
                   ),
-                  SizedBox(width: 5.fSize),
+                  SizedBox(width: 2.fSize),
                   
                   const Text(
                     '10 Comments',
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 10,
                   ),
                   ),
-                  SizedBox(width: 5.fSize),
-                  //like button
+                  SizedBox(width: 2.fSize),
                   PostLike(),
                 ]
               ),
-                  
-
-
               ],
             )
           ],
         ),
           )
-          
         ],
-        
          );
      }
    ),
-      
     ],
-    
   );
   }
 }
@@ -240,13 +231,13 @@ class _PostLikeState extends State<PostLike> {
   @override
   Widget build(BuildContext context) {
     return LikeButton(
-      size: 20.0,
+      size: 15.0,
       likeCount: _likeCount,
       likeCountPadding: const EdgeInsets.only(left: 4),
       likeBuilder: (liked) => Icon(
         Icons.favorite, 
         color: liked ? Colors.red : Colors.grey, 
-        size: 20
+        size: 15
         ),
       countBuilder: (count, liked, text) => 
       Text(

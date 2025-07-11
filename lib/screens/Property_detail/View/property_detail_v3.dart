@@ -100,6 +100,7 @@ class PropertyDetail extends StatelessWidget {
                        dropdownStyleData: DropdownStyleData(
                                         width: 370.fSize,
                                         offset: const Offset(-12.5, -1),
+                                        useSafeArea: true,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           border: const Border(
@@ -119,12 +120,13 @@ class PropertyDetail extends StatelessWidget {
                                             ),
                                           ],
                                         ),
-                                        maxHeight: 300,
+                                        maxHeight: 200,
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(40),
                                           thickness: WidgetStateProperty.all(6),
                                           thumbVisibility:
                                               WidgetStateProperty.all(true),
+                                          trackVisibility: WidgetStateProperty.all(true),
                                         ),
                                       ),
                     
@@ -521,7 +523,13 @@ class PropertyOverviewContainer extends StatelessWidget {
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      color:Colors.white,
+
+      decoration: const BoxDecoration(
+        color:Colors.white,
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),  // Add top right radius
+
+      ),),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -568,7 +576,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 21.fSize),
+            SizedBox(width: 17.fSize),
             Padding(
               padding: const EdgeInsets.only(top:10),
               child: SizedBox(
@@ -611,7 +619,7 @@ class PropertyOverviewContainer extends StatelessWidget {
               ),
             ),
           ]),
-          SizedBox(height: 20.fSize),
+          SizedBox(height: 10.fSize),
           Padding(
             padding: const EdgeInsets.only(top: 30),
             child: Row(children: [
@@ -677,7 +685,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 21.fSize),
+              SizedBox(width: 17.fSize),
               SizedBox(
                 width: 175,
                 height: 175,
@@ -962,7 +970,7 @@ class UnitDetailsContainer extends StatelessWidget {
                         Text(
                           '${model.locationByMonth.first['occupancy']?? ''}% Active',
                           style: const TextStyle(
-                              fontSize: 15,
+                              fontSize: 10,
                               fontWeight: FontWeight.bold,
                             )
                         ),

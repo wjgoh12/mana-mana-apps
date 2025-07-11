@@ -95,9 +95,9 @@ class NewsletterImageStack extends StatelessWidget {
         final height = 207.fSize;
        // final position = 25.height;
         final containerWidth = isMobile ? 370.fSize : 360.fSize;
-        final containerHeight = 360.fSize;
-        final smallcontainerWidth = isMobile? 40.fSize: 30.fSize;
-        final smallcontainerHeight = 50.fSize;
+        final containerHeight = 381.fSize;
+        final smallcontainerWidth = isMobile? 50.fSize: 40.fSize;
+        final smallcontainerHeight = 60.fSize;
 
           return Stack(
             clipBehavior: Clip.none,
@@ -154,13 +154,13 @@ class NewsletterImageStack extends StatelessWidget {
                       Text(DateTime.now().day.toString(),
                       style:TextStyle(
                         color: Colors.white,
-                        fontSize: 23.fSize
+                        fontSize: 20.5.fSize
                       )
                       ),
                      Text(
                         [
-                          'January', 'February', 'March', 'April', 'May', 'June',
-                          'July', 'August', 'September', 'October', 'November', 'December'
+                          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                         ][DateTime.now().month - 1],
                       style:TextStyle(
                         color: Colors.white,
@@ -203,7 +203,7 @@ class NewsletterImageStack extends StatelessWidget {
               child: Text(
                 'Scarletz Suites: Your Chic Urban Stay in the Heart of Kuala Lumpur',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   color: Colors.black,
                   
                 ),
@@ -213,13 +213,25 @@ class NewsletterImageStack extends StatelessWidget {
 
 
             Padding(
-              padding:const EdgeInsets.only(left:10),
+              padding:const EdgeInsets.only(left:5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('60 Views'),
+                  const Text(
+                    '60 Views',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.black,
+                    )
+                  ),
                   
-                  const Text('10 Comments'),
+                  const Text(
+                    '10 Comments',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.black,
+                    ),
+                    ),
 
                   //like button
                   PostLike(),
@@ -244,7 +256,7 @@ class NewsletterImageStack extends StatelessWidget {
                          Text(
                            'Read More',
                            style: TextStyle(
-                            fontSize: 15.fSize,
+                            fontSize: 12.fSize,
                             color: Colors.black
                             ),
                          ),
@@ -294,7 +306,7 @@ class _PostLikeState extends State<PostLike> {
   @override
   Widget build(BuildContext context) {
     return LikeButton(
-      size: 20.0,
+      size: 18.0,
       likeCount: _likeCount,
       likeCountPadding: const EdgeInsets.only(left: 4),
       likeBuilder: (liked) => Icon(

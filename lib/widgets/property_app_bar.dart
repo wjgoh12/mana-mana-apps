@@ -4,7 +4,7 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 
 PreferredSizeWidget propertyAppBar(context, function) {
   return AppBar(
-    backgroundColor: const Color(0XFFFFFFFF).withOpacity(0),
+    backgroundColor: Colors.white,
     leadingWidth: 15.width,
     automaticallyImplyLeading: false,
     centerTitle: true,
