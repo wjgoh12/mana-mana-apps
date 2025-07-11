@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
@@ -508,15 +507,6 @@ class AnnualStatementContainer extends StatelessWidget {
       ),
     );
   }
-}
-
-class PropertyTopBar extends StatelessWidget{
-  const PropertyTopBar({super.key});
-
-  Widget build(BuildContext context) {
-    return Container();
-  }
-  
 }
 
 class PropertyOverviewContainer extends StatelessWidget {
@@ -1178,9 +1168,6 @@ class EStatementContainer extends StatelessWidget {
   }
 }
 
-  
-
-
     return SingleChildScrollView(
       child: ListView.builder(
         itemCount: items.length,
@@ -1191,6 +1178,7 @@ class EStatementContainer extends StatelessWidget {
           return Row(
             children: [
               InkWell(
+                hoverColor: Colors.grey.shade50,
                 
                 onTap: () => model.downloadPdfStatement(context),
 
@@ -1206,7 +1194,6 @@ class EStatementContainer extends StatelessWidget {
                           ),
                         ),
                 ),
-                
               )
             ],
           );
@@ -1219,7 +1206,8 @@ class EStatementContainer extends StatelessWidget {
 
 class StickyEstatementBar extends StatefulWidget {
   final VoidCallback onBack;
-final List<String> yearOptions;
+  final List<String> yearOptions;
+
   const StickyEstatementBar({
     required this.onBack,
     required this.yearOptions,
@@ -1233,6 +1221,7 @@ final List<String> yearOptions;
 
 class _StickyEstatementBarState extends State<StickyEstatementBar> {
   String? _selectedYear;
+  
 
   @override
   Widget build(BuildContext context) {

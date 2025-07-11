@@ -329,8 +329,6 @@ final locationCount = uniqueLocations.length;
                               overallRevenue: false,
                               model: model),
                               
-                                        
-                                        
                             ],
                           ),
                         ),

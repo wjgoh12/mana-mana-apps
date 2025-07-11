@@ -22,28 +22,33 @@ class AllPropertyScreen extends StatelessWidget {
         () => Navigator.of(context).pop(),
       ),
       body: ListView(
+        shrinkWrap: true,
         padding: const EdgeInsets.symmetric(vertical: 5),
         children: [
           GestureDetector(
-            child: Column(
-              children: locationByMonth
-                  .map((property) => property['location'])
-                  .toSet()
-                  .map((uniqueLocation) {
-                final property = locationByMonth
-                    .firstWhere((p) => p['location'] == uniqueLocation);
-                return Column(
-                  children: [
-                    GestureDetector(
-                      child: _buildPropertyStack(
-                        locationByMonth: [property],
-                        context: context,
-                      ),
+            child: SizedBox(
+              child: Column(
+                children: locationByMonth
+                    .map((property) => property['location'])
+                    .toSet()
+                    .map((uniqueLocation) {
+                  final property = locationByMonth
+                      .firstWhere((p) => p['location'] == uniqueLocation);
+                  return SizedBox(
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          child: _buildPropertyStack(
+                            locationByMonth: [property],
+                            context: context,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                  ],
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           ),
         ],

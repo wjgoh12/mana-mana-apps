@@ -41,38 +41,40 @@ class PropertyDetail extends StatelessWidget {
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 7.width),
-                        child: Column(
-                          children: [
-                            SizedBox(height: 2.height),
-                            // PropertyStack(
-                            //   locationByMonth: locationByMonth,
-                            //   // image: model.property,
-                            //   // text1: model.property,
-                            //   // text2: model.locationRoad,
-                            //   // width: 86.width,
-                            //   // height: 12.height,
-                            // ),
-                            SizedBox(height: 2.height),
-                            // _buildOverallRevenue(),
-                            // SizedBox(height: 2.height),
-                            TypeUnitSelection(model: model),
-                            SizedBox(height: 2.height),
-                            UnitRevenue(model: model),
-                            // // SizedBox(height: 1.height),
-                            // // _buildStatisticsSection(),
-                            // // SizedBox(height: 5.height),
-                            _buildTitleSection('Monthly Statement'),
-                            SizedBox(height: 1.height),
-                            MonthlyStatementContainer(model: model),
-                            SizedBox(height: 1.height),
-                            // _buildTitleSection('Annual Statement'),
-                            // SizedBox(height: 1.height),
-                            // AnnualStatementContainer(model: model),
-                            // // _buildAgreementsSection(),
-                            // SizedBox(height: 3.height),
-                            // // _buildAgreementContainer(),
-                            // SizedBox(height: 10.height),
-                          ],
+                        child: SizedBox(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 2.height),
+                              // PropertyStack(
+                              //   locationByMonth: locationByMonth,
+                              //   // image: model.property,
+                              //   // text1: model.property,
+                              //   // text2: model.locationRoad,
+                              //   // width: 86.width,
+                              //   // height: 12.height,
+                              // ),
+                              SizedBox(height: 2.height),
+                              // _buildOverallRevenue(),
+                              // SizedBox(height: 2.height),
+                              TypeUnitSelection(model: model),
+                              SizedBox(height: 2.height),
+                              UnitRevenue(model: model),
+                              // // SizedBox(height: 1.height),
+                              // // _buildStatisticsSection(),
+                              // // SizedBox(height: 5.height),
+                              _buildTitleSection('Monthly Statement'),
+                              SizedBox(height: 1.height),
+                              MonthlyStatementContainer(model: model),
+                              SizedBox(height: 1.height),
+                              // _buildTitleSection('Annual Statement'),
+                              // SizedBox(height: 1.height),
+                              // AnnualStatementContainer(model: model),
+                              // // _buildAgreementsSection(),
+                              // SizedBox(height: 3.height),
+                              // // _buildAgreementContainer(),
+                              // SizedBox(height: 10.height),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -133,112 +135,114 @@ class MonthlyStatementContainer extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(6.width, 3.height, 5.width, 2.height),
-        child: Column(
-          children: [
-            LayoutBuilder(
-              builder: (context, constraints) {
-                if (model.isLoading) {
-                  // Check if data is still loading
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: const Center(
-                      child:
-                          CircularProgressIndicator(),
-                    ),
-                  );
-                }
-                return model.isDateLoading
-                    ? const CircularProgressIndicator()
-                    : Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _buildGradientText('Year'),
-                              SizedBox(width: 2.width),
-                              TypeUnitSelectionDropdown(
-                                label: 'Year',
-                                list: model.yearItems,
-                                onChanged: (_) {
-                                  model.updateSelectedYear(_!);
-                                },
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _buildGradientText('Month'),
-                              SizedBox(width: 2.width),
-                              model.isMonthLoadng
-                                  ? const CircularProgressIndicator() // Display a loading spinner
-                                  : TypeUnitSelectionDropdown(
-                                      label: 'Month',
-                                      list: model.monthItems,
-                                      onChanged: (_) {
-                                        model.updateSelectedMonth(_!);
-                                      },
-                                    ),
-                            ],
-                          )
-                        ],
-                      );
-              },
-            ),
-            SizedBox(height: 4.height),
-            ElevatedButton(
-              onPressed: () => model.downloadPdfStatement(context),
-              // () async {
-              // print(property);
-              // print(selectedYearValue);
-              // print(selectedMonthValue);
-              // print(selectedType);
-              // print(selectedUnitNo);
-              // await ownerPropertyList_repository.downloadPdfStatement(
-              //     context,
-              //     property,
-              //     selectedYearValue,
-              //     selectedMonthValue,
-              //     selectedType,
-              //     selectedUnitNo);
-              // },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0XFF4313E9),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 8.width, vertical: 0.5.height),
-                child: model.isDownloading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        'Download PDF',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.fSize,
-                          fontWeight: FontWeight.w600,
-                        ),
+        child: SizedBox(
+          child: Column(
+            children: [
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  if (model.isLoading) {
+                    // Check if data is still loading
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                      padding: const EdgeInsets.all(16),
+                      child: const Center(
+                        child:
+                            CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  return model.isDateLoading
+                      ? const CircularProgressIndicator()
+                      : Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildGradientText('Year'),
+                                SizedBox(width: 2.width),
+                                TypeUnitSelectionDropdown(
+                                  label: 'Year',
+                                  list: model.yearItems,
+                                  onChanged: (_) {
+                                    model.updateSelectedYear(_!);
+                                  },
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildGradientText('Month'),
+                                SizedBox(width: 2.width),
+                                model.isMonthLoadng
+                                    ? const CircularProgressIndicator() // Display a loading spinner
+                                    : TypeUnitSelectionDropdown(
+                                        label: 'Month',
+                                        list: model.monthItems,
+                                        onChanged: (_) {
+                                          model.updateSelectedMonth(_!);
+                                        },
+                                      ),
+                              ],
+                            )
+                          ],
+                        );
+                },
               ),
-            )
-            // _buildMonthlyStatementContent(),
-          ],
+              SizedBox(height: 4.height),
+              ElevatedButton(
+                onPressed: () => model.downloadPdfStatement(context),
+                // () async {
+                // print(property);
+                // print(selectedYearValue);
+                // print(selectedMonthValue);
+                // print(selectedType);
+                // print(selectedUnitNo);
+                // await ownerPropertyList_repository.downloadPdfStatement(
+                //     context,
+                //     property,
+                //     selectedYearValue,
+                //     selectedMonthValue,
+                //     selectedType,
+                //     selectedUnitNo);
+                // },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0XFF4313E9),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 8.width, vertical: 0.5.height),
+                  child: model.isDownloading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          'Download PDF',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.fSize,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              )
+              // _buildMonthlyStatementContent(),
+            ],
+          ),
         ),
       ),
     );
@@ -267,112 +271,114 @@ class AnnualStatementContainer extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(6.width, 3.height, 5.width, 2.height),
-        child: Column(
-          children: [
-            LayoutBuilder(
-              builder: (context, constraints) {
-                if (model.isLoading) {
-                  // Check if data is still loading
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: const Center(
-                      child:
-                          CircularProgressIndicator(), // Display a loading spinner
-                    ),
-                  );
-                }
-                return model.isDateLoading
-                    ? const CircularProgressIndicator()
-                    : Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _buildGradientText('Year'),
-                              SizedBox(width: 2.width),
-                              TypeUnitSelectionDropdown(
-                                label: 'Year',
-                                list: model.yearItems,
-                                onChanged: (_) {
-                                  model.updateSelectedAnnualYear(_!);
-                                },
-                              ),
-                            ],
-                          ),
-                          // Row(
-                          //   mainAxisSize: MainAxisSize.min,
-                          //   children: [
-                          //     _buildGradientText('Month'),
-                          //     SizedBox(width: 2.width),
-                          //     model.isMonthLoadng
-                          //         ? const CircularProgressIndicator() // Display a loading spinner
-                          //         : TypeUnitSelectionDropdown(
-                          //             label: 'Month',
-                          //             list: model.monthItems,
-                          //             onChanged: (_) {
-                          //               model.updateSelectedMonth(_!);
-                          //             },
-                          //           ),
-                          //   ],
-                          // )
-                        ],
-                      );
-              },
-            ),
-            SizedBox(height: 4.height),
-            ElevatedButton(
-              onPressed: () => model.downloadAnnualPdfStatement(context),
-              // () async {
-              // print(property);
-              // print(selectedYearValue);
-              // print(selectedMonthValue);
-              // print(selectedType);
-              // print(selectedUnitNo);
-              // await ownerPropertyList_repository.downloadPdfStatement(
-              //     context,
-              //     property,
-              //     selectedYearValue,
-              //     selectedMonthValue,
-              //     selectedType,
-              //     selectedUnitNo);
-              // },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0XFF4313E9),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 8.width, vertical: 0.5.height),
-                child: model.isAnnualDownloading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        'Download PDF',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.fSize,
-                          fontWeight: FontWeight.w600,
-                        ),
+        child: SizedBox(
+          child: Column(
+            children: [
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  if (model.isLoading) {
+                    // Check if data is still loading
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                      padding: const EdgeInsets.all(16),
+                      child: const Center(
+                        child:
+                            CircularProgressIndicator(), // Display a loading spinner
+                      ),
+                    );
+                  }
+                  return model.isDateLoading
+                      ? const CircularProgressIndicator()
+                      : Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildGradientText('Year'),
+                                SizedBox(width: 2.width),
+                                TypeUnitSelectionDropdown(
+                                  label: 'Year',
+                                  list: model.yearItems,
+                                  onChanged: (_) {
+                                    model.updateSelectedAnnualYear(_!);
+                                  },
+                                ),
+                              ],
+                            ),
+                            // Row(
+                            //   mainAxisSize: MainAxisSize.min,
+                            //   children: [
+                            //     _buildGradientText('Month'),
+                            //     SizedBox(width: 2.width),
+                            //     model.isMonthLoadng
+                            //         ? const CircularProgressIndicator() // Display a loading spinner
+                            //         : TypeUnitSelectionDropdown(
+                            //             label: 'Month',
+                            //             list: model.monthItems,
+                            //             onChanged: (_) {
+                            //               model.updateSelectedMonth(_!);
+                            //             },
+                            //           ),
+                            //   ],
+                            // )
+                          ],
+                        );
+                },
               ),
-            )
-            // _buildMonthlyStatementContent(),
-          ],
+              SizedBox(height: 4.height),
+              ElevatedButton(
+                onPressed: () => model.downloadAnnualPdfStatement(context),
+                // () async {
+                // print(property);
+                // print(selectedYearValue);
+                // print(selectedMonthValue);
+                // print(selectedType);
+                // print(selectedUnitNo);
+                // await ownerPropertyList_repository.downloadPdfStatement(
+                //     context,
+                //     property,
+                //     selectedYearValue,
+                //     selectedMonthValue,
+                //     selectedType,
+                //     selectedUnitNo);
+                // },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0XFF4313E9),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 8.width, vertical: 0.5.height),
+                  child: model.isAnnualDownloading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          'Download PDF',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.fSize,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              )
+              // _buildMonthlyStatementContent(),
+            ],
+          ),
         ),
       ),
     );

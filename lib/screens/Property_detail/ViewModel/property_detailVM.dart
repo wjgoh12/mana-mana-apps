@@ -61,22 +61,22 @@ class PropertyDetailVM extends ChangeNotifier {
 
     switch (property.toUpperCase()) {
       case "EXPRESSIONZ":
-        locationRoad = "@ Jalan Tun Razak";
+        locationRoad = "Jalan Tun Razak";
         break;
       case "CEYLONZ":
-        locationRoad = "@ Persiaran Raja Chulan";
+        locationRoad = "Persiaran Raja Chulan";
         break;
       case "SCARLETZ":
-        locationRoad = "@ Jalan Yap Kwan Seng";
+        locationRoad = "Jalan Yap Kwan Seng";
         break;
       case "MILLERZ":
-        locationRoad = "@ Old Klang Road";
+        locationRoad = "Old Klang Road";
         break;
       case "MOSSAZ":
-        locationRoad = "@ Empire City";
+        locationRoad = "Empire City";
         break;
       case "PAXTONZ":
-        locationRoad = "@ Empire City";
+        locationRoad = "Empire City";
         break;
       default:
         locationRoad = "";

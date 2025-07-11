@@ -155,93 +155,95 @@ class _BottomNavBarState extends State<BottomNavBar> {
             end: Alignment.topRight,
           ),
         ) : null,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Icon container
-            AnimatedScale(
-              duration: const Duration(milliseconds: 300),
-            scale: isSelected ? 1.2 : 1.0,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 300),
-              opacity: isSelected ? 1.0 : 1.0,
-              child: icon is IconData
-                  ? Icon(
-                      icon,
-                      size: 24.fSize,
-                      color: isSelected ? Colors.white : Colors.grey,
-                    )
-                    : isSelected
-            ? Image.asset(
-                icon,
-                width: 24.fSize,
-                height: 24.fSize,
-                color: Colors.white,
-              )
-                  : ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [
-                          Color(0XFFB82B7D),
-                          Color(0xFF3E51FF),
-                        ],
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                      ).createShader(bounds),
-                      blendMode: BlendMode.srcIn,
-                      child: Image.asset(
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon container
+              AnimatedScale(
+                duration: const Duration(milliseconds: 300),
+              scale: isSelected ? 1.2 : 1.0,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 300),
+                opacity: isSelected ? 1.0 : 1.0,
+                child: icon is IconData
+                    ? Icon(
                         icon,
-                        width: 24.fSize,
-                        height: 24.fSize,
-                        
-                      ),
-                    ),
-            ),
-            ),
-            
-            SizedBox(height: 4.fSize),
-            
-            // Text with constrained width
-            SizedBox(
-              width: 70.fSize, // Fixed width for text
-              child: AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 200),
-                style: TextStyle(
-                  color: isSelected ? const Color(0xFFFFFFFF) : Colors.transparent,
-                  fontSize: 10.fSize,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                ),
-                child: isSelected
-                  ? Text(
-                      label,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    )
-                  : ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [
-                          Color(0XFFB82B7D),
-                          Color(0xFF3E51FF),
-                        ],
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                      ).createShader(bounds),
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10.fSize,
-                          fontWeight: FontWeight.normal,
+                        size: 24.fSize,
+                        color: isSelected ? Colors.white : Colors.grey,
+                      )
+                      : isSelected
+              ? Image.asset(
+                  icon,
+                  width: 24.fSize,
+                  height: 24.fSize,
+                  color: Colors.white,
+                )
+                    : ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [
+                            Color(0XFFB82B7D),
+                            Color(0xFF3E51FF),
+                          ],
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                        ).createShader(bounds),
+                        blendMode: BlendMode.srcIn,
+                        child: Image.asset(
+                          icon,
+                          width: 24.fSize,
+                          height: 24.fSize,
+                          
                         ),
+                      ),
+              ),
+              ),
+              
+              SizedBox(height: 4.fSize),
+              
+              // Text with constrained width
+              SizedBox(
+                width: 70.fSize, // Fixed width for text
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 200),
+                  style: TextStyle(
+                    color: isSelected ? const Color(0xFFFFFFFF) : Colors.transparent,
+                    fontSize: 10.fSize,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  ),
+                  child: isSelected
+                    ? Text(
+                        label,
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
+                      )
+                    : ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [
+                            Color(0XFFB82B7D),
+                            Color(0xFF3E51FF),
+                          ],
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                        ).createShader(bounds),
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10.fSize,
+                            fontWeight: FontWeight.normal,
+                          ),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
-                    ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
