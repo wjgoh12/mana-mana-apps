@@ -51,7 +51,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                 
               ),
               body: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white
                 ),
                 child: SingleChildScrollView(
@@ -60,7 +60,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                   child:Column(
                     children: [
                       DecoratedBox(
-                        decoration:BoxDecoration(
+                        decoration:const BoxDecoration(
                           color:Colors.white,
                         ),
                         child: Row(
