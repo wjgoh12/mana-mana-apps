@@ -325,6 +325,7 @@ final locationCount = uniqueLocations.length;
                             RevenueContainer(
                               title:
                               '${model.revenueLastestYear} Accumulated Profit​',
+                              
                               icon: Icons.home_outlined,
                               overallRevenue: false,
                               model: model),
@@ -417,7 +418,7 @@ class RevenueContainer extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Open Sans',
             // fontSize: 12.fSize,
-            fontSize: 12.fSize,
+            fontSize: 10.fSize,
             
           ),
         ),

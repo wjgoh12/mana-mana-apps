@@ -301,7 +301,6 @@ class OwnerProfile_v3 extends StatelessWidget {
                         highlightColor: Colors.transparent,
                         onTap: () {
                           launchUrl(Uri.parse('https://wa.me/60125626784'));
-                        
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -366,8 +365,6 @@ class OwnerProfile_v3 extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         TextButton(
-                          
-                          
                           onPressed: (){
                           launchUrl(Uri.parse(
                                     'https://www.manamanasuites.com/terms-conditions'));
@@ -408,11 +405,6 @@ class OwnerProfile_v3 extends StatelessWidget {
                         ),
                       ],
                      ),
-                
-                
-                      
-                
-                
                     ]
                   ),
                   )
