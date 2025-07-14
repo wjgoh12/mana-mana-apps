@@ -6,14 +6,14 @@ PreferredSizeWidget newsletterAppBar(context, function) {
   return AppBar(
     backgroundColor: const Color(0XFFFFFFFF).withOpacity(0),
     automaticallyImplyLeading: false,
-    leadingWidth: 15.width,
+    leadingWidth: 13.width,
     centerTitle: true,
     
     title: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CircleAvatar(
-             radius: 22.fSize, // or tweak size as needed
+             radius: 20.fSize, // or tweak size as needed
              backgroundImage: const AssetImage(
               'assets/images/mana2logo.png',),
              backgroundColor: Colors.transparent,

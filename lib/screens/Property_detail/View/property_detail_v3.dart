@@ -515,9 +515,15 @@ class PropertyOverviewContainer extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
   const PropertyOverviewContainer(
       {super.key, required this.model, required this.locationByMonth});
+      
 
   @override
   Widget build(BuildContext context) {
+    double getTotalNetAfterPOB() {
+  return model.unitByMonth
+      .where((unit) => unit.slocation == model.property)
+      .fold(0.0, (sum, unit) => sum + (model.selectedUnitBlc ?? 0.0));
+    }
 
     
     return Container(
@@ -661,6 +667,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                         width: 59.fSize,
                       height: 58.fSize,
                       ),
+                      //property overview
                       const Text('Monthly Profit',style:TextStyle(
                         fontSize:12,
                       ),),
@@ -683,9 +690,9 @@ class PropertyOverviewContainer extends StatelessWidget {
                                     ),
                                   ),
                                   TextSpan(
-                                    //text:'${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+                                    text:'${model.locationByMonth.first['total'] ?? ''}',
                                     style: const TextStyle(
-                                      fontSize: 16,               // Larger for the amount
+                                      fontSize: 16,       
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),

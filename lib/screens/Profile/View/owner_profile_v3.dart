@@ -29,7 +29,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                 title: Row(
                   children:[ 
                     CircleAvatar(
-                    radius: 23.fSize, 
+                    radius: 20.fSize, 
                     backgroundImage: const AssetImage(
                       'assets/images/mana2logo.png'
                       ),

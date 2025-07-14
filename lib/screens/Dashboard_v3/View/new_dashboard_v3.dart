@@ -44,11 +44,14 @@ class NewDashboardV3 extends StatelessWidget {
               body: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) => [
                   SliverAppBar(
+                    shadowColor: Color(0xFF3E51FF).withOpacity(0.15),
+                    
                     pinned: true,
                     floating: false,
                     expandedHeight: _getExpandedHeight(context),
                     backgroundColor: Colors.white,
                     surfaceTintColor: Colors.transparent,
+                    
                     elevation: 0,
                     automaticallyImplyLeading: false,
                     systemOverlayStyle: const SystemUiOverlayStyle(
