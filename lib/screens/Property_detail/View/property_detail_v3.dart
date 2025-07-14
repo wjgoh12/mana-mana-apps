@@ -532,6 +532,7 @@ class PropertyOverviewContainer extends StatelessWidget {
       ),),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(children: [
             Padding(
@@ -545,7 +546,12 @@ class PropertyOverviewContainer extends StatelessWidget {
                   shadowColor: Colors.grey.withOpacity(0.8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
+                    side:const BorderSide(
+                      color: Colors.black,
+                      width: 0.3,
+                    ),
                   ),
+                  
                   child: Column(
               
                     children: [
@@ -588,6 +594,10 @@ class PropertyOverviewContainer extends StatelessWidget {
                   shadowColor: Colors.grey.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
+                    side:const BorderSide(
+                      color: Colors.black,
+                      width: 0.3,
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(top:45),
@@ -632,6 +642,10 @@ class PropertyOverviewContainer extends StatelessWidget {
                   shadowColor: Colors.grey.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
+                    side:const BorderSide(
+                      color: Colors.black,
+                      width: 0.3,
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(top:30),
@@ -695,6 +709,10 @@ class PropertyOverviewContainer extends StatelessWidget {
                   shadowColor: Colors.grey.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
+                    side:const BorderSide(
+                      color: Colors.black,
+                      width: 0.3,
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(top:30),

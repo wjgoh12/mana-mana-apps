@@ -7,8 +7,9 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class PropertyListV3 extends StatelessWidget {
+  final ScrollController controller;
   final NewDashboardVM model;
-  const PropertyListV3({required this.model, Key? key}) : super(key: key);
+  const PropertyListV3({required this.model,required this.controller, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +39,14 @@ class PropertyListV3 extends StatelessWidget {
                 ),
               )
             : SizedBox(
-  height: 450.fSize,
-  child: NotificationListener<ScrollNotification>(
-    onNotification: (notif) {
-      if (notif is ScrollStartNotification &&
-          notif.metrics.axis == Axis.horizontal) {
-        // e.g. disable outer scroll if needed
-      }
+              height: 450.fSize,
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (notif) {
+                  if (notif is ScrollStartNotification &&
+                      notif.metrics.axis == Axis.horizontal) {
+                    // e.g. disable outer scroll if needed
+                    return true;
+               }
       return false; // allow notifications to continue
     },
     child: ListView(

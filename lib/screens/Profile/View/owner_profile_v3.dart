@@ -31,7 +31,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                     CircleAvatar(
                     radius: 23.fSize, 
                     backgroundImage: const AssetImage(
-                      'assets/images/mana2logo.png',),
+                      'assets/images/mana2logo.png'
+                      ),
                     backgroundColor: Colors.white,
                     ),
                     SizedBox(width: 10.fSize),

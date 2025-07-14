@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
@@ -104,31 +105,47 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Container(
-        height: 80,
-        width: 320.fSize,
-        margin: EdgeInsets.all(16.fSize),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(40),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+      child: LayoutBuilder(
+        builder:(context, constraints) {
+          const itemCount = 4;
+          final totalWidth=constraints.maxWidth;
+          final itemWidth = totalWidth / itemCount;
+          final indicatorSize = 70.fSize;
+        
+
+        return Container(
+          height: 80,
+          width: 320.fSize,
+          margin: EdgeInsets.all(16.fSize),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(40),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 2,
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+               Positioned.fill(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildNavItem('assets/images/Home.png', 'Home', 0),
+                  _buildNavItem('assets/images/Properties.png', 'Properties', 1),
+                  _buildNavItem('assets/images/Newsletter.png', 'Newsletter', 2),
+                  _buildNavItem('assets/images/Profile.png', 'Profile', 3),
+                ],
+              ),
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildNavItem('assets/images/Home.png', 'Home', 0),
-            _buildNavItem('assets/images/Properties.png', 'Properties', 1),
-            _buildNavItem('assets/images/Newsletter.png', 'Newsletter', 2),
-            _buildNavItem('assets/images/Profile.png', 'Profile', 3),
-          ],
-        ),
+            ]
+          ),
+        );
+        }
       ),
     );
   }

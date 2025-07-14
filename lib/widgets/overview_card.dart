@@ -377,13 +377,12 @@ class RevenueContainer extends StatelessWidget {
                   _buildDateRow(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     
                       children: [
                         Column(
                           children: [
                             Transform.translate(
-                              offset: Offset(0, -3.5), // Move up by 3.5 pixels
+                              offset: Offset(-2, -6), // Move up by 3.5 pixels
                               child: CircleAvatar(
                                 radius: 20.fSize,
                                 backgroundColor: Colors.white,

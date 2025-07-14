@@ -12,8 +12,10 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:like_button/like_button.dart';
 
 class NewsletterListV3 extends StatelessWidget {
+  
   final NewDashboardVM model;
-  const NewsletterListV3({required this.model, Key? key}) : super(key: key);
+  final ScrollController controller;
+  const NewsletterListV3({required this.model,required this.controller, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
