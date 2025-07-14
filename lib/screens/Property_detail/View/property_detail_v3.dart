@@ -571,7 +571,10 @@ class PropertyOverviewContainer extends StatelessWidget {
                          fontSize:12,
                        ),
                        ),
-                     Text('${locationByMonth.first['unitByMonth'] ?? ''}'),
+                     Text('${model.unitByMonth.where((unit) => 
+                        unit.slocation?.contains(locationByMonth.first['location']) == true
+                      ).length-1}'),
+
                      Text(
                        DateFormat('MMMM yyyy').format(DateTime.now()),
                        style: const TextStyle(
@@ -680,7 +683,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: '${model.locationByMonth.first['total'] ?? ''}',
+                                    //text:'${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
                                     style: const TextStyle(
                                       fontSize: 16,               // Larger for the amount
                                       fontWeight: FontWeight.bold,
@@ -957,7 +960,9 @@ class UnitDetailsContainer extends StatelessWidget {
                     height: 125,
                     
                     child: Container(
+                      
                       decoration:  BoxDecoration(
+                        color:Colors.white,
                         borderRadius: const BorderRadius.all(Radius.circular(10)),
                         boxShadow:[
                           BoxShadow(
@@ -1007,12 +1012,13 @@ class UnitDetailsContainer extends StatelessWidget {
                     
                     child: Container(
                       decoration:  BoxDecoration(
+                        color:Colors.white,
                         borderRadius: const BorderRadius.all(Radius.circular(10)),
                         boxShadow:[
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Color(0xFF3E51FF).withOpacity(0.15),
                         blurRadius: 3,
-                        offset: const Offset(0, 3),
+                        offset: const Offset(0, 0),
                           )
                         ]
                       ),
@@ -1050,7 +1056,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                       ),
                                     ),
                                     TextSpan(
-                                      text: '${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+                                       text: '${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
                                       style: const TextStyle(
                                         fontSize: 15,               // Larger for the amount
                                         fontWeight: FontWeight.bold,
@@ -1078,12 +1084,13 @@ class UnitDetailsContainer extends StatelessWidget {
                     
                     child: Container(
                       decoration:  BoxDecoration(
+                        color:Colors.white,
                         borderRadius: const BorderRadius.all(Radius.circular(10)),
                         boxShadow:[
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
-                        blurRadius: 3,
-                        offset: const Offset(0, 3),
+                            color: Color(0xFF3E51FF).withOpacity(0.15),
+                        blurRadius: 10,
+                        offset: const Offset(0, 0),
                           )
                         ]
                       ),

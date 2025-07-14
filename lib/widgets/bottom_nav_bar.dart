@@ -45,11 +45,58 @@ class _BottomNavBarState extends State<BottomNavBar> {
     }
   }
 
+  PageRouteBuilder _createRoute(Widget page, {String transitionType = 'slide'}) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionDuration: const Duration(milliseconds: 300),
+      reverseTransitionDuration: const Duration(milliseconds: 300),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        switch (transitionType) {
+          case 'fade':
+            return FadeTransition(opacity: animation, child: child);
+            
+          case 'scale':
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+              ),
+              child: child,
+            );
+            
+          case 'slideUp':
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.0, 1.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              child: child,
+            );
+            
+          case 'slideLeft':
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(-1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              child: child,
+            );
+            
+          default: // 'slide' - slide from right
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              child: child,
+            );
+        }
+      },
+    );
+  }
+
   void _onItemTapped(int index) {
-      
-      print('Tap Item $index');
-      
-  
+    print('Tap Item $index');
+
     if (_selectedIndex != index) {
       setState(() {
         _selectedIndex = index;
@@ -57,43 +104,18 @@ class _BottomNavBarState extends State<BottomNavBar> {
       
       switch (index) {
       case 0:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const NewDashboardV3()),
-      //   ).then((_) {
-      // setState(() {
-      //   _selectedIndex = 0;
-      // });
-      // }
-      );
+        Navigator.pushReplacement(context, _createRoute(const NewDashboardV3(), transitionType: 'fade'));
         break;
         
       case 1:
       final newDashboardVM =context.read<NewDashboardVM>();
-        Navigator.push(
-           context,
-           MaterialPageRoute(
-            builder: 
-           (_) => 
-           AllPropertyScreen(locationByMonth: newDashboardVM.locationByMonth)),
-        );
+        Navigator.pushReplacement(context, _createRoute(AllPropertyScreen(), transitionType: 'fade'));
         break;
       case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const AllNewsletter()),
-
-      );
+        Navigator.pushReplacement(context, _createRoute(const AllNewsletter(), transitionType: 'fade'));
         break;
       case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => OwnerProfile_v3()),
-        ).then((_) {
-      setState(() {
-        _selectedIndex = 3;
-      });
-      });;
+        Navigator.pushReplacement(context, _createRoute(OwnerProfile_v3(), transitionType: 'fade'));
         break;
     }
     }
