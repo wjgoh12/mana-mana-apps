@@ -168,7 +168,7 @@ class NewDashboardV3 extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 2.height),
+                           //   SizedBox(height: 2.height),
                             ],
                           ),
                         ),
@@ -176,7 +176,7 @@ class NewDashboardV3 extends StatelessWidget {
                         // Overview section
                         Container(
                           width: 100.width,
-                          padding: EdgeInsets.all(7.width),
+                          padding: EdgeInsets.symmetric(horizontal:7.width),
                           color: Colors.white,
                           child: Column(
                             children: [
@@ -195,7 +195,7 @@ class NewDashboardV3 extends StatelessWidget {
                         // Properties section
                         Container(
                           width: 100.width,
-                          padding: EdgeInsets.all(7.width),
+                          padding: EdgeInsets.symmetric(horizontal: 7.width),
                           color: Colors.white,
                           child: Column(
                             children: [
@@ -225,12 +225,12 @@ class NewDashboardV3 extends StatelessWidget {
                           ),
                         ),
 
-                        SizedBox(height: 2.height),
+                     //   SizedBox(height: 2.height),
 
                         // Newsletter section
                         Container(
                           width: 100.width,
-                          padding: EdgeInsets.all(7.width),
+                          padding: EdgeInsets.symmetric(horizontal: 7.width),
                           color: Colors.white,
                           child: Column(
                             children: [
@@ -261,7 +261,7 @@ class NewDashboardV3 extends StatelessWidget {
                                 model: model,
                                 controller: newsletterScrollController,
                               ),
-                              const SizedBox(height: 30),
+                              const SizedBox(height: 60),
                             ],
                           ),
                         ),

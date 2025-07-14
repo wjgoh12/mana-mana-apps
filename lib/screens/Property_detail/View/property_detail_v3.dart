@@ -392,10 +392,9 @@ class AnnualStatementContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0XFF120051).withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-            spreadRadius: -1.0,
+            color: const Color(0XFF3E51FF).withOpacity(0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 0),
           ),
         ],
       ),
@@ -534,96 +533,97 @@ class PropertyOverviewContainer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             Padding(
-              padding: const EdgeInsets.only(top:10),
-              child: SizedBox(
-                width: 175,
-                height: 175,
-                child: Card(
-                  color: const Color(0XFFFFFFFF),
-                  elevation: 5,
-                  shadowColor: Colors.grey.withOpacity(0.8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side:const BorderSide(
-                      color: Colors.black,
-                      width: 0.3,
-                    ),
-                  ),
-                  
-                  child: Column(
-              
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top:30),
-                        child: Image.asset(
-                          'assets/images/PropertyOverview1.png',
-                          width: 67.fSize,
-                          height: 59.fSize,
-                        ),
-                      ),
-                      SizedBox(height: 5.fSize),
-                      const Text(
-                        'Total Assets',
-                        style:TextStyle(
-                          fontSize:12,
-                        ),
-                        ),
-                      Text('${locationByMonth.first['unitByMonth'] ?? ''}'),
-                      Text(
-                        DateFormat('MMMM yyyy').format(DateTime.now()),
-                        style: const TextStyle(
-                              fontSize: 10,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              padding: const EdgeInsets.only(top:50),
+              child: Container(
+                 //margin: const EdgeInsets.only(bottom: 20),
+                 width: 175,
+                 height: 175,
+                 decoration: BoxDecoration(
+                   color: const Color(0XFFFFFFFF),
+                   borderRadius: BorderRadius.circular(12),
+                   boxShadow: [
+                     BoxShadow(
+                       color: Color(0xFF3E51FF).withOpacity(0.15),
+                       blurRadius: 10,
+                       offset: const Offset(0, 0),
+                     ),
+                   ],
+                 ),
+                 child: Column(
+                            
+                   children: [
+                     Padding(
+                       padding: const EdgeInsets.only(top:30),
+                       child: Image.asset(
+                         'assets/images/PropertyOverview1.png',
+                         width: 67.fSize,
+                         height: 59.fSize,
+                       ),
+                     ),
+                     SizedBox(height: 5.fSize),
+                     const Text(
+                       'Total Assets',
+                       style:TextStyle(
+                         fontSize:12,
+                       ),
+                       ),
+                     Text('${locationByMonth.first['unitByMonth'] ?? ''}'),
+                     Text(
+                       DateFormat('MMMM yyyy').format(DateTime.now()),
+                       style: const TextStyle(
+                             fontSize: 10,
+                           ),
+                     ),
+                   ],
+                 ),
+               ),
             ),
             SizedBox(width: 17.fSize),
             Padding(
-              padding: const EdgeInsets.only(top:10),
-              child: SizedBox(
+              padding: const EdgeInsets.only(top:50),
+              child: Container(
                 width: 175,
                 height: 175,
-                child: Card(
-                  color: const Color(0XFFFFFFFF),
-                  elevation: 5,
-                  shadowColor: Colors.grey.withOpacity(0.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side:const BorderSide(
-                      color: Colors.black,
-                      width: 0.3,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top:45),
-                    child: Column(
-                      children: [
-                        SizedBox(height: 5.fSize),
-                        Image.asset(
-                          'assets/images/PropertyOverview2.png',
-                          width: 65.fSize,
-                          height: 38.fSize,
-                        ),
-                        SizedBox(height:5.fSize),
-                        const Text('Occupancy Rate',
-                        style:TextStyle(
-                            fontSize:12,
-                          ),),
-                        
-                        Text('${locationByMonth.first['totalAssets'] ?? ''}'),
-                        Text(DateFormat('MMMM yyyy').format(DateTime.now(),
-                        ),
-                        style: const TextStyle(
-                              fontSize: 10,
-                            )
-                        ),
-                      ],
-                    ),
+                decoration: BoxDecoration(
+                     color: const Color(0XFFFFFFFF),
+                     borderRadius: BorderRadius.circular(12),
+                     boxShadow: [
+                       BoxShadow(
+                         color: Color(0xFF3E51FF).withOpacity(0.15),
+                         blurRadius: 10,
+                         offset: const Offset(0, 0),
+                       ),
+                     ],
+                   ),
+                   
+                child: Padding(
+                  padding: const EdgeInsets.only(top:45),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 5.fSize),
+                      Image.asset(
+                        'assets/images/PropertyOverview2.png',
+                        width: 65.fSize,
+                        height: 38.fSize,
+                      ),
+                      SizedBox(height:5.fSize),
+                      const Text('Occupancy Rate',
+                      style:TextStyle(
+                          fontSize:12,
+                        ),),
+                      
+                      Text('${locationByMonth.first['totalAssets'] ?? ''}'),
+                      Text(DateFormat('MMMM yyyy').format(DateTime.now(),
+                      ),
+                      style: const TextStyle(
+                            fontSize: 10,
+                          )
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -631,140 +631,140 @@ class PropertyOverviewContainer extends StatelessWidget {
           ]),
           SizedBox(height: 10.fSize),
           Padding(
-            padding: const EdgeInsets.only(top: 30),
-            child: Row(children: [
-              SizedBox(
+            padding: const EdgeInsets.only(top: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+              Container(
                 width: 175,
                 height: 175,
-                child: Card(
-                  color: const Color(0XFFFFFFFF),
-                  elevation: 5,
-                  shadowColor: Colors.grey.withOpacity(0.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side:const BorderSide(
-                      color: Colors.black,
-                      width: 0.3,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top:30),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/images/PropertyOverview3.png',
-                          width: 59.fSize,
-                        height: 58.fSize,
-                        ),
-                        const Text('Monthly Profit',style:TextStyle(
-                          fontSize:12,
-                        ),),
-                        RichText(
-                                text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                      alignment: PlaceholderAlignment.baseline,
-                                      baseline: TextBaseline.alphabetic,
-                                      child: Transform.translate(
-                                        offset: const Offset(0, -4), // adjust this value
-                                        child: const Text(
-                                          'RM',
-                                          style: TextStyle(
-                                            fontSize: 12, // smaller size
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
+                 decoration: BoxDecoration(
+                     color: const Color(0XFFFFFFFF),
+                     borderRadius: BorderRadius.circular(10),
+                     boxShadow: [
+                       BoxShadow(
+                         color: Color(0xFF3E51FF).withOpacity(0.15),
+                         blurRadius: 10,
+                         offset: const Offset(0, 0),
+                       ),
+                     ],
+                   ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top:30),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'assets/images/PropertyOverview3.png',
+                        width: 59.fSize,
+                      height: 58.fSize,
+                      ),
+                      const Text('Monthly Profit',style:TextStyle(
+                        fontSize:12,
+                      ),),
+                      RichText(
+                              text: TextSpan(
+                                children: [
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.baseline,
+                                    baseline: TextBaseline.alphabetic,
+                                    child: Transform.translate(
+                                      offset: const Offset(0, -4), // adjust this value
+                                      child: const Text(
+                                        'RM',
+                                        style: TextStyle(
+                                          fontSize: 12, // smaller size
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
                                         ),
                                       ),
                                     ),
-                                    TextSpan(
-                                      text: '${model.locationByMonth.first['total'] ?? ''}',
-                                      style: const TextStyle(
-                                        fontSize: 16,               // Larger for the amount
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
+                                  ),
+                                  TextSpan(
+                                    text: '${model.locationByMonth.first['total'] ?? ''}',
+                                    style: const TextStyle(
+                                      fontSize: 16,               // Larger for the amount
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                        Text(
-                          DateFormat('MMMM yyyy').format(DateTime.now()),
-                          style: const TextStyle(
-                            fontSize: 10,
-                          ),
-                          ),
-                      ],
-                    ),
+                            ),
+                      Text(
+                        DateFormat('MMMM yyyy').format(DateTime.now()),
+                        style: const TextStyle(
+                          fontSize: 10,
+                        ),
+                        ),
+                    ],
                   ),
                 ),
               ),
               SizedBox(width: 17.fSize),
-              SizedBox(
+              Container(
                 width: 175,
                 height: 175,
-                child: Card(
-                  color: const Color(0XFFFFFFFF),
-                  elevation: 5,
-                  shadowColor: Colors.grey.withOpacity(0.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side:const BorderSide(
-                      color: Colors.black,
-                      width: 0.3,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top:30),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/images/PropertyOverview4.png',
-                        width: 57.fSize,
-                          height: 59.fSize,
-                          ),
-                        const Text('Total Net After POB',
-                        style:TextStyle(
-                          fontSize:12,
+                 decoration: BoxDecoration(
+                     color: const Color(0XFFFFFFFF),
+                     borderRadius: BorderRadius.circular(12),
+                     boxShadow: [
+                       BoxShadow(
+                         color: Color(0xFF3E51FF).withOpacity(0.15),
+                         blurRadius: 10,
+                         offset: const Offset(0, 0),
+                       ),
+                     ],
+                   ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top:30),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'assets/images/PropertyOverview4.png',
+                      width: 57.fSize,
+                        height: 59.fSize,
                         ),
-                        ),
-                        RichText(
-                                text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                      alignment: PlaceholderAlignment.baseline,
-                                      baseline: TextBaseline.alphabetic,
-                                      child: Transform.translate(
-                                        offset: const Offset(0, -4), // adjust this value
-                                        child: const Text(
-                                          'RM',
-                                          style: TextStyle(
-                                            fontSize: 12, // smaller size
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
+                      const Text('Total Net After POB',
+                      style:TextStyle(
+                        fontSize:12,
+                      ),
+                      ),
+                      RichText(
+                              text: TextSpan(
+                                children: [
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.baseline,
+                                    baseline: TextBaseline.alphabetic,
+                                    child: Transform.translate(
+                                      offset: const Offset(0, -4), // adjust this value
+                                      child: const Text(
+                                        'RM',
+                                        style: TextStyle(
+                                          fontSize: 12, // smaller size
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
                                         ),
                                       ),
                                     ),
-                                    TextSpan(
-                                      text: '${model.locationByMonth.first['total'] ?? ''}',
-                                      style: const TextStyle(
-                                        fontSize: 16,               // Larger for the amount
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
+                                  ),
+                                  TextSpan(
+                                    text: '${model.locationByMonth.first['total'] ?? ''}',
+                                    style: const TextStyle(
+                                      fontSize: 16,               // Larger for the amount
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                        Text(
-                          DateFormat('MMMM yyyy').format(DateTime.now()),
-                          style: const TextStyle(
-                            fontSize: 10,
-                          )
-                        ),
-                      ],
-                    ),
+                            ),
+                      Text(
+                        DateFormat('MMMM yyyy').format(DateTime.now()),
+                        style: const TextStyle(
+                          fontSize: 10,
+                        )
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -967,39 +967,35 @@ class UnitDetailsContainer extends StatelessWidget {
                           )
                         ]
                       ),
-                      child: Card(
-                         elevation: 0,
-                         color: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top:15),
-                          child: Column(
-                            children: [
-                              Image.asset(
-                                'assets/images/PropertyOverview2.png',
-                                width:39.fSize,
-                                height:22.fSize,
-                                ),
-                                const SizedBox(height: 15),
-                                const Text('Occupancy Rate',
-                        style:TextStyle(
-                            fontSize:10,
-                          ),),
-                        
-                        Text(
-                          '${model.locationByMonth.first['occupancy']?? ''}% Active',
-                          style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            )
-                        ),
-                        Text(DateFormat('MMMM yyyy').format(DateTime.now(),
-                        ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top:15),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/PropertyOverview2.png',
+                              width:39.fSize,
+                              height:22.fSize,
+                              ),
+                              const SizedBox(height: 15),
+                              const Text('Occupancy Rate',
+                      style:TextStyle(
+                          fontSize:10,
+                        ),),
+                      
+                      Text(
+                        '${model.locationByMonth.first['occupancy']?? ''}% Active',
                         style: const TextStyle(
-                              fontSize: 10,
-                            )
-                        ),
-                          ],
-                          ),
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          )
+                      ),
+                      Text(DateFormat('MMMM yyyy').format(DateTime.now(),
+                      ),
+                      style: const TextStyle(
+                            fontSize: 10,
+                          )
+                      ),
+                        ],
                         ),
                       ),
                     ),
@@ -1020,61 +1016,57 @@ class UnitDetailsContainer extends StatelessWidget {
                           )
                         ]
                       ),
-                      child: Card(
-                         elevation: 0,
-                         color: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top:15),
-                          child: Column(
-                            children: [
-                              Image.asset(
-                                'assets/images/PropertyOverview3.png',
-                                width:30.fSize,
-                                height:30.fSize,
-                                ),
-                                const SizedBox(height: 13),
-                                const Text('Monthly Profit',
-                        style:TextStyle(
-                            fontSize:10,
-                          ),),
-                        
-                        RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      WidgetSpan(
-                                        alignment: PlaceholderAlignment.baseline,
-                                        baseline: TextBaseline.alphabetic,
-                                        child: Transform.translate(
-                                          offset: const Offset(0, -4), // adjust this value
-                                          child: const Text(
-                                            'RM',
-                                            style: TextStyle(
-                                              fontSize: 10, // smaller size
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top:15),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/PropertyOverview3.png',
+                              width:30.fSize,
+                              height:30.fSize,
+                              ),
+                              const SizedBox(height: 13),
+                              const Text('Monthly Profit',
+                      style:TextStyle(
+                          fontSize:10,
+                        ),),
+                      
+                      RichText(
+                                text: TextSpan(
+                                  children: [
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: Transform.translate(
+                                        offset: const Offset(0, -4), // adjust this value
+                                        child: const Text(
+                                          'RM',
+                                          style: TextStyle(
+                                            fontSize: 10, // smaller size
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
                                           ),
                                         ),
                                       ),
-                                      TextSpan(
-                                        text: '${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
-                                        style: const TextStyle(
-                                          fontSize: 15,               // Larger for the amount
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
+                                    ),
+                                    TextSpan(
+                                      text: '${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+                                      style: const TextStyle(
+                                        fontSize: 15,               // Larger for the amount
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                        Text(DateFormat('MMMM yyyy').format(DateTime.now(),
-                        ),
-                        style: const TextStyle(
-                              fontSize: 10,
-                            )
-                        ),
-                          ],
-                          ),
+                              ),
+                      Text(DateFormat('MMMM yyyy').format(DateTime.now(),
+                      ),
+                      style: const TextStyle(
+                            fontSize: 10,
+                          )
+                      ),
+                        ],
                         ),
                       ),
                     ),
@@ -1095,61 +1087,57 @@ class UnitDetailsContainer extends StatelessWidget {
                           )
                         ]
                       ),
-                      child: Card(
-                         elevation: 0,
-                         color: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top:15),
-                          child: Column(
-                            children: [
-                              Image.asset(
-                                'assets/images/PropertyOverview4.png',
-                                width:30.fSize,
-                                height:30.fSize,
-                                ),
-                                const SizedBox(height: 15),
-                                const Text('Net After POB',
-                                style:TextStyle(
-                                    fontSize:9,
-                                  ),),
-                                
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      WidgetSpan(
-                                        alignment: PlaceholderAlignment.baseline,
-                                        baseline: TextBaseline.alphabetic,
-                                        child: Transform.translate(
-                                          offset: const Offset(0, -4), // adjust this value
-                                          child: const Text(
-                                            'RM',
-                                            style: TextStyle(
-                                              fontSize: 10, // smaller size
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top:15),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/PropertyOverview4.png',
+                              width:30.fSize,
+                              height:30.fSize,
+                              ),
+                              const SizedBox(height: 15),
+                              const Text('Net After POB',
+                              style:TextStyle(
+                                  fontSize:9,
+                                ),),
+                              
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: Transform.translate(
+                                        offset: const Offset(0, -4), // adjust this value
+                                        child: const Text(
+                                          'RM',
+                                          style: TextStyle(
+                                            fontSize: 10, // smaller size
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
                                           ),
                                         ),
                                       ),
-                                      TextSpan(
-                                        text: '${model.selectedUnitBlc.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
-                                        style: const TextStyle(
-                                          fontSize: 15,               // Larger for the amount
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
+                                    ),
+                                    TextSpan(
+                                      text: '${model.selectedUnitBlc.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+                                      style: const TextStyle(
+                                        fontSize: 15,               // Larger for the amount
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                Text(DateFormat('MMMM yyyy').format(DateTime.now(),
-                                ),
-                                style: const TextStyle(
-                                      fontSize: 10,
-                                    )
-                                ),
-                          ],
-                          ),
+                              ),
+                              Text(DateFormat('MMMM yyyy').format(DateTime.now(),
+                              ),
+                              style: const TextStyle(
+                                    fontSize: 10,
+                                  )
+                              ),
+                        ],
                         ),
                       ),
                     ),

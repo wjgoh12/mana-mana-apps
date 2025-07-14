@@ -153,10 +153,9 @@ class PropertyImageStack extends StatelessWidget {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 5,
-                offset: const Offset(0, 3),
+                color: const Color(0xFF3E51FF).withOpacity(0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 0),
               ),
             ],
           ),

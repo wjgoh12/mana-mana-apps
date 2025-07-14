@@ -15,6 +15,32 @@ String getTotalProfit() {
   final profit = model.overallProfit.toString();
   return profit;
 }
+
+String getOccupancyRate() {
+  try {
+    // Calculate total properties
+    final uniqueLocations = model.totalByMonth
+        .map((e) => e['slocation'])   
+        .toSet()                      
+        .toList();
+    final totalProperties = uniqueLocations.length;
+    
+    if (totalProperties == 0) return '0';
+    
+    // Calculate active properties (adjust this logic based on your data structure)
+    final activeProperties = model.totalByMonth
+        .where((e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE') // Adjust field name as needed
+        .map((e) => e['slocation'])
+        .toSet()
+        .length;
+    
+    final percentage = (activeProperties / totalProperties * 100).round();
+    return percentage.toString();
+  } catch (e) {
+    return '0';
+  }
+}
+
   @override
   Widget build(BuildContext context) {
 
@@ -40,11 +66,17 @@ final locationCount = uniqueLocations.length;
                 Card(
                   
                   margin: const EdgeInsets.only(bottom: 20),
-                  color: const Color(0xFF5092FF),
-                  child: SizedBox(
+                  child: Container(
                     width: 190.fSize,
                     height: 130.fSize,
-                   child: Column(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12), // Match card's border radius
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/overviewContainer1.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Column(
                     
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -129,7 +161,7 @@ final locationCount = uniqueLocations.length;
                          Stack(
                             children: [
                               Align(
-                                alignment: Alignment.centerLeft, // Vertically center, left-aligned
+                                alignment: Alignment.centerLeft,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
                                   child: CircleAvatar(
@@ -160,11 +192,15 @@ final locationCount = uniqueLocations.length;
                               ),
                             ),
                             //hard coded
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.only(left:8),
                               child: Text(
-                                '% Active',
-                                style:TextStyle(
+
+                                //calculate the occupancy rate
+                                //in a method
+                                //then call here
+                                '${getOccupancyRate()}% Active',
+                                style:const TextStyle(
                                   fontSize: 12,
                                   fontFamily: 'Open Sans',
                                   fontWeight: FontWeight.bold,
@@ -308,9 +344,16 @@ final locationCount = uniqueLocations.length;
                   Card(
                     margin: const EdgeInsets.only(bottom: 20),
                     color: const Color(0xFFDBC7FF),
-                    child: SizedBox(
+                    child: Container(
                       width: 190.fSize,
                       height: 130.fSize,
+                      decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12), // Match card's border radius
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/overviewContainer4.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                       child: SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.only(left:5),
@@ -382,7 +425,7 @@ class RevenueContainer extends StatelessWidget {
                         Column(
                           children: [
                             Transform.translate(
-                              offset: Offset(-2, -6), // Move up by 3.5 pixels
+                              offset: Offset(-2, -6),
                               child: CircleAvatar(
                                 radius: 20.fSize,
                                 backgroundColor: Colors.white,
@@ -423,16 +466,6 @@ class RevenueContainer extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        // Container(
-        //   width: 3.width,
-        //   height: 3.width,
-        //   alignment: Alignment.center,
-        //   child: Icon(
-        //     Icons.arrow_outward_rounded,
-        //     color: const Color(0xff3E51FF),
-        //     size: 3.width,
-        //   ),
-        // ),
       ],
     );
   }
@@ -464,11 +497,11 @@ class RevenueContainer extends StatelessWidget {
             alignment: PlaceholderAlignment.baseline,
             baseline: TextBaseline.alphabetic,
             child: Transform.translate(
-              offset: const Offset(0, -3),
+              offset: const Offset(0, -4),
                child: const Text(
                 'RM',
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                   ),
@@ -478,7 +511,7 @@ class RevenueContainer extends StatelessWidget {
        ]
         ),
         ),
-        SizedBox(width: 1.width),
+       // SizedBox(width: 1.width),
         FutureBuilder<dynamic>(
           future: overallRevenue ? model.overallBalance : model.overallProfit,
           builder: (context, snapshot) {
@@ -491,7 +524,7 @@ class RevenueContainer extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Open Sans',
                   fontWeight: FontWeight.bold,
-                  fontSize: 14.fSize,
+                  fontSize: 15.fSize,
                 ),
               );
             }
