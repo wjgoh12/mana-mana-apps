@@ -27,6 +27,7 @@ class _FinancialDetailsState extends State<FinancialDetails> {
         final isLoading = snapshot.connectionState != ConnectionState.done;
 
         return Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
@@ -42,6 +43,13 @@ class _FinancialDetailsState extends State<FinancialDetails> {
                 fontSize: 20,
               ),
             ),
+            bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey.shade300,
+            height: 1.0,
+          ),
+        ),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16),

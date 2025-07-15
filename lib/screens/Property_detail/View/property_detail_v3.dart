@@ -171,19 +171,22 @@ class PropertyDetail extends StatelessWidget {
                           ],
                     
                           onChanged: (String? newValue) {
-
-                           if (newValue != null) {
-                             if (newValue == 'Overview') {
-                                  model.updateSelectedView('Overview');
-                                   } else {
-                                      model.updateSelectedView(newValue);
-                                      final parts = newValue.split(' (');
-                                      final type = parts[0];
-                                      final unit = parts[1].replaceAll(')', '');
-                                      model.updateSelectedTypeUnit(type, unit);
-                                    }
-                                  }
-                                },
+  if (newValue != null) {
+    if (newValue == 'Overview') {
+      model.updateSelectedView('Overview');
+    } else {
+      final parts = newValue.split(' (');
+      if (parts.length == 2) {
+        final type = parts[0].trim();
+        final unit = parts[1].replaceAll(')', '').trim();
+        
+        // Update the view and unit data
+        model.updateSelectedView(newValue);
+        model.updateSelectedTypeUnit(type, unit);
+      }
+    }
+  }
+},
                                 hint: const Text('Select Unit'),
                                       value: model.selectedView == 'Overview'
                                           ? 'Overview'
@@ -577,7 +580,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                          fontSize:12,
                        ),
                        ),
-                     Text('${model.unitByMonth.where((unit) => 
+                     Text('${model.isLoading ? 0 : model.unitByMonth.where((unit) =>
                         unit.slocation?.contains(locationByMonth.first['location']) == true
                       ).length-1}'),
 

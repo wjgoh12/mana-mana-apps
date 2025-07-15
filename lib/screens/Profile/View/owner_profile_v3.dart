@@ -52,7 +52,13 @@ class OwnerProfile_v3 extends StatelessWidget {
                   ]
                 ),
                 centerTitle: false,
-                
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(1.0),
+                  child: Container(
+                    color: Colors.grey.shade300,
+                    height: 1.0,
+                  ),
+                ),
               ),
               body: Padding(
                 padding: const EdgeInsets.only(bottom: 100),
@@ -140,8 +146,26 @@ class OwnerProfile_v3 extends StatelessWidget {
                           //this widget responds to touch actions
                           onTap: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => PersonalInformation()),
-                            );
+                              PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => PersonalInformation(),
+                              transitionDuration: const Duration(milliseconds: 300),
+                              reverseTransitionDuration: const Duration(milliseconds: 300),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: ScaleTransition(
+                                    scale: Tween<double>(
+                                      begin: 0.95,
+                                      end: 1.0,
+                                    ).animate(CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeInOut,
+                                    )),
+                                    child: child,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
