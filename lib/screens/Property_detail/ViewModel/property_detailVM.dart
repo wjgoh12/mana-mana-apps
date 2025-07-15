@@ -501,4 +501,16 @@ class PropertyDetailVM extends ChangeNotifier {
     fetchData(locationByMonth);
     notifyListeners();
   }
+  // In PropertyDetailVM
+Future<void> downloadSpecificPdfStatement(BuildContext context, dynamic item) async {
+  // Set the specific item data before downloading
+  selectedYearValue = item.iyear.toString();
+  selectedMonthValue = item.imonth.toString();
+  
+  // Call your existing download method
+  await downloadPdfStatement(context);
 }
+
+}
+
+

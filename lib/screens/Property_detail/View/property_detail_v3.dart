@@ -1199,36 +1199,46 @@ class EStatementContainer extends StatelessWidget {
   }
 }
 
-    return SingleChildScrollView(
-      child: ListView.builder(
+    return Container(
+      decoration:const BoxDecoration(
+        color: Colors.white,
+      ),
+      child: SingleChildScrollView(
+        
+        child: ListView.builder(
         itemCount: items.length,
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(), 
+        physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, i) {
-          final item = items[i];
-          return Row(
-            children: [
-              InkWell(
-                hoverColor: Colors.grey.shade50,
-                
-                onTap: () => model.downloadPdfStatement(context),
-
-                child: SizedBox(
-                  height: 50.fSize,
-                  
-                  child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: [
-                        Text('${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
-                            ],
-                          ),
-                        ),
+      final item = items[i]; 
+      
+      if (model.selectedView != 'Overview' && 
+          item.sunitno != model.selectedUnitNo) {
+        return const SizedBox.shrink(); // Skip this item
+      }
+      
+      return Row(
+        children: [
+          InkWell(
+            hoverColor: Colors.grey.shade50,
+            onTap: () => model.downloadPdfStatement(context),
+            child: SizedBox(
+              height: 50.fSize,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
+                    Text('${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
+                  ],
                 ),
-              )
-            ],
-          );
+              ),
+            ),
+          )
+        ],
+      );
         },
+      ),
+      
       ),
     );
 
