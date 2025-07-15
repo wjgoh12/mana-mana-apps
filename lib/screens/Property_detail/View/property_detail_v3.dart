@@ -20,6 +20,7 @@ class PropertyDetail extends StatelessWidget {
 
     //final ScrollController scrollController = ScrollController();
     bool isCollapsed = false;
+    bool showStickyDropdown = false;
 
     return ListenableBuilder(
       listenable: model,
@@ -30,7 +31,9 @@ class PropertyDetail extends StatelessWidget {
      NotificationListener<ScrollNotification>(
       onNotification: (scrollInfo) {
       final collapsedHeight = 290.fSize - kToolbarHeight;
+      final dropdownStickyHeight = 200.fSize;
       isCollapsed = scrollInfo.metrics.pixels > collapsedHeight;
+      showStickyDropdown = scrollInfo.metrics.pixels > dropdownStickyHeight;
       return false;
     },
       child: CustomScrollView(
@@ -172,6 +175,9 @@ class PropertyDetail extends StatelessWidget {
                     
                           onChanged: (String? newValue) {
                         if (newValue != null) {
+                          setState(){
+                            model.selectedView = newValue;
+                          }
                           if (newValue == 'Overview') {
                             model.updateSelectedView('Overview');
                           } else {
@@ -183,6 +189,7 @@ class PropertyDetail extends StatelessWidget {
                               // Update the view and unit data
                               model.updateSelectedView('UnitDetails');
                               model.updateSelectedTypeUnit(type, unit);
+                              
                             }
                           }
                         }
@@ -213,8 +220,14 @@ class PropertyDetail extends StatelessWidget {
     ),
 if (isCollapsed)
    Container(
+    
+     decoration: BoxDecoration(
+      color:Colors.white,
+         border: Border(bottom: BorderSide(color:Colors.grey.shade300, width: 1)),
+         
+        ),
       height: 85.fSize,
-      color: Colors.white,
+      //color: Colors.white,
       alignment: Alignment.centerLeft,
       child: SafeArea(
         bottom: false, 
@@ -232,8 +245,9 @@ if (isCollapsed)
           ],
         ),
       
+      ),
+    
     ),
-  ),
 
     ]
   ),
@@ -963,7 +977,7 @@ class UnitDetailsContainer extends StatelessWidget {
             child:Padding(
               padding: const EdgeInsets.symmetric(horizontal: 3),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
                     width: 125,
@@ -976,9 +990,9 @@ class UnitDetailsContainer extends StatelessWidget {
                         borderRadius: const BorderRadius.all(Radius.circular(10)),
                         boxShadow:[
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
-                        blurRadius: 3,
-                        offset: const Offset(0, 3),
+                            color: Color(0xFF3E51FF).withOpacity(0.15),
+                        blurRadius: 10,
+                        offset: const Offset(0, 0),
                           )
                         ]
                       ),
@@ -1015,6 +1029,7 @@ class UnitDetailsContainer extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(width: 10),
                   
                    SizedBox(
                     width: 125,
@@ -1027,7 +1042,7 @@ class UnitDetailsContainer extends StatelessWidget {
                         boxShadow:[
                           BoxShadow(
                             color: Color(0xFF3E51FF).withOpacity(0.15),
-                        blurRadius: 3,
+                        blurRadius: 10,
                         offset: const Offset(0, 0),
                           )
                         ]
@@ -1087,6 +1102,7 @@ class UnitDetailsContainer extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(width: 10),
                
                  SizedBox(
                     width: 125,
@@ -1100,7 +1116,7 @@ class UnitDetailsContainer extends StatelessWidget {
                           BoxShadow(
                             color: Color(0xFF3E51FF).withOpacity(0.15),
                         blurRadius: 10,
-                        offset: const Offset(0, 0),
+                        offset: const Offset(0, -3),
                           )
                         ]
                       ),
@@ -1211,7 +1227,6 @@ class EStatementContainer extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, i) {
       final item = items[i]; 
-      
       if (model.selectedView != 'Overview' && 
           item.sunitno != model.selectedUnitNo) {
         return const SizedBox.shrink(); // Skip this item
@@ -1242,6 +1257,129 @@ class EStatementContainer extends StatelessWidget {
       ),
     );
 
+  }
+}
+
+class StickyDropdownBar extends StatelessWidget {
+  final PropertyDetailVM model;
+  final List<Map<String, dynamic>> locationByMonth;
+  
+  const StickyDropdownBar({
+    Key? key,
+    required this.model,
+    required this.locationByMonth,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 60.fSize,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              // Left side - Property name
+              Expanded(
+                flex: 1,
+                child: Text(
+                  locationByMonth.first['location'] ?? '',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              
+              // Right side - Dropdown
+              Expanded(
+                flex: 2,
+                child: Container(
+                  height: 40.fSize,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey, width: 0.5),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    underline: const SizedBox(),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      maxHeight: 200,
+                    ),
+                    iconStyleData: const IconStyleData(
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      iconSize: 20,
+                    ),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: 'Overview',
+                        child: Text('Overview'),
+                      ),
+                      ...model.typeItems.map<DropdownMenuItem<String>>(
+                        (String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        },
+                      ).toList(),
+                    ],
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        if (newValue == 'Overview') {
+                          model.updateSelectedView('Overview');
+                        } else {
+                          final parts = newValue.split(' (');
+                          if (parts.length == 2) {
+                            final type = parts[0].trim();
+                            final unit = parts[1].replaceAll(')', '').trim();
+                            
+                            model.updateSelectedView('UnitDetails');
+                            model.updateSelectedTypeUnit(type, unit);
+                          }
+                        }
+                      }
+                    },
+                    hint: const Text('Select Unit'),
+                    value: model.selectedView == 'Overview'
+                        ? 'Overview'
+                        : (model.selectedType != null && model.selectedUnitNo != null)
+                        ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
+                        : null,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

@@ -44,13 +44,13 @@ class NewDashboardV3 extends StatelessWidget {
               body: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) => [
                   SliverAppBar(
-                    bottom: PreferredSize(
-                      preferredSize: const Size.fromHeight(1.0),
-                      child: Container(
-                        color: Colors.grey.shade300,
-                        height: 1.0,
-                      ),
-                    ),
+                    // bottom: PreferredSize(
+                    //   preferredSize: const Size.fromHeight(1.0),
+                    //   child: Container(
+                    //     color: Colors.grey.shade300,
+                    //     height: 1.0,
+                    //   ),
+                    // ),
                     pinned: true,
                     floating: false,
                     expandedHeight: _getExpandedHeight(context),
@@ -92,7 +92,6 @@ class NewDashboardV3 extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 0),
                     child: Column(
                       children: [
-                        // Greeting and search bar (always visible)
                         Container(
                           width: 100.width,
                           padding: EdgeInsets.all(7.width),

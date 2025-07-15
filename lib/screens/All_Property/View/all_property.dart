@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/All_Property/property_dropdown.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
@@ -28,34 +29,50 @@ class AllPropertyScreen extends StatelessWidget {
             ),
             body: model.isLoading 
               ? const Center(child: CircularProgressIndicator()) // Show loading
-              : ListView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(vertical: 5),
+              : Column(
                   children: [
-                    GestureDetector(
-                      child: SizedBox(
-                        child: Column(
-                          children: model.locationByMonth
-                              .map((property) => property['location'])
-                              .toSet()
-                              .map((uniqueLocation) {
-                            final property = model.locationByMonth
-                                .firstWhere((p) => p['location'] == uniqueLocation);
-                            return SizedBox(
+                    // Add PropertyTitleDropdown here
+                    const Padding(
+                      padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                      child: Row(
+                        children: [
+                          PropertyTitleDropdown(),
+                        ],
+                      ),
+                    ),
+                    // Main content
+                    Expanded(
+                      child: ListView(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        children: [
+                          GestureDetector(
+                            child: SizedBox(
                               child: Column(
-                                children: [
-                                  GestureDetector(
-                                    child: _buildPropertyStack(
-                                      locationByMonth: [property],
-                                      context: context,
+                                children: model.locationByMonth
+                                    .map((property) => property['location'])
+                                    .toSet()
+                                    .map((uniqueLocation) {
+                                  final property = model.locationByMonth
+                                      .firstWhere((p) => p['location'] == uniqueLocation);
+                                  return SizedBox(
+                                    child: Column(
+                                      children: [
+                                        GestureDetector(
+                                          child: _buildPropertyStack(
+                                            locationByMonth: [property],
+                                            context: context,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                      ],
                                     ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                ],
+                                  );
+                                }).toList(),
                               ),
-                            );
-                          }).toList(),
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
