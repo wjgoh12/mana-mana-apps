@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter_read_details.dart';
@@ -13,7 +14,7 @@ import 'package:like_button/like_button.dart';
 
 class NewsletterListV3 extends StatelessWidget {
   
-  final NewDashboardVM model;
+  final NewDashboardVM_v3 model;
   final ScrollController controller;
   const NewsletterListV3({required this.model,required this.controller, Key? key}) : super(key: key);
 

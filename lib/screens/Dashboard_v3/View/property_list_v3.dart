@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
@@ -8,7 +9,7 @@ import 'package:responsive_builder/responsive_builder.dart';
 
 class PropertyListV3 extends StatelessWidget {
   final ScrollController controller;
-  final NewDashboardVM model;
+  final NewDashboardVM_v3 model;
   const PropertyListV3({required this.model,required this.controller, Key? key}) : super(key: key);
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/revenue_dashboard.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/statistic_table.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/View/user_info.dart';
@@ -23,11 +24,11 @@ class NewDashboardV3 extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) {
-        final model = NewDashboardVM();
+        final model = NewDashboardVM_v3();
         model.fetchData();
         return model;
       },
-      child: Consumer<NewDashboardVM>(
+      child: Consumer<NewDashboardVM_v3>(
         builder: (context, model, child) {
           final ScrollController propertyScrollController = ScrollController();
           final ScrollController newsletterScrollController = ScrollController();
@@ -44,13 +45,7 @@ class NewDashboardV3 extends StatelessWidget {
               body: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) => [
                   SliverAppBar(
-                    // bottom: PreferredSize(
-                    //   preferredSize: const Size.fromHeight(1.0),
-                    //   child: Container(
-                    //     color: Colors.grey.shade300,
-                    //     height: 1.0,
-                    //   ),
-                    // ),
+                    
                     pinned: true,
                     floating: false,
                     expandedHeight: _getExpandedHeight(context),
