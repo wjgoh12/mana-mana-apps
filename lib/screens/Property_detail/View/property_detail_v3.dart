@@ -171,22 +171,22 @@ class PropertyDetail extends StatelessWidget {
                           ],
                     
                           onChanged: (String? newValue) {
-  if (newValue != null) {
-    if (newValue == 'Overview') {
-      model.updateSelectedView('Overview');
-    } else {
-      final parts = newValue.split(' (');
-      if (parts.length == 2) {
-        final type = parts[0].trim();
-        final unit = parts[1].replaceAll(')', '').trim();
-        
-        // Update the view and unit data
-        model.updateSelectedView(newValue);
-        model.updateSelectedTypeUnit(type, unit);
-      }
-    }
-  }
-},
+                        if (newValue != null) {
+                          if (newValue == 'Overview') {
+                            model.updateSelectedView('Overview');
+                          } else {
+                            final parts = newValue.split(' (');
+                            if (parts.length == 2) {
+                              final type = parts[0].trim();
+                              final unit = parts[1].replaceAll(')', '').trim();
+                              
+                              // Update the view and unit data
+                              model.updateSelectedView('UnitDetails');
+                              model.updateSelectedTypeUnit(type, unit);
+                            }
+                          }
+                        }
+                      },
                                 hint: const Text('Select Unit'),
                                       value: model.selectedView == 'Overview'
                                           ? 'Overview'

@@ -51,15 +51,10 @@ class PropertyDetailVM extends ChangeNotifier {
     _users = await userRepository.getUsers();
     property = locationByMonth[0]['location'];
     
-    // Don't set selectedView here if it's already set
-    // Remove this problematic block:
-    /*
-    if (selectedView == null || selectedView!.isEmpty) {
-      selectedView = unitByMonth.first.stype.toString();
-      selectedType = unitByMonth.first.stype.toString();
-      selectedUnitNo = unitByMonth.first.sunitno;
+  
+    if (selectedView.isEmpty) {
+      selectedView = 'Overview';
     }
-    */
     
     notifyListeners();
 
@@ -296,12 +291,6 @@ class PropertyDetailVM extends ChangeNotifier {
       monthItems = ['-'];
     }
     selectedAnnualYearValue = selectedYearValue;
-    // Only set initial selectedView if it's 'Overview' or empty
-    if (selectedView == 'Overview' || selectedView == null || selectedView!.isEmpty) {
-      if (selectedType != null && selectedUnitNo != null) {
-        selectedView = '$selectedType ($selectedUnitNo)';
-      }
-    }
     isLoading = false;
     notifyListeners();
   }
@@ -313,7 +302,7 @@ class PropertyDetailVM extends ChangeNotifier {
     
     selectedType = newSelectedType;
     selectedUnitNo = newSelectedUnitNo;
-    selectedView = '$selectedType($selectedUnitNo)'; // Update view to show unit details
+    // Don't change selectedView here - it should remain as 'UnitDetails'
     
     // Update year and month items for the selected unit
     yearItems = unitByMonth
@@ -434,8 +423,8 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSelectedView(String newView) {
-    selectedView = newView;
+  void updateSelectedView(String view) {
+    selectedView = view;
     notifyListeners();
   }
 
