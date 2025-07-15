@@ -1,58 +1,58 @@
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class OccupancyRateBox extends StatefulWidget{
-
-
-  
-  const OccupancyRateBox({super.key});
 
   final labelColor1 = const Color(0xFF8C71E7);
-  final labelColor2 = const Color(0xFFDDD7FF);
+  final barBackgroundColor = const Color(0xFFDDD7FF);
+class OccupancyRateBox extends StatefulWidget{
+  final model=NewDashboardVM_v3();
+  
+  OccupancyRateBox({super.key});
+
+
+  BarChartGroupData generateBarGroup(
+    int x,
+    Color color,
+    double value,
+  ){
+    return BarChartGroupData(
+      x: x,
+      barsSpace: 0.7.width,
+      barRods: [
+        BarChartRodData(
+          toY: value,
+          color: labelColor1,
+          width: 3.width,
+        ),
+        
+      ],
+      showingTooltipIndicators: touchedGroupIndex == x ? [0, 1] : [],
+    );
+    
+  }
+    int touchedGroupIndex = -1;
 
   @override
   State<OccupancyRateBox> createState() => _OccupancyRateBoxState();
 
-  BarChartGroupData generateBarGroup(
-    int x, 
-    LinearGradient color, 
-    double value, 
-    double shadowValue,) {
-      return BarChartGroupData(
-        x: x,
-        barsSpace: 0.7,
-        barRods: [
-          BarChartRodData(
-            toY: value,
-            gradient: color,
-            color:labelColor1,
-            width: 10,
-            borderRadius: BorderRadius.circular(5),
-            borderSide: const BorderSide(
-              color: Colors.transparent,
-              width: 1,
-            ),
-          ),
-          BarChartRodData(
-            toY: shadowValue,
-            gradient: color,
-            width: 10,
-            borderRadius: BorderRadius.circular(5),
-            borderSide: const BorderSide(
-              color: Colors.transparent,
-              width: 1,
-            ),
-          ),
-        ],
-      );
-    } 
+
+
 }
 
 class _OccupancyRateBoxState extends State<OccupancyRateBox> {
+  
   @override
   Widget build(BuildContext context) {
+
+    final dataList=[
+      ...List.generate(6,
+      (index) => _BarData(labelColor1,60, 100))
+    ];
+
     return Container(
       alignment: Alignment.topLeft,
       width: 390,
@@ -68,12 +68,13 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
           ),
         ],
       ),
-
       //title & dropdown 
       child:const Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
             Padding(
-              padding: EdgeInsets.only(left:10, top:14),
+              padding: EdgeInsets.only(left:10, top:5),
               child: Text(
                 'Occupancy Rate',
                 style:TextStyle(
@@ -81,28 +82,57 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
                   fontWeight: FontWeight.bold,
                 )
                 ),
-
-                //dropdown
-
+            ),           
+            //dropdown
+               OccupancyPeriodDropdown(),
                 
-            ),
         ],
       ),
-
       
-
       
     );
   }
 
+  
+
 }
 
-class _OccupancyData {
-  const _OccupancyData(this.color, this.value, this.maxValue);
-  final LinearGradient color;
+
+class OccupancyPeriodDropdown extends StatefulWidget {
+  const OccupancyPeriodDropdown({super.key});
+
+  @override
+  State<OccupancyPeriodDropdown> createState() => _OccupancyPeriodDropdownState();
+
+
+
+  Widget build(BuildContext context) {
+    return Container(
+      child: DropdownButton2<String>(
+        items: const [
+          const DropdownMenuItem<String>(
+            value:'Monthly',
+            child:Text('Monthly'),
+          )
+        ],
+      )
+    );
+  }
+}
+
+
+class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+
+    );
+}
+}
+
+class _BarData {
+  const _BarData(this.color, this.value, this.maxValue);
+  final Color color;
   final double value;
   final double maxValue;
 }
-
-
-class 

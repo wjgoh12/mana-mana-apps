@@ -4,6 +4,7 @@ import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/All_Property/View/occupancy_rate_box.dart';
 import 'package:mana_mana_app/screens/All_Property/property_dropdown.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
@@ -19,7 +20,7 @@ class PropertySummaryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NewDashboardVM();
+    final model = NewDashboardVM_v3();
     final model2 = PropertyDetailVM();
     model.fetchData();
     model2.fetchData(model.locationByMonth);
@@ -57,10 +58,10 @@ class PropertySummaryScreen extends StatelessWidget {
                 const SizedBox(height: 16), // spacing between dropdown and card
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: OverviewCard(model: model),
+                  child: OverviewCard(model:model),
                 ),
                 SizedBox(height:10.fSize),
-                const OccupancyRateBox(),
+                OccupancyRateBox(),
 
                 Row(children: [
                   Column(

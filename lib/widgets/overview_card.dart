@@ -8,7 +8,7 @@ import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.
 import 'package:mana_mana_app/screens/Dashboard_v3/View/statistic_table_v3.dart';
 
 class OverviewCard extends StatelessWidget {
-  final NewDashboardVM model;
+  final NewDashboardVM_v3 model;
   const OverviewCard({required this.model, super.key});
 
 String getTotalProfit() {
@@ -385,7 +385,7 @@ class RevenueContainer extends StatelessWidget {
   final String title;
   final IconData icon;
   final bool overallRevenue;
-  final NewDashboardVM model;
+  final NewDashboardVM_v3 model;
   const RevenueContainer({
     Key? key,
     required this.title,

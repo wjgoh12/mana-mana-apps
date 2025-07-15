@@ -29,7 +29,7 @@ class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
     } else if (selectedValue == 'Property List') {
       return 'Property List';
     } else {
-      return 'Select Page';
+      return 'Select page';
     }
   }
   @override
