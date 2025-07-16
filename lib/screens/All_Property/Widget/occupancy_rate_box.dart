@@ -69,7 +69,7 @@
             ),
           ],
         ),
-        child: Column(
+        child: const Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

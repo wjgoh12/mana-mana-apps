@@ -23,7 +23,7 @@ class _RecentActivityState extends State<RecentActivity> {
     return Container(
       alignment: Alignment.topLeft,
       width: 390,
-      height:600,
+      height:500,
       child: Padding(
                   padding: const EdgeInsets.only(left:10, top:15),
                   child: Column(
@@ -38,7 +38,19 @@ class _RecentActivityState extends State<RecentActivity> {
                       //recent activity record list
                       Expanded(
                         child: ListView(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: false,
                           children: [
+                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
                             RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
                             RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
                           ],
@@ -59,9 +71,15 @@ class RecentActivityRecord extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return ButtonBar(
+    return InkWell(
+      focusColor: Colors.transparent,
+      
+      onTap:(){
+        Navigator.pushNamed(context, '../Property_detail/property_detail_v3.dart');
+      },
 
-      children: [ Container(
+      child: 
+        Container(
         width: 390.fSize,
         height: 60.fSize,
         margin: EdgeInsets.all(10),
@@ -99,7 +117,7 @@ class RecentActivityRecord extends StatelessWidget {
           ),
       ),
       ),
-      ]
+      
     );
   } 
 }
