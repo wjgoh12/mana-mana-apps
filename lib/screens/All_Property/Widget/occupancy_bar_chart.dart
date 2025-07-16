@@ -1,77 +1,403 @@
-
 import 'package:fl_chart/fl_chart.dart';
+
+//import 'package:fl_chart_app/presentation/resources/app_resources.dart';
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/All_Property/resources/app_colors.dart';
 
 class OccupancyBarChart extends StatelessWidget {
-  final List<OccupancyData> data;
+  const OccupancyBarChart({required this.isShowingMainData});
 
-  const OccupancyBarChart({required this.data, Key? key}) : super(key: key);
-
-  BarChartGroupData makeGroup(int x, OccupancyData d) {
-  return BarChartGroupData(
-    x: x.toInt(),
-    barsSpace: 0,
-    barRods: [
-      // Full 100% background
-      BarChartRodData(toY: 100.0, color: Color(0xFFDDD7FF), width: 20),
-      // Actual occupancy
-      BarChartRodData(toY: d.occupancyRate.toDouble(), color: Color(0xFF8C71E7), width: 20),
-    ],
-  );
-}
+  final bool isShowingMainData;
 
   @override
   Widget build(BuildContext context) {
-    final groups = data.asMap().entries.map((e) => makeGroup(e.key, e.value)).toList();
+    return LineChart(
+      isShowingMainData ? sampleData1 : sampleData2,
+      duration: const Duration(milliseconds: 250),
+    );
+  }
 
-    return SizedBox(
-      height: 190,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SizedBox(
-          width: data.length * 40.0,
-          child: BarChart(
-                  BarChartData(
-                    minY: 0,
-                    maxY: 100,
-                    barGroups: groups,
-                    alignment: BarChartAlignment.spaceBetween,
-                    gridData: FlGridData(show: false),
-                    borderData: FlBorderData(show: false),
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true, 
-                          reservedSize: 28,
-                          getTitlesWidget: (value, meta) {
-                            final index = value.toInt();
-                            return SideTitleWidget(
-                              axisSide: meta.axisSide,
-                              child: Text(data[index].month),
-                            );
-                          },
-                        ),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: true, interval: 20),
-                      ),
-                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    ),
-                  ),
+  LineChartData get sampleData1 => LineChartData(
+        lineTouchData: lineTouchData1,
+        gridData: gridData,
+        titlesData: titlesData1,
+        borderData: borderData,
+        lineBarsData: lineBarsData1,
+        minX: 0,
+        maxX: 14,
+        maxY: 6,
+        minY: 0,
+      );
+
+  LineChartData get sampleData2 => LineChartData(
+        lineTouchData: lineTouchData2,
+        gridData: gridData,
+        titlesData: titlesData2,
+        borderData: borderData,
+        lineBarsData: lineBarsData2,
+        minX: 0,
+        maxX: 14,
+        maxY: 6,
+        minY: 0,
+      );
+
+  LineTouchData get lineTouchData1 => LineTouchData(
+        handleBuiltInTouches: true,
+        touchTooltipData: LineTouchTooltipData(
+          getTooltipColor: (touchedSpot) => Colors.blueGrey.withOpacity(0.8),
+          // Add these properties for better tooltip display
+          //tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+          tooltipRoundedRadius: 8,
+          tooltipPadding: const EdgeInsets.all(8),
+          getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
+            return touchedBarSpots.map((barSpot) {
+              final flSpot = barSpot.spotIndex;
+              String month = '';
+              switch (flSpot.toInt()) {
+                case 2:
+                  month = 'SEPT';
+                  break;
+                case 7:
+                  month = 'OCT';
+                  break;
+                case 12:
+                  month = 'DEC';
+                  break;
+                default:
+                  month = 'Month ${flSpot.toInt()}';
+              }
+              return LineTooltipItem(
+                '$month\n${barSpot.y.toStringAsFixed(1)}%',
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
-
+              );
+            }).toList();
+          },
         ),
+      );
+
+  FlTitlesData get titlesData1 => FlTitlesData(
+        bottomTitles: AxisTitles(
+          sideTitles: bottomTitles,
+        ),
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        leftTitles: AxisTitles(
+          sideTitles: leftTitles(),
+        ),
+      );
+
+  List<LineChartBarData> get lineBarsData1 => [
+        lineChartBarData1_1,
+        // lineChartBarData1_2,
+        // lineChartBarData1_3,
+      ];
+
+  LineTouchData get lineTouchData2 => const LineTouchData(
+        enabled: false,
+      );
+
+  FlTitlesData get titlesData2 => FlTitlesData(
+        bottomTitles: AxisTitles(
+          sideTitles: bottomTitles,
+        ),
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        leftTitles: AxisTitles(
+          sideTitles: leftTitles(),
+        ),
+      );
+
+  List<LineChartBarData> get lineBarsData2 => [
+        lineChartBarData2_1,
+        lineChartBarData2_2,
+        lineChartBarData2_3,
+      ];
+
+  Widget leftTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
+    );
+    String text;
+    switch (value.toInt()) {
+      case 1:
+        text = '0';
+        break;
+      case 2:
+        text = '20';
+        break;
+      case 3:
+        text = '40';
+        break;
+      case 4:
+        text = '60';
+        break;
+      case 5:
+        text = '80';
+        break;
+        case 6:
+        text = '100';
+        break;
+      default:
+        return Container();
+    }
+
+    return SideTitleWidget(
+      axisSide: AxisSide.left,
+      //meta: meta,
+      child: Text(
+        text,
+        style: style,
+        textAlign: TextAlign.center,
       ),
     );
   }
+
+  SideTitles leftTitles() => SideTitles(
+        getTitlesWidget: leftTitleWidgets,
+        showTitles: true,
+        interval: 1,
+        reservedSize: 40,
+      );
+
+  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
+    );
+    Widget text;
+    switch (value.toInt()) {
+      case 2:
+        text = const Text('SEPT', style: style);
+        break;
+      case 7:
+        text = const Text('OCT', style: style);
+        break;
+      case 12:
+        text = const Text('DEC', style: style);
+        break;
+      default:
+        text = const Text('');
+        break;
+    }
+
+    return SideTitleWidget(
+      axisSide: AxisSide.bottom,
+      //meta: meta,
+      space: 10,
+      child: text,
+    );
+  }
+
+  SideTitles get bottomTitles => SideTitles(
+        showTitles: true,
+        reservedSize: 30,
+        interval: 1,
+        getTitlesWidget: bottomTitleWidgets,
+      );
+
+  FlGridData get gridData => const FlGridData(show: false);
+
+  FlBorderData get borderData => FlBorderData(
+        show: true,
+        border: Border(
+          bottom: BorderSide(
+              color: AppColors.primary.withOpacity(0.2), width: 4),
+          left: const BorderSide(color: Colors.transparent),
+          right: const BorderSide(color: Colors.transparent),
+          top: const BorderSide(color: Colors.transparent),
+        ),
+      );
+
+  LineChartBarData get lineChartBarData1_1 => LineChartBarData(
+        isCurved: true,
+        color: Color(0XFF8C71E7),
+        barWidth: 8,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: false),
+        belowBarData: BarAreaData(show: false),
+        spots: const [
+          FlSpot(1, 1),
+          FlSpot(3, 1.5),
+          // FlSpot(5, 1.4),
+          FlSpot(7, 3.4),
+          FlSpot(10, 2),
+          // FlSpot(12, 2.2),
+          FlSpot(13, 1.8),
+        ],
+      );
+
+  // LineChartBarData get lineChartBarData1_2 => LineChartBarData(
+  //       isCurved: true,
+  //       color: AppColors.contentColorPink,
+  //       barWidth: 8,
+  //       isStrokeCapRound: true,
+  //       dotData: const FlDotData(show: false),
+  //       belowBarData: BarAreaData(
+  //         show: false,
+  //         color: AppColors.contentColorPink.withOpacity(0),
+  //       ),
+  //       spots: const [
+  //         FlSpot(1, 1),
+  //         FlSpot(3, 2.8),
+  //         FlSpot(7, 1.2),
+  //         FlSpot(10, 2.8),
+  //         FlSpot(12, 2.6),
+  //         FlSpot(13, 3.9),
+  //       ],
+  //     );
+
+  // LineChartBarData get lineChartBarData1_3 => LineChartBarData(
+  //       isCurved: true,
+  //       color: AppColors.contentColorCyan,
+  //       barWidth: 8,
+  //       isStrokeCapRound: true,
+  //       dotData: const FlDotData(show: false),
+  //       belowBarData: BarAreaData(show: false),
+  //       spots: const [
+  //         FlSpot(1, 2.8),
+  //         FlSpot(3, 1.9),
+  //         FlSpot(6, 3),
+  //         FlSpot(10, 1.3),
+  //         FlSpot(13, 2.5),
+  //       ],
+  //     );
+
+  LineChartBarData get lineChartBarData2_1 => LineChartBarData(
+        isCurved: true,
+        curveSmoothness: 0,
+        color: Color(0xFF8C71E7).withOpacity(0.5),
+        barWidth: 4,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: true),
+        belowBarData: BarAreaData(show: false),
+        spots: const [
+          FlSpot(1, 1),
+          FlSpot(3, 4),
+          FlSpot(5, 1.8),
+          FlSpot(7, 5),
+          FlSpot(10, 2),
+          FlSpot(12, 2.2),
+          FlSpot(13, 1.8),
+        ],
+      );
+
+  LineChartBarData get lineChartBarData2_2 => LineChartBarData(
+        isCurved: true,
+        color: AppColors.contentColorPink.withOpacity(0.5),
+        barWidth: 4,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: false),
+        belowBarData: BarAreaData(
+          show: true,
+          color: AppColors.contentColorPink.withOpacity(0.2),
+        ),
+        spots: const [
+          FlSpot(1, 1),
+          FlSpot(3, 2.8),
+          FlSpot(7, 1.2),
+          FlSpot(10, 2.8),
+          FlSpot(12, 2.6),
+          FlSpot(13, 3.9),
+        ],
+      );
+
+  LineChartBarData get lineChartBarData2_3 => LineChartBarData(
+        isCurved: true,
+        curveSmoothness: 0,
+        color: AppColors.contentColorCyan.withOpacity(0.5),
+        barWidth: 2,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: true),
+        belowBarData: BarAreaData(show: false),
+        spots: const [
+          FlSpot(1, 3.8),
+          FlSpot(3, 1.9),
+          FlSpot(6, 5),
+          FlSpot(10, 3.3),
+          FlSpot(13, 4.5),
+        ],
+      );
 }
 
+class LineChartSample1 extends StatefulWidget {
+  const LineChartSample1({super.key});
 
+  @override
+  State<StatefulWidget> createState() => LineChartSample1State();
+}
 
-class OccupancyData{
-  final String month;
-  final int occupancyRate;
+class LineChartSample1State extends State<LineChartSample1> {
+  late bool isShowingMainData;
 
-  OccupancyData(this.month, this.occupancyRate);
+  @override
+  void initState() {
+    super.initState();
+    isShowingMainData = true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 1.23,
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const SizedBox(
+                height: 37,
+              ),
+              const Text(
+                'Monthly Sales',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 37,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16, left: 6),
+                  child: OccupancyBarChart(isShowingMainData: isShowingMainData),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              color:
+                  Colors.white.withOpacity(isShowingMainData ? 1.0 : 0.5),
+            ),
+            onPressed: () {
+              setState(() {
+                isShowingMainData = !isShowingMainData;
+              });
+            },
+          )
+        ],
+      ),
+    );
+  }
 }
