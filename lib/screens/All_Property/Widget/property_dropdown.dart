@@ -8,7 +8,8 @@ import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailV
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class PropertyTitleDropdown extends StatefulWidget{
-  const PropertyTitleDropdown({Key? key}) : super(key: key);
+  final String currentPage;
+  const PropertyTitleDropdown({required this.currentPage});
 
 @override
   State<PropertyTitleDropdown> createState() => _PropertyTitleDropdownState();
@@ -16,17 +17,17 @@ class PropertyTitleDropdown extends StatefulWidget{
 
 class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
 
-  String? selectedValue ='Property Summary';
+  String? selectedValue ='Summary';
 
   final pages = {
-    'Property Summary': PropertySummaryScreen(),
+    'Summary': PropertySummaryScreen(),
     'Property List': AllPropertyScreen(),
     
   };
   String getDisplayText(){
-    if(selectedValue == 'Property Summary') {
-      return 'Property Summary';
-    } else if (selectedValue == 'Property List') {
+    if(widget.currentPage == 'Summary') {
+      return 'Summary';
+    } else if (widget.currentPage == 'Property List') {
       return 'Property List';
     } else {
       return 'Select page';
@@ -42,10 +43,12 @@ class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
     return Container(
       width:197.fSize,
       child: DropdownButton2<String>(
-                        value: selectedValue,
+        
+                        value: getDisplayText(),
                         isExpanded: false,
                         underline: const SizedBox(),
                          dropdownStyleData: DropdownStyleData(
+                          
                                           width: 197.fSize,
                                           offset: const Offset(-2, -1),
                                           useSafeArea: true,
@@ -103,7 +106,12 @@ class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
                              pages.keys.map((String item) {
                               return DropdownMenuItem<String>(
                                 value: item,
-                                child: Text(item),
+                                child: Text(item,
+                                style:TextStyle(
+                                  fontSize:25.fSize,
+                                  color:Colors.black,
+                                )
+                                ),
                               );
                             }).toList(),
 

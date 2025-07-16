@@ -1,8 +1,9 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
-import 'package:mana_mana_app/screens/All_Property/View/occupancy_rate_box.dart';
-import 'package:mana_mana_app/screens/All_Property/property_dropdown.dart';
+import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_rate_box.dart';
+import 'package:mana_mana_app/screens/All_Property/Widget/recent_activity.dart';
+import 'package:mana_mana_app/screens/All_Property/Widget/property_dropdown.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
@@ -45,13 +46,13 @@ class PropertySummaryScreen extends StatelessWidget {
           return SingleChildScrollView(
             padding: const EdgeInsets.only(left: 15, top: 5, right: 15),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // align children to start
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
                     Expanded(
-                      flex: 0, // minimal width based on child
-                      child: PropertyTitleDropdown(),
+                      flex: 0,
+                      child: PropertyTitleDropdown(currentPage:'Summary'),
                     ),
                   ],
                 ),
@@ -62,29 +63,10 @@ class PropertySummaryScreen extends StatelessWidget {
                 ),
                 SizedBox(height:10.fSize),
                 OccupancyRateBox(),
+                RecentActivity(),
+                
 
-                Row(children: [
-                  Column(
-                    children: [
-                      
 
-                  ],
-                  ),
-                ],
-                ),
-                SizedBox(height:10.fSize),
-
-                Column(
-                  children: [
-                    Text(
-                      'Recent Activity',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      )
-                    )
-                ],
-                ),
                 
               ],
               

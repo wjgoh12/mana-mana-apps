@@ -1,5 +1,6 @@
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_rate_dropdown.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -48,10 +49,10 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
   @override
   Widget build(BuildContext context) {
 
-    final dataList=[
-      ...List.generate(6,
-      (index) => _BarData(labelColor1,60, 100))
-    ];
+    // final dataList=[
+    //   ...List.generate(6,
+    //   (index) => _BarData(labelColor1,60, 100))
+    // ];
 
     return Container(
       alignment: Alignment.topLeft,
@@ -69,12 +70,12 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
         ],
       ),
       //title & dropdown 
-      child:const Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
             Padding(
-              padding: EdgeInsets.only(left:10, top:5),
+              padding: EdgeInsets.only(left:10, top:15),
               child: Text(
                 'Occupancy Rate',
                 style:TextStyle(
@@ -88,47 +89,12 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
                 
         ],
       ),
-      
-      
     );
   }
 
-  
-
 }
 
 
-class OccupancyPeriodDropdown extends StatefulWidget {
-  const OccupancyPeriodDropdown({super.key});
-
-  @override
-  State<OccupancyPeriodDropdown> createState() => _OccupancyPeriodDropdownState();
-
-
-
-  Widget build(BuildContext context) {
-    return Container(
-      child: DropdownButton2<String>(
-        items: const [
-          const DropdownMenuItem<String>(
-            value:'Monthly',
-            child:Text('Monthly'),
-          )
-        ],
-      )
-    );
-  }
-}
-
-
-class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-
-    );
-}
-}
 
 class _BarData {
   const _BarData(this.color, this.value, this.maxValue);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/All_Property/property_dropdown.dart';
+import 'package:mana_mana_app/screens/All_Property/Widget/property_dropdown.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
@@ -31,12 +31,12 @@ class AllPropertyScreen extends StatelessWidget {
               ? const Center(child: CircularProgressIndicator()) // Show loading
               : Column(
                   children: [
-                    // Add PropertyTitleDropdown here
+                    // Add PropertyTitleDropdown shere
                     const Padding(
                       padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
                       child: Row(
                         children: [
-                          PropertyTitleDropdown(),
+                          PropertyTitleDropdown(currentPage: 'Property List'),
                         ],
                       ),
                     ),
