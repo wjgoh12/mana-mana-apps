@@ -10,13 +10,8 @@ class RecentActivity extends StatefulWidget{
 
   const RecentActivity({super.key});
 
-
-  
-
   @override
   State<RecentActivity> createState() => _RecentActivityState();
-
-
 
 }
 
@@ -25,11 +20,10 @@ class _RecentActivityState extends State<RecentActivity> {
   @override
   Widget build(BuildContext context) {
 
-
     return Container(
       alignment: Alignment.topLeft,
       width: 390,
-      height:250,
+      height:600,
       child: Padding(
                   padding: const EdgeInsets.only(left:10, top:15),
                   child: Column(
@@ -40,15 +34,72 @@ class _RecentActivityState extends State<RecentActivity> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         )
+                      ),
+                      //recent activity record list
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
+                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
+                          ],
+                        ),
                       )
                   ],
                   ),
                 ),
-      
-    );
-  }
+                );
+                }
+                }
 
+class RecentActivityRecord extends StatelessWidget {
+  final String unitName;
+  final String propertyName;
+
+  const RecentActivityRecord({super.key, required this.unitName, required this.propertyName});
   
+  @override
+  Widget build(BuildContext context) {
+    return ButtonBar(
 
+      children: [ Container(
+        width: 390.fSize,
+        height: 60.fSize,
+        margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.fSize),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFF000000).withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 0),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child:Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text(
+                  'Statement for Unit $unitName has been issued',
+                  style:TextStyle(
+                    fontSize: 12.fSize,
+                    color: Color(0xFF888888),
+                  )),
+                Text('$propertyName'),
+              ],
+              ),
+              Icon(Icons.arrow_right,color: Colors.black),
+            ],
+          ),
+      ),
+      ),
+      ]
+    );
+  } 
 }
-

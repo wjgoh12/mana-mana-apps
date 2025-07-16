@@ -8,6 +8,7 @@ class OccupancyBarChart extends StatelessWidget {
   const OccupancyBarChart({required this.isShowingMainData});
 
   final bool isShowingMainData;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +17,7 @@ class OccupancyBarChart extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
     );
   }
+  
 
   LineChartData get sampleData1 => LineChartData(
         lineTouchData: lineTouchData1,
@@ -42,6 +44,7 @@ class OccupancyBarChart extends StatelessWidget {
       );
 
   LineTouchData get lineTouchData1 => LineTouchData(
+    
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
           getTooltipColor: (touchedSpot) => Colors.blueGrey.withOpacity(0.8),
@@ -51,6 +54,7 @@ class OccupancyBarChart extends StatelessWidget {
           tooltipPadding: const EdgeInsets.all(8),
           getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
             return touchedBarSpots.map((barSpot) {
+              final percentage= barSpot.y * 10;
               final flSpot = barSpot.spotIndex;
               String month = '';
               switch (flSpot.toInt()) {
@@ -67,7 +71,8 @@ class OccupancyBarChart extends StatelessWidget {
                   month = 'Month ${flSpot.toInt()}';
               }
               return LineTooltipItem(
-                '$month\n${barSpot.y.toStringAsFixed(1)}%',
+                
+                '$month\n${percentage.toStringAsFixed(1)}%',
                 const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -120,9 +125,9 @@ class OccupancyBarChart extends StatelessWidget {
       );
 
   List<LineChartBarData> get lineBarsData2 => [
-        lineChartBarData2_1,
-        lineChartBarData2_2,
-        lineChartBarData2_3,
+        // lineChartBarData2_1,
+        // lineChartBarData2_2,
+        // lineChartBarData2_3,
       ];
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
@@ -156,7 +161,7 @@ class OccupancyBarChart extends StatelessWidget {
 
     return SideTitleWidget(
       axisSide: AxisSide.left,
-      //meta: meta,
+      space: 0,
       child: Text(
         text,
         style: style,
@@ -226,11 +231,11 @@ class OccupancyBarChart extends StatelessWidget {
         color: Color(0XFF8C71E7),
         barWidth: 8,
         isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
+        dotData: const FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: const [
-          FlSpot(1, 1),
-          FlSpot(3, 1.5),
+          FlSpot(1, 0),
+          FlSpot(2, 2),
           // FlSpot(5, 1.4),
           FlSpot(7, 3.4),
           FlSpot(10, 2),
@@ -275,61 +280,61 @@ class OccupancyBarChart extends StatelessWidget {
   //       ],
   //     );
 
-  LineChartBarData get lineChartBarData2_1 => LineChartBarData(
-        isCurved: true,
-        curveSmoothness: 0,
-        color: Color(0xFF8C71E7).withOpacity(0.5),
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: true),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 1),
-          FlSpot(3, 4),
-          FlSpot(5, 1.8),
-          FlSpot(7, 5),
-          FlSpot(10, 2),
-          FlSpot(12, 2.2),
-          FlSpot(13, 1.8),
-        ],
-      );
+  // LineChartBarData get lineChartBarData2_1 => LineChartBarData(
+  //       isCurved: true,
+  //       curveSmoothness: 0,
+  //       color: Color(0xFF8C71E7).withOpacity(0.5),
+  //       barWidth: 4,
+  //       isStrokeCapRound: true,
+  //       dotData: const FlDotData(show: true),
+  //       belowBarData: BarAreaData(show: false),
+  //       spots: const [
+  //         FlSpot(1, 1),
+  //         FlSpot(3, 4),
+  //         FlSpot(5, 1.8),
+  //         FlSpot(7, 5),
+  //         FlSpot(10, 2),
+  //         FlSpot(12, 2.2),
+  //         FlSpot(13, 1.8),
+  //       ],
+  //     );
 
-  LineChartBarData get lineChartBarData2_2 => LineChartBarData(
-        isCurved: true,
-        color: AppColors.contentColorPink.withOpacity(0.5),
-        barWidth: 4,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: false),
-        belowBarData: BarAreaData(
-          show: true,
-          color: AppColors.contentColorPink.withOpacity(0.2),
-        ),
-        spots: const [
-          FlSpot(1, 1),
-          FlSpot(3, 2.8),
-          FlSpot(7, 1.2),
-          FlSpot(10, 2.8),
-          FlSpot(12, 2.6),
-          FlSpot(13, 3.9),
-        ],
-      );
+  // LineChartBarData get lineChartBarData2_2 => LineChartBarData(
+  //       isCurved: true,
+  //       color: AppColors.contentColorPink.withOpacity(0.5),
+  //       barWidth: 4,
+  //       isStrokeCapRound: true,
+  //       dotData: const FlDotData(show: false),
+  //       belowBarData: BarAreaData(
+  //         show: true,
+  //         color: AppColors.contentColorPink.withOpacity(0.2),
+  //       ),
+  //       spots: const [
+  //         FlSpot(1, 1),
+  //         FlSpot(3, 2.8),
+  //         FlSpot(7, 1.2),
+  //         FlSpot(10, 2.8),
+  //         FlSpot(12, 2.6),
+  //         FlSpot(13, 3.9),
+  //       ],
+  //     );
 
-  LineChartBarData get lineChartBarData2_3 => LineChartBarData(
-        isCurved: true,
-        curveSmoothness: 0,
-        color: AppColors.contentColorCyan.withOpacity(0.5),
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: const FlDotData(show: true),
-        belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 3.8),
-          FlSpot(3, 1.9),
-          FlSpot(6, 5),
-          FlSpot(10, 3.3),
-          FlSpot(13, 4.5),
-        ],
-      );
+  // LineChartBarData get lineChartBarData2_3 => LineChartBarData(
+  //       isCurved: true,
+  //       curveSmoothness: 0,
+  //       color: AppColors.contentColorCyan.withOpacity(0.5),
+  //       barWidth: 2,
+  //       isStrokeCapRound: true,
+  //       dotData: const FlDotData(show: true),
+  //       belowBarData: BarAreaData(show: false),
+  //       spots: const [
+  //         FlSpot(1, 3.8),
+  //         FlSpot(3, 1.9),
+  //         FlSpot(6, 5),
+  //         FlSpot(10, 3.3),
+  //         FlSpot(13, 4.5),
+  //       ],
+  //     );
 }
 
 class LineChartSample1 extends StatefulWidget {
@@ -361,7 +366,7 @@ class LineChartSample1State extends State<LineChartSample1> {
                 height: 37,
               ),
               const Text(
-                'Monthly Sales',
+                'Occupancy Rate',
                 style: TextStyle(
                   color: AppColors.primary,
                   fontSize: 32,
