@@ -45,7 +45,7 @@ class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
       child: Container(
         width: 130.fSize,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25.fSize),
+          borderRadius: BorderRadius.circular(15.fSize),
           color:Color(0xFFF0F2FD),
         ),
         child: DropdownButton2<String>(
@@ -67,7 +67,22 @@ class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
           }).toList(),
           dropdownStyleData: DropdownStyleData(
             width: 130.fSize,
-            offset: const Offset(-2, -1),
+            offset: const Offset(0.5, 8),
+            decoration: BoxDecoration(
+              borderRadius: 
+              BorderRadius.only(
+                bottomLeft: Radius.circular(15), 
+                bottomRight: Radius.circular(15)
+                ),
+              color: Color(0xFFF0F2FD),
+              boxShadow: [
+                BoxShadow(
+                  color:Colors.transparent,
+                ),
+              
+              ],
+              
+            )
             
           ),
 

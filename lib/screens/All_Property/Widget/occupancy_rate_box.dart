@@ -1,6 +1,7 @@
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_rate_dropdown.dart';
+import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_bar_chart.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -57,7 +58,7 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
     return Container(
       alignment: Alignment.topLeft,
       width: 390,
-      height:250,
+      height: 250,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -69,24 +70,27 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
           ),
         ],
       ),
-      //title & dropdown 
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: [
-            Padding(
-              padding: EdgeInsets.only(left:10, top:15),
-              child: Text(
-                'Occupancy Rate',
-                style:TextStyle(
-                  fontSize:20,
-                  fontWeight: FontWeight.bold,
-                )
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 10, top: 15),
+                child: Text(
+                  'Occupancy Rate',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  )
                 ),
-            ),           
-            //dropdown
-               OccupancyPeriodDropdown(),
-                
+              ),           
+              //dropdown
+              OccupancyPeriodDropdown(),
+            ],
+          ),
+          OccupancyBarChart(data: [],),
         ],
       ),
     );
