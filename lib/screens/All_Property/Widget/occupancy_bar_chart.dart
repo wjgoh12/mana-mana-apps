@@ -17,7 +17,6 @@ class OccupancyBarChart extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
     );
   }
-  
 
   LineChartData get sampleData1 => LineChartData(
         lineTouchData: lineTouchData1,
@@ -58,14 +57,14 @@ class OccupancyBarChart extends StatelessWidget {
               final flSpot = barSpot.spotIndex;
               String month = '';
               switch (flSpot.toInt()) {
-                case 2:
+                case 0:
                   month = 'SEPT';
                   break;
-                case 7:
+                case 1:
                   month = 'OCT';
                   break;
-                case 12:
-                  month = 'DEC';
+                case 2:
+                  month = 'NOV';
                   break;
                 default:
                   month = 'Month ${flSpot.toInt()}';
@@ -191,7 +190,7 @@ class OccupancyBarChart extends StatelessWidget {
         text = const Text('OCT', style: style);
         break;
       case 12:
-        text = const Text('DEC', style: style);
+        text = const Text('NOV', style: style);
         break;
       default:
         text = const Text('');
@@ -234,13 +233,11 @@ class OccupancyBarChart extends StatelessWidget {
         dotData: const FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: const [
-          FlSpot(1, 0),
           FlSpot(2, 2),
           // FlSpot(5, 1.4),
           FlSpot(7, 3.4),
-          FlSpot(10, 2),
           // FlSpot(12, 2.2),
-          FlSpot(13, 1.8),
+          FlSpot(12, 1.8),
         ],
       );
 
@@ -337,14 +334,14 @@ class OccupancyBarChart extends StatelessWidget {
   //     );
 }
 
-class LineChartSample1 extends StatefulWidget {
-  const LineChartSample1({super.key});
+class LineChart1 extends StatefulWidget {
+  const LineChart1({super.key});
 
   @override
-  State<StatefulWidget> createState() => LineChartSample1State();
+  State<StatefulWidget> createState() => LineChart1State();
 }
 
-class LineChartSample1State extends State<LineChartSample1> {
+class LineChart1State extends State<LineChart1> {
   late bool isShowingMainData;
 
   @override

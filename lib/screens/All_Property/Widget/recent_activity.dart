@@ -3,6 +3,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
+import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 
@@ -19,6 +21,7 @@ class _RecentActivityState extends State<RecentActivity> {
   
   @override
   Widget build(BuildContext context) {
+    final PropertyDetailVM model=PropertyDetailVM();
 
     return Container(
       alignment: Alignment.topLeft,
@@ -41,18 +44,12 @@ class _RecentActivityState extends State<RecentActivity> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: false,
                           children: [
-                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
+
+                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
                             RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
                             RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
                             RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
-                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
-                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
-                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
-                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
-                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
-                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
-                            RecentActivityRecord(unitName: '45-99.99', propertyName:'SCARLETZ'),
-                            RecentActivityRecord(unitName: '12-12-22', propertyName:'SCARLETZ'),
+                            
                           ],
                         ),
                       )
@@ -75,7 +72,12 @@ class RecentActivityRecord extends StatelessWidget {
       focusColor: Colors.transparent,
       
       onTap:(){
-        Navigator.pushNamed(context, '../Property_detail/property_detail_v3.dart');
+        Navigator.push(context, 
+        MaterialPageRoute(
+          builder:(context) =>property_detail_v3(locationByMonth: [
+            {'location': propertyName}
+          ],)
+        ));
       },
 
       child: 

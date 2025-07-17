@@ -335,7 +335,7 @@ class PropertyImageStack extends StatelessWidget {
                    child: TextButton(
                       onPressed: (){
                          Navigator.push(context,
-                         MaterialPageRoute(builder: (context) => PropertyDetail(locationByMonth: [locationByMonth.first]),
+                         MaterialPageRoute(builder: (context) => property_detail_v3(locationByMonth: [locationByMonth.first]),
                          )
                          );
                       },

@@ -116,7 +116,7 @@ class AllPropertyScreen extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => PropertyDetail(locationByMonth: locationByMonth),
+            builder: (context) => property_detail_v3(locationByMonth: locationByMonth),
           ),
         );
       },

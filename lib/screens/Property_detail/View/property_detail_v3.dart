@@ -6,9 +6,9 @@ import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailV
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class PropertyDetail extends StatelessWidget {
+class property_detail_v3 extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
-  const PropertyDetail({required this.locationByMonth, Key? key})
+  const property_detail_v3({required this.locationByMonth, Key? key})
       : super(key: key);
 
   @override
@@ -21,6 +21,7 @@ class PropertyDetail extends StatelessWidget {
     //final ScrollController scrollController = ScrollController();
     bool isCollapsed = false;
     bool showStickyDropdown = false;
+    bool showStickyEstatement= false;
 
     return ListenableBuilder(
       listenable: model,
@@ -31,7 +32,7 @@ class PropertyDetail extends StatelessWidget {
      NotificationListener<ScrollNotification>(
       onNotification: (scrollInfo) {
       final collapsedHeight = 290.fSize - kToolbarHeight;
-      final dropdownStickyHeight = 200.fSize;
+      final dropdownStickyHeight = 400.fSize;
       isCollapsed = scrollInfo.metrics.pixels > collapsedHeight;
       showStickyDropdown = scrollInfo.metrics.pixels > dropdownStickyHeight;
       return false;
@@ -194,18 +195,17 @@ class PropertyDetail extends StatelessWidget {
                           }
                         }
                       },
-                                hint: const Text('Select Unit'),
-                                      value: model.selectedView == 'Overview'
-                                          ? 'Overview'
-                                          : (model.selectedType != null && model.selectedUnitNo != null)
-                                          ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
+                           hint: const Text('Select Unit'),
+                              value: model.selectedView == 'Overview'
+                                ? 'Overview'
+                                : (model.selectedType != null && model.selectedUnitNo != null)
+                                ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
                                           : null,
                     ),
                   ),
                 ],
               ),
-              
-            ),
+             ),
           ),
           SliverFillRemaining(
             hasScrollBody: model.selectedView != 'Overview',
@@ -253,8 +253,7 @@ if (isCollapsed)
   ),
   
 );
-
-      }   
+}   
           );
         
       }
@@ -1182,7 +1181,8 @@ class UnitDetailsContainer extends StatelessWidget {
           ),
       
           StickyEstatementBar(onBack: () => Navigator.pop(context),
-          yearOptions: model.yearItems),
+          yearOptions: model.yearItems,
+          model:model),
           //EStatementContainer(model: model),
           EStatementContainer(model: model)
           
@@ -1202,61 +1202,125 @@ class EStatementContainer extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final items = model.unitByMonth;
+    // Check if year is selected - if not, show empty container
+    if (model.selectedYearValue == null) {
+      return Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+        ),
+        height: 200, // Give it some height so it's visible
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.calendar_today_outlined,
+                size: 48,
+                color: Colors.grey.shade400,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Please select a year to view statements',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Filter items by selected year
+    final allItems = model.unitByMonth;
+    final filteredItems = allItems.where((item) {
+      return item.iyear != null && item.iyear.toString() == model.selectedYearValue.toString();
+    }).toList();
+
     String monthNumberToName(int month) {
-  const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
-  ];
-  if (month >= 1 && month <= 12) {
-    return months[month - 1];
-  } else {
-    return 'Unknown';
-  }
-}
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
+      ];
+      if (month >= 1 && month <= 12) {
+        return months[month - 1];
+      } else {
+        return 'Unknown';
+      }
+    }
+
+    // If no statements found for selected year
+    if (filteredItems.isEmpty) {
+      return Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+        ),
+        height: 200,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.description_outlined,
+                size: 48,
+                color: Colors.grey.shade400,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'No statements found for ${model.selectedYearValue}',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Container(
-      decoration:const BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
       ),
       child: SingleChildScrollView(
-        
         child: ListView.builder(
-        itemCount: items.length,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, i) {
-      final item = items[i]; 
-      if (model.selectedView != 'Overview' && 
-          item.sunitno != model.selectedUnitNo) {
-        return const SizedBox.shrink(); // Skip this item
-      }
-      
-      return Row(
-        children: [
-          InkWell(
-            hoverColor: Colors.grey.shade50,
-            onTap: () => model.downloadPdfStatement(context),
-            child: SizedBox(
-              height: 50.fSize,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  children: [
-                    Text('${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
-                  ],
-                ),
-              ),
-            ),
-          )
-        ],
-      );
-        },
-      ),
-      
+          itemCount: filteredItems.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, i) {
+            final item = filteredItems[i]; 
+            
+            // Apply unit filter if not in Overview mode
+            if (model.selectedView != 'Overview' && 
+                item.sunitno != model.selectedUnitNo) {
+              return const SizedBox.shrink(); // Skip this item
+            }
+            
+            return Row(
+              children: [
+                InkWell(
+                  hoverColor: Colors.grey.shade50,
+                  onTap: () => model.downloadPdfStatement(context),
+                  child: SizedBox(
+                    height: 50.fSize,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Text('${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            );
+          },
+        ),
       ),
     );
-
   }
 }
 
@@ -1386,61 +1450,78 @@ class StickyDropdownBar extends StatelessWidget {
 class StickyEstatementBar extends StatefulWidget {
   final VoidCallback onBack;
   final List<String> yearOptions;
-
+  final PropertyDetailVM model; 
   const StickyEstatementBar({
     required this.onBack,
     required this.yearOptions,
+    required this.model, // Add this parameter
     Key? key,
   }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _StickyEstatementBarState createState() => _StickyEstatementBarState();
 }
 
 class _StickyEstatementBarState extends State<StickyEstatementBar> {
   String? _selectedYear;
-  
 
   @override
   Widget build(BuildContext context) {
-
-      return Container(
-        height: 85.fSize,
-        color: Colors.white,
-        alignment: Alignment.centerLeft,
-        child: SafeArea(
-          bottom: false,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const SizedBox(width: 8),
-              const Text(
-                'eStatements',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return Container(
+      height: 85.fSize,
+      color: Colors.white,
+      alignment: Alignment.centerLeft,
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(width: 8),
+            const Text(
+              'eStatements',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const Spacer(),
+            const Text('Year'),
+            const SizedBox(width: 8),
+            DropdownButton2<String>(
+              dropdownStyleData: DropdownStyleData(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                  ),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                )
               ),
-              const Spacer(),
-              const Text('Year'),
-              const SizedBox(width: 8),
-              DropdownButton<String>(
-                value: _selectedYear,
+              value: _selectedYear,
               hint: const Text('Select Year'),
               items: widget.yearOptions
-                      .map((year) => DropdownMenuItem(
-                            value: year,
-                            child: Text(year),
-                          ))
-                      .toList(),
-                  onChanged: (val) {
-                    setState(() => _selectedYear = val);
-                    // Optionally notify parent with callback or event
-                  },
-              ),
-              const SizedBox(width: 8),
-              ],
-              ),
-            
-          )
+                  .map((year) => DropdownMenuItem(
+                        value: year,
+                        child: Text(year),
+                      ))
+                  .toList(),
+              onChanged: (val) {
+                setState(() => _selectedYear = val);
+                // Update the model with selected year
+                widget.model.updateSelectedYear(val!);
+              },
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+      ),
     );
   }
 }

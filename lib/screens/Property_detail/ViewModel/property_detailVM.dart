@@ -23,6 +23,7 @@ class PropertyDetailVM extends ChangeNotifier {
   List<String> monthItems = [];
   List<String> typeItems = [];
   String? selectedYearValue;
+  String? get _selectedYearValue => selectedYearValue;
   String? selectedMonthValue;
   String? selectedAnnualYearValue;
   int unitLatestMonth = 0;
