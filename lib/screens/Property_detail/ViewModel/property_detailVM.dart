@@ -22,8 +22,12 @@ class PropertyDetailVM extends ChangeNotifier {
   List<String> yearItems = [];
   List<String> monthItems = [];
   List<String> typeItems = [];
-  String? selectedYearValue;
-  String? get _selectedYearValue => selectedYearValue;
+  String? _selectedYearValue; // Don't initialize with any value
+  String? get selectedYearValue => _selectedYearValue;
+  PropertyDetailVM(){
+    _selectedYearValue = null; // Explicitly set to null
+    print('PropertyDetailVM constructor - selectedYearValue initialized to: $_selectedYearValue');
+  }
   String? selectedMonthValue;
   String? selectedAnnualYearValue;
   int unitLatestMonth = 0;
@@ -269,29 +273,13 @@ class PropertyDetailVM extends ChangeNotifier {
           .toSet()
           .toList()
         ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-      selectedYearValue = yearItems.isNotEmpty
-          ? yearItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
-          : '';
-      monthItems = unitByMonth
-          .where((item) =>
-              item.iyear.toString() == selectedYearValue &&
-              item.slocation == property &&
-              item.stype == selectedType &&
-              item.sunitno == selectedUnitNo)
-          .map((item) => item.imonth.toString())
-          .toSet()
-          .toList()
-        ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-      selectedMonthValue = monthItems.isNotEmpty
-          ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
-          : '';
-      // yearItems = unitByMonth.map((item) => item.iyear.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-      // monthItems = unitByMonth.where((item) => item.iyear == DateTime.now().year).map((item) => item.imonth.toString()).toSet().toList()..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+      monthItems = []; // Start with empty months until year is selected
+      selectedMonthValue = null; // Also keep month as null
     } else {
       yearItems = ['-'];
       monthItems = ['-'];
     }
-    selectedAnnualYearValue = selectedYearValue;
+    selectedAnnualYearValue = _selectedYearValue;
     isLoading = false;
     notifyListeners();
   }
@@ -316,13 +304,13 @@ class PropertyDetailVM extends ChangeNotifier {
         .toList()
       ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
     
-    selectedYearValue = yearItems.isNotEmpty
+    _selectedYearValue = yearItems.isNotEmpty
         ? yearItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : '';
     
     monthItems = unitByMonth
         .where((item) =>
-            item.iyear.toString() == selectedYearValue &&
+            item.iyear.toString() == _selectedYearValue &&
             item.slocation == property &&
             item.stype == selectedType &&
             item.sunitno == selectedUnitNo)
@@ -393,7 +381,7 @@ class PropertyDetailVM extends ChangeNotifier {
     _isMonthLoadng = true;
     notifyListeners();
     // monthItems = ['0','1','2','3','4','5','6','7','8','9','10','11','12'];
-    selectedYearValue = newSelectedYear;
+    _selectedYearValue = newSelectedYear;
     monthItems = unitByMonth
         .where((item) =>
             item.iyear.toString() == selectedYearValue &&
@@ -505,7 +493,7 @@ class PropertyDetailVM extends ChangeNotifier {
   // In PropertyDetailVM
 Future<void> downloadSpecificPdfStatement(BuildContext context, dynamic item) async {
   // Set the specific item data before downloading
-  selectedYearValue = item.iyear.toString();
+  _selectedYearValue = item.iyear.toString();
   selectedMonthValue = item.imonth.toString();
   
   // Call your existing download method
@@ -513,5 +501,3 @@ Future<void> downloadSpecificPdfStatement(BuildContext context, dynamic item) as
 }
 
 }
-
-

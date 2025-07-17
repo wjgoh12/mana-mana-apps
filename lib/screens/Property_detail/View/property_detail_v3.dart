@@ -1192,134 +1192,151 @@ class UnitDetailsContainer extends StatelessWidget {
   }
 }
 
-class EStatementContainer extends StatelessWidget {
+class EStatementContainer extends StatefulWidget {
   final PropertyDetailVM model;
   const EStatementContainer({Key? key, required this.model}) : super(key: key);
 
   @override
+  State<EStatementContainer> createState() => _EStatementContainerState();
+}
+
+class _EStatementContainerState extends State<EStatementContainer> {
+  String? _lastPrintedValue;
+
+  @override
   Widget build(BuildContext context) {
-    if (model.isDateLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    return ListenableBuilder(
+      listenable: widget.model,
+      builder: (context, child) {
+        
+        if (_lastPrintedValue != widget.model.selectedYearValue) {
+          _lastPrintedValue = widget.model.selectedYearValue;
+          print('selectedYearValue changed to: ${widget.model.selectedYearValue}');
+        }
 
-    // Check if year is selected - if not, show empty container
-    if (model.selectedYearValue == null) {
-      return Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        height: 200, // Give it some height so it's visible
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.calendar_today_outlined,
-                size: 48,
-                color: Colors.grey.shade400,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Please select a year to view statements',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+        if (widget.model.isDateLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    // Filter items by selected year
-    final allItems = model.unitByMonth;
-    final filteredItems = allItems.where((item) {
-      return item.iyear != null && item.iyear.toString() == model.selectedYearValue.toString();
-    }).toList();
-
-    String monthNumberToName(int month) {
-      const months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
-      ];
-      if (month >= 1 && month <= 12) {
-        return months[month - 1];
-      } else {
-        return 'Unknown';
-      }
-    }
-
-    // If no statements found for selected year
-    if (filteredItems.isEmpty) {
-      return Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        height: 200,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.description_outlined,
-                size: 48,
-                color: Colors.grey.shade400,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'No statements found for ${model.selectedYearValue}',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
-      child: SingleChildScrollView(
-        child: ListView.builder(
-          itemCount: filteredItems.length,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, i) {
-            final item = filteredItems[i]; 
-            
-            // Apply unit filter if not in Overview mode
-            if (model.selectedView != 'Overview' && 
-                item.sunitno != model.selectedUnitNo) {
-              return const SizedBox.shrink(); // Skip this item
-            }
-            
-            return Row(
-              children: [
-                InkWell(
-                  hoverColor: Colors.grey.shade50,
-                  onTap: () => model.downloadPdfStatement(context),
-                  child: SizedBox(
-                    height: 50.fSize,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: [
-                          Text('${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
-                        ],
-                      ),
+        // Check if year is selected - should be null initially
+        if (widget.model.selectedYearValue == null || widget.model.selectedYearValue!.isEmpty) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
+            height: 200,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 48,
+                    color: Colors.grey.shade400,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Please select a year to view statements',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
                     ),
                   ),
-                )
-              ],
-            );
-          },
-        ),
-      ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        // Filter items by selected year
+        final allItems = widget.model.unitByMonth;
+        final filteredItems = allItems.where((item) {
+          return item.iyear != null && 
+                 item.iyear.toString() == widget.model.selectedYearValue.toString();
+        }).toList();
+
+        String monthNumberToName(int month) {
+          const months = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
+          ];
+          if (month >= 1 && month <= 12) {
+            return months[month - 1];
+          } else {
+            return 'Unknown';
+          }
+        }
+
+        if (filteredItems.isEmpty) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
+            height: 200,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.description_outlined,
+                    size: 48,
+                    color: Colors.grey.shade400,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'No statements found for ${widget.model.selectedYearValue}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+          ),
+          child: SingleChildScrollView(
+            child: ListView.builder(
+              itemCount: filteredItems.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, i) {
+                final item = filteredItems[i]; 
+                
+                if (widget.model.selectedView != 'Overview' && 
+                    item.sunitno != widget.model.selectedUnitNo) {
+                  return const SizedBox.shrink();
+                }
+                
+                return Row(
+                  children: [
+                    InkWell(
+                      hoverColor: Colors.grey.shade50,
+                      onTap: () => widget.model.downloadPdfStatement(context),
+                      child: SizedBox(
+                        height: 50.fSize,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              Text('${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -1369,7 +1386,6 @@ class StickyDropdownBar extends StatelessWidget {
                 ),
               ),
               
-              // Right side - Dropdown
               Expanded(
                 flex: 2,
                 child: Container(
@@ -1447,84 +1463,96 @@ class StickyDropdownBar extends StatelessWidget {
   }
 }
 
-class StickyEstatementBar extends StatefulWidget {
-  final VoidCallback onBack;
-  final List<String> yearOptions;
-  final PropertyDetailVM model; 
-  const StickyEstatementBar({
-    required this.onBack,
-    required this.yearOptions,
-    required this.model, // Add this parameter
-    Key? key,
-  }) : super(key: key);
+          class StickyEstatementBar extends StatefulWidget {
+            final VoidCallback onBack;
+            final List<String> yearOptions;
+            final PropertyDetailVM model; 
+            const StickyEstatementBar({
+              required this.onBack,
+              required this.yearOptions,
+              required this.model, // Add this parameter
+              Key? key,
+            }) : super(key: key);
 
-  @override
-  _StickyEstatementBarState createState() => _StickyEstatementBarState();
-}
+            @override
+            _StickyEstatementBarState createState() => _StickyEstatementBarState();
+          }
 
-class _StickyEstatementBarState extends State<StickyEstatementBar> {
-  String? _selectedYear;
+          class _StickyEstatementBarState extends State<StickyEstatementBar> {
+            String? _selectedYear; // This should start as null
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 85.fSize,
-      color: Colors.white,
-      alignment: Alignment.centerLeft,
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const SizedBox(width: 8),
-            const Text(
-              'eStatements',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const Spacer(),
-            const Text('Year'),
-            const SizedBox(width: 8),
-            DropdownButton2<String>(
-              dropdownStyleData: DropdownStyleData(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+            @override
+            void initState() {
+              super.initState();
+              // Don't initialize with any value - let it be null
+              _selectedYear = null;
+              print('StickyEstatementBar initialized with _selectedYear: $_selectedYear');
+            }
+
+            @override
+            Widget build(BuildContext context) {
+              return Container(
+                height: 85.fSize,
+                color: Colors.white,
+                alignment: Alignment.centerLeft,
+                child: SafeArea(
+                  bottom: false,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(width: 8),
+                      const Text(
+                        'eStatements',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      const Text('Year'),
+                      const SizedBox(width: 8),
+                      DropdownButton2<String>(
+                        dropdownStyleData: DropdownStyleData(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border(
+                              bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                            ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                          )
+                        ),
+                        value: _selectedYear, // This should be null initially
+                        hint: const Text('Select Year'),
+                        items: widget.yearOptions
+                            .map((year) => DropdownMenuItem(
+                                  value: year,
+                                  child: Text(year),
+                                ))
+                            .toList(),
+                        onChanged: (val) {
+                          print('User selected year: $val');
+                          setState(() => _selectedYear = val);
+                          
+                          // Update the model
+                          if (val != null) {
+                            widget.model.updateSelectedYear(val);
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                    ],
                   ),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                )
-              ),
-              value: _selectedYear,
-              hint: const Text('Select Year'),
-              items: widget.yearOptions
-                  .map((year) => DropdownMenuItem(
-                        value: year,
-                        child: Text(year),
-                      ))
-                  .toList(),
-              onChanged: (val) {
-                setState(() => _selectedYear = val);
-                // Update the model with selected year
-                widget.model.updateSelectedYear(val!);
-              },
-            ),
-            const SizedBox(width: 8),
-          ],
-        ),
-      ),
-    );
-  }
-}
+                ),
+              );
+            }
+          }
 
 Widget _buildGradientText(String text) {
   return GradientText1(

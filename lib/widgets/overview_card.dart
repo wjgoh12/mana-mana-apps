@@ -50,6 +50,7 @@ String getOccupancyRate() {
     .toList();
 
 final locationCount = uniqueLocations.length;
+final activeLocations= model.totalByMonth.where((e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE');
 
 
     return SizedBox(
@@ -71,7 +72,7 @@ final locationCount = uniqueLocations.length;
                     height: 130.fSize,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12), // Match card's border radius
-                      image: DecorationImage(
+                      image: const DecorationImage(
                         image: AssetImage('assets/images/overviewContainer1.png'),
                         fit: BoxFit.cover,
                       ),
@@ -135,7 +136,7 @@ final locationCount = uniqueLocations.length;
                       Padding(
                         padding: const EdgeInsets.only(left: 10),
                       child:Text(
-                        'Managed: ', 
+                        'Managed: $locationCount ', 
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 13.fSize,
@@ -193,7 +194,7 @@ final locationCount = uniqueLocations.length;
                             ),
                             //hard coded
                             Padding(
-                              padding: EdgeInsets.only(left:8),
+                              padding: const EdgeInsets.only(left:8),
                               child: Text(
 
                                 //calculate the occupancy rate
