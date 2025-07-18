@@ -426,7 +426,7 @@ class RevenueContainer extends StatelessWidget {
                         Column(
                           children: [
                             Transform.translate(
-                              offset: Offset(-2, -6),
+                              offset: Offset(0, -6),
                               child: CircleAvatar(
                                 radius: 20.fSize,
                                 backgroundColor: Colors.white,
