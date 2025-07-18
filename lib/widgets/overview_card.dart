@@ -72,7 +72,7 @@ final activeLocations= model.totalByMonth.where((e) => e['unitstatus'] == 'Activ
                     height: 130.fSize,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12), // Match card's border radius
-                      image: const DecorationImage(
+                      image: DecorationImage(
                         image: AssetImage('assets/images/overviewContainer1.png'),
                         fit: BoxFit.cover,
                       ),
@@ -136,7 +136,7 @@ final activeLocations= model.totalByMonth.where((e) => e['unitstatus'] == 'Activ
                       Padding(
                         padding: const EdgeInsets.only(left: 10),
                       child:Text(
-                        'Managed: $locationCount ', 
+                        'Managed: ${locationCount} ', 
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 13.fSize,
@@ -194,7 +194,7 @@ final activeLocations= model.totalByMonth.where((e) => e['unitstatus'] == 'Activ
                             ),
                             //hard coded
                             Padding(
-                              padding: const EdgeInsets.only(left:8),
+                              padding: EdgeInsets.only(left:8),
                               child: Text(
 
                                 //calculate the occupancy rate

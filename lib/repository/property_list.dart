@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 class PropertyListRepository {
   final ApiService _apiService = ApiService();
 
+
   Future<List<OwnerPropertyList>> getOwnerUnit() async {
     return await _apiService.post(ApiEndpoint.ownerUnit).then((res) {
       List<dynamic> value = res ?? [];
@@ -268,4 +269,12 @@ class PropertyListRepository {
       return _;
     });
   }
+
+  
+  static Future<int> getTotalPropertyCount() async {
+    final propertyListRepository = PropertyListRepository();
+    final ownerUnits = await propertyListRepository.getOwnerUnit();
+    return ownerUnits.length;
+  }
 }
+

@@ -6,259 +6,349 @@ import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailV
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class property_detail_v3 extends StatelessWidget {
+class property_detail_v3 extends StatefulWidget {
   final List<Map<String, dynamic>> locationByMonth;
   const property_detail_v3({required this.locationByMonth, Key? key})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final model = PropertyDetailVM();
-    model.fetchData(locationByMonth);
-    
-                  
+  State<property_detail_v3> createState() => _property_detail_v3State();
+}
 
-    //final ScrollController scrollController = ScrollController();
-    bool isCollapsed = false;
-    bool showStickyDropdown = false;
-    bool showStickyEstatement= false;
+class _property_detail_v3State extends State<property_detail_v3> {
+  late PropertyDetailVM model;
+  bool isCollapsed = false;
+  bool showStickyDropdown = false;
+  
+  // Key to track the original dropdown position
+  final GlobalKey _originalDropdownKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    model = PropertyDetailVM();
+    
+    if (widget.locationByMonth.isNotEmpty) {
+      model.fetchData(widget.locationByMonth);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.locationByMonth.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Property Details'),
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back),
+          ),
+        ),
+        body: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
+                'No property data available',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return ListenableBuilder(
       listenable: model,
       builder: (context, child) {
         return Scaffold(
-  body: Stack(
-    children: [
-     NotificationListener<ScrollNotification>(
-      onNotification: (scrollInfo) {
-      final collapsedHeight = 290.fSize - kToolbarHeight;
-      final dropdownStickyHeight = 400.fSize;
-      isCollapsed = scrollInfo.metrics.pixels > collapsedHeight;
-      showStickyDropdown = scrollInfo.metrics.pixels > dropdownStickyHeight;
-      return false;
-    },
-      child: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            expandedHeight: 290.fSize,
-            pinned: true,
-            backgroundColor: Colors.white,
-            flexibleSpace: FlexibleSpaceBar(
-            background: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.asset(
-                  'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
-                  fit: BoxFit.cover,
-                ),
-                Positioned(
-                  top: 30,
-                  left: 10,
-                  child: IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: Image.asset('assets/images/GroupBack.png'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-            
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(top:Radius.circular(20)),
-                color: Colors.white,
-              ),
-              padding: EdgeInsets.only(top: 30.fSize),
-              child: Column(
-                children: [
-                  Text(locationByMonth.first['location'] ?? '', style: const TextStyle(fontSize: 30)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset('assets/images/map_pin.png',
-                          width: 14.fSize, height: 17.fSize),
-                      Text(model.locationRoad),
-                    ],
-                  ),
-                  SizedBox(height: 10.fSize),
-      
-                  Container(
-                   width: 370.fSize,
-                   decoration: BoxDecoration(
-                    border: Border.all(
-                     color: Colors.grey,
-                      width: 0.5,
-                     ),
-                       borderRadius: BorderRadius.circular(4),
-                     ),
-                       padding: const EdgeInsets.symmetric(
-                       horizontal: 12, vertical: 4),
-                    
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      underline: const SizedBox(),
-                       dropdownStyleData: DropdownStyleData(
-                                        width: 370.fSize,
-                                        offset: const Offset(-12.5, -1),
-                                        useSafeArea: true,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: const Border(
-                                            left: BorderSide(color: Colors.grey, width: 0.5),
-                                            right: BorderSide(color: Colors.grey, width: 0.5),
-                                            bottom: BorderSide(color: Colors.grey, width: 0.5),
-                                          ),
-                                          borderRadius: const BorderRadius.only(
-                                            bottomLeft: Radius.circular(4),
-                                            bottomRight: Radius.circular(4),
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 4),
-                                            ),
-                                          ],
+          body: Stack(
+            children: [
+              NotificationListener<ScrollNotification>(
+                onNotification: (scrollInfo) {
+                  final collapsedHeight = 290.fSize - kToolbarHeight;
+                  
+                  // Calculate when the original dropdown becomes invisible
+                  // This should be when the SliverToBoxAdapter (which contains the dropdown) scrolls out of view
+                  final dropdownInvisibleHeight = 290.fSize + 125.fSize; // AppBar height + dropdown container height
+                  
+                  setState(() {
+                    isCollapsed = scrollInfo.metrics.pixels > collapsedHeight;
+                    // Only show sticky dropdown when:
+                    // 1. Original dropdown is invisible (scrolled past)
+                    // 2. User is NOT in Overview mode
+                    // 3. User has scrolled enough
+                    showStickyDropdown = scrollInfo.metrics.pixels > dropdownInvisibleHeight && 
+                                       model.selectedView != 'Overview';
+                  });
+                  
+                  return false;
+                },
+                child: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      automaticallyImplyLeading: false,
+                      expandedHeight: 290.fSize,
+                      pinned: true,
+                      backgroundColor: Colors.white,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            widget.locationByMonth.first['location'] != null
+                                ? Image.asset(
+                                    'assets/images/${widget.locationByMonth.first['location'].toString().toUpperCase()}.png',
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        color: Colors.grey.shade300,
+                                        child: const Center(
+                                          child: Icon(Icons.image_not_supported, size: 64),
                                         ),
-                                        maxHeight: 200,
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(40),
-                                          thickness: WidgetStateProperty.all(6),
-                                          thumbVisibility:
-                                              WidgetStateProperty.all(true),
-                                          trackVisibility: WidgetStateProperty.all(true),
-                                        ),
-                                      ),
-                    
-                                      menuItemStyleData: MenuItemStyleData(
-                                        height: 50,
-                                        padding:
-                                            const EdgeInsets.symmetric(horizontal: 16),
-                                        overlayColor:
-                                            WidgetStateProperty.resolveWith<Color?>(
-                                          (Set<WidgetState> states) {
-                                            if (states.contains(WidgetState.hovered)) {
-                                     return Colors.blue.withOpacity(0.1);
-                                   }
-                                   return null;
-                                  },
-                                ),
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    color: Colors.grey.shade300,
+                                    child: const Center(
+                                      child: Icon(Icons.image_not_supported, size: 64),
+                                    ),
+                                  ),
+                            Positioned(
+                              top: 30,
+                              left: 10,
+                              child: IconButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                icon: Image.asset('assets/images/GroupBack.png'),
                               ),
-                    
-                               iconStyleData: const IconStyleData(
-                               icon: Icon(Icons.keyboard_arrow_down),
-                               iconSize: 24,
-                              ),
-                               buttonStyleData: const ButtonStyleData(
-                               padding: EdgeInsets.zero,
-                               decoration: BoxDecoration(
-                               color: Colors.transparent,
                             ),
-                          ),
-                    items: [
-                          const DropdownMenuItem<String>(
-                          value: 'Overview',
-                          child: Text('Overview'),
-                       ),
-                          ...model.typeItems
-                          .map<DropdownMenuItem<String>>(
-                           (String value) {
-                             return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                               );
-                             }).toList(),
                           ],
-                    
-                          onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          setState(){
-                            model.selectedView = newValue;
-                          }
-                          if (newValue == 'Overview') {
-                            model.updateSelectedView('Overview');
-                          } else {
-                            final parts = newValue.split(' (');
-                            if (parts.length == 2) {
-                              final type = parts[0].trim();
-                              final unit = parts[1].replaceAll(')', '').trim();
-                              
-                              // Update the view and unit data
-                              model.updateSelectedView('UnitDetails');
-                              model.updateSelectedTypeUnit(type, unit);
-                              
-                            }
-                          }
-                        }
-                      },
-                           hint: const Text('Select Unit'),
-                              value: model.selectedView == 'Overview'
-                                ? 'Overview'
-                                : (model.selectedType != null && model.selectedUnitNo != null)
-                                ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
-                                          : null,
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Container(
+                        key: _originalDropdownKey, // Add key to track this container
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                          color: Colors.white,
+                        ),
+                        padding: EdgeInsets.only(top: 30.fSize),
+                        child: Column(
+                          children: [
+                            Text(
+                              widget.locationByMonth.first['location']?.toString() ?? 'Unknown Property',
+                              style: const TextStyle(fontSize: 30),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/map_pin.png',
+                                    width: 14.fSize, height: 17.fSize),
+                                Text(model.locationRoad),
+                              ],
+                            ),
+                            SizedBox(height: 10.fSize),
+                            
+                            // Original dropdown - this will scroll away
+                            Container(
+                              width: 370.fSize,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 0.5,
+                                ),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                underline: const SizedBox(),
+                                dropdownStyleData: DropdownStyleData(
+                                  width: 370.fSize,
+                                  offset: const Offset(-12.5, -1),
+                                  useSafeArea: true,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: const Border(
+                                      left: BorderSide(color: Colors.grey, width: 0.5),
+                                      right: BorderSide(color: Colors.grey, width: 0.5),
+                                      bottom: BorderSide(color: Colors.grey, width: 0.5),
+                                    ),
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(4),
+                                      bottomRight: Radius.circular(4),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  maxHeight: 200,
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: WidgetStateProperty.all(6),
+                                    thumbVisibility: WidgetStateProperty.all(true),
+                                    trackVisibility: WidgetStateProperty.all(true),
+                                  ),
+                                ),
+                                menuItemStyleData: MenuItemStyleData(
+                                  height: 50,
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                                    (Set<WidgetState> states) {
+                                      if (states.contains(WidgetState.hovered)) {
+                                        return Colors.blue.withOpacity(0.1);
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                iconStyleData: const IconStyleData(
+                                  icon: Icon(Icons.keyboard_arrow_down),
+                                  iconSize: 24,
+                                ),
+                                buttonStyleData: const ButtonStyleData(
+                                  padding: EdgeInsets.zero,
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                                items: [
+                                  const DropdownMenuItem<String>(
+                                    value: 'Overview',
+                                    child: Text('Overview'),
+                                  ),
+                                  ...model.typeItems.map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    },
+                                  ).toList(),
+                                ],
+                                onChanged: (String? newValue) {
+                                  if (newValue != null) {
+                                    if (newValue == 'Overview') {
+                                      model.updateSelectedView('Overview');
+                                    } else {
+                                      final parts = newValue.split(' (');
+                                      if (parts.length == 2) {
+                                        final type = parts[0].trim();
+                                        final unit = parts[1].replaceAll(')', '').trim();
+                                        
+                                        model.updateSelectedView('UnitDetails');
+                                        model.updateSelectedTypeUnit(type, unit);
+                                      }
+                                    }
+                                  }
+                                },
+                                hint: const Text('Select Unit'),
+                                value: model.selectedView == 'Overview'
+                                    ? 'Overview'
+                                    : (model.selectedType != null && model.selectedUnitNo != null)
+                                        ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
+                                        : null,
+                              ),
+                            ),
+                            SizedBox(height: 20.fSize), // Add some spacing
+                          ],
+                        ),
+                      ),
+                    ),
+                    SliverFillRemaining(
+                      hasScrollBody: model.selectedView != 'Overview',
+                      child: SingleChildScrollView(
+                        child: model.selectedView == 'Overview'
+                            ? PropertyOverviewContainer(model: model, locationByMonth: widget.locationByMonth)
+                            : UnitDetailsContainer(model: model),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Collapsed header (Property(s) bar)
+              if (isCollapsed)
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1)),
+                  ),
+                  height: 85.fSize,
+                  alignment: Alignment.topLeft,
+                  child: SafeArea(
+                    bottom: false,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Image.asset('assets/images/GroupBack.png'),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Property(s)',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-             ),
+                ),
+              
+              // Sticky dropdown bar - only shows when original dropdown is invisible AND not in Overview
+              if (showStickyDropdown)
+                Positioned(
+                  top: isCollapsed ? 85.fSize : 0, // Position below the Property(s) bar if it's showing
+                  left: 0,
+                  right: 0,
+                  child: StickyDropdownBar(
+                    model: model,
+                    locationByMonth: widget.locationByMonth,
+                  ),
+                ),
+            ],
           ),
-          SliverFillRemaining(
-            hasScrollBody: model.selectedView != 'Overview',
-            child: SingleChildScrollView(
-              child: model.selectedView == 'Overview'
-                ? PropertyOverviewContainer(model: model, locationByMonth: locationByMonth)
-                : UnitDetailsContainer(model: model),
-            ),
-          ),
-        ],
-      ),
-    ),
-if (isCollapsed)
-   Container(
-    
-     decoration: BoxDecoration(
-      color:Colors.white,
-         border: Border(bottom: BorderSide(color:Colors.grey.shade300, width: 1)),
-         
-        ),
-      height: 85.fSize,
-      //color: Colors.white,
-      alignment: Alignment.centerLeft,
-      child: SafeArea(
-        bottom: false, 
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Image.asset('assets/images/GroupBack.png'),
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              'Property(s)',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      
-      ),
-    
-    ),
-
-    ]
-  ),
-  
-);
-}   
-          );
-        
-      }
-    
+        );
+      },
+    );
   }
+}
+
+class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final double minHeight, maxHeight;
+
+  _StickyHeaderDelegate({
+    required this.child,
+    required this.minHeight,
+    required this.maxHeight,
+  });
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  bool shouldRebuild(covariant _StickyHeaderDelegate oldDelegate) {
+    return oldDelegate.maxHeight != maxHeight ||
+           oldDelegate.minHeight != minHeight ||
+           oldDelegate.child != child;
+  }
+}
 
 class MonthlyStatementContainer extends StatelessWidget {
   final PropertyDetailVM model;
@@ -453,22 +543,7 @@ class AnnualStatementContainer extends StatelessWidget {
                               ),
                             ],
                           ),
-                          // Row(
-                          //   mainAxisSize: MainAxisSize.min,
-                          //   children: [
-                          //     _buildGradientText('Month'),
-                          //     SizedBox(width: 2.width),
-                          //     model.isMonthLoadng
-                          //         ? const CircularProgressIndicator() // Display a loading spinner
-                          //         : TypeUnitSelectionDropdown(
-                          //             label: 'Month',
-                          //             list: model.monthItems,
-                          //             onChanged: (_) {
-                          //               model.updateSelectedMonth(_!);
-                          //             },
-                          //           ),
-                          //   ],
-                          // )
+                          
                         ],
                       );
               },
@@ -476,20 +551,7 @@ class AnnualStatementContainer extends StatelessWidget {
             SizedBox(height: 4.height),
             ElevatedButton(
               onPressed: () => model.downloadAnnualPdfStatement(context),
-              // () async {
-              // print(property);
-              // print(selectedYearValue);
-              // print(selectedMonthValue);
-              // print(selectedType);
-              // print(selectedUnitNo);
-              // await ownerPropertyList_repository.downloadPdfStatement(
-              //     context,
-              //     property,
-              //     selectedYearValue,
-              //     selectedMonthValue,
-              //     selectedType,
-              //     selectedUnitNo);
-              // },
+              
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0XFF4313E9),
                 shape: RoundedRectangleBorder(
@@ -931,40 +993,8 @@ class UnitDetailsContainer extends StatelessWidget {
                   )
                 ],
               ),
-      
-                Padding(
-                  padding: const EdgeInsets.only(top: 25),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ...model.ownerData
-                          .where((owner) => owner.location == model.property)
-                          .map((owner) => owner.accountname)
-                          .toSet() // Remove duplicates
-                          .map((ownerName) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 2),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.person,
-                                      size: 16,
-                                      color: Colors.grey[600],
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      ownerName ?? 'Unknown Owner',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ))
-                          .toList(),
-                    ],
-                  ),
-                ),
+
+              SizedBox(width: 20.width),
       
             ],
           ),
@@ -1354,7 +1384,7 @@ class StickyDropdownBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60.fSize,
+      height: 70.fSize,
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(
@@ -1371,10 +1401,10 @@ class StickyDropdownBar extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left side - Property name
               Expanded(
                 flex: 1,
                 child: Text(
@@ -1393,65 +1423,69 @@ class StickyDropdownBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey, width: 0.5),
                     borderRadius: BorderRadius.circular(4),
+                    
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: DropdownButton2<String>(
-                    isExpanded: true,
-                    underline: const SizedBox(),
-                    dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+                  padding: const EdgeInsets.only(right:10,bottom:3),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      underline: const SizedBox(),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        maxHeight: 200,
                       ),
-                      maxHeight: 200,
-                    ),
-                    iconStyleData: const IconStyleData(
-                      icon: Icon(Icons.keyboard_arrow_down),
-                      iconSize: 20,
-                    ),
-                    items: [
-                      const DropdownMenuItem<String>(
-                        value: 'Overview',
-                        child: Text('Overview'),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(Icons.keyboard_arrow_down),
+                        iconSize: 20,
                       ),
-                      ...model.typeItems.map<DropdownMenuItem<String>>(
-                        (String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        },
-                      ).toList(),
-                    ],
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        if (newValue == 'Overview') {
-                          model.updateSelectedView('Overview');
-                        } else {
-                          final parts = newValue.split(' (');
-                          if (parts.length == 2) {
-                            final type = parts[0].trim();
-                            final unit = parts[1].replaceAll(')', '').trim();
-                            
-                            model.updateSelectedView('UnitDetails');
-                            model.updateSelectedTypeUnit(type, unit);
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: 'Overview',
+                          child: Text('Overview'),
+                        ),
+                        ...model.typeItems.map<DropdownMenuItem<String>>(
+                          (String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          },
+                        ).toList(),
+                      ],
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          if (newValue == 'Overview') {
+                            model.updateSelectedView('Overview');
+                          } else {
+                            final parts = newValue.split(' (');
+                            if (parts.length == 2) {
+                              final type = parts[0].trim();
+                              final unit = parts[1].replaceAll(')', '').trim();
+                              
+                              model.updateSelectedView('UnitDetails');
+                              model.updateSelectedTypeUnit(type, unit);
+                            }
                           }
                         }
-                      }
-                    },
-                    hint: const Text('Select Unit'),
-                    value: model.selectedView == 'Overview'
-                        ? 'Overview'
-                        : (model.selectedType != null && model.selectedUnitNo != null)
-                        ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
-                        : null,
+                      },
+                      hint: const Text('Select Unit'),
+                      value: model.selectedView == 'Overview'
+                          ? 'Overview'
+                          : (model.selectedType != null && model.selectedUnitNo != null)
+                          ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
+                          : null,
+                    ),
                   ),
                 ),
               ),
@@ -1463,7 +1497,7 @@ class StickyDropdownBar extends StatelessWidget {
   }
 }
 
-          class StickyEstatementBar extends StatefulWidget {
+   class StickyEstatementBar extends StatefulWidget {
             final VoidCallback onBack;
             final List<String> yearOptions;
             final PropertyDetailVM model; 
@@ -1478,7 +1512,7 @@ class StickyDropdownBar extends StatelessWidget {
             _StickyEstatementBarState createState() => _StickyEstatementBarState();
           }
 
-          class _StickyEstatementBarState extends State<StickyEstatementBar> {
+   class _StickyEstatementBarState extends State<StickyEstatementBar> {
             String? _selectedYear; // This should start as null
 
             @override

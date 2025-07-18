@@ -206,7 +206,7 @@ class PropertyImageStack extends StatelessWidget {
                         ),
                         SizedBox(width: 2.width),
                         Text(
-                          '${locationByMonth.length} Total(${locationByMonth.first['occupancy']?? ''}% Occupancy)',
+                          '${locationByMonth.first['unit']} Total(${locationByMonth.first['occupancy']?? ''}% Occupancy)',
                           style:const TextStyle(
                             fontSize: 8,
                           )
