@@ -730,7 +730,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                      borderRadius: BorderRadius.circular(10),
                      boxShadow: [
                        BoxShadow(
-                         color: Color(0xFF3E51FF).withOpacity(0.15),
+                         color: const Color(0xFF3E51FF).withOpacity(0.15),
                          blurRadius: 10,
                          offset: const Offset(0, 0),
                        ),
