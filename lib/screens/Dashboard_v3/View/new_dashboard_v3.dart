@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
+import 'package:mana_mana_app/screens/All_Property/View/property_summary.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
@@ -186,7 +187,14 @@ class NewDashboardV3 extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   _buildSectionTitle('Overview'),
-                                  _seeAllButton(),
+                                  _seeAllButton(
+                                    onPressed: (){
+                                      Navigator.push(
+                                        context, 
+                                        MaterialPageRoute(builder: (context) =>PropertySummaryScreen())
+                                      );
+                                    },
+                                  ),
                                 ],
                               ),
                               OverviewCard(model: model),

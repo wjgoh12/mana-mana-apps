@@ -228,7 +228,7 @@ class OccupancyBarChart extends StatelessWidget {
   LineChartBarData get lineChartBarData1_1 => LineChartBarData(
         isCurved: true,
         color: Color(0XFF8C71E7),
-        barWidth: 8,
+        barWidth: 5,
         isStrokeCapRound: true,
         dotData: const FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
