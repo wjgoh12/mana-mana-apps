@@ -19,18 +19,68 @@ class _property_detail_v3State extends State<property_detail_v3> {
   late PropertyDetailVM model;
   bool isCollapsed = false;
   bool showStickyDropdown = false;
-  
-  // Key to track the original dropdown position
+  bool showStickyEstatement = false;
+  bool isFullScreenEstatement = false;
+
   final GlobalKey _originalDropdownKey = GlobalKey();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     model = PropertyDetailVM();
-    
+
     if (widget.locationByMonth.isNotEmpty) {
       model.fetchData(widget.locationByMonth);
     }
+
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final scrollOffset = _scrollController.offset;
+    
+    final collapsedHeight = 100.fSize;
+    final dropdownInvisibleHeight = 415.fSize;
+    final estatementStickyHeight = 585.fSize;
+
+    setState(() {
+      isCollapsed = scrollOffset > collapsedHeight;
+
+      
+      showStickyDropdown = scrollOffset > dropdownInvisibleHeight && 
+                          model.selectedView != 'Overview';
+
+      
+      showStickyEstatement = scrollOffset > estatementStickyHeight + 80 && 
+                            model.selectedView == 'UnitDetails';
+    });
+  }
+
+  double _calculateStickyEstatementTop() {
+    double top = 0;
+
+    if (isCollapsed) {
+      top += 85.fSize;
+    }
+    if (showStickyDropdown) {
+      top += 70.fSize;
+    }
+    return top;
+  }
+
+
+  void _toggleFullScreenEstatement() {
+    setState(() {
+      isFullScreenEstatement = !isFullScreenEstatement;
+    });
   }
 
   @override
@@ -66,27 +116,73 @@ class _property_detail_v3State extends State<property_detail_v3> {
         return Scaffold(
           body: Stack(
             children: [
-              NotificationListener<ScrollNotification>(
-                onNotification: (scrollInfo) {
-                  final collapsedHeight = 290.fSize - kToolbarHeight;
-                  
-                  // Calculate when the original dropdown becomes invisible
-                  // This should be when the SliverToBoxAdapter (which contains the dropdown) scrolls out of view
-                  final dropdownInvisibleHeight = 290.fSize + 125.fSize; // AppBar height + dropdown container height
-                  
-                  setState(() {
-                    isCollapsed = scrollInfo.metrics.pixels > collapsedHeight;
-                    // Only show sticky dropdown when:
-                    // 1. Original dropdown is invisible (scrolled past)
-                    // 2. User is NOT in Overview mode
-                    // 3. User has scrolled enough
-                    showStickyDropdown = scrollInfo.metrics.pixels > dropdownInvisibleHeight && 
-                                       model.selectedView != 'Overview';
-                  });
-                  
-                  return false;
-                },
-                child: CustomScrollView(
+              if (isFullScreenEstatement)
+                Container(
+                  color: Colors.white,
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 50.fSize,
+                          decoration: BoxDecoration(
+
+                            color: Colors.white,
+                            border: Border(
+                              bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.shade300,
+                                blurRadius: 10,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: _toggleFullScreenEstatement,
+                                icon: const Icon(Icons.close),
+                              ),
+                              const Text(
+                                'eStatements',
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              const Spacer(),
+                              const Text('Year'),
+                              const SizedBox(width: 8),
+                              DropdownButton2<String>(
+                                value: model.selectedYearValue,
+                                hint: const Text('Select Year'),
+                                items: model.yearItems
+                                    .map((year) => DropdownMenuItem(
+                          value: year,
+                                        child: Text(year),
+                                      ))
+                                  .toList(),
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    model.updateSelectedYear(val);
+                                  }
+                                },
+                              ),
+                              const SizedBox(width: 16),
+                            ],
+                          ),
+                        ),
+
+                        Expanded(
+                          child: EStatementContainer(model: model),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              if (!isFullScreenEstatement)
+                CustomScrollView(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
                     SliverAppBar(
                       automaticallyImplyLeading: false,
@@ -130,7 +226,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
                     ),
                     SliverToBoxAdapter(
                       child: Container(
-                        key: _originalDropdownKey, // Add key to track this container
+                        key: _originalDropdownKey,
                         decoration: const BoxDecoration(
                           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                           color: Colors.white,
@@ -145,25 +241,20 @@ class _property_detail_v3State extends State<property_detail_v3> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image.asset('assets/images/map_pin.png',
-                                    width: 14.fSize, height: 17.fSize),
+                                Image.asset('assets/images/map_pin.png', width: 14.fSize, height: 17.fSize),
                                 Text(model.locationRoad),
                               ],
                             ),
                             SizedBox(height: 10.fSize),
-                            
-                            // Original dropdown - this will scroll away
+
+                           
                             Container(
                               width: 370.fSize,
                               decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 0.5,
-                                ),
+                                border: Border.all(color: Colors.grey, width: 0.5),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                               child: DropdownButton2<String>(
                                 isExpanded: true,
                                 underline: const SizedBox(),
@@ -191,34 +282,6 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                     ],
                                   ),
                                   maxHeight: 200,
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    radius: const Radius.circular(40),
-                                    thickness: WidgetStateProperty.all(6),
-                                    thumbVisibility: WidgetStateProperty.all(true),
-                                    trackVisibility: WidgetStateProperty.all(true),
-                                  ),
-                                ),
-                                menuItemStyleData: MenuItemStyleData(
-                                  height: 50,
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                                    (Set<WidgetState> states) {
-                                      if (states.contains(WidgetState.hovered)) {
-                                        return Colors.blue.withOpacity(0.1);
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                iconStyleData: const IconStyleData(
-                                  icon: Icon(Icons.keyboard_arrow_down),
-                                  iconSize: 24,
-                                ),
-                                buttonStyleData: const ButtonStyleData(
-                                  padding: EdgeInsets.zero,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                  ),
                                 ),
                                 items: [
                                   const DropdownMenuItem<String>(
@@ -243,7 +306,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                       if (parts.length == 2) {
                                         final type = parts[0].trim();
                                         final unit = parts[1].replaceAll(')', '').trim();
-                                        
+
                                         model.updateSelectedView('UnitDetails');
                                         model.updateSelectedTypeUnit(type, unit);
                                       }
@@ -258,61 +321,82 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                         : null,
                               ),
                             ),
-                            SizedBox(height: 20.fSize), // Add some spacing
+                            SizedBox(height: 20.fSize),
                           ],
                         ),
                       ),
                     ),
-                    SliverFillRemaining(
-                      hasScrollBody: model.selectedView != 'Overview',
-                      child: SingleChildScrollView(
-                        child: model.selectedView == 'Overview'
-                            ? PropertyOverviewContainer(model: model, locationByMonth: widget.locationByMonth)
-                            : UnitDetailsContainer(model: model),
-                      ),
+                    SliverToBoxAdapter(
+                      child: model.selectedView == 'Overview'
+                          ? PropertyOverviewContainer(
+                              model: model,
+                              locationByMonth: widget.locationByMonth)
+                          : UnitDetailsContainer(
+                              model: model,
+                            ),
+                    ),
+                    
+                    SliverPadding(
+                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 1.5),
                     ),
                   ],
                 ),
-              ),
-              
-              // Collapsed header (Property(s) bar)
-              if (isCollapsed)
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1)),
-                  ),
-                  height: 85.fSize,
-                  alignment: Alignment.topLeft,
-                  child: SafeArea(
-                    bottom: false,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: Image.asset('assets/images/GroupBack.png'),
+
+              if (!isFullScreenEstatement) ...[
+
+                if (isCollapsed)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                      ),
+                      height: 85.fSize,
+                      child: SafeArea(
+                        bottom: false,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              icon: Image.asset('assets/images/GroupBack.png'),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Property(s)',
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Property(s)',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              
-              // Sticky dropdown bar - only shows when original dropdown is invisible AND not in Overview
-              if (showStickyDropdown)
-                Positioned(
-                  top: isCollapsed ? 85.fSize : 0, // Position below the Property(s) bar if it's showing
-                  left: 0,
-                  right: 0,
-                  child: StickyDropdownBar(
-                    model: model,
-                    locationByMonth: widget.locationByMonth,
+
+                if (showStickyDropdown)
+                  Positioned(
+                    top: isCollapsed ? 85.fSize : 0,
+                    left: 0,
+                    right: 0,
+                    child: StickyDropdownBar(
+                      model: model,
+                      locationByMonth: widget.locationByMonth,
+                    ),
                   ),
-                ),
+
+                if (showStickyEstatement)
+                  Positioned(
+                    top: _calculateStickyEstatementTop(),
+                    left: 0,
+                    right: 0,
+                    child: StickyEstatementBar(
+                      onBack: () => Navigator.pop(context),
+                      onFullScreen: _toggleFullScreenEstatement,
+                      yearOptions: model.yearItems,
+                      model: model,
+                    ),
+                  ),
+              ],
             ],
           ),
         );
@@ -332,7 +416,8 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   });
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return SizedBox.expand(child: child);
   }
 
@@ -345,8 +430,8 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant _StickyHeaderDelegate oldDelegate) {
     return oldDelegate.maxHeight != maxHeight ||
-           oldDelegate.minHeight != minHeight ||
-           oldDelegate.child != child;
+        oldDelegate.minHeight != minHeight ||
+        oldDelegate.child != child;
   }
 }
 
@@ -377,7 +462,6 @@ class MonthlyStatementContainer extends StatelessWidget {
             LayoutBuilder(
               builder: (context, constraints) {
                 if (model.isLoading) {
-                  // Check if data is still loading
                   return Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -386,7 +470,7 @@ class MonthlyStatementContainer extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     child: const Center(
                       child:
-                          CircularProgressIndicator(), // Display a loading spinner
+                          CircularProgressIndicator(),
                     ),
                   );
                 }
@@ -417,7 +501,7 @@ class MonthlyStatementContainer extends StatelessWidget {
                               _buildGradientText('Month'),
                               SizedBox(width: 2.width),
                               model.isMonthLoadng
-                                  ? const CircularProgressIndicator() // Display a loading spinner
+                                  ? const CircularProgressIndicator()
                                   : TypeUnitSelectionDropdown(
                                       label: 'Month',
                                       list: model.monthItems,
@@ -464,7 +548,6 @@ class MonthlyStatementContainer extends StatelessWidget {
                         child: CircularProgressIndicator(
                           color: Colors.white,
                           strokeWidth: 2,
-                          
                         ),
                       )
                     : Text(
@@ -543,7 +626,6 @@ class AnnualStatementContainer extends StatelessWidget {
                               ),
                             ],
                           ),
-                          
                         ],
                       );
               },
@@ -551,7 +633,6 @@ class AnnualStatementContainer extends StatelessWidget {
             SizedBox(height: 4.height),
             ElevatedButton(
               onPressed: () => model.downloadAnnualPdfStatement(context),
-              
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0XFF4313E9),
                 shape: RoundedRectangleBorder(
@@ -593,102 +674,93 @@ class PropertyOverviewContainer extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
   const PropertyOverviewContainer(
       {super.key, required this.model, required this.locationByMonth});
-      
 
   @override
   Widget build(BuildContext context) {
     double getTotalNetAfterPOB() {
-  return model.unitByMonth
-      .where((unit) => unit.slocation == model.property)
-      .fold(0.0, (sum, unit) => sum + (model.selectedUnitBlc ?? 0.0));
+      return model.unitByMonth
+          .where((unit) => unit.slocation == model.property)
+          .fold(0.0, (sum, unit) => sum + (model.selectedUnitBlc ?? 0.0));
     }
 
-    
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-
       decoration: const BoxDecoration(
-        color:Colors.white,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),  // Add top right radius
-
-      ),),
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Padding(
-              padding: const EdgeInsets.only(top:50),
-              child: Container(
-                 //margin: const EdgeInsets.only(bottom: 20),
-                 width: 175,
-                 height: 175,
-                 decoration: BoxDecoration(
-                   color: const Color(0XFFFFFFFF),
-                   borderRadius: BorderRadius.circular(12),
-                   boxShadow: [
-                     BoxShadow(
-                       color: Color(0xFF3E51FF).withOpacity(0.15),
-                       blurRadius: 10,
-                       offset: const Offset(0, 0),
-                     ),
-                   ],
-                 ),
-                 child: Column(
-                            
-                   children: [
-                     Padding(
-                       padding: const EdgeInsets.only(top:30),
-                       child: Image.asset(
-                         'assets/images/PropertyOverview1.png',
-                         width: 67.fSize,
-                         height: 59.fSize,
-                       ),
-                     ),
-                     SizedBox(height: 5.fSize),
-                     const Text(
-                       'Total Assets',
-                       style:TextStyle(
-                         fontSize:12,
-                       ),
-                       ),
-                     Text('${model.isLoading ? 0 : model.unitByMonth.where((unit) =>
-                        unit.slocation?.contains(locationByMonth.first['location']) == true
-                      ).length-1}'),
-
-                     Text(
-                       DateFormat('MMMM yyyy').format(DateTime.now()),
-                       style: const TextStyle(
-                             fontSize: 10,
-                           ),
-                     ),
-                   ],
-                 ),
-               ),
-            ),
-            SizedBox(width: 17.fSize),
-            Padding(
-              padding: const EdgeInsets.only(top:50),
+              padding: const EdgeInsets.only(top: 50),
               child: Container(
                 width: 175,
                 height: 175,
                 decoration: BoxDecoration(
-                     color: const Color(0XFFFFFFFF),
-                     borderRadius: BorderRadius.circular(12),
-                     boxShadow: [
-                       BoxShadow(
-                         color: Color(0xFF3E51FF).withOpacity(0.15),
-                         blurRadius: 10,
-                         offset: const Offset(0, 0),
-                       ),
-                     ],
-                   ),
-                   
+                  color: const Color(0XFFFFFFFF),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF3E51FF).withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 30),
+                      child: Image.asset(
+                        'assets/images/PropertyOverview1.png',
+                        width: 67.fSize,
+                        height: 59.fSize,
+                      ),
+                    ),
+                    SizedBox(height: 5.fSize),
+                    const Text(
+                      'Total Assets',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                        '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation?.contains(locationByMonth.first['location']) == true).length - 1}'),
+                    Text(
+                      DateFormat('MMMM yyyy').format(DateTime.now()),
+                      style: const TextStyle(
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(width: 17.fSize),
+            Padding(
+              padding: const EdgeInsets.only(top: 50),
+              child: Container(
+                width: 175,
+                height: 175,
+                decoration: BoxDecoration(
+                  color: const Color(0XFFFFFFFF),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF3E51FF).withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.only(top:45),
+                  padding: const EdgeInsets.only(top: 45),
                   child: Column(
                     children: [
                       SizedBox(height: 5.fSize),
@@ -697,19 +769,21 @@ class PropertyOverviewContainer extends StatelessWidget {
                         width: 65.fSize,
                         height: 38.fSize,
                       ),
-                      SizedBox(height:5.fSize),
-                      const Text('Occupancy Rate',
-                      style:TextStyle(
-                          fontSize:12,
-                        ),),
-                      
+                      SizedBox(height: 5.fSize),
+                      const Text(
+                        'Occupancy Rate',
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
                       Text('${locationByMonth.first['totalAssets'] ?? ''}'),
-                      Text(DateFormat('MMMM yyyy').format(DateTime.now(),
-                      ),
-                      style: const TextStyle(
+                      Text(
+                          DateFormat('MMMM yyyy').format(
+                            DateTime.now(),
+                          ),
+                          style: const TextStyle(
                             fontSize: 10,
-                          )
-                      ),
+                          )),
                     ],
                   ),
                 ),
@@ -719,71 +793,73 @@ class PropertyOverviewContainer extends StatelessWidget {
           SizedBox(height: 10.fSize),
           Padding(
             padding: const EdgeInsets.only(top: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
                 width: 175,
                 height: 175,
-                 decoration: BoxDecoration(
-                     color: const Color(0XFFFFFFFF),
-                     borderRadius: BorderRadius.circular(10),
-                     boxShadow: [
-                       BoxShadow(
-                         color: const Color(0xFF3E51FF).withOpacity(0.15),
-                         blurRadius: 10,
-                         offset: const Offset(0, 0),
-                       ),
-                     ],
-                   ),
+                decoration: BoxDecoration(
+                  color: const Color(0XFFFFFFFF),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF3E51FF).withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.only(top:30),
+                  padding: const EdgeInsets.only(top: 30),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/PropertyOverview3.png',
                         width: 59.fSize,
-                      height: 58.fSize,
+                        height: 58.fSize,
                       ),
-                      //property overview
-                      const Text('Monthly Profit',style:TextStyle(
-                        fontSize:12,
-                      ),),
+                      const Text(
+                        'Monthly Profit',
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
                       RichText(
-                              text: TextSpan(
-                                children: [
-                                  WidgetSpan(
-                                    alignment: PlaceholderAlignment.baseline,
-                                    baseline: TextBaseline.alphabetic,
-                                    child: Transform.translate(
-                                      offset: const Offset(0, -4), // adjust this value
-                                      child: const Text(
-                                        'RM',
-                                        style: TextStyle(
-                                          fontSize: 12, // smaller size
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
+                        text: TextSpan(
+                          children: [
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.baseline,
+                              baseline: TextBaseline.alphabetic,
+                              child: Transform.translate(
+                                offset:
+                                    const Offset(0, -4),
+                                child: const Text(
+                                  'RM',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
-                                  TextSpan(
-                                    text:'${model.locationByMonth.first['total'] ?? ''}',
-                                    style: const TextStyle(
-                                      fontSize: 16,       
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
+                            TextSpan(
+                              text:
+                                  '${model.locationByMonth.first['total'] ?? ''}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       Text(
                         DateFormat('MMMM yyyy').format(DateTime.now()),
                         style: const TextStyle(
                           fontSize: 10,
                         ),
-                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -792,66 +868,67 @@ class PropertyOverviewContainer extends StatelessWidget {
               Container(
                 width: 175,
                 height: 175,
-                 decoration: BoxDecoration(
-                     color: const Color(0XFFFFFFFF),
-                     borderRadius: BorderRadius.circular(12),
-                     boxShadow: [
-                       BoxShadow(
-                         color: Color(0xFF3E51FF).withOpacity(0.15),
-                         blurRadius: 10,
-                         offset: const Offset(0, 0),
-                       ),
-                     ],
-                   ),
+                decoration: BoxDecoration(
+                  color: const Color(0XFFFFFFFF),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF3E51FF).withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.only(top:30),
+                  padding: const EdgeInsets.only(top: 30),
                   child: Column(
                     children: [
                       Image.asset(
                         'assets/images/PropertyOverview4.png',
-                      width: 57.fSize,
+                        width: 57.fSize,
                         height: 59.fSize,
-                        ),
-                      const Text('Total Net After POB',
-                      style:TextStyle(
-                        fontSize:12,
                       ),
+                      const Text(
+                        'Total Net After POB',
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
                       ),
                       RichText(
-                              text: TextSpan(
-                                children: [
-                                  WidgetSpan(
-                                    alignment: PlaceholderAlignment.baseline,
-                                    baseline: TextBaseline.alphabetic,
-                                    child: Transform.translate(
-                                      offset: const Offset(0, -4), // adjust this value
-                                      child: const Text(
-                                        'RM',
-                                        style: TextStyle(
-                                          fontSize: 12, // smaller size
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
+                        text: TextSpan(
+                          children: [
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.baseline,
+                              baseline: TextBaseline.alphabetic,
+                              child: Transform.translate(
+                                offset:
+                                    const Offset(0, -4),
+                                child: const Text(
+                                  'RM',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
-                                  TextSpan(
-                                    text: '${model.locationByMonth.first['total'] ?? ''}',
-                                    style: const TextStyle(
-                                      fontSize: 16,               // Larger for the amount
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
-                      Text(
-                        DateFormat('MMMM yyyy').format(DateTime.now()),
-                        style: const TextStyle(
-                          fontSize: 10,
-                        )
+                            TextSpan(
+                              text:
+                                  '${model.locationByMonth.first['total'] ?? ''}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      Text(DateFormat('MMMM yyyy').format(DateTime.now()),
+                          style: const TextStyle(
+                            fontSize: 10,
+                          )),
                     ],
                   ),
                 ),
@@ -868,12 +945,8 @@ class ContractDetailsContainer extends StatelessWidget {
   final PropertyDetailVM model;
   final List<Map<String, dynamic>> locationByMonth;
 
-  const ContractDetailsContainer({
-    super.key, 
-    required this.model,
-    required this.locationByMonth
-  });
-  
+  const ContractDetailsContainer(
+      {super.key, required this.model, required this.locationByMonth});
 
   @override
   Widget build(BuildContext context) {
@@ -885,75 +958,73 @@ class ContractDetailsContainer extends StatelessWidget {
             ? model.locationByMonth.first['unitType'] as String?
             : '';
 
-    return Container(
-      width: 400.fSize,
-      height: 50.fSize,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50.fSize),
-        border: Border.all(color: const Color(0xFF5092FF)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-             const Padding(
-              padding: EdgeInsets.only(left: 5, top: 5, bottom: 10),
-              child: Text('Contract Type',
-              style:TextStyle(
-                fontSize: 10,
+        return Container(
+          width: 400.fSize,
+          height: 50.fSize,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50.fSize),
+            border: Border.all(color: const Color(0xFF5092FF)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 5, top: 5, bottom: 10),
+                  child: Text(
+                    'Contract Type',
+                    style: TextStyle(
+                      fontSize: 10,
+                    ),
+                  ),
                 ),
-              ),
-              
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5, top: 5, bottom: 10),
-              child: Text( model.unitByMonth.first.stype ?? '',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                  color: Color(0xFF5092FF),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5, top: 5, bottom: 10),
+                  child: Text(
+                    model.unitByMonth.first.stype ?? '',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: Color(0xFF5092FF),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: SizedBox(
-                
-                width: 1,
-                height: 30,
-                child: Container(
-                  color:  const Color(0xFF5092FF),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: SizedBox(
+                    width: 1,
+                    height: 30,
+                    child: Container(
+                      color: const Color(0xFF5092FF),
+                    ),
+                  ),
                 ),
-              ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 5, bottom: 10),
+                  child: Text('Contract End Date',
+                      style: TextStyle(
+                        fontSize: 10,
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 3, top: 5, bottom: 10),
+                  child: Text(
+                      DateFormat(DateFormat.YEAR_ABBR_MONTH_DAY).format(
+                        DateTime.now(),
+                      ),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF5092FF),
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+              ],
             ),
-            const Padding(
-              padding:EdgeInsets.only( top: 5, bottom: 10),
-              child: Text('Contract End Date',
-              style:TextStyle(
-                fontSize: 10,
-              )
-              ),
-            ),
-            Padding(
-              padding:const EdgeInsets.only( left:3,top: 5, bottom: 10),
-              child: Text(
-                DateFormat(DateFormat.YEAR_ABBR_MONTH_DAY).format(DateTime.now(),),
-              style:const TextStyle(
-                fontSize: 12,
-                color:Color(0xFF5092FF),
-                fontWeight: FontWeight.bold,
-              )
-              ),
-            ),
-          ],
-        ),
-      ),
-      );
-    
+          ),
+        );
       },
     );
-
   }
 }
 
@@ -964,258 +1035,255 @@ class UnitDetailsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color:Colors.white,
+      color: Colors.white,
       child: Column(
         children: [
-          SizedBox(height:25.fSize),
-          
-          ContractDetailsContainer(model: model, locationByMonth: model.locationByMonth),
+          SizedBox(height: 25.fSize),
+
+          ContractDetailsContainer(
+              model: model, locationByMonth: model.locationByMonth),
           Row(
             children: [
-      
-      
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left:15,top:25),
+                    padding: const EdgeInsets.only(left: 15, top: 25),
                     child: Image.asset(
                       'assets/images/Group.png',
-                      width:50,
-                      height:50,
-                      ),
+                      width: 50,
+                      height: 50,
+                    ),
                   ),
                   const Padding(
                     padding: EdgeInsets.only(left: 15, top: 1),
-                    child:Text('Owner(s)',
-                    style:TextStyle(
-                      fontSize: 12,
-                    )),
+                    child: Text('Owner(s)',
+                        style: TextStyle(
+                          fontSize: 12,
+                        )),
                   )
                 ],
               ),
-
               SizedBox(width: 20.width),
-      
             ],
           ),
           SizedBox(height: 2.height),
-      
+
           Container(
             height: 125,
             color: Colors.white,
-            child:Padding(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 3),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 125,
-                    height: 125,
-                    
-                    child: Container(
-                      
-                      decoration:  BoxDecoration(
-                        color:Colors.white,
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                        boxShadow:[
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                SizedBox(
+                  width: 125,
+                  height: 125,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
                           BoxShadow(
                             color: Color(0xFF3E51FF).withOpacity(0.15),
-                        blurRadius: 10,
-                        offset: const Offset(0, 0),
+                            blurRadius: 10,
+                            offset: const Offset(0, 0),
                           )
-                        ]
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top:15),
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/PropertyOverview2.png',
-                              width:39.fSize,
-                              height:22.fSize,
-                              ),
-                              const SizedBox(height: 15),
-                              const Text('Occupancy Rate',
-                      style:TextStyle(
-                          fontSize:10,
-                        ),),
-                      
-                      Text(
-                        '${model.locationByMonth.first['occupancy']?? ''}% Active',
-                        style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          )
-                      ),
-                      Text(DateFormat('MMMM yyyy').format(DateTime.now(),
-                      ),
-                      style: const TextStyle(
-                            fontSize: 10,
-                          )
-                      ),
-                        ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  
-                   SizedBox(
-                    width: 125,
-                    height: 125,
-                    
-                    child: Container(
-                      decoration:  BoxDecoration(
-                        color:Colors.white,
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                        boxShadow:[
-                          BoxShadow(
-                            color: Color(0xFF3E51FF).withOpacity(0.15),
-                        blurRadius: 10,
-                        offset: const Offset(0, 0),
-                          )
-                        ]
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top:15),
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/PropertyOverview3.png',
-                              width:30.fSize,
-                              height:30.fSize,
-                              ),
-                              const SizedBox(height: 13),
-                              const Text('Monthly Profit',
-                      style:TextStyle(
-                          fontSize:10,
-                        ),),
-                      
-                      RichText(
-                                text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                      alignment: PlaceholderAlignment.baseline,
-                                      baseline: TextBaseline.alphabetic,
-                                      child: Transform.translate(
-                                        offset: const Offset(0, -4), // adjust this value
-                                        child: const Text(
-                                          'RM',
-                                          style: TextStyle(
-                                            fontSize: 10, // smaller size
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    TextSpan(
-                                       text: '${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
-                                      style: const TextStyle(
-                                        fontSize: 15,               // Larger for the amount
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                      Text(DateFormat('MMMM yyyy').format(DateTime.now(),
-                      ),
-                      style: const TextStyle(
-                            fontSize: 10,
-                          )
-                      ),
-                        ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-               
-                 SizedBox(
-                    width: 125,
-                    height: 125,
-                    
-                    child: Container(
-                      decoration:  BoxDecoration(
-                        color:Colors.white,
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                        boxShadow:[
-                          BoxShadow(
-                            color: Color(0xFF3E51FF).withOpacity(0.15),
-                        blurRadius: 10,
-                        offset: const Offset(0, -3),
-                          )
-                        ]
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top:15),
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/PropertyOverview4.png',
-                              width:30.fSize,
-                              height:30.fSize,
-                              ),
-                              const SizedBox(height: 15),
-                              const Text('Net After POB',
-                              style:TextStyle(
-                                  fontSize:9,
-                                ),),
-                              
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                      alignment: PlaceholderAlignment.baseline,
-                                      baseline: TextBaseline.alphabetic,
-                                      child: Transform.translate(
-                                        offset: const Offset(0, -4), // adjust this value
-                                        child: const Text(
-                                          'RM',
-                                          style: TextStyle(
-                                            fontSize: 10, // smaller size
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: '${model.selectedUnitBlc.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
-                                      style: const TextStyle(
-                                        fontSize: 15,               // Larger for the amount
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text(DateFormat('MMMM yyyy').format(DateTime.now(),
+                        ]),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            'assets/images/PropertyOverview2.png',
+                            width: 39.fSize,
+                            height: 22.fSize,
+                          ),
+                          const SizedBox(height: 15),
+                          const Text(
+                            'Occupancy Rate',
+                            style: TextStyle(
+                              fontSize: 10,
+                            ),
+                          ),
+                          Text(
+                              '${model.locationByMonth.first['occupancy'] ?? ''}% Active',
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          Text(
+                              DateFormat('MMMM yyyy').format(
+                                DateTime.now(),
                               ),
                               style: const TextStyle(
-                                    fontSize: 10,
-                                  )
-                              ),
+                                fontSize: 10,
+                              )),
                         ],
-                        ),
                       ),
                     ),
                   ),
-                ]
-              ),
+                ),
+                SizedBox(width: 10),
+                SizedBox(
+                  width: 125,
+                  height: 125,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF3E51FF).withOpacity(0.15),
+                            blurRadius: 10,
+                            offset: const Offset(0, 0),
+                          )
+                        ]),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            'assets/images/PropertyOverview3.png',
+                            width: 30.fSize,
+                            height: 30.fSize,
+                          ),
+                          const SizedBox(height: 13),
+                          const Text(
+                            'Monthly Profit',
+                            style: TextStyle(
+                              fontSize: 10,
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.baseline,
+                                  baseline: TextBaseline.alphabetic,
+                                  child: Transform.translate(
+                                    offset: const Offset(
+                                        0, -4),
+                                    child: const Text(
+                                      'RM',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text:
+                                      '${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                              DateFormat('MMMM yyyy').format(
+                                DateTime.now(),
+                              ),
+                              style: const TextStyle(
+                                fontSize: 10,
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                SizedBox(
+                  width: 125,
+                  height: 125,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF3E51FF).withOpacity(0.15),
+                            blurRadius: 10,
+                            offset: const Offset(0, -3),
+                          )
+                        ]),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            'assets/images/PropertyOverview4.png',
+                            width: 30.fSize,
+                            height: 30.fSize,
+                          ),
+                          const SizedBox(height: 15),
+                          const Text(
+                            'Net After POB',
+                            style: TextStyle(
+                              fontSize: 9,
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.baseline,
+                                  baseline: TextBaseline.alphabetic,
+                                  child: Transform.translate(
+                                    offset: const Offset(
+                                        0, -4),
+                                    child: const Text(
+                                      'RM',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text:
+                                      '${model.selectedUnitBlc.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                              DateFormat('MMMM yyyy').format(
+                                DateTime.now(),
+                              ),
+                              style: const TextStyle(
+                                fontSize: 10,
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
             ),
-            
           ),
-      
-          StickyEstatementBar(onBack: () => Navigator.pop(context),
-          yearOptions: model.yearItems,
-          model:model),
-          //EStatementContainer(model: model),
+
+          StickyEstatementBar(
+              onBack: () => Navigator.pop(context),
+              yearOptions: model.yearItems,
+              model: model),
+         
           EStatementContainer(model: model)
-          
         ],
       ),
     );
@@ -1238,23 +1306,23 @@ class _EStatementContainerState extends State<EStatementContainer> {
     return ListenableBuilder(
       listenable: widget.model,
       builder: (context, child) {
-        
         if (_lastPrintedValue != widget.model.selectedYearValue) {
           _lastPrintedValue = widget.model.selectedYearValue;
-          print('selectedYearValue changed to: ${widget.model.selectedYearValue}');
+          print(
+              'selectedYearValue changed to: ${widget.model.selectedYearValue}');
         }
 
         if (widget.model.isDateLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // Check if year is selected - should be null initially
-        if (widget.model.selectedYearValue == null || widget.model.selectedYearValue!.isEmpty) {
+        if (widget.model.selectedYearValue == null ||
+            widget.model.selectedYearValue!.isEmpty) {
           return Container(
             decoration: const BoxDecoration(
               color: Colors.white,
             ),
-            height: 200,
+            height: 500,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1278,17 +1346,27 @@ class _EStatementContainerState extends State<EStatementContainer> {
           );
         }
 
-        // Filter items by selected year
         final allItems = widget.model.unitByMonth;
         final filteredItems = allItems.where((item) {
-          return item.iyear != null && 
-                 item.iyear.toString() == widget.model.selectedYearValue.toString();
+          return item.iyear != null &&
+              item.iyear.toString() ==
+                  widget.model.selectedYearValue.toString();
         }).toList();
 
         String monthNumberToName(int month) {
           const months = [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sept',
+            'Oct',
+            'Nov',
+            'Dec'
           ];
           if (month >= 1 && month <= 12) {
             return months[month - 1];
@@ -1329,20 +1407,22 @@ class _EStatementContainerState extends State<EStatementContainer> {
         return Container(
           decoration: const BoxDecoration(
             color: Colors.white,
+            
           ),
+          height:500,
           child: SingleChildScrollView(
             child: ListView.builder(
               itemCount: filteredItems.length,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, i) {
-                final item = filteredItems[i]; 
-                
-                if (widget.model.selectedView != 'Overview' && 
+                final item = filteredItems[i];
+
+                if (widget.model.selectedView != 'Overview' &&
                     item.sunitno != widget.model.selectedUnitNo) {
                   return const SizedBox.shrink();
                 }
-                
+
                 return Row(
                   children: [
                     InkWell(
@@ -1354,7 +1434,8 @@ class _EStatementContainerState extends State<EStatementContainer> {
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Row(
                             children: [
-                              Text('${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
+                              Text(
+                                  '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
                             ],
                           ),
                         ),
@@ -1374,7 +1455,7 @@ class _EStatementContainerState extends State<EStatementContainer> {
 class StickyDropdownBar extends StatelessWidget {
   final PropertyDetailVM model;
   final List<Map<String, dynamic>> locationByMonth;
-  
+
   const StickyDropdownBar({
     Key? key,
     required this.model,
@@ -1415,7 +1496,6 @@ class StickyDropdownBar extends StatelessWidget {
                   ),
                 ),
               ),
-              
               Expanded(
                 flex: 2,
                 child: Container(
@@ -1423,9 +1503,8 @@ class StickyDropdownBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey, width: 0.5),
                     borderRadius: BorderRadius.circular(4),
-                    
                   ),
-                  padding: const EdgeInsets.only(right:10,bottom:3),
+                  padding: const EdgeInsets.only(right: 10, bottom: 3),
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: DropdownButton2<String>(
@@ -1472,7 +1551,7 @@ class StickyDropdownBar extends StatelessWidget {
                             if (parts.length == 2) {
                               final type = parts[0].trim();
                               final unit = parts[1].replaceAll(')', '').trim();
-                              
+
                               model.updateSelectedView('UnitDetails');
                               model.updateSelectedTypeUnit(type, unit);
                             }
@@ -1482,9 +1561,10 @@ class StickyDropdownBar extends StatelessWidget {
                       hint: const Text('Select Unit'),
                       value: model.selectedView == 'Overview'
                           ? 'Overview'
-                          : (model.selectedType != null && model.selectedUnitNo != null)
-                          ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
-                          : null,
+                          : (model.selectedType != null &&
+                                  model.selectedUnitNo != null)
+                              ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
+                              : null,
                     ),
                   ),
                 ),
@@ -1497,96 +1577,102 @@ class StickyDropdownBar extends StatelessWidget {
   }
 }
 
-   class StickyEstatementBar extends StatefulWidget {
-            final VoidCallback onBack;
-            final List<String> yearOptions;
-            final PropertyDetailVM model; 
-            const StickyEstatementBar({
-              required this.onBack,
-              required this.yearOptions,
-              required this.model, // Add this parameter
-              Key? key,
-            }) : super(key: key);
+class StickyEstatementBar extends StatefulWidget {
+  final VoidCallback onBack;
+  final List<String> yearOptions;
+  final PropertyDetailVM model;
+  final VoidCallback? onFullScreen;
+  const StickyEstatementBar({
+    required this.onBack,
+    required this.yearOptions,
+    required this.model,
+    this.onFullScreen,
+    Key? key,
+  }) : super(key: key);
 
-            @override
-            _StickyEstatementBarState createState() => _StickyEstatementBarState();
-          }
+  @override
+  _StickyEstatementBarState createState() => _StickyEstatementBarState();
+}
 
-   class _StickyEstatementBarState extends State<StickyEstatementBar> {
-            String? _selectedYear; // This should start as null
+class _StickyEstatementBarState extends State<StickyEstatementBar> {
+  String? _selectedYear;
 
-            @override
-            void initState() {
-              super.initState();
-              // Don't initialize with any value - let it be null
-              _selectedYear = null;
-              print('StickyEstatementBar initialized with _selectedYear: $_selectedYear');
-            }
+  @override
+  void initState() {
+    super.initState();
+    
+    _selectedYear = null;
+    print('StickyEstatementBar initialized with _selectedYear: $_selectedYear');
+  }
 
-            @override
-            Widget build(BuildContext context) {
-              return Container(
-                height: 85.fSize,
-                color: Colors.white,
-                alignment: Alignment.centerLeft,
-                child: SafeArea(
-                  bottom: false,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(width: 8),
-                      const Text(
-                        'eStatements',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 65.fSize,
+      alignment: Alignment.topLeft,
+      decoration:BoxDecoration(
+        color: Colors.white,
+        border:Border(
+          bottom: BorderSide(color: Color(0xFF383838).withOpacity(0.1), width: 1,),
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(width: 8),
+            const Text(
+              'eStatements',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const Spacer(),
+            const Text('Year'),
+            const SizedBox(width: 8),
+            DropdownButton2<String>(
+              dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                        bottom:
+                            BorderSide(color: Colors.grey.shade300, width: 1),
                       ),
-                      const Spacer(),
-                      const Text('Year'),
-                      const SizedBox(width: 8),
-                      DropdownButton2<String>(
-                        dropdownStyleData: DropdownStyleData(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border(
-                              bottom: BorderSide(color: Colors.grey.shade300, width: 1),
-                            ),
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.15),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          )
-                        ),
-                        value: _selectedYear, // This should be null initially
-                        hint: const Text('Select Year'),
-                        items: widget.yearOptions
-                            .map((year) => DropdownMenuItem(
-                                  value: year,
-                                  child: Text(year),
-                                ))
-                            .toList(),
-                        onChanged: (val) {
-                          print('User selected year: $val');
-                          setState(() => _selectedYear = val);
-                          
-                          // Update the model
-                          if (val != null) {
-                            widget.model.updateSelectedYear(val);
-                          }
-                        },
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
                       ),
-                      const SizedBox(width: 8),
-                    ],
-                  ),
-                ),
-              );
-            }
-          }
+                      boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ])),
+              value: _selectedYear, 
+              
+              hint: const Text('Select Year'),
+              items: widget.yearOptions
+                  .map((year) => DropdownMenuItem(
+                        value: year,
+                        child: Text(year),
+                      ))
+                  .toList(),
+              onChanged: (val) {
+                print('User selected year: $val');
+                setState(() => _selectedYear = val);
+
+                if (val != null) {
+                  widget.model.updateSelectedYear(val);
+                }
+              },
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 Widget _buildGradientText(String text) {
   return GradientText1(
