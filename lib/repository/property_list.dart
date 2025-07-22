@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
@@ -275,6 +277,16 @@ class PropertyListRepository {
     final propertyListRepository = PropertyListRepository();
     final ownerUnits = await propertyListRepository.getOwnerUnit();
     return ownerUnits.length;
+  }
+
+  Future<Map<String, dynamic>> getPropertyContractType() async {
+    return await _apiService.post(ApiEndpoint.propertyContractType).then((res) {
+      if (res is Map<String, dynamic>) {
+        return res;
+      } else {
+        throw Exception('Failed to fetch property contract type');
+      }
+    });
   }
 }
 

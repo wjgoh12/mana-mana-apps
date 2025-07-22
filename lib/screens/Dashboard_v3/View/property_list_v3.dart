@@ -1,16 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class PropertyListV3 extends StatelessWidget {
   final ScrollController controller;
   final NewDashboardVM_v3 model;
-  const PropertyListV3({required this.model,required this.controller, Key? key}) : super(key: key);
+  PropertyListV3({required this.model,required this.controller, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -238,26 +236,57 @@ class PropertyImageStack extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                //Circle avatar showing owner initials
-                 Row(
-                  children: [
-                       for (var owner in locationByMonth.first['owners'] ?? [])
+                  SizedBox(width: 10.fSize),
+                 Expanded(
+                   child: SingleChildScrollView(
+                     scrollDirection: Axis.horizontal,
+                     child: Row(
+                      children: [
+                        for (var owner in locationByMonth.first['owners'] ?? []) ...[
+                          // Main owner avatar
                           Padding(
                             padding: const EdgeInsets.only(right: 5),
-                            child: CircleAvatar(
-                            radius: 15,
-                            backgroundColor: Colors.blue,
-                            child: Text(
-                              getInitials(owner['name'] ?? ''),
-                               style: const TextStyle(
-                               color: Colors.white,
-                               fontSize: 12,
+                            child: Tooltip(
+                              message: owner['ownerName'] ?? 'Unknown Owner',
+                              child: CircleAvatar(
+                                radius: 13,
+                                backgroundColor: Colors.blue,
+                                child: Text(
+                                  getInitials(owner['ownerName'] ?? ''),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
-                             ),
                             ),
-                           ),
-                          ],
-                        ),
+                          ),
+                          // Co-owner avatar if exists
+                          if (owner['coOwnerName'] != null && owner['coOwnerName'].toString().isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5),
+                              child: Tooltip(
+                                message: owner['coOwnerName'],
+                                child: CircleAvatar(
+                                  radius: 13,
+                                  backgroundColor: Colors.green,
+                                  child: Text(
+                                    getInitials(owner['coOwnerName']),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                       ],
+                     ),
+                   ),
+                 ),
                 ],
               ),
             ),
@@ -329,7 +358,6 @@ class PropertyImageStack extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                //after pressed button, it will navigate to property detail page
                 Container(
                   margin: const EdgeInsets.only(right: 10,bottom:8),
                    child: TextButton(

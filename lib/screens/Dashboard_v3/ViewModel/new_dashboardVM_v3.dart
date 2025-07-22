@@ -13,6 +13,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   final PropertyListRepository ownerPropertyListRepository =
       PropertyListRepository();
 
+
   String userNameAccount = '';
   List<User> _users = [];
   List<User> get users => _users;
@@ -27,6 +28,8 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   List<Map<String, dynamic>> newsletters = [];
   List<Map<String, dynamic>> monthlyBlcOwner = [];
   List<Map<String, dynamic>> locationByMonth = [];
+  List<Map<String, dynamic>> propertyContractType = [];
+  
 
   Future get overallBalance => Future.delayed(
       const Duration(milliseconds: 500),
@@ -81,6 +84,63 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     // : DateTime.now().year.toString();
 
     totalByMonth = await ownerPropertyListRepository.totalByMonth();
+
+    // Fetch property contract type data from API
+    try {
+      final contractResponse = await ownerPropertyListRepository.getPropertyContractType();
+      propertyContractType = contractResponse['data'] ?? [];
+    } catch (e) {
+      print('Error fetching property contract type: $e');
+      propertyContractType = [];
+    }
+    
+    // TODO: If you want to call from a completely new API for owner names, 
+    // you can add a new method here like:
+    // 
+    // try {
+    //   List<Map<String, dynamic>> newOwnerData = await ownerPropertyListRepository.getOwnersFromNewAPI();
+    //   // Process and merge the new owner data with propertyContractType
+    //   // or replace propertyContractType entirely with the new data
+    // } catch (e) {
+    //   print('Error fetching from new owner API: $e');
+    // }
+    
+    // If no data from API, use fallback data (can be removed in production)
+    if (propertyContractType.isEmpty) {
+      propertyContractType = [
+        {
+          "location": "SCARLETZ",
+          "type": "D",
+          "unitNo": "45-99.99",
+          "ownerName": "Robin Hood",
+          "coOwnerName": "Marian",
+          "contractType": "PS",
+          "startDate": "2025-02-07",
+          "endDate": "2028-06-12"
+        },
+        {
+          "location": "SCARLETZ",
+          "type": "A",
+          "unitNo": "23-45.67",
+          "ownerName": "John Doe",
+          "coOwnerName": null,
+          "contractType": "PS",
+          "startDate": "2024-12-01",
+          "endDate": "2027-12-01"
+        },
+        
+        {
+          "location": "EXPRESSIONZ",
+          "type": "B",
+          "unitNo": "12-34.56",
+          "ownerName": "Jane Smith",
+          "coOwnerName": "Bob Smith",
+          "contractType": "PS",
+          "startDate": "2024-01-15",
+          "endDate": "2027-01-15"
+        }
+      ];
+    }
     
     // totalByMonth = [
     //   {'total': 4200.31, 'transcode': 'NOPROF', 'month': 5, 'year': 2024},
@@ -107,6 +167,24 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           });
 
     locationByMonth = await ownerPropertyListRepository.locationByMonth();
+    
+    // Enrich locationByMonth with owner data from propertyContractType
+    for (var location in locationByMonth) {
+      // Find matching owners for this location
+      List<Map<String, dynamic>> ownersForLocation = propertyContractType
+          .where((property) => property['location'] == location['location'])
+          .toList();
+      
+      // Add owners array to location data
+      location['owners'] = ownersForLocation.map((property) {
+        return {
+          'ownerName': property['ownerName'],
+          'coOwnerName': property['coOwnerName'],
+          'unitNo': property['unitNo'],
+          'contractType': property['contractType'],
+        };
+      }).toList();
+    }
     // print(locationByMonth.first);
     // locationByMonth = [
     //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 5, 'year': 2024},

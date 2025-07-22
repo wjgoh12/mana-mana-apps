@@ -160,7 +160,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                 hint: const Text('Select Year'),
                                 items: model.yearItems
                                     .map((year) => DropdownMenuItem(
-                          value: year,
+                                        value: year,
                                         child: Text(year),
                                       ))
                                   .toList(),
@@ -1619,7 +1619,7 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
             const Text('Year'),
             const SizedBox(width: 8),
             DropdownButton2<String>(
-              value: widget.model.selectedYearValue, // Use model value, not local _selectedYear
+              value: widget.model.selectedYearValue,
               hint: widget.model.yearItems.isNotEmpty ? const Text('Select Year') : const Text('-'),
               items: widget.yearOptions
                   .map((year) => DropdownMenuItem(
