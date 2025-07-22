@@ -44,7 +44,13 @@ class _property_detail_v3State extends State<property_detail_v3> {
     super.dispose();
   }
 
+  // Add this method to disable scroll for Overview
   void _onScroll() {
+    // Only allow scrolling for UnitDetails, block for Overview
+    if (model.selectedView == 'Overview') {
+      return; // Block all scroll logic for Overview
+    }
+    
     final scrollOffset = _scrollController.offset;
     
     final collapsedHeight = 100.fSize;
@@ -54,11 +60,9 @@ class _property_detail_v3State extends State<property_detail_v3> {
     setState(() {
       isCollapsed = scrollOffset > collapsedHeight;
 
-      
       showStickyDropdown = scrollOffset > dropdownInvisibleHeight && 
                           model.selectedView != 'Overview';
 
-      
       showStickyEstatement = scrollOffset > estatementStickyHeight + 80 && 
                             model.selectedView == 'UnitDetails';
     });
@@ -182,7 +186,9 @@ class _property_detail_v3State extends State<property_detail_v3> {
               if (!isFullScreenEstatement)
                 CustomScrollView(
                   controller: _scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
+                  physics: model.selectedView == 'Overview' 
+                      ? const NeverScrollableScrollPhysics() // Lock scroll for Overview
+                      : const AlwaysScrollableScrollPhysics(), // Allow scroll for UnitDetails
                   slivers: [
                     SliverAppBar(
                       automaticallyImplyLeading: false,
