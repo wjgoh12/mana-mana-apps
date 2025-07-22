@@ -1316,25 +1316,61 @@ class _EStatementContainerState extends State<EStatementContainer> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (widget.model.selectedYearValue == null ||
-            widget.model.selectedYearValue!.isEmpty) {
+        // if (widget.model.selectedYearValue == null ||
+        //     widget.model.selectedYearValue!.isEmpty) {
+        //   return Container(
+        //     decoration: const BoxDecoration(
+        //       color: Colors.white,
+        //     ),
+        //     height: 500,
+        //     child: Center(
+        //       child: Column(
+        //         mainAxisAlignment: MainAxisAlignment.center,
+        //         children: [
+        //           Icon(
+        //             Icons.calendar_today_outlined,
+        //             size: 48,
+        //             color: Colors.grey.shade400,
+        //           ),
+        //           SizedBox(height: 16),
+        //           Text(
+        //             'Please select a year to view statements',
+        //             style: TextStyle(
+        //               fontSize: 16,
+        //               color: Colors.grey.shade600,
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   );
+        // }
+        
+
+        final allItems = widget.model.unitByMonth;
+        final filteredItems = allItems.where((item) {
+          return item.iyear != null &&
+              item.iyear.toString() ==
+                  widget.model.selectedYearValue.toString();
+        }).toList();
+        if (filteredItems.isEmpty) {
           return Container(
             decoration: const BoxDecoration(
               color: Colors.white,
             ),
-            height: 500,
+            height: 200,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.calendar_today_outlined,
+                    Icons.description_outlined,
                     size: 48,
                     color: Colors.grey.shade400,
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Please select a year to view statements',
+                    'No statements found !',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey.shade600,
@@ -1345,13 +1381,6 @@ class _EStatementContainerState extends State<EStatementContainer> {
             ),
           );
         }
-
-        final allItems = widget.model.unitByMonth;
-        final filteredItems = allItems.where((item) {
-          return item.iyear != null &&
-              item.iyear.toString() ==
-                  widget.model.selectedYearValue.toString();
-        }).toList();
 
         String monthNumberToName(int month) {
           const months = [
@@ -1375,34 +1404,7 @@ class _EStatementContainerState extends State<EStatementContainer> {
           }
         }
 
-        if (filteredItems.isEmpty) {
-          return Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-            ),
-            height: 200,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.description_outlined,
-                    size: 48,
-                    color: Colors.grey.shade400,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'No statements found for ${widget.model.selectedYearValue}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
+        
 
         return Container(
           decoration: const BoxDecoration(
@@ -1410,41 +1412,33 @@ class _EStatementContainerState extends State<EStatementContainer> {
             
           ),
           height:500,
-          child: SingleChildScrollView(
-            child: ListView.builder(
-              itemCount: filteredItems.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, i) {
-                final item = filteredItems[i];
+          child: ListView.builder(
+            itemCount: filteredItems.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, i) {
+              final item = filteredItems[i];
 
-                if (widget.model.selectedView != 'Overview' &&
-                    item.sunitno != widget.model.selectedUnitNo) {
-                  return const SizedBox.shrink();
-                }
+              if (widget.model.selectedView != 'Overview' &&
+                  item.sunitno != widget.model.selectedUnitNo) {
+                return const SizedBox.shrink();
+              }
 
-                return Row(
-                  children: [
-                    InkWell(
-                      hoverColor: Colors.grey.shade50,
-                      onTap: () => widget.model.downloadPdfStatement(context),
-                      child: SizedBox(
-                        height: 50.fSize,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: [
-                              Text(
-                                  '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              },
-            ),
+              return InkWell(
+                hoverColor: Colors.grey.shade50,
+                onTap: () => widget.model.downloadPdfStatement(context),
+                child: Container(
+                  height: 50.fSize,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      Text(
+                          '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         );
       },
@@ -1595,25 +1589,14 @@ class StickyEstatementBar extends StatefulWidget {
 }
 
 class _StickyEstatementBarState extends State<StickyEstatementBar> {
-  String? _selectedYear;
-
-  @override
-  void initState() {
-    super.initState();
-    
-    _selectedYear = null;
-    print('StickyEstatementBar initialized with _selectedYear: $_selectedYear');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 65.fSize,
-      alignment: Alignment.topLeft,
-      decoration:BoxDecoration(
+      height: 60.fSize,
+      decoration: BoxDecoration(
         color: Colors.white,
-        border:Border(
-          bottom: BorderSide(color: Color(0xFF383838).withOpacity(0.1), width: 1,),
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade300, width: 1),
         ),
       ),
       child: SafeArea(
@@ -1624,33 +1607,14 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
             const SizedBox(width: 8),
             const Text(
               'eStatements',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Spacer(),
             const Text('Year'),
             const SizedBox(width: 8),
             DropdownButton2<String>(
-              dropdownStyleData: DropdownStyleData(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border(
-                        bottom:
-                            BorderSide(color: Colors.grey.shade300, width: 1),
-                      ),
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                      boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ])),
-              value: _selectedYear, 
-              
-              hint: const Text('Select Year'),
+              value: widget.model.selectedYearValue, // Use model value, not local _selectedYear
+              hint: widget.model.yearItems.isNotEmpty ? const Text('Select Year') : const Text('-'),
               items: widget.yearOptions
                   .map((year) => DropdownMenuItem(
                         value: year,
@@ -1658,9 +1622,6 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
                       ))
                   .toList(),
               onChanged: (val) {
-                print('User selected year: $val');
-                setState(() => _selectedYear = val);
-
                 if (val != null) {
                   widget.model.updateSelectedYear(val);
                 }
