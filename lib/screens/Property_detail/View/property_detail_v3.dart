@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
@@ -1015,15 +1016,14 @@ class ContractDetailsContainer extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 3, top: 5, bottom: 10),
-                  child: Text(
-                      DateFormat(DateFormat.YEAR_ABBR_MONTH_DAY).format(
-                        DateTime.now(),
-                      ),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF5092FF),
-                        fontWeight: FontWeight.bold,
-                      )),
+                  child:Text(
+                    locationByMonth.first['endDate'] ?? '',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF5092FF),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -1069,7 +1069,50 @@ class UnitDetailsContainer extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(width: 20.width),
+              SizedBox(width: 5.fSize),
+              Container(
+                width: 300,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        for (var owner in model.locationByMonth.first['owners'] ?? []) ...[
+                          // Main owner avatar
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Tooltip(
+                              message: owner['unitNo'] == model.selectedUnitNo
+                                  ? '${owner['ownerName']} - Unit ${owner['unitNo']}'
+                                  : 'Unknown Owner',
+                              child: CircleAvatar(
+                                radius: 13,
+                                backgroundColor: owner['unitNo'] == model.selectedUnitNo
+                                ? Colors.blue
+                                : Colors.transparent,
+                                child: Text(
+                                  owner['unitNo'] == model.selectedUnitNo
+                                      ? getInitials(owner['ownerName'] ?? '')
+                                      : '',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 1.width),
+                          owner['unitNo'] == model.selectedUnitNo
+                              ? Text(owner['ownerName'] ?? '')
+                              : Text(''),
+                          SizedBox(width: 2.width),
+                        ]
+                      ],
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
           SizedBox(height: 2.height),
