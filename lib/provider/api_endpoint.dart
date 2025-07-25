@@ -8,5 +8,6 @@ class ApiEndpoint{
   static const String getUnitByMonth = '/mobile/dash/total_bymonth_single_type_unit';
   static const String locationByMonth = '/mobile/dash/total_bymonth_location';
   static const String userLogout = '/mobile/dash/refs/logout';
-  static const String propertyContractType ='/mobile/units/getPropertyOverviewContractType';
+  static const String propertyContractType ='/mobile/enqs/getPropertyOverviewContractType';
+  static const String propertyOccupancyRate = '/mobile/enqs/propertyOverviewOccupanceRate';
 }
