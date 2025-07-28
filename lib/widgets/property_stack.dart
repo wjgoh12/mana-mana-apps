@@ -1,29 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class PropertyStack extends StatelessWidget {
+  final List<Map<String, dynamic>> locationByMonth;
   const PropertyStack({
     super.key,
-    required this.image,
-    required this.text1,
-    required this.text2,
-    required this.text3,
-    required this.total,
+    // required this.image,
+    // required this.text1,
+    // required this.text2,
+    // required this.text3,
+    // required this.total,
+    required this.locationByMonth,
   });
 
-  final String image;
-  final String text1;
-  final String text2;
-  final String text3;
-  final double total;
+  // final String image;
+  // final String text1;
+  // final String text2;
+  // final String text3;
+  // final double total;
 
   @override
   Widget build(BuildContext context) {
-    final NewDashboardVM model = NewDashboardVM();
-    model.fetchData();
+    NewDashboardVM_v3 model = NewDashboardVM_v3();
+
+    if (locationByMonth.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    String locationRoad = '';
+    switch (locationByMonth[0]['location'].toUpperCase()) {
+      case "EXPRESSIONZ":
+        locationRoad = "Jalan Tun Razak";
+        break;
+      case "CEYLONZ":
+        locationRoad = "Persiaran Raja Chulan";
+        break;
+      case "SCARLETZ":
+        locationRoad = "Jalan Yap Kwan Seng";
+        break;
+      case "MILLERZ":
+        locationRoad = "Old Klang Road";
+        break;
+      case "MOSSAZ":
+        locationRoad = "Empire City";
+        break;
+      case "PAXTONZ":
+        locationRoad = "Empire City";
+        break;
+      default:
+        locationRoad = "";
+        break;
+    }
+    //final NewDashboardVM_v3 model = NewDashboardVM_v3();
+    //model.fetchData();
 
     return ResponsiveBuilder(builder: (context, sizingInformation) {
       final isMobile =
@@ -68,7 +106,7 @@ class PropertyStack extends StatelessWidget {
                             width: width,
                             height: height,
                             child: Image.asset(
-                              'assets/images/${image.toString().toUpperCase()}.png',
+                              'assets/images/${(locationByMonth.first['location'] ?? '').toString().toUpperCase()}.png',
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -103,7 +141,7 @@ class PropertyStack extends StatelessWidget {
                               Image.asset('assets/images/map_pin.png',
                                   width: 17.fSize, height: 17.fSize),
                               Text(
-                                text2,
+                                '$locationRoad',
                                 style: const TextStyle(fontSize: 9),
                               ),
                               SizedBox(
@@ -121,7 +159,7 @@ class PropertyStack extends StatelessWidget {
                               ),
                               SizedBox(width: 2.width),
                               Text(
-                                'Total',
+                                '${locationByMonth.first['totalUnits'] ?? 0} Total(${model.propertyOccupancy['amount'] ?? ''}% Occupancy)',
                                 style: const TextStyle(fontSize: 9),
                               ),
                             ],
@@ -151,22 +189,66 @@ class PropertyStack extends StatelessWidget {
                             color: Colors.black,
                           ),
                         ),
+                        for (var owner in (locationByMonth.isNotEmpty
+                            ? locationByMonth.first['owners'] ?? []
+                            : [])) ...[
+                          // Main owner avatar
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Tooltip(
+                              message: owner['ownerName'] ?? 'Unknown Owner',
+                              child: CircleAvatar(
+                                radius: 13,
+                                backgroundColor: Colors.blue,
+                                child: Text(
+                                  getInitials(owner['ownerName'] ?? ''),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Co-owner avatar if exists
+                          if (owner['coOwnerName'] != null &&
+                              owner['coOwnerName'].toString().isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5),
+                              child: Tooltip(
+                                message: owner['coOwnerName'],
+                                child: CircleAvatar(
+                                  radius: 13,
+                                  backgroundColor: Colors.green,
+                                  child: Text(
+                                    getInitials(owner['coOwnerName']),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ],
                     ),
                   ),
+
+                  SizedBox(height: 2.height),
                   Padding(
-                    padding: const EdgeInsets.only(left: 12, top: 5),
+                    padding: const EdgeInsets.only(left: 12),
                     child: Text(
-                      text1.toString(),
+                      locationByMonth.first['location'] ?? '',
                       style: const TextStyle(
-                        fontFamily: 'Open Sans',
                         fontSize: 21,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
                     ),
                   ),
-
                   //divider
                   Container(
                     height: 1,
@@ -197,7 +279,7 @@ class PropertyStack extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    'RM$total',
+                                    'RM ${locationByMonth.first['total'] ?? 0.0}',
                                     style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -206,7 +288,7 @@ class PropertyStack extends StatelessWidget {
                                 ],
                               ),
                             ),
-
+                            SizedBox(width: 10.width),
                             //after pressed button, it will navigate to property detail page
                             Positioned(
                               bottom: 0,
@@ -222,7 +304,7 @@ class PropertyStack extends StatelessWidget {
                                           builder: (context) =>
                                               property_detail_v3(
                                                   locationByMonth:
-                                                      model.locationByMonth),
+                                                      locationByMonth),
                                         ));
                                   },
                                   style: ButtonStyle(

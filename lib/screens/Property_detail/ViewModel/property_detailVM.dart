@@ -57,6 +57,12 @@ class PropertyDetailVM extends ChangeNotifier {
   Future<void> fetchData(List<Map<String, dynamic>> newLocationByMonth) async {
     locationByMonth = newLocationByMonth;
     _users = await userRepository.getUsers();
+    
+    if (locationByMonth.isEmpty) {
+      print('Warning: locationByMonth is empty');
+      return;
+    }
+    
     property = locationByMonth[0]['location'];
 
     if (selectedView.isEmpty) {

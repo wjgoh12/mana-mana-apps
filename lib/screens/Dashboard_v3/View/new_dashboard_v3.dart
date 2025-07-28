@@ -5,10 +5,6 @@ import 'package:mana_mana_app/screens/All_Property/View/property_summary.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/View/revenue_dashboard.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/View/statistic_table.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/View/user_info.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 import 'package:mana_mana_app/widgets/overview_card.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
@@ -32,7 +28,8 @@ class NewDashboardV3 extends StatelessWidget {
       child: Consumer<NewDashboardVM_v3>(
         builder: (context, model, child) {
           final ScrollController propertyScrollController = ScrollController();
-          final ScrollController newsletterScrollController = ScrollController();
+          final ScrollController newsletterScrollController =
+              ScrollController();
           final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
 
           return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -46,13 +43,11 @@ class NewDashboardV3 extends StatelessWidget {
               body: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) => [
                   SliverAppBar(
-                    
                     pinned: true,
                     floating: false,
                     expandedHeight: _getExpandedHeight(context),
                     backgroundColor: Colors.white,
                     surfaceTintColor: Colors.transparent,
-                    
                     elevation: 0,
                     automaticallyImplyLeading: false,
                     systemOverlayStyle: const SystemUiOverlayStyle(
@@ -60,20 +55,21 @@ class NewDashboardV3 extends StatelessWidget {
                       statusBarIconBrightness: Brightness.dark,
                       statusBarBrightness: Brightness.light,
                     ),
-                    title: innerBoxIsScrolled 
-                      ? Text(
-                          'Dashboard',
-                          style: TextStyle(
-                            fontSize: 18.fSize,
-                            fontFamily: 'Open Sans',
-                            fontWeight: FontWeight.w800,
-                            color: Colors.black,
-                          ),
-                        )
-                      : null,
+                    title: innerBoxIsScrolled
+                        ? Text(
+                            'Dashboard',
+                            style: TextStyle(
+                              fontSize: 18.fSize,
+                              fontFamily: 'Open Sans',
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black,
+                            ),
+                          )
+                        : null,
                     centerTitle: true,
                     flexibleSpace: FlexibleSpaceBar(
-                      background: _buildHeaderContent(context, model, isRefreshing, innerBoxIsScrolled),
+                      background: _buildHeaderContent(
+                          context, model, isRefreshing, innerBoxIsScrolled),
                       collapseMode: CollapseMode.pin,
                     ),
                   ),
@@ -109,13 +105,17 @@ class NewDashboardV3 extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 2.height),
-                              
+
                               // Gradient title
                               Row(
                                 children: [
                                   ShaderMask(
-                                    shaderCallback: (bounds) => const LinearGradient(
-                                      colors: [Color(0xFFB82B7D), Color.fromRGBO(62, 81, 255, 1)],
+                                    shaderCallback: (bounds) =>
+                                        const LinearGradient(
+                                      colors: [
+                                        Color(0xFFB82B7D),
+                                        Color.fromRGBO(62, 81, 255, 1)
+                                      ],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                     ).createShader(bounds),
@@ -147,7 +147,8 @@ class NewDashboardV3 extends StatelessWidget {
                                   prefixIcon: SizedBox(
                                     width: 20,
                                     height: 20,
-                                    child: Image.asset('assets/images/searchIcon.png'),
+                                    child: Image.asset(
+                                        'assets/images/searchIcon.png'),
                                   ),
                                   hintText: 'Search Your Properties',
                                   hintStyle: TextStyle(fontSize: 15.fSize),
@@ -171,7 +172,7 @@ class NewDashboardV3 extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                           //   SizedBox(height: 2.height),
+                              //   SizedBox(height: 2.height),
                             ],
                           ),
                         ),
@@ -179,20 +180,22 @@ class NewDashboardV3 extends StatelessWidget {
                         // Overview section
                         Container(
                           width: 100.width,
-                          padding: EdgeInsets.symmetric(horizontal:7.width),
+                          padding: EdgeInsets.symmetric(horizontal: 7.width),
                           color: Colors.white,
                           child: Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   _buildSectionTitle('Overview'),
                                   _seeAllButton(
-                                    onPressed: (){
+                                    onPressed: () {
                                       Navigator.push(
-                                        context, 
-                                        MaterialPageRoute(builder: (context) =>PropertySummaryScreen())
-                                      );
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PropertySummaryScreen()));
                                     },
                                   ),
                                 ],
@@ -210,7 +213,8 @@ class NewDashboardV3 extends StatelessWidget {
                           child: Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   _buildSectionTitle('Your Properties'),
                                   _seeAllButton(
@@ -218,8 +222,8 @@ class NewDashboardV3 extends StatelessWidget {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => AllPropertyScreen(
-                                          ),
+                                          builder: (context) =>
+                                              AllPropertyScreen(),
                                         ),
                                       );
                                     },
@@ -234,7 +238,7 @@ class NewDashboardV3 extends StatelessWidget {
                           ),
                         ),
 
-                     //   SizedBox(height: 2.height),
+                        //   SizedBox(height: 2.height),
 
                         // Newsletter section
                         Container(
@@ -246,7 +250,8 @@ class NewDashboardV3 extends StatelessWidget {
                               SizedBox(
                                 height: 40.fSize,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Align(
                                       alignment: Alignment.topLeft,
@@ -279,7 +284,8 @@ class NewDashboardV3 extends StatelessWidget {
                   ),
                 ),
               ),
-              floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
               bottomNavigationBar: const BottomNavBar(currentIndex: 0),
               extendBody: true,
             ),
@@ -293,11 +299,12 @@ class NewDashboardV3 extends StatelessWidget {
     // Only need height for status bar + top bar since other content is in body
     final statusBarHeight = MediaQuery.of(context).padding.top;
     final topBarHeight = 60.0; // Approximate height of topBar
-    
+
     return statusBarHeight + topBarHeight;
   }
 
-  Widget _buildHeaderContent(BuildContext context, dynamic model, ValueNotifier<bool> isRefreshing, bool innerBoxIsScrolled) {
+  Widget _buildHeaderContent(BuildContext context, dynamic model,
+      ValueNotifier<bool> isRefreshing, bool innerBoxIsScrolled) {
     return Container(
       width: 100.width,
       color: Colors.white,
@@ -305,7 +312,7 @@ class NewDashboardV3 extends StatelessWidget {
         children: [
           // Status bar spacing
           SizedBox(height: MediaQuery.of(context).padding.top),
-          
+
           // Only show Owner's portal top bar when not scrolled
           if (!innerBoxIsScrolled) topBar(context, () {}),
         ],

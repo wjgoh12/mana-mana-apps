@@ -12,70 +12,69 @@ class PropertyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-        if (model.isLoading) {
-          // Check if data is still loading
-          return Container(
+    if (model.isLoading) {
+      // Check if data is still loading
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: const Center(
+          child: CircularProgressIndicator(), // Display a loading spinner
+        ),
+      );
+    }
+
+    return model.locationByMonth.isEmpty
+        ? Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
             ),
             padding: const EdgeInsets.all(16),
             child: const Center(
-              child: CircularProgressIndicator(), // Display a loading spinner
+              child: Text('No properties available'),
+            ),
+          )
+        : SizedBox(
+            height: 38.height,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                ...model.locationByMonth
+                    .where((property) =>
+                        property['year'] ==
+                            model.locationByMonth
+                                .map((p) => p['year'])
+                                .reduce((a, b) => a > b ? a : b) &&
+                        property['month'] == model.unitLatestMonth)
+                    .expand((property) => [
+                          PropertyImageStack(
+                            locationByMonth: [property],
+                          ),
+                          const SizedBox(width: 20),
+                        ])
+                    .toList(),
+                // ...model.locationByMonth
+                //     .where((property) =>
+                //         property['year'] ==
+                //             model.locationByMonth
+                //                 .map((p) => p['year'])
+                //                 .reduce((a, b) => a > b ? a : b) &&
+                //         property['month'] == model.unitLatestMonth)
+                //     .expand((property) => [
+                //           PropertyImageStack(
+                //             locationByMonth: [property],
+                //           ),
+                //           const SizedBox(width: 20),
+                //         ])
+                //     .toList(),
+                const SizedBox(width: 5),
+                ViewAllProperty(model: model),
+              ],
             ),
           );
-        }
-
-        return model.locationByMonth.isEmpty
-            ? Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: const Center(
-                  child: Text('No properties available'),
-                ),
-              )
-            : SizedBox(
-                height: 38.height,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    ...model.locationByMonth
-                        .where((property) =>
-                            property['year'] ==
-                                model.locationByMonth
-                                    .map((p) => p['year'])
-                                    .reduce((a, b) => a > b ? a : b) &&
-                            property['month'] == model.unitLatestMonth)
-                        .expand((property) => [
-                              PropertyImageStack(
-                                locationByMonth: [property],
-                              ),
-                              const SizedBox(width: 20),
-                            ])
-                        .toList(),
-                    // ...model.locationByMonth
-                    //     .where((property) =>
-                    //         property['year'] ==
-                    //             model.locationByMonth
-                    //                 .map((p) => p['year'])
-                    //                 .reduce((a, b) => a > b ? a : b) &&
-                    //         property['month'] == model.unitLatestMonth)
-                    //     .expand((property) => [
-                    //           PropertyImageStack(
-                    //             locationByMonth: [property],
-                    //           ),
-                    //           const SizedBox(width: 20),
-                    //         ])
-                    //     .toList(),
-                    const SizedBox(width: 5),
-                    ViewAllProperty(model: model),
-                  ],
-                ),
-              );
-      
   }
 }
 
@@ -148,7 +147,8 @@ class PropertyImageStack extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PropertyDetail(locationByMonth: locationByMonth),
+                    builder: (context) =>
+                        PropertyDetail(locationByMonth: locationByMonth),
                   ),
                 );
               },
@@ -226,7 +226,8 @@ class PropertyImageStack extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              NumberFormat('#,##0.00').format(locationByMonth.first['total']),
+                              NumberFormat('#,##0.00')
+                                  .format(locationByMonth.first['total']),
                               // locationByMonth.first['total'].toString(),
                               style: TextStyle(
                                 fontFamily: 'Open Sans',

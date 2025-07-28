@@ -83,6 +83,9 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
     totalByMonth = await ownerPropertyListRepository.totalByMonth();
 
+    propertyOccupancy =
+        await ownerPropertyListRepository.getPropertyOccupancy();
+
     // Fetch property contract type data from API
     try {
       final contractResponse =
@@ -126,7 +129,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           "endDate": "2027-01-15"
         }
       ];
-      print(propertyContractType);
+      //print(propertyContractType);
     }
 
     // totalByMonth = [
@@ -154,6 +157,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           });
 
     locationByMonth = await ownerPropertyListRepository.locationByMonth();
+    //print('location by month: $locationByMonth');
 
     // Enrich locationByMonth with owner data from propertyContractType
     for (var location in locationByMonth) {
@@ -174,7 +178,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         };
       }).toList();
     }
-    // print(locationByMonth.first);
+    //print(locationByMonth.first['owner']);
     // locationByMonth = [
     //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 5, 'year': 2024},
     //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 6, 'year': 2024},
@@ -218,5 +222,15 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     final contract = propertyContractType
         .firstWhere((contract) => contract['location'] == location);
     return contract['contractType'] ?? '';
+  }
+
+  String getOccupancyByLocation(String location) {
+    // Try to get occupancy from propertyOccupancy map
+    if (propertyOccupancy.containsKey(location)) {
+      return propertyOccupancy[location]['amount']?.toString() ?? '0';
+    }
+    
+    // Fallback to calculating based on available data
+    return '85'; // Placeholder - replace with actual occupancy calculation
   }
 }

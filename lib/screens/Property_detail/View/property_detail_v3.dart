@@ -715,7 +715,7 @@ class PropertyOverviewContainer extends StatelessWidget {
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Padding(
-              padding: const EdgeInsets.only(top: 50),
+              padding: const EdgeInsets.only(top: 25),
               child: Container(
                 width: 175,
                 height: 175,
@@ -761,7 +761,7 @@ class PropertyOverviewContainer extends StatelessWidget {
             ),
             SizedBox(width: 17.fSize),
             Padding(
-              padding: const EdgeInsets.only(top: 50),
+              padding: const EdgeInsets.only(top: 25),
               child: Container(
                 width: 175,
                 height: 175,
@@ -1008,11 +1008,13 @@ class ContractDetailsContainer extends StatelessWidget {
                         padding:
                             const EdgeInsets.only(left: 5, top: 5, bottom: 10),
                         child: Text(
-                          (model.locationByMonth.first['owners'] ?? [])
-                              .where((owner) =>
-                                  owner['unitNo'] == model.selectedUnitNo)
-                              .map((owner) => owner['contractType'] ?? '')
-                              .join(' '),
+                          (model.locationByMonth.isNotEmpty && 
+                           model.locationByMonth.first['owners'] != null)
+                              ? (model.locationByMonth.first['owners'] as List)
+                                  .where((owner) => owner['unitNo'] == model.selectedUnitNo)
+                                  .map((owner) => owner['contractType'] ?? '')
+                                  .join(' ')
+                              : '',
                           style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFF5092FF),
@@ -1046,11 +1048,13 @@ class ContractDetailsContainer extends StatelessWidget {
                       padding:
                           const EdgeInsets.only(left: 3, top: 5, bottom: 10),
                       child: Text(
-                        (model.locationByMonth.first['owners'] ?? [])
-                            .where((owner) =>
-                                owner['unitNo'] == model.selectedUnitNo)
-                            .map((owner) => owner['endDate'] ?? '')
-                            .join(' '),
+                      (model.locationByMonth.isNotEmpty && 
+                      model.locationByMonth.first['owners'] != null)
+                      ? (model.locationByMonth.first['owners'] as List)
+                          .where((owner) => owner['unitNo'] == model.selectedUnitNo)
+                          .map((owner) => owner['endDate'] ?? '')
+                                .join(' ')
+                            : '',
                         style: const TextStyle(
                           fontSize: 12,
                           color: Color(0xFF5092FF),

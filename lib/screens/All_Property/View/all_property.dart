@@ -27,56 +27,59 @@ class AllPropertyScreen extends StatelessWidget {
               context,
               () => Navigator.of(context).pop(),
             ),
-            body: model.isLoading 
-              ? const Center(child: CircularProgressIndicator()) // Show loading
-              : Column(
-                  children: [
-                    // Add PropertyTitleDropdown shere
-                    const Padding(
-                      padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
-                      child: Row(
-                        children: [
-                          PropertyTitleDropdown(currentPage: 'Property List'),
-                        ],
+            body: model.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator()) // Show loading
+                : Column(
+                    children: [
+                      // Add PropertyTitleDropdown shere
+                      const Padding(
+                        padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                        child: Row(
+                          children: [
+                            PropertyTitleDropdown(currentPage: 'Property List'),
+                          ],
+                        ),
                       ),
-                    ),
-                    // Main content
-                    Expanded(
-                      child: ListView(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        children: [
-                          GestureDetector(
-                            child: SizedBox(
-                              child: Column(
-                                children: model.locationByMonth
-                                    .map((property) => property['location'])
-                                    .toSet()
-                                    .map((uniqueLocation) {
-                                  final property = model.locationByMonth
-                                      .firstWhere((p) => p['location'] == uniqueLocation);
-                                  return SizedBox(
-                                    child: Column(
-                                      children: [
-                                        GestureDetector(
-                                          child: _buildPropertyStack(
-                                            locationByMonth: [property],
-                                            context: context,
+                      // Main content
+                      Expanded(
+                        child: ListView(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          children: [
+                            GestureDetector(
+                              child: SizedBox(
+                                child: Column(
+                                  children: model.locationByMonth
+                                      .map((property) => property['location'])
+                                      .toSet()
+                                      .map((uniqueLocation) {
+                                    final property = model.locationByMonth
+                                        .firstWhere((p) =>
+                                            p['location'] == uniqueLocation);
+                                    return SizedBox(
+                                      child: Column(
+                                        children: [
+                                          GestureDetector(
+                                            child: _buildPropertyStack(
+                                              locationByMonth: [property],
+                                              context: context,
+                                              model: model,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
+                                          const SizedBox(height: 20),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
             bottomNavigationBar: const BottomNavBar(currentIndex: 1),
           );
         },
@@ -87,6 +90,7 @@ class AllPropertyScreen extends StatelessWidget {
   Widget _buildPropertyStack({
     required List<Map<String, dynamic>> locationByMonth,
     required BuildContext context,
+    required NewDashboardVM model,
   }) {
     String locationRoad = '';
     switch (locationByMonth[0]['location'].toUpperCase()) {
@@ -116,16 +120,13 @@ class AllPropertyScreen extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => property_detail_v3(locationByMonth: locationByMonth),
+            builder: (context) =>
+                property_detail_v3(locationByMonth: locationByMonth),
           ),
         );
       },
       child: PropertyStack(
-        image: locationByMonth[0]['location'] ?? '',
-        text1: locationByMonth[0]['location'] ?? '',
-        text2: locationRoad,
-        text3: locationByMonth[0]['totalUnits'] ?? '',
-        total: locationByMonth[0]['total'] ?? '',
+        locationByMonth: locationByMonth,
       ),
     );
   }
