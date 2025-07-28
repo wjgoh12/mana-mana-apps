@@ -625,11 +625,11 @@ class PropertyOverviewContainer extends StatelessWidget {
                                       alignment: PlaceholderAlignment.baseline,
                                       baseline: TextBaseline.alphabetic,
                                       child: Transform.translate(
-                                        offset: const Offset(0, -4), // adjust this value
+                                        offset: const Offset(0, -4),
                                         child: const Text(
                                           'RM',
                                           style: TextStyle(
-                                            fontSize: 12, // smaller size
+                                            fontSize: 12,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
                                           ),
@@ -639,7 +639,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                                     TextSpan(
                                       text: '${model.locationByMonth.first['total'] ?? ''}',
                                       style: const TextStyle(
-                                        fontSize: 16,               // Larger for the amount
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),

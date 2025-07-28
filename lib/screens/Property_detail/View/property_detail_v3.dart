@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
@@ -18,6 +19,7 @@ class property_detail_v3 extends StatefulWidget {
 
 class _property_detail_v3State extends State<property_detail_v3> {
   late PropertyDetailVM model;
+  late NewDashboardVM_v3 model2;
   bool isCollapsed = false;
   bool showStickyDropdown = false;
   bool showStickyEstatement = false;
@@ -51,9 +53,9 @@ class _property_detail_v3State extends State<property_detail_v3> {
     if (model.selectedView == 'Overview') {
       return; // Block all scroll logic for Overview
     }
-    
+
     final scrollOffset = _scrollController.offset;
-    
+
     final collapsedHeight = 100.fSize;
     final dropdownInvisibleHeight = 415.fSize;
     final estatementStickyHeight = 585.fSize;
@@ -61,11 +63,11 @@ class _property_detail_v3State extends State<property_detail_v3> {
     setState(() {
       isCollapsed = scrollOffset > collapsedHeight;
 
-      showStickyDropdown = scrollOffset > dropdownInvisibleHeight && 
-                          model.selectedView != 'Overview';
+      showStickyDropdown = scrollOffset > dropdownInvisibleHeight &&
+          model.selectedView != 'Overview';
 
-      showStickyEstatement = scrollOffset > estatementStickyHeight + 80 && 
-                            model.selectedView == 'UnitDetails';
+      showStickyEstatement = scrollOffset > estatementStickyHeight + 80 &&
+          model.selectedView == 'UnitDetails';
     });
   }
 
@@ -80,7 +82,6 @@ class _property_detail_v3State extends State<property_detail_v3> {
     }
     return top;
   }
-
 
   void _toggleFullScreenEstatement() {
     setState(() {
@@ -130,10 +131,10 @@ class _property_detail_v3State extends State<property_detail_v3> {
                         Container(
                           height: 50.fSize,
                           decoration: BoxDecoration(
-
                             color: Colors.white,
                             border: Border(
-                              bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+                              bottom: BorderSide(
+                                  color: Colors.grey.shade300, width: 1),
                             ),
                             boxShadow: [
                               BoxShadow(
@@ -151,7 +152,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
                               ),
                               const Text(
                                 'eStatements',
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                               const Spacer(),
                               const Text('Year'),
@@ -161,10 +163,10 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                 hint: const Text('Select Year'),
                                 items: model.yearItems
                                     .map((year) => DropdownMenuItem(
-                                        value: year,
-                                        child: Text(year),
-                                      ))
-                                  .toList(),
+                                          value: year,
+                                          child: Text(year),
+                                        ))
+                                    .toList(),
                                 onChanged: (val) {
                                   if (val != null) {
                                     model.updateSelectedYear(val);
@@ -175,7 +177,6 @@ class _property_detail_v3State extends State<property_detail_v3> {
                             ],
                           ),
                         ),
-
                         Expanded(
                           child: EStatementContainer(model: model),
                         ),
@@ -183,11 +184,10 @@ class _property_detail_v3State extends State<property_detail_v3> {
                     ),
                   ),
                 ),
-
               if (!isFullScreenEstatement)
                 CustomScrollView(
                   controller: _scrollController,
-                  physics: model.selectedView == 'Overview' 
+                  physics: model.selectedView == 'Overview'
                       ? const NeverScrollableScrollPhysics() // Lock scroll for Overview
                       : const AlwaysScrollableScrollPhysics(), // Allow scroll for UnitDetails
                   slivers: [
@@ -208,7 +208,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                       return Container(
                                         color: Colors.grey.shade300,
                                         child: const Center(
-                                          child: Icon(Icons.image_not_supported, size: 64),
+                                          child: Icon(Icons.image_not_supported,
+                                              size: 64),
                                         ),
                                       );
                                     },
@@ -216,7 +217,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                 : Container(
                                     color: Colors.grey.shade300,
                                     child: const Center(
-                                      child: Icon(Icons.image_not_supported, size: 64),
+                                      child: Icon(Icons.image_not_supported,
+                                          size: 64),
                                     ),
                                   ),
                             Positioned(
@@ -224,7 +226,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
                               left: 10,
                               child: IconButton(
                                 onPressed: () => Navigator.of(context).pop(),
-                                icon: Image.asset('assets/images/GroupBack.png'),
+                                icon:
+                                    Image.asset('assets/images/GroupBack.png'),
                               ),
                             ),
                           ],
@@ -235,33 +238,37 @@ class _property_detail_v3State extends State<property_detail_v3> {
                       child: Container(
                         key: _originalDropdownKey,
                         decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
                           color: Colors.white,
                         ),
                         padding: EdgeInsets.only(top: 30.fSize),
                         child: Column(
                           children: [
                             Text(
-                              widget.locationByMonth.first['location']?.toString() ?? 'Unknown Property',
+                              widget.locationByMonth.first['location']
+                                      ?.toString() ??
+                                  'Unknown Property',
                               style: const TextStyle(fontSize: 30),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image.asset('assets/images/map_pin.png', width: 14.fSize, height: 17.fSize),
+                                Image.asset('assets/images/map_pin.png',
+                                    width: 14.fSize, height: 17.fSize),
                                 Text(model.locationRoad),
                               ],
                             ),
                             SizedBox(height: 10.fSize),
-
-                           
                             Container(
                               width: 370.fSize,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey, width: 0.5),
+                                border:
+                                    Border.all(color: Colors.grey, width: 0.5),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
                               child: DropdownButton2<String>(
                                 isExpanded: true,
                                 underline: const SizedBox(),
@@ -272,9 +279,12 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: const Border(
-                                      left: BorderSide(color: Colors.grey, width: 0.5),
-                                      right: BorderSide(color: Colors.grey, width: 0.5),
-                                      bottom: BorderSide(color: Colors.grey, width: 0.5),
+                                      left: BorderSide(
+                                          color: Colors.grey, width: 0.5),
+                                      right: BorderSide(
+                                          color: Colors.grey, width: 0.5),
+                                      bottom: BorderSide(
+                                          color: Colors.grey, width: 0.5),
                                     ),
                                     borderRadius: const BorderRadius.only(
                                       bottomLeft: Radius.circular(4),
@@ -295,7 +305,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                     value: 'Overview',
                                     child: Text('Overview'),
                                   ),
-                                  ...model.typeItems.map<DropdownMenuItem<String>>(
+                                  ...model.typeItems
+                                      .map<DropdownMenuItem<String>>(
                                     (String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
@@ -312,10 +323,12 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                       final parts = newValue.split(' (');
                                       if (parts.length == 2) {
                                         final type = parts[0].trim();
-                                        final unit = parts[1].replaceAll(')', '').trim();
+                                        final unit =
+                                            parts[1].replaceAll(')', '').trim();
 
                                         model.updateSelectedView('UnitDetails');
-                                        model.updateSelectedTypeUnit(type, unit);
+                                        model.updateSelectedTypeUnit(
+                                            type, unit);
                                       }
                                     }
                                   }
@@ -323,7 +336,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                 hint: const Text('Select Unit'),
                                 value: model.selectedView == 'Overview'
                                     ? 'Overview'
-                                    : (model.selectedType != null && model.selectedUnitNo != null)
+                                    : (model.selectedType != null &&
+                                            model.selectedUnitNo != null)
                                         ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
                                         : null,
                               ),
@@ -342,15 +356,13 @@ class _property_detail_v3State extends State<property_detail_v3> {
                               model: model,
                             ),
                     ),
-                    
                     SliverPadding(
-                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 1.5),
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 1.5),
                     ),
                   ],
                 ),
-
               if (!isFullScreenEstatement) ...[
-
                 if (isCollapsed)
                   Positioned(
                     top: 0,
@@ -372,14 +384,14 @@ class _property_detail_v3State extends State<property_detail_v3> {
                             const SizedBox(width: 8),
                             const Text(
                               'Property(s)',
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-
                 if (showStickyDropdown)
                   Positioned(
                     top: isCollapsed ? 85.fSize : 0,
@@ -390,7 +402,6 @@ class _property_detail_v3State extends State<property_detail_v3> {
                       locationByMonth: widget.locationByMonth,
                     ),
                   ),
-
                 if (showStickyEstatement)
                   Positioned(
                     top: _calculateStickyEstatementTop(),
@@ -476,8 +487,7 @@ class MonthlyStatementContainer extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.all(16),
                     child: const Center(
-                      child:
-                          CircularProgressIndicator(),
+                      child: CircularProgressIndicator(),
                     ),
                   );
                 }
@@ -837,8 +847,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                               alignment: PlaceholderAlignment.baseline,
                               baseline: TextBaseline.alphabetic,
                               child: Transform.translate(
-                                offset:
-                                    const Offset(0, -4),
+                                offset: const Offset(0, -4),
                                 child: const Text(
                                   'RM',
                                   style: TextStyle(
@@ -908,8 +917,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                               alignment: PlaceholderAlignment.baseline,
                               baseline: TextBaseline.alphabetic,
                               child: Transform.translate(
-                                offset:
-                                    const Offset(0, -4),
+                                offset: const Offset(0, -4),
                                 child: const Text(
                                   'RM',
                                   style: TextStyle(
@@ -950,10 +958,14 @@ class PropertyOverviewContainer extends StatelessWidget {
 
 class ContractDetailsContainer extends StatelessWidget {
   final PropertyDetailVM model;
+  final NewDashboardVM_v3 model2;
   final List<Map<String, dynamic>> locationByMonth;
 
   const ContractDetailsContainer(
-      {super.key, required this.model, required this.locationByMonth});
+      {super.key,
+      required this.model,
+      required this.model2,
+      required this.locationByMonth});
 
   @override
   Widget build(BuildContext context) {
@@ -966,6 +978,7 @@ class ContractDetailsContainer extends StatelessWidget {
             : '';
 
         return Container(
+          //alignment: Alignment.spaceBetween,
           width: 400.fSize,
           height: 50.fSize,
           decoration: BoxDecoration(
@@ -975,26 +988,36 @@ class ContractDetailsContainer extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 5, top: 5, bottom: 10),
-                  child: Text(
-                    'Contract Type',
-                    style: TextStyle(
-                      fontSize: 10,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5, top: 5, bottom: 10),
-                  child: Text(
-                    model.unitByMonth.first.stype ?? '',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: Color(0xFF5092FF),
-                    ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 2.5,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 5, top: 5, bottom: 10),
+                        child: Text(
+                          'Contract Type',
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 5, top: 5, bottom: 10),
+                        child: Text(
+                          // model2.getContractType() ??
+                          '',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Color(0xFF5092FF),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
@@ -1007,23 +1030,28 @@ class ContractDetailsContainer extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 5, bottom: 10),
-                  child: Text('Contract End Date',
-                      style: TextStyle(
-                        fontSize: 10,
-                      )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 3, top: 5, bottom: 10),
-                  child:Text(
-                    locationByMonth.first['endDate'] ?? '',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF5092FF),
-                      fontWeight: FontWeight.bold,
+                Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 5, bottom: 10),
+                      child: Text('Contract End Date',
+                          style: TextStyle(
+                            fontSize: 10,
+                          )),
                     ),
-                  ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 3, top: 5, bottom: 10),
+                      child: Text(
+                        locationByMonth.first['endDate'] ?? '',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF5092FF),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -1040,14 +1068,16 @@ class UnitDetailsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final NewDashboardVM_v3 model2 = NewDashboardVM_v3();
     return Container(
       color: Colors.white,
       child: Column(
         children: [
           SizedBox(height: 25.fSize),
-
           ContractDetailsContainer(
-              model: model, locationByMonth: model.locationByMonth),
+              model: model,
+              model2: model2,
+              locationByMonth: model.locationByMonth),
           Row(
             children: [
               Column(
@@ -1069,26 +1099,29 @@ class UnitDetailsContainer extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(width: 5.fSize),
+              //SizedBox(width: 5.fSize),
               Container(
+                alignment: Alignment.topLeft,
                 width: 300,
                 child: Column(
                   children: [
                     Row(
                       children: [
-                        for (var owner in model.locationByMonth.first['owners'] ?? []) ...[
+                        for (var owner
+                            in model.locationByMonth.first['owners'] ?? []) ...[
                           // Main owner avatar
                           Padding(
-                            padding: const EdgeInsets.only(right: 5),
+                            padding: const EdgeInsets.only(left: 1),
                             child: Tooltip(
                               message: owner['unitNo'] == model.selectedUnitNo
                                   ? '${owner['ownerName']} - Unit ${owner['unitNo']}'
                                   : 'Unknown Owner',
                               child: CircleAvatar(
                                 radius: 13,
-                                backgroundColor: owner['unitNo'] == model.selectedUnitNo
-                                ? Colors.blue
-                                : Colors.transparent,
+                                backgroundColor:
+                                    owner['unitNo'] == model.selectedUnitNo
+                                        ? Colors.blue
+                                        : Colors.transparent,
                                 child: Text(
                                   owner['unitNo'] == model.selectedUnitNo
                                       ? getInitials(owner['ownerName'] ?? '')
@@ -1116,7 +1149,6 @@ class UnitDetailsContainer extends StatelessWidget {
             ],
           ),
           SizedBox(height: 2.height),
-
           Container(
             height: 125,
             color: Colors.white,
@@ -1158,9 +1190,10 @@ class UnitDetailsContainer extends StatelessWidget {
                           Text(
                               '${model.locationByMonth.first['occupancy'] ?? ''}% Active',
                               style: const TextStyle(
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                               )),
+                          SizedBox(height: 5.fSize),
                           Text(
                               DateFormat('MMMM yyyy').format(
                                 DateTime.now(),
@@ -1212,8 +1245,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                   alignment: PlaceholderAlignment.baseline,
                                   baseline: TextBaseline.alphabetic,
                                   child: Transform.translate(
-                                    offset: const Offset(
-                                        0, -4),
+                                    offset: const Offset(0, -4),
                                     child: const Text(
                                       'RM',
                                       style: TextStyle(
@@ -1287,8 +1319,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                   alignment: PlaceholderAlignment.baseline,
                                   baseline: TextBaseline.alphabetic,
                                   child: Transform.translate(
-                                    offset: const Offset(
-                                        0, -4),
+                                    offset: const Offset(0, -4),
                                     child: const Text(
                                       'RM',
                                       style: TextStyle(
@@ -1326,12 +1357,10 @@ class UnitDetailsContainer extends StatelessWidget {
               ]),
             ),
           ),
-
           StickyEstatementBar(
               onBack: () => Navigator.pop(context),
               yearOptions: model.yearItems,
               model: model),
-         
           EStatementContainer(model: model)
         ],
       ),
@@ -1394,7 +1423,6 @@ class _EStatementContainerState extends State<EStatementContainer> {
         //     ),
         //   );
         // }
-        
 
         final allItems = widget.model.unitByMonth;
         final filteredItems = allItems.where((item) {
@@ -1453,14 +1481,11 @@ class _EStatementContainerState extends State<EStatementContainer> {
           }
         }
 
-        
-
         return Container(
           decoration: const BoxDecoration(
             color: Colors.white,
-            
           ),
-          height:500,
+          height: 500,
           child: ListView.builder(
             itemCount: filteredItems.length,
             shrinkWrap: true,
@@ -1663,7 +1688,9 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
             const SizedBox(width: 8),
             DropdownButton2<String>(
               value: widget.model.selectedYearValue,
-              hint: widget.model.yearItems.isNotEmpty ? const Text('Select Year') : const Text('-'),
+              hint: widget.model.yearItems.isNotEmpty
+                  ? const Text('Select Year')
+                  : const Text('-'),
               items: widget.yearOptions
                   .map((year) => DropdownMenuItem(
                         value: year,

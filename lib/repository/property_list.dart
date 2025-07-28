@@ -16,7 +16,6 @@ import 'package:path_provider/path_provider.dart';
 class PropertyListRepository {
   final ApiService _apiService = ApiService();
 
-
   Future<List<OwnerPropertyList>> getOwnerUnit() async {
     return await _apiService.post(ApiEndpoint.ownerUnit).then((res) {
       List<dynamic> value = res ?? [];
@@ -101,7 +100,7 @@ class PropertyListRepository {
       }
     };
     // final Map<String, dynamic> data = {
-      
+
     //     "year": "2024",
     //     // "month": 8,
     //     "unitModel": {
@@ -110,7 +109,7 @@ class PropertyListRepository {
     //       "location": "MOSSAZ",
     //       "email": "jeanw@tsitd.com"
     //     }
-      
+
     // };
 
     final res = await _apiService
@@ -272,7 +271,6 @@ class PropertyListRepository {
     });
   }
 
-  
   static Future<int> getTotalPropertyCount() async {
     final propertyListRepository = PropertyListRepository();
     final ownerUnits = await propertyListRepository.getOwnerUnit();
@@ -288,5 +286,16 @@ class PropertyListRepository {
       }
     });
   }
-}
 
+  Future<Map<String, dynamic>> getPropertyOccupancy() async {
+    return await _apiService
+        .post(ApiEndpoint.propertyOccupancyRate)
+        .then((res) {
+      if (res is Map<String, dynamic>) {
+        return res;
+      } else {
+        throw Exception('Failed to fetch property occupancy rate');
+      }
+    });
+  }
+}

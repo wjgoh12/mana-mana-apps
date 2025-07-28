@@ -17,6 +17,8 @@ class PropertyDetailVM extends ChangeNotifier {
   String selectedView = 'Overview'; // Default to Overview
   List<OwnerPropertyList> ownerData = [];
   List<SingleUnitByMonth> unitByMonth = [];
+  List<String> propertyOccupancy =
+      []; // List to store PropertyOccupancy objects>
   List<User> _users = [];
   List<User> get users => _users;
   List<String> yearItems = [];
@@ -24,9 +26,10 @@ class PropertyDetailVM extends ChangeNotifier {
   List<String> typeItems = [];
   String? _selectedYearValue; // Don't initialize with any value
   String? get selectedYearValue => _selectedYearValue;
-  PropertyDetailVM(){
+  PropertyDetailVM() {
     _selectedYearValue = null; // Explicitly set to null
-    print('PropertyDetailVM constructor - selectedYearValue initialized to: $_selectedYearValue');
+    print(
+        'PropertyDetailVM constructor - selectedYearValue initialized to: $_selectedYearValue');
   }
   String? selectedMonthValue;
   String? selectedAnnualYearValue;
@@ -55,12 +58,11 @@ class PropertyDetailVM extends ChangeNotifier {
     locationByMonth = newLocationByMonth;
     _users = await userRepository.getUsers();
     property = locationByMonth[0]['location'];
-    
-  
+
     if (selectedView.isEmpty) {
       selectedView = 'Overview';
     }
-    
+
     notifyListeners();
 
     switch (property.toUpperCase()) {
@@ -213,7 +215,9 @@ class PropertyDetailVM extends ChangeNotifier {
     //       imonth: 11,
     //       iyear: 2024),
     // ];
-    
+
+    //propertyOccupancy = await ownerPropertyListRepository.getUnitByMonth();
+
     var filteredYears = unitByMonth
         .where((unit) =>
             unit.slocation == property &&
@@ -288,11 +292,11 @@ class PropertyDetailVM extends ChangeNotifier {
       String newSelectedType, String newSelectedUnitNo) async {
     _isDateLoading = true;
     notifyListeners();
-    
+
     selectedType = newSelectedType;
     selectedUnitNo = newSelectedUnitNo;
     // Don't change selectedView here - it should remain as 'UnitDetails'
-    
+
     // Update year and month items for the selected unit
     yearItems = unitByMonth
         .where((item) =>
@@ -303,11 +307,11 @@ class PropertyDetailVM extends ChangeNotifier {
         .toSet()
         .toList()
       ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-    
+
     _selectedYearValue = yearItems.isNotEmpty
         ? yearItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : '';
-    
+
     monthItems = unitByMonth
         .where((item) =>
             item.iyear.toString() == _selectedYearValue &&
@@ -318,7 +322,7 @@ class PropertyDetailVM extends ChangeNotifier {
         .toSet()
         .toList()
       ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-    
+
     selectedMonthValue = monthItems.isNotEmpty
         ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : '';
@@ -331,12 +335,12 @@ class PropertyDetailVM extends ChangeNotifier {
             unit.sunitno == selectedUnitNo)
         .map((unit) => unit.iyear ?? 0)
         .toList();
-    
+
     if (filteredYears.isNotEmpty) {
       unitLatestYear = filteredYears
           .reduce((value, element) => value > element ? value : element);
     }
-    
+
     var filteredMonths = unitByMonth
         .where((unit) =>
             unit.slocation == property &&
@@ -490,14 +494,15 @@ class PropertyDetailVM extends ChangeNotifier {
     fetchData(locationByMonth);
     notifyListeners();
   }
-  // In PropertyDetailVM
-Future<void> downloadSpecificPdfStatement(BuildContext context, dynamic item) async {
-  // Set the specific item data before downloading
-  _selectedYearValue = item.iyear.toString();
-  selectedMonthValue = item.imonth.toString();
-  
-  // Call your existing download method
-  await downloadPdfStatement(context);
-}
 
+  // In PropertyDetailVM
+  Future<void> downloadSpecificPdfStatement(
+      BuildContext context, dynamic item) async {
+    // Set the specific item data before downloading
+    _selectedYearValue = item.iyear.toString();
+    selectedMonthValue = item.imonth.toString();
+
+    // Call your existing download method
+    await downloadPdfStatement(context);
+  }
 }

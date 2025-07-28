@@ -13,14 +13,12 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   final PropertyListRepository ownerPropertyListRepository =
       PropertyListRepository();
 
-
   String userNameAccount = '';
   List<User> _users = [];
   List<User> get users => _users;
   int unitLatestMonth = 0;
   List<OwnerPropertyList> ownerUnits = [];
   String revenueLastestYear = '';
-  
 
   List<Map<String, dynamic>> revenueDashboard = [];
   List<Map<String, dynamic>> monthlyProfitOwner = [];
@@ -29,7 +27,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   List<Map<String, dynamic>> monthlyBlcOwner = [];
   List<Map<String, dynamic>> locationByMonth = [];
   List<Map<String, dynamic>> propertyContractType = [];
-  
+  Map<String, dynamic> propertyOccupancy = {};
 
   Future get overallBalance => Future.delayed(
       const Duration(milliseconds: 500),
@@ -87,25 +85,14 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
     // Fetch property contract type data from API
     try {
-      final contractResponse = await ownerPropertyListRepository.getPropertyContractType();
+      final contractResponse =
+          await ownerPropertyListRepository.getPropertyContractType();
       propertyContractType = contractResponse['data'] ?? [];
     } catch (e) {
       print('Error fetching property contract type: $e');
       propertyContractType = [];
     }
-    
-    // TODO: If you want to call from a completely new API for owner names, 
-    // you can add a new method here like:
-    // 
-    // try {
-    //   List<Map<String, dynamic>> newOwnerData = await ownerPropertyListRepository.getOwnersFromNewAPI();
-    //   // Process and merge the new owner data with propertyContractType
-    //   // or replace propertyContractType entirely with the new data
-    // } catch (e) {
-    //   print('Error fetching from new owner API: $e');
-    // }
-    
-    // If no data from API, use fallback data (can be removed in production)
+
     if (propertyContractType.isEmpty) {
       propertyContractType = [
         {
@@ -120,15 +107,14 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         },
         {
           "location": "SCARLETZ",
-          "type": "",
+          "type": "P2B",
           "unitNo": "2000-2100-55",
-          "ownerName": "John Doe",
+          "ownerName": "Tan Ah Ming",
           "coOwnerName": null,
           "contractType": "PS",
           "startDate": "2024-12-01",
           "endDate": "2027-12-01"
         },
-        
         {
           "location": "EXPRESSIONZ",
           "type": "B",
@@ -141,7 +127,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         }
       ];
     }
-    
+
     // totalByMonth = [
     //   {'total': 4200.31, 'transcode': 'NOPROF', 'month': 5, 'year': 2024},
     //   {'total': 1842.01, 'transcode': 'OWNBAL', 'month': 5, 'year': 2024},
@@ -167,14 +153,14 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           });
 
     locationByMonth = await ownerPropertyListRepository.locationByMonth();
-    
+
     // Enrich locationByMonth with owner data from propertyContractType
     for (var location in locationByMonth) {
       // Find matching owners for this location
       List<Map<String, dynamic>> ownersForLocation = propertyContractType
           .where((property) => property['location'] == location['location'])
           .toList();
-      
+
       // Add owners array to location data
       location['owners'] = ownersForLocation.map((property) {
         return {
@@ -206,16 +192,28 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
 
     //_newsletters = await newsletterRepository.getNewsletters();
-    
 
     isLoading = false;
     notifyListeners();
 
+    propertyOccupancy =
+        await ownerPropertyListRepository.getPropertyOccupancy();
+
+    // propertyOccupancy = [
+    //   {"year": 2024, "month": 9, "amount": 92.53},
+    // {"year": 2024, "month": 9, "amount": 92.53}
+    // ];
   }
 
   Future<void> refreshData() async {
     await Future.delayed(const Duration(seconds: 1));
     fetchData();
     notifyListeners();
+  }
+
+  String getContractType(String location) {
+    final contract = propertyContractType
+        .firstWhere((contract) => contract['location'] == location);
+    return contract['contractType'] ?? '';
   }
 }

@@ -61,7 +61,6 @@ class PropertyStack extends StatelessWidget {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 // Image at top
                    Stack(
               children: [
                 Padding(
@@ -133,7 +132,7 @@ class PropertyStack extends StatelessWidget {
                           ),
                           SizedBox(width: 2.width),
                           Text(
-                            '${text3.toString()} Total'
+                            '${} Total'
                             ,style:const TextStyle(
                               fontSize: 9),
                             ),
