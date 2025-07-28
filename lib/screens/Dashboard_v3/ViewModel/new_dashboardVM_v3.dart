@@ -111,7 +111,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           "unitNo": "2000-2100-55",
           "ownerName": "Tan Ah Ming",
           "coOwnerName": null,
-          "contractType": "PS",
+          "contractType": "A",
           "startDate": "2024-12-01",
           "endDate": "2027-12-01"
         },
@@ -126,6 +126,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           "endDate": "2027-01-15"
         }
       ];
+      print(propertyContractType);
     }
 
     // totalByMonth = [
@@ -168,6 +169,8 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           'coOwnerName': property['coOwnerName'],
           'unitNo': property['unitNo'],
           'contractType': property['contractType'],
+          'endDate': property['endDate'],
+          'startDate': property['startDate'],
         };
       }).toList();
     }

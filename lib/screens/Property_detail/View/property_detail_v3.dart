@@ -1008,12 +1008,15 @@ class ContractDetailsContainer extends StatelessWidget {
                         padding:
                             const EdgeInsets.only(left: 5, top: 5, bottom: 10),
                         child: Text(
-                          // model2.getContractType() ??
-                          '',
+                          (model.locationByMonth.first['owners'] ?? [])
+                              .where((owner) =>
+                                  owner['unitNo'] == model.selectedUnitNo)
+                              .map((owner) => owner['contractType'] ?? '')
+                              .join(' '),
                           style: const TextStyle(
-                            fontWeight: FontWeight.bold,
                             fontSize: 12,
                             color: Color(0xFF5092FF),
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -1043,7 +1046,11 @@ class ContractDetailsContainer extends StatelessWidget {
                       padding:
                           const EdgeInsets.only(left: 3, top: 5, bottom: 10),
                       child: Text(
-                        locationByMonth.first['endDate'] ?? '',
+                        (model.locationByMonth.first['owners'] ?? [])
+                            .where((owner) =>
+                                owner['unitNo'] == model.selectedUnitNo)
+                            .map((owner) => owner['endDate'] ?? '')
+                            .join(' '),
                         style: const TextStyle(
                           fontSize: 12,
                           color: Color(0xFF5092FF),
@@ -1109,7 +1116,6 @@ class UnitDetailsContainer extends StatelessWidget {
                       children: [
                         for (var owner
                             in model.locationByMonth.first['owners'] ?? []) ...[
-                          // Main owner avatar
                           Padding(
                             padding: const EdgeInsets.only(left: 1),
                             child: Tooltip(
