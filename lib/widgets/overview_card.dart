@@ -1,386 +1,371 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/View/statistic_table_v3.dart';
 
 class OverviewCard extends StatelessWidget {
   final NewDashboardVM_v3 model;
   const OverviewCard({required this.model, super.key});
 
-String getTotalProfit() {
-  final profit = model.overallProfit.toString();
-  return profit;
-}
-
-String getOccupancyRate() {
-  try {
-    // Calculate total properties
-    final uniqueLocations = model.totalByMonth
-        .map((e) => e['slocation'])   
-        .toSet()                      
-        .toList();
-    final totalProperties = uniqueLocations.length;
-    
-    if (totalProperties == 0) return '0';
-    
-    // Calculate active properties (adjust this logic based on your data structure)
-    final activeProperties = model.totalByMonth
-        .where((e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE') // Adjust field name as needed
-        .map((e) => e['slocation'])
-        .toSet()
-        .length;
-    
-    final percentage = (activeProperties / totalProperties * 100).round();
-    return percentage.toString();
-  } catch (e) {
-    return '0';
+  String getTotalProfit() {
+    final profit = model.overallProfit.toString();
+    return profit;
   }
-}
+
+  String getOccupancyRate() {
+    try {
+      // Calculate total properties
+      final uniqueLocations =
+          model.totalByMonth.map((e) => e['slocation']).toSet().toList();
+      final totalProperties = uniqueLocations.length;
+
+      if (totalProperties == 0) return '0';
+
+      // Calculate active properties (adjust this logic based on your data structure)
+      final activeProperties = model.totalByMonth
+          .where((e) =>
+              e['unitstatus'] == 'Active' ||
+              e['unitstatus'] == 'ACTIVE') // Adjust field name as needed
+          .map((e) => e['slocation'])
+          .toSet()
+          .length;
+
+      final percentage = (activeProperties / totalProperties * 100).round();
+      return percentage.toString();
+    } catch (e) {
+      return '0';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final uniqueLocations =
+        model.totalByMonth.map((e) => e['slocation']).toSet().toList();
 
-    final uniqueLocations = model.totalByMonth
-    .map((e) => e['slocation'])   
-    .toSet()                      
-    .toList();
-
-final locationCount = uniqueLocations.length;
-final activeLocations= model.totalByMonth.where((e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE');
-
+    final locationCount = uniqueLocations.length;
+    final activeLocations = model.totalByMonth.where(
+        (e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE');
 
     return SizedBox(
       width: double.infinity,
       child: Row(
-        
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Left Column
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start, 
-              children: [
-                //1st 
-                Card(
-                  
-                  margin: const EdgeInsets.only(bottom: 20),
-                  child: Container(
-                    width: 190.fSize,
-                    height: 130.fSize,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12), // Match card's border radius
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/overviewContainer1.png'),
-                        fit: BoxFit.cover,
-                      ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Left Column
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //1st
+              Card(
+                margin: const EdgeInsets.only(bottom: 20),
+                child: Container(
+                  width: 190.fSize,
+                  height: 130.fSize,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(12), // Match card's border radius
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/overviewContainer1.png'),
+                      fit: BoxFit.cover,
                     ),
-                    child: Column(
-                    
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      
-                      Stack(
-                        children: [
-                      Positioned(
-                        left: 10,
-                        top: 10,
-                        child: CircleAvatar(
-                          radius: 20.fSize,
-                          backgroundColor: Colors.white,
-                          child: Image.asset(
-                            'assets/images/OverviewProperty.png',
-                            width: 18.fSize,
-                            height: 22.fSize,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        
-                        children: [
-                          
-                          Padding(
-                            padding:const EdgeInsets.only(right:15),
-                              child:
-                              Text(
-                                '$locationCount',
-                                //call total number of locations
-                                //total Properties
-                      
-                                style: TextStyle(
-                                  fontSize: 40.fSize,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              )
-                        
-                          ),
-                          const SizedBox(width: 1), // spacing between text and image
-                        ],
-                      )
-                        ]
-                      ),
-                      Padding(
-                        padding:const EdgeInsets.only(left: 10),
-                      child:Text(
-                        'Total Properties', 
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10.fSize,
-                          ),
-                      ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                      child:Text(
-                        'Managed: ${locationCount} ', 
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.fSize,
-                          fontWeight: FontWeight.bold,
-                          ),
-                      ),
-                      ),
-                    ]
-                   ),
                   ),
-                ),
-                  
-                //2nd
-                Card(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  color: const Color(0xFFFFE7B8),
-                  child: SizedBox(
-                    width: 190.fSize,
-                    height: 83.fSize,
-                    child: Row(
-                     crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                         Stack(
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
-                                  child: CircleAvatar(
-                                  radius: 23.fSize, 
-                                  backgroundColor: Colors.white,
-                                  child: Image.asset(
-                                    'assets/images/OverviewOccupancy.png',
-                                    width:35.fSize,
-                                    height:25.fSize,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                                padding: EdgeInsets.only(left:8,top:10),
-                                child: Text(
-                                  'Occupancy Rate',
-                                  style: TextStyle(
-                                    fontSize: 8.0,
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                        Stack(children: [
+                          Positioned(
+                            left: 10,
+                            top: 10,
+                            child: CircleAvatar(
+                              radius: 20.fSize,
+                              backgroundColor: Colors.white,
+                              child: Image.asset(
+                                'assets/images/OverviewProperty.png',
+                                width: 18.fSize,
+                                height: 22.fSize,
                               ),
                             ),
-                            //hard coded
-                            Padding(
-                              padding: EdgeInsets.only(left:8),
-                              child: Text(
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Padding(
+                                  padding: const EdgeInsets.only(right: 15),
+                                  child: Text(
+                                    '$locationCount',
+                                    //call total number of locations
+                                    //total Properties
+
+                                    style: TextStyle(
+                                      fontSize: 40.fSize,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  )),
+                              const SizedBox(
+                                  width: 1), // spacing between text and image
+                            ],
+                          )
+                        ]),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            'Total Properties',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.fSize,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            'Managed: ${locationCount} ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13.fSize,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ]),
+                ),
+              ),
+
+              //2nd
+              Card(
+                margin: const EdgeInsets.only(bottom: 20),
+                color: const Color(0xFFFFE7B8),
+                child: SizedBox(
+                  width: 190.fSize,
+                  height: 83.fSize,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 10),
+                              child: CircleAvatar(
+                                radius: 23.fSize,
+                                backgroundColor: Colors.white,
+                                child: Image.asset(
+                                  'assets/images/OverviewOccupancy.png',
+                                  width: 35.fSize,
+                                  height: 25.fSize,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8, top: 10),
+                            child: Text(
+                              'Occupancy Rate',
+                              style: TextStyle(
+                                fontSize: 8.0,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                          //hard coded
+                          Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: Text(
 
                                 //calculate the occupancy rate
                                 //in a method
                                 //then call here
-                                '${getOccupancyRate()}% Active',
-                                style:const TextStyle(
+                                '${getOccupancyRate()}%',
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontFamily: 'Open Sans',
                                   fontWeight: FontWeight.bold,
-                                )
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Text(
+                              'As of Month ' +
+                                  DateFormat('MMMM yyyy').format(
+                                    DateTime.now(),
+                                  ),
+                              style: const TextStyle(
+                                fontSize: 8.0,
+                                fontFamily: 'Open Sans',
+                                fontWeight: FontWeight.normal,
                               ),
                             ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Text(
-                                  DateFormat('MMMM yyyy').format(DateTime.now(),
-                                  
-                                ),
-                                style:const  TextStyle(
-                                    fontSize: 8.0,
-                                    fontFamily: 'Open Sans',
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ),
-                            ],
                           ),
-                      ],
-                     
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                ),
-              ],
-            ),
-      
-            const SizedBox(width: 20), // spacing between columns
-      
-            // Right Column
-            Flexible(
-              child: Column(
-                children: [
-                  //3rd
-                  Card(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    color: const Color(0xFF9EEAFF),
-                    child: SizedBox(
+              ),
+            ],
+          ),
+
+          const SizedBox(width: 20), // spacing between columns
+
+          // Right Column
+          Flexible(
+            child: Column(
+              children: [
+                //3rd
+                Card(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  color: const Color(0xFF9EEAFF),
+                  child: SizedBox(
                       width: 190.fSize,
                       height: 83.fSize,
                       child: Row(
                         children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: CircleAvatar(
-                                  radius: 23.fSize,
-                                  backgroundColor: Colors.white,
-                                  child:Image.asset(
-                                    'assets/images/OverviewMonthlyProfit.png',
-                                    width: 30.fSize,
-                                    height: 28.fSize,
-                                  )
-                                ),
-                              ),
-                                  
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: CircleAvatar(
+                                radius: 23.fSize,
+                                backgroundColor: Colors.white,
+                                child: Image.asset(
+                                  'assets/images/OverviewMonthlyProfit.png',
+                                  width: 30.fSize,
+                                  height: 28.fSize,
+                                )),
+                          ),
                           Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Padding(
                                 padding: EdgeInsets.only(left: 10, top: 10),
                                 child: Text(
                                   'Monthly Profit',
                                   style: TextStyle(
-                                    fontSize: 10.0,
-                                    fontFamily: 'Open Sans',
-                                    fontWeight: FontWeight.normal
-                                  ),
+                                      fontSize: 10.0,
+                                      fontFamily: 'Open Sans',
+                                      fontWeight: FontWeight.normal),
                                 ),
                               ),
                               ...model.monthlyBlcOwner.map((entry) {
-                              final year = entry['year'];
-                              final month = entry['month'];
-                              final profitEntry = model.monthlyProfitOwner.firstWhere(
-                                (profit) =>
-                                    profit['year'] == year &&
-                                    profit['month'] == month,
-                                orElse: () => {'total': 0.00},
-                              );
-                              final totalProfit = profitEntry['total'];
-                              final formatted = totalProfit
-                                  .toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                    (m) => '${m[1]},',
-                                  );
-                              return Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      WidgetSpan(
-                                        alignment: PlaceholderAlignment.baseline,
-                                        baseline: TextBaseline.alphabetic,
-                                        child: Transform.translate(
-                                          offset: const Offset(0, -4),
-                                          child: const Text(
-                                            'RM',
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              fontFamily: 'Open Sans',
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
+                                final year = entry['year'];
+                                final month = entry['month'];
+                                final profitEntry =
+                                    model.monthlyProfitOwner.firstWhere(
+                                  (profit) =>
+                                      profit['year'] == year &&
+                                      profit['month'] == month,
+                                  orElse: () => {'total': 0.00},
+                                );
+                                final totalProfit = profitEntry['total'];
+                                final formatted = totalProfit
+                                    .toStringAsFixed(2)
+                                    .replaceAllMapped(
+                                      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                                      (m) => '${m[1]},',
+                                    );
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        WidgetSpan(
+                                          alignment:
+                                              PlaceholderAlignment.baseline,
+                                          baseline: TextBaseline.alphabetic,
+                                          child: Transform.translate(
+                                            offset: const Offset(0, -4),
+                                            child: const Text(
+                                              'RM',
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontFamily: 'Open Sans',
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      TextSpan(
-                                        text: formatted,
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          fontFamily: 'Open Sans',
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
+                                        TextSpan(
+                                          text: formatted,
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: 'Open Sans',
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            }).toList(),
+                                );
+                              }).toList(),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10),
                                 child: Text(
-                                  DateFormat('MMMM yyyy').format(DateTime.now(),
-                                ),
-                                style:const  TextStyle(
-                                    fontSize: 8.0,
-                                    fontStyle: FontStyle.normal
+                                  DateFormat('MMMM yyyy').format(
+                                    DateTime.now(),
                                   ),
+                                  style: const TextStyle(
+                                      fontSize: 8.0,
+                                      fontStyle: FontStyle.normal),
                                 ),
                               ),
                             ],
                           )
                         ],
-                      )
-                    ),
-                  ),
-      
-                  //4th
-                  Card(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    color: const Color(0xFFDBC7FF),
-                    child: Container(
-                      width: 190.fSize,
-                      height: 130.fSize,
-                      decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12), // Match card's border radius
+                      )),
+                ),
+
+                //4th
+                Card(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  color: const Color(0xFFDBC7FF),
+                  child: Container(
+                    width: 190.fSize,
+                    height: 130.fSize,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                          12), // Match card's border radius
                       image: DecorationImage(
-                        image: AssetImage('assets/images/overviewContainer4.png'),
+                        image:
+                            AssetImage('assets/images/overviewContainer4.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left:5),
-                          child: Column(
-                            children: [
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Column(
+                          children: [
                             RevenueContainer(
-                              title:
-                              '${model.revenueLastestYear} Accumulated Profit​',
-                              icon: Icons.home_outlined,
-                              overallRevenue: false,
-                              model: model),
-                            ],
-                          ),
+                                title:
+                                    '${model.revenueLastestYear} Accumulated Profit​',
+                                icon: Icons.home_outlined,
+                                overallRevenue: false,
+                                model: model),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
+        ],
       ),
     );
   }
 }
-
 
 class RevenueContainer extends StatelessWidget {
   final String title;
@@ -406,10 +391,8 @@ class RevenueContainer extends StatelessWidget {
             // onTap: () => model.updateOverallRevenueAmount(),
             child: Container(
               padding: !Responsive.isMobile(context)
-                  ? EdgeInsets.only(
-                      left: 1.height, right: 1.height)
+                  ? EdgeInsets.only(left: 1.height, right: 1.height)
                   : EdgeInsets.all(1.height),
-
               child: Column(
                 children: [
                   SizedBox(
@@ -421,33 +404,29 @@ class RevenueContainer extends StatelessWidget {
                   _buildDateRow(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    
-                      children: [
-                        Column(
-                          children: [
-                            Transform.translate(
-                              offset: Offset(0, -6),
-                              child: CircleAvatar(
-                                radius: 20.fSize,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  'assets/images/OverviewAccumulatedProfit.png',
-                                  width: 26.fSize,
-                                  height: 24.fSize,
-                                ),
+                    children: [
+                      Column(
+                        children: [
+                          Transform.translate(
+                            offset: Offset(0, -6),
+                            child: CircleAvatar(
+                              radius: 20.fSize,
+                              backgroundColor: Colors.white,
+                              child: Image.asset(
+                                'assets/images/OverviewAccumulatedProfit.png',
+                                width: 26.fSize,
+                                height: 24.fSize,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-
-
-                        ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -463,7 +442,6 @@ class RevenueContainer extends StatelessWidget {
             fontFamily: 'Open Sans',
             // fontSize: 12.fSize,
             fontSize: 10.fSize,
-            
           ),
         ),
         const Spacer(),
@@ -492,27 +470,25 @@ class RevenueContainer extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text.rich(
-        TextSpan(
-       children: [
-          WidgetSpan(
-            alignment: PlaceholderAlignment.baseline,
-            baseline: TextBaseline.alphabetic,
-            child: Transform.translate(
-              offset: const Offset(0, -4),
-               child: const Text(
-                'RM',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+          TextSpan(children: [
+            WidgetSpan(
+              alignment: PlaceholderAlignment.baseline,
+              baseline: TextBaseline.alphabetic,
+              child: Transform.translate(
+                offset: const Offset(0, -4),
+                child: const Text(
+                  'RM',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                  ),
-                   ),
-                   ),
-       ]
+                ),
+              ),
+            ),
+          ]),
         ),
-        ),
-       // SizedBox(width: 1.width),
+        // SizedBox(width: 1.width),
         FutureBuilder<dynamic>(
           future: overallRevenue ? model.overallBalance : model.overallProfit,
           builder: (context, snapshot) {
@@ -535,4 +511,3 @@ class RevenueContainer extends StatelessWidget {
     );
   }
 }
-

@@ -16,16 +16,31 @@ import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
 
-class PropertySummaryScreen extends StatelessWidget {
+class PropertySummaryScreen extends StatefulWidget {
   const PropertySummaryScreen({super.key});
 
   @override
+  State<PropertySummaryScreen> createState() => _PropertySummaryScreenState();
+}
+
+class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
+  final model = NewDashboardVM_v3();
+  final model2 = PropertyDetailVM();
+  late Future<void> _initFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initFuture = _init();
+  }
+
+  Future<void> _init() async {
+    await model.fetchData();
+    await model2.fetchData(model.locationByMonth); // use fetched data
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final model = NewDashboardVM_v3();
-    final model2 = PropertyDetailVM();
-    model.fetchData();
-    model2.fetchData(model.locationByMonth);
-    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: propertyAppBar(
@@ -38,11 +53,11 @@ class PropertySummaryScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
-          
+
           return SingleChildScrollView(
             padding: const EdgeInsets.only(left: 15, top: 5, right: 15),
             child: Column(
@@ -52,27 +67,21 @@ class PropertySummaryScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: 0,
-                      child: PropertyTitleDropdown(currentPage:'Summary'),
+                      child: PropertyTitleDropdown(currentPage: 'Summary'),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16), // spacing between dropdown and card
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: OverviewCard(model:model),
+                  child: OverviewCard(model: model),
                 ),
-                SizedBox(height:10.fSize),
+                SizedBox(height: 10.fSize),
                 OccupancyRateBox(),
-                RecentActivity(),
-                
-
-
-                
+                RecentActivity(model: model2),
               ],
-              
             ),
           );
-
         },
       ),
       bottomNavigationBar: const BottomNavBar(currentIndex: 1),

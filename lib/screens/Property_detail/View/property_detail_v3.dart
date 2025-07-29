@@ -58,7 +58,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
 
     final collapsedHeight = 100.fSize;
     final dropdownInvisibleHeight = 415.fSize;
-    final estatementStickyHeight = 585.fSize;
+    final estatementStickyHeight = 600.fSize;
 
     setState(() {
       isCollapsed = scrollOffset > collapsedHeight;
@@ -1008,10 +1008,11 @@ class ContractDetailsContainer extends StatelessWidget {
                         padding:
                             const EdgeInsets.only(left: 5, top: 5, bottom: 10),
                         child: Text(
-                          (model.locationByMonth.isNotEmpty && 
-                           model.locationByMonth.first['owners'] != null)
+                          (model.locationByMonth.isNotEmpty &&
+                                  model.locationByMonth.first['owners'] != null)
                               ? (model.locationByMonth.first['owners'] as List)
-                                  .where((owner) => owner['unitNo'] == model.selectedUnitNo)
+                                  .where((owner) =>
+                                      owner['unitNo'] == model.selectedUnitNo)
                                   .map((owner) => owner['contractType'] ?? '')
                                   .join(' ')
                               : '',
@@ -1048,11 +1049,12 @@ class ContractDetailsContainer extends StatelessWidget {
                       padding:
                           const EdgeInsets.only(left: 3, top: 5, bottom: 10),
                       child: Text(
-                      (model.locationByMonth.isNotEmpty && 
-                      model.locationByMonth.first['owners'] != null)
-                      ? (model.locationByMonth.first['owners'] as List)
-                          .where((owner) => owner['unitNo'] == model.selectedUnitNo)
-                          .map((owner) => owner['endDate'] ?? '')
+                        (model.locationByMonth.isNotEmpty &&
+                                model.locationByMonth.first['owners'] != null)
+                            ? (model.locationByMonth.first['owners'] as List)
+                                .where((owner) =>
+                                    owner['unitNo'] == model.selectedUnitNo)
+                                .map((owner) => owner['endDate'] ?? '')
                                 .join(' ')
                             : '',
                         style: const TextStyle(
@@ -1198,16 +1200,17 @@ class UnitDetailsContainer extends StatelessWidget {
                             ),
                           ),
                           Text(
-                              '${model.locationByMonth.first['occupancy'] ?? ''}% Active',
+                              '${model.locationByMonth.first['occupancy'] ?? ''}%',
                               style: const TextStyle(
-                                fontSize: 11,
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               )),
                           SizedBox(height: 5.fSize),
                           Text(
-                              DateFormat('MMMM yyyy').format(
-                                DateTime.now(),
-                              ),
+                              'As of Month ' +
+                                  DateFormat('MMMM yyyy').format(
+                                    DateTime.now(),
+                                  ),
                               style: const TextStyle(
                                 fontSize: 10,
                               )),
@@ -1303,7 +1306,7 @@ class UnitDetailsContainer extends StatelessWidget {
                           BoxShadow(
                             color: Color(0xFF3E51FF).withOpacity(0.15),
                             blurRadius: 10,
-                            offset: const Offset(0, -3),
+                            offset: const Offset(0, 0),
                           )
                         ]),
                     child: Padding(
@@ -1367,11 +1370,14 @@ class UnitDetailsContainer extends StatelessWidget {
               ]),
             ),
           ),
+          SizedBox(height: 15),
+          SizedBox(
+              height: 0.5, width: 400, child: Container(color: Colors.grey)),
           StickyEstatementBar(
               onBack: () => Navigator.pop(context),
               yearOptions: model.yearItems,
               model: model),
-          EStatementContainer(model: model)
+          EStatementContainer(model: model),
         ],
       ),
     );

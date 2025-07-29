@@ -229,8 +229,21 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     if (propertyOccupancy.containsKey(location)) {
       return propertyOccupancy[location]['amount']?.toString() ?? '0';
     }
-    
-    // Fallback to calculating based on available data
-    return '85'; // Placeholder - replace with actual occupancy calculation
+
+    return '0';
+  }
+
+  String getTotalOccupancyRate() {
+    double total = 0;
+    print("propertyOccupancy: $propertyOccupancy");
+
+    propertyOccupancy.forEach((key, value) {
+      final amount = value['amount'];
+      if (amount is num) {
+        total += amount.toDouble();
+      }
+    });
+
+    return total.toStringAsFixed(1); // or use toInt().toString() if no decimals
   }
 }

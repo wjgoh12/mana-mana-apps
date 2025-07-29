@@ -14,13 +14,12 @@ import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailV
 import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {
-  
   final int currentIndex;
   final Function(int)? onTap;
 
   const BottomNavBar({
     super.key,
-    this.currentIndex = 0,// Default index is 0
+    this.currentIndex = 0, // Default index is 0
     this.onTap,
   });
 
@@ -46,7 +45,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
     }
   }
 
-  PageRouteBuilder _createRoute(Widget page, {String transitionType = 'slide'}) {
+  PageRouteBuilder _createRoute(Widget page,
+      {String transitionType = 'slide'}) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionDuration: const Duration(milliseconds: 300),
@@ -55,7 +55,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         switch (transitionType) {
           case 'fade':
             return FadeTransition(opacity: animation, child: child);
-            
+
           case 'scale':
             return ScaleTransition(
               scale: Tween<double>(begin: 0.95, end: 1.0).animate(
@@ -63,31 +63,34 @@ class _BottomNavBarState extends State<BottomNavBar> {
               ),
               child: child,
             );
-            
+
           case 'slideUp':
             return SlideTransition(
               position: Tween<Offset>(
                 begin: const Offset(0.0, 1.0),
                 end: Offset.zero,
-              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
               child: child,
             );
-            
+
           case 'slideLeft':
             return SlideTransition(
               position: Tween<Offset>(
                 begin: const Offset(-1.0, 0.0),
                 end: Offset.zero,
-              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
               child: child,
             );
-            
+
           default: // 'slide' - slide from right
             return SlideTransition(
               position: Tween<Offset>(
                 begin: const Offset(1.0, 0.0),
                 end: Offset.zero,
-              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
               child: child,
             );
         }
@@ -102,39 +105,39 @@ class _BottomNavBarState extends State<BottomNavBar> {
       setState(() {
         _selectedIndex = index;
       });
-      
+
       switch (index) {
-      case 0:
-        Navigator.pushReplacement(context, _createRoute(const NewDashboardV3(), transitionType: 'fade'));
-        break;
-        
-      case 1:
-      final newDashboardVM =context.read<NewDashboardVM>();
-        Navigator.pushReplacement(context, _createRoute(PropertySummaryScreen(), transitionType: 'fade'));
-        break;
-      case 2:
-        Navigator.pushReplacement(context, _createRoute(const AllNewsletter(), transitionType: 'fade'));
-        break;
-      case 3:
-        Navigator.pushReplacement(context, _createRoute(OwnerProfile_v3(), transitionType: 'fade'));
-        break;
-    }
+        case 0:
+          Navigator.pushReplacement(context,
+              _createRoute(const NewDashboardV3(), transitionType: 'fade'));
+          break;
+
+        case 1:
+          final newDashboardVM = context.read<NewDashboardVM>();
+          Navigator.pushReplacement(context,
+              _createRoute(PropertySummaryScreen(), transitionType: 'fade'));
+          break;
+        case 2:
+          Navigator.pushReplacement(context,
+              _createRoute(const AllNewsletter(), transitionType: 'fade'));
+          break;
+        case 3:
+          Navigator.pushReplacement(
+              context, _createRoute(OwnerProfile_v3(), transitionType: 'fade'));
+          break;
+      }
     }
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: LayoutBuilder(
-        builder:(context, constraints) {
-          const itemCount = 4;
-          final totalWidth=constraints.maxWidth;
-          final itemWidth = totalWidth / itemCount;
-          final indicatorSize = 70.fSize;
-        
+      child: LayoutBuilder(builder: (context, constraints) {
+        const itemCount = 4;
+        final totalWidth = constraints.maxWidth;
+        final itemWidth = totalWidth / itemCount;
+        final indicatorSize = 70.fSize;
 
         return Container(
           height: 80,
@@ -152,30 +155,29 @@ class _BottomNavBarState extends State<BottomNavBar> {
               ),
             ],
           ),
-          child: Stack(
-            children: [
-               Positioned.fill(
+          child: Stack(children: [
+            Positioned.fill(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildNavItem('assets/images/Home.png', 'Home', 0),
-                  _buildNavItem('assets/images/Properties.png', 'Properties', 1),
-                  _buildNavItem('assets/images/Newsletter.png', 'Newsletter', 2),
+                  _buildNavItem(
+                      'assets/images/Properties.png', 'Properties', 1),
+                  _buildNavItem(
+                      'assets/images/Newsletter.png', 'Newsletter', 2),
                   _buildNavItem('assets/images/Profile.png', 'Profile', 3),
                 ],
               ),
             ),
-            ]
-          ),
+          ]),
         );
-        }
-      ),
+      }),
     );
   }
 
   Widget _buildNavItem(dynamic icon, String label, int index) {
     bool isSelected = _selectedIndex == index;
-    
+
     return GestureDetector(
       onTap: () => _onItemTapped(index),
       behavior: HitTestBehavior.opaque,
@@ -183,18 +185,19 @@ class _BottomNavBarState extends State<BottomNavBar> {
         duration: const Duration(milliseconds: 200),
         width: 70.fSize, // Fixed width instead of Expanded
         height: 70.fSize,
-        decoration: isSelected ? 
-        const BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [
-              Color(0XFFB82B7D),
-              Color(0xFF3E51FF),
-            ],
-            begin: Alignment.bottomLeft,
-            end: Alignment.topRight,
-          ),
-        ) : null,
+        decoration: isSelected
+            ? const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0XFFB82B7D),
+                    Color(0xFF3E51FF),
+                  ],
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                ),
+              )
+            : null,
         child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -203,83 +206,85 @@ class _BottomNavBarState extends State<BottomNavBar> {
               // Icon container
               AnimatedScale(
                 duration: const Duration(milliseconds: 300),
-              scale: isSelected ? 1.2 : 1.0,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
-                opacity: isSelected ? 1.0 : 1.0,
-                child: icon is IconData
-                    ? Icon(
-                        icon,
-                        size: 24.fSize,
-                        color: isSelected ? Colors.white : Colors.grey,
-                      )
-                      : isSelected
-              ? Image.asset(
-                  icon,
-                  width: 24.fSize,
-                  height: 24.fSize,
-                  color: Colors.white,
-                )
-                    : ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0XFFB82B7D),
-                            Color(0xFF3E51FF),
-                          ],
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                        ).createShader(bounds),
-                        blendMode: BlendMode.srcIn,
-                        child: Image.asset(
+                scale: isSelected ? 1.2 : 1.0,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: isSelected ? 1.0 : 1.0,
+                  child: icon is IconData
+                      ? Icon(
                           icon,
-                          width: 24.fSize,
-                          height: 24.fSize,
-                          
-                        ),
-                      ),
+                          size: 24.fSize,
+                          color: isSelected ? Colors.white : Colors.grey,
+                        )
+                      : isSelected
+                          ? Image.asset(
+                              icon,
+                              width: 24.fSize,
+                              height: 24.fSize,
+                              color: Colors.white,
+                            )
+                          : ShaderMask(
+                              shaderCallback: (bounds) => const LinearGradient(
+                                colors: [
+                                  Color(0XFFB82B7D),
+                                  Color(0xFF3E51FF),
+                                ],
+                                begin: Alignment.bottomLeft,
+                                end: Alignment.topRight,
+                              ).createShader(bounds),
+                              blendMode: BlendMode.srcIn,
+                              child: Image.asset(
+                                icon,
+                                width: 24.fSize,
+                                height: 24.fSize,
+                              ),
+                            ),
+                ),
               ),
-              ),
-              
+
               SizedBox(height: 4.fSize),
-              
+
               // Text with constrained width
               SizedBox(
                 width: 70.fSize, // Fixed width for text
                 child: AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 200),
                   style: TextStyle(
-                    color: isSelected ? const Color(0xFFFFFFFF) : Colors.transparent,
+                    color: isSelected
+                        ? const Color(0xFFFFFFFF)
+                        : Colors.transparent,
                     fontSize: 10.fSize,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                   child: isSelected
-                    ? Text(
-                        label,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      )
-                    : ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0XFFB82B7D),
-                            Color(0xFF3E51FF),
-                          ],
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                        ).createShader(bounds),
-                        child: Text(
+                      ? Text(
                           label,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.fSize,
-                            fontWeight: FontWeight.normal,
-                          ),
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
+                        )
+                      : ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [
+                              Color(0XFFB82B7D),
+                              Color(0xFF3E51FF),
+                            ],
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            label,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.fSize,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                         ),
-                      ),
                 ),
               ),
             ],

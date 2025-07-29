@@ -92,6 +92,21 @@ class AllPropertyScreen extends StatelessWidget {
     required BuildContext context,
     required NewDashboardVM model,
   }) {
+    final latestMonth = model.unitLatestMonth;
+    final latestYear = model.locationByMonth
+        .map((p) => p['year'])
+        .reduce((a, b) => a > b ? a : b);
+
+    final latestLocationByMonth = model.locationByMonth
+        .where((p) => p['year'] == latestYear && p['month'] == latestMonth)
+        .toList();
+
+    print("Filtered data passed to PropertyStack:");
+    for (var item in latestLocationByMonth) {
+      print(
+          "Location: ${item['location']}, Month: ${item['month']}, Owners: ${item['owners']}, TotalUnits: ${item['totalUnits']}");
+    }
+
     String locationRoad = '';
     switch (locationByMonth[0]['location'].toUpperCase()) {
       case "EXPRESSIONZ":
@@ -126,7 +141,7 @@ class AllPropertyScreen extends StatelessWidget {
         );
       },
       child: PropertyStack(
-        locationByMonth: locationByMonth,
+        locationByMonth: latestLocationByMonth,
       ),
     );
   }

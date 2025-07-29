@@ -23,9 +23,18 @@ class PropertyStack extends StatelessWidget {
   // final String text3;
   // final double total;
 
+  String getInitials(String name) {
+    if (name.isEmpty) return '';
+    List<String> words = name.split(' ');
+    List<String> initials = words.map((word) => word[0].toUpperCase()).toList();
+    return initials.join('');
+  }
+
   @override
   Widget build(BuildContext context) {
-    NewDashboardVM_v3 model = NewDashboardVM_v3();
+    print('locationByMonth length: ${locationByMonth.length}');
+    print('First item keys: ${locationByMonth.first.keys}');
+    print('First item: ${locationByMonth.first}');
 
     if (locationByMonth.isEmpty) {
       return Container(
@@ -159,7 +168,7 @@ class PropertyStack extends StatelessWidget {
                               ),
                               SizedBox(width: 2.width),
                               Text(
-                                '${locationByMonth.first['totalUnits'] ?? 0} Total(${model.propertyOccupancy['amount'] ?? ''}% Occupancy)',
+                                '${locationByMonth.first['totalUnits'] ?? 0} Total(${locationByMonth.first['occupancy'] ?? '85'}% Occupancy)',
                                 style: const TextStyle(fontSize: 9),
                               ),
                             ],
@@ -169,9 +178,8 @@ class PropertyStack extends StatelessWidget {
                     ],
                   ),
 
-                  // Group icon and text
                   Padding(
-                    padding: const EdgeInsets.only(left: 10, top: 10),
+                    padding: const EdgeInsets.only(left: 10, top: 5),
                     child: Row(
                       children: [
                         Image.asset(
@@ -184,55 +192,67 @@ class PropertyStack extends StatelessWidget {
                           'Owner(s)',
                           style: TextStyle(
                             fontFamily: 'Open Sans',
-                            fontSize: 15.fSize,
+                            fontSize: 13.fSize,
                             fontWeight: FontWeight.w500,
                             color: Colors.black,
                           ),
                         ),
-                        for (var owner in (locationByMonth.isNotEmpty
-                            ? locationByMonth.first['owners'] ?? []
-                            : [])) ...[
-                          // Main owner avatar
-                          Padding(
-                            padding: const EdgeInsets.only(right: 5),
-                            child: Tooltip(
-                              message: owner['ownerName'] ?? 'Unknown Owner',
-                              child: CircleAvatar(
-                                radius: 13,
-                                backgroundColor: Colors.blue,
-                                child: Text(
-                                  getInitials(owner['ownerName'] ?? ''),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          // Co-owner avatar if exists
-                          if (owner['coOwnerName'] != null &&
-                              owner['coOwnerName'].toString().isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 5),
-                              child: Tooltip(
-                                message: owner['coOwnerName'],
-                                child: CircleAvatar(
-                                  radius: 13,
-                                  backgroundColor: Colors.green,
-                                  child: Text(
-                                    getInitials(owner['coOwnerName']),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
+                        SizedBox(width: 10.fSize),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                for (var owner
+                                    in locationByMonth.first['owners'] ??
+                                        []) ...[
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 5),
+                                    child: Tooltip(
+                                      message:
+                                          owner['ownerName'] ?? 'Unknown Owner',
+                                      child: CircleAvatar(
+                                        radius: 13,
+                                        backgroundColor: Colors.blue,
+                                        child: Text(
+                                          getInitials(owner['ownerName'] ?? ''),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
+                                  // Co-owner avatar if exists
+                                  if (owner['coOwnerName'] != null &&
+                                      owner['coOwnerName']
+                                          .toString()
+                                          .isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 5),
+                                      child: Tooltip(
+                                        message: owner['coOwnerName'],
+                                        child: CircleAvatar(
+                                          radius: 13,
+                                          backgroundColor: Colors.green,
+                                          child: Text(
+                                            getInitials(owner['coOwnerName']),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ],
                             ),
-                        ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
