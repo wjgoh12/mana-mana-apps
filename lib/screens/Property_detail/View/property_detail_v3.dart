@@ -715,7 +715,7 @@ class PropertyOverviewContainer extends StatelessWidget {
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Padding(
-              padding: const EdgeInsets.only(top: 25),
+              padding: const EdgeInsets.only(top: 10),
               child: Container(
                 width: 175,
                 height: 175,
@@ -761,7 +761,7 @@ class PropertyOverviewContainer extends StatelessWidget {
             ),
             SizedBox(width: 17.fSize),
             Padding(
-              padding: const EdgeInsets.only(top: 25),
+              padding: const EdgeInsets.only(top: 10),
               child: Container(
                 width: 175,
                 height: 175,

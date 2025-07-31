@@ -39,13 +39,13 @@ class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
     model2.fetchData(model.locationByMonth);
 
     return Container(
-      width: 197.fSize,
+      width: 205.fSize,
       child: DropdownButton2<String>(
         value: getDisplayText(),
         isExpanded: false,
         underline: const SizedBox(),
         dropdownStyleData: DropdownStyleData(
-          width: 197.fSize,
+          width: 220.fSize,
           offset: const Offset(-2, -1),
           useSafeArea: true,
           decoration: BoxDecoration(
@@ -71,7 +71,7 @@ class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
           ),
         ),
         menuItemStyleData: MenuItemStyleData(
-          height: 50,
+          height: 45.fSize,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           overlayColor: WidgetStateProperty.resolveWith<Color?>(
             (Set<WidgetState> states) {
@@ -97,7 +97,7 @@ class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
             value: item,
             child: Text(item,
                 style: TextStyle(
-                  fontSize: 25.fSize,
+                  fontSize: 23.fSize,
                   color: Colors.black,
                 )),
           );

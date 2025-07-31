@@ -101,7 +101,7 @@ class AllPropertyScreen extends StatelessWidget {
         .where((p) => p['year'] == latestYear && p['month'] == latestMonth)
         .toList();
 
-    print("Filtered data passed to PropertyStack:");
+    //print("Filtered data passed to PropertyStack:");
     for (var item in latestLocationByMonth) {
       print(
           "Location: ${item['location']}, Month: ${item['month']}, Owners: ${item['owners']}, TotalUnits: ${item['totalUnits']}");

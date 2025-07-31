@@ -287,15 +287,57 @@ class PropertyListRepository {
     });
   }
 
-  Future<Map<String, dynamic>> getPropertyOccupancy() async {
-    return await _apiService
-        .post(ApiEndpoint.propertyOccupancyRate)
-        .then((res) {
-      if (res is Map<String, dynamic>) {
-        return res;
-      } else {
-        throw Exception('Failed to fetch property occupancy rate');
-      }
+  // Dummy occupancy data for property + unitNo
+  final List<Map<String, dynamic>> _dummyOccupancyData = [
+    {
+      "location": "CEYLONZ",
+      "unitNo": "12-05",
+      "year": 2024,
+      "month": 9,
+      "amount": 92.53
+    },
+    {
+      "location": "SCARLETZ",
+      "unitNo": "45-99.99",
+      "year": 2025,
+      "month": 7,
+      "amount": 85.00
+    },
+    // Add more as needed
+  ];
+
+  /// Get dummy occupancy data by location and unitNo
+  Future<Map<String, dynamic>> getDummyPropertyOccupancy(
+      {required String location, required String unitNo}) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    final found = _dummyOccupancyData.firstWhere(
+      (item) => item['location'] == location && item['unitNo'] == unitNo,
+      orElse: () => {
+        "location": location,
+        "unitNo": unitNo,
+        "year": DateTime.now().year,
+        "month": DateTime.now().month,
+        "amount": 0.0
+      },
+    );
+    return found;
+  }
+
+  Future<Map<String, dynamic>> getPropertyOccupancy(
+      {String? location, String? unitNo}) async {
+    final res =
+        await _apiService.post(ApiEndpoint.propertyOccupancyRate, data: {
+      if (location != null) "location": location,
+      if (unitNo != null) "unitNo": unitNo,
     });
+    if (res is Map<String, dynamic> && res.isNotEmpty) {
+      return res;
+    } else if (location != null && unitNo != null) {
+      // fallback to dummy
+      return await getDummyPropertyOccupancy(
+          location: location, unitNo: unitNo);
+    } else {
+      throw Exception('Failed to fetch property occupancy rate');
+    }
   }
 }

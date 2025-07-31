@@ -80,7 +80,7 @@ class RecentActivityRecord extends StatelessWidget {
       },
       child: Container(
         width: 390.fSize,
-        height: 60.fSize,
+        height: 90.fSize,
         margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,

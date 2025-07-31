@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/widgets/occupancy_text.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -175,9 +176,9 @@ class PropertyImageStack extends StatelessWidget {
                       ),
                       Positioned(
                         top: (containerHeight - smallcontainerHeight) / 2,
-                        left: (containerWidth - smallcontainerWidth) / 2,
+                        left: (containerWidth - smallcontainerWidth) / 2 - 15,
                         child: Container(
-                          width: smallcontainerWidth,
+                          width: smallcontainerWidth + 31,
                           height: smallcontainerHeight,
                           padding: const EdgeInsets.only(left: 8),
                           decoration: BoxDecoration(
@@ -200,12 +201,8 @@ class PropertyImageStack extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
-                                '(${locationByMonth.first['occupancy'] ?? model.getOccupancyByLocation(locationByMonth.first['location'])}% Occupancy)',
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                ),
-                              )
+                              // Show occupancy rate using async widget
+                              OccupancyText(),
                             ],
                           ),
                         ),
@@ -330,7 +327,7 @@ class PropertyImageStack extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(top: 5),
+                              padding: const EdgeInsets.only(top: 3),
                               child: Image.asset('assets/images/Wallet.png',
                                   width: 45.fSize, height: 45.fSize),
                             ),
@@ -357,7 +354,7 @@ class PropertyImageStack extends StatelessWidget {
                             const Spacer(),
                             Container(
                               margin:
-                                  const EdgeInsets.only(right: 10, bottom: 8),
+                                  const EdgeInsets.only(right: 10, bottom: 3),
                               child: TextButton(
                                 onPressed: () {
                                   Navigator.push(

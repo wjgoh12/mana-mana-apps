@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
@@ -15,19 +16,25 @@ class OverviewCard extends StatelessWidget {
   }
 
   String getOccupancyRate() {
+    PropertyListRepository propertyrepo = PropertyListRepository();
     try {
+      //get from all_property occupancy
+      //calc units average from every location, then calc location avege occupancy rate
+
       // Calculate total properties
       final uniqueLocations =
-          model.totalByMonth.map((e) => e['slocation']).toSet().toList();
+          model.locationByMonth.map((e) => e['slocation']).toSet().toList();
       final totalProperties = uniqueLocations.length;
+
+      //model.totalByMonth.map((e) => e['slocation']).toSet().toList();
+      //final totalProperties = uniqueLocations.length;
 
       if (totalProperties == 0) return '0';
 
       // Calculate active properties (adjust this logic based on your data structure)
-      final activeProperties = model.totalByMonth
-          .where((e) =>
-              e['unitstatus'] == 'Active' ||
-              e['unitstatus'] == 'ACTIVE') // Adjust field name as needed
+      final activeProperties = model.locationByMonth
+          .where(
+              (e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE')
           .map((e) => e['slocation'])
           .toSet()
           .length;
@@ -152,12 +159,12 @@ class OverviewCard extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 15, horizontal: 10),
                               child: CircleAvatar(
-                                radius: 23.fSize,
+                                radius: 19.fSize,
                                 backgroundColor: Colors.white,
                                 child: Image.asset(
                                   'assets/images/OverviewOccupancy.png',
-                                  width: 35.fSize,
-                                  height: 25.fSize,
+                                  width: 30.fSize,
+                                  height: 20.fSize,
                                 ),
                               ),
                             ),
@@ -193,14 +200,14 @@ class OverviewCard extends StatelessWidget {
                                 )),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 10),
+                            padding: const EdgeInsets.only(left: 3),
                             child: Text(
                               'As of Month ' +
                                   DateFormat('MMMM yyyy').format(
                                     DateTime.now(),
                                   ),
                               style: const TextStyle(
-                                fontSize: 8.0,
+                                fontSize: 7.0,
                                 fontFamily: 'Open Sans',
                                 fontWeight: FontWeight.normal,
                               ),
@@ -469,24 +476,27 @@ class RevenueContainer extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text.rich(
-          TextSpan(children: [
-            WidgetSpan(
-              alignment: PlaceholderAlignment.baseline,
-              baseline: TextBaseline.alphabetic,
-              child: Transform.translate(
-                offset: const Offset(0, -4),
-                child: const Text(
-                  'RM',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+        RichText(
+          text: TextSpan(
+            children: [
+              WidgetSpan(
+                alignment: PlaceholderAlignment.baseline,
+                baseline: TextBaseline.alphabetic,
+                child: Transform.translate(
+                  offset: const Offset(0, -4),
+                  child: const Text(
+                    'RM',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'Open Sans',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
         // SizedBox(width: 1.width),
         FutureBuilder<dynamic>(
