@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/provider/version_checker.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
@@ -12,10 +13,13 @@ class Splashscreen extends StatefulWidget {
 
 class _SplashScreenState extends State<Splashscreen>
     with SingleTickerProviderStateMixin {
-
   @override
   void initState() {
     super.initState();
+
+    //FULLSCREEN
+    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
     _initialize();
   }
 
@@ -28,8 +32,8 @@ class _SplashScreenState extends State<Splashscreen>
           barrierDismissible: false,
           builder: (context) => AlertDialog(
             title: const Text('Update Available'),
-            content:
-                const Text('A new version is available. Please update to continue.'),
+            content: const Text(
+                'A new version is available. Please update to continue.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -50,8 +54,7 @@ class _SplashScreenState extends State<Splashscreen>
           if (success) {
             Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (_) => const NewDashboardV3()));
-          } else {
-          }
+          } else {}
         }
       });
     }
@@ -92,8 +95,8 @@ class _SplashScreenState extends State<Splashscreen>
         barrierDismissible: false,
         builder: (context) => AlertDialog(
           title: const Text('Update Available'),
-          content:
-              const Text('A new version is available. Please update to continue.'),
+          content: const Text(
+              'A new version is available. Please update to continue.'),
           actions: [
             TextButton(
               onPressed: () {
