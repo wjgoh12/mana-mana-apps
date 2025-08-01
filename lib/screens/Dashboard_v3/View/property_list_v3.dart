@@ -176,9 +176,9 @@ class PropertyImageStack extends StatelessWidget {
                       ),
                       Positioned(
                         top: (containerHeight - smallcontainerHeight) / 2,
-                        left: (containerWidth - smallcontainerWidth) / 2 - 15,
+                        left: (containerWidth - smallcontainerWidth) / 2 - 25,
                         child: Container(
-                          width: smallcontainerWidth + 31,
+                          width: smallcontainerWidth + 50,
                           height: smallcontainerHeight,
                           padding: const EdgeInsets.only(left: 8),
                           decoration: BoxDecoration(

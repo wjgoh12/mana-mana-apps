@@ -288,6 +288,11 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       final occupancy = await ownerPropertyListRepository.getPropertyOccupancy(
           location: location, unitNo: unitNo);
 
+      // Check if it's an error response
+      if (occupancy.containsKey('status')) {
+        return '0';
+      }
+
       if (occupancy.containsKey('amount') && occupancy['amount'] is num) {
         return occupancy['amount'].toString();
       }
@@ -313,6 +318,11 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       try {
         final occupancy = await ownerPropertyListRepository
             .getPropertyOccupancy(location: location, unitNo: unit['unitNo']);
+
+        // Check if it's an error response
+        if (occupancy.containsKey('status')) {
+          continue;
+        }
 
         if (occupancy.containsKey('amount') && occupancy['amount'] is num) {
           totalOccupancy += occupancy['amount'].toDouble();
