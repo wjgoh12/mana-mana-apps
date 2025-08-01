@@ -24,67 +24,118 @@ class PropertySummaryScreen extends StatefulWidget {
 }
 
 class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
-  final model = NewDashboardVM_v3();
-  final model2 = PropertyDetailVM();
+  final NewDashboardVM_v3 _model = NewDashboardVM_v3();
+  final PropertyDetailVM _model2 = PropertyDetailVM();
   late Future<void> _initFuture;
 
   @override
   void initState() {
     super.initState();
-    _initFuture = _init();
+    _initFuture = _initializeData();
   }
 
-  Future<void> _init() async {
-    await model.fetchData();
-    await model2.fetchData(model.locationByMonth); // use fetched data
+  @override
+  void dispose() {
+    _model.dispose();
+    _model2.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initializeData() async {
+    try {
+      await _model.fetchData();
+      await _model2.fetchData(_model.locationByMonth);
+    } catch (e) {
+      // Handle error appropriately
+      debugPrint('Error initializing data: $e');
+      rethrow;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: propertyAppBar(
-        context,
-        () => Navigator.of(context).pop(),
-      ),
-      body: FutureBuilder(
-        future: model.fetchData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: _model),
+        ChangeNotifierProvider.value(value: _model2),
+      ],
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: propertyAppBar(
+          context,
+          () => Navigator.of(context).pop(),
+        ),
+        body: FutureBuilder<void>(
+          future: _initFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.only(left: 15, top: 5, right: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Row(
+            if (snapshot.hasError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      flex: 0,
-                      child: PropertyTitleDropdown(currentPage: 'Summary'),
+                    const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+                    const SizedBox(height: 16),
+                    Text('Error: ${snapshot.error}'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _initFuture = _initializeData();
+                        });
+                      },
+                      child: const Text('Retry'),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16), // spacing between dropdown and card
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: OverviewCard(model: model),
-                ),
-                SizedBox(height: 10.fSize),
-                OccupancyRateBox(),
-                RecentActivity(model: model2),
-              ],
-            ),
-          );
-        },
+              );
+            }
+
+            return const _PropertySummaryContent();
+          },
+        ),
+        bottomNavigationBar: const BottomNavBar(currentIndex: 1),
       ),
-      bottomNavigationBar: const BottomNavBar(currentIndex: 1),
+    );
+  }
+}
+
+// Extract content to optimize rebuilds
+class _PropertySummaryContent extends StatelessWidget {
+  const _PropertySummaryContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer2<NewDashboardVM_v3, PropertyDetailVM>(
+      builder: (context, model, model2, child) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.only(left: 15, top: 5, right: 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Expanded(
+                    flex: 0,
+                    child: PropertyTitleDropdown(currentPage: 'Summary'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: OverviewCard(model: model),
+              ),
+              SizedBox(height: 10.fSize),
+              OccupancyRateBox(),
+              RecentActivity(model: model2),
+            ],
+          ),
+        );
+      },
     );
   }
 }

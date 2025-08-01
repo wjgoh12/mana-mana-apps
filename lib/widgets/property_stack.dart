@@ -80,7 +80,7 @@ class PropertyStack extends StatelessWidget {
       // final position = 25.height;
       final containerWidth = isMobile ? 370.fSize : 360.fSize;
       final containerHeight = 405.fSize;
-      final smallcontainerWidth = isMobile ? 320.fSize : 90.width;
+      final smallcontainerWidth = isMobile ? 335.fSize : 90.width;
       final smallcontainerHeight = 35.fSize;
 
       return Stack(
@@ -148,10 +148,10 @@ class PropertyStack extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Image.asset('assets/images/map_pin.png',
-                                  width: 17.fSize, height: 17.fSize),
+                                  width: 15.fSize, height: 15.fSize),
                               Text(
                                 '$locationRoad',
-                                style: const TextStyle(fontSize: 9),
+                                style: const TextStyle(fontSize: 8),
                               ),
                               SizedBox(
                                 width: 1.width,
@@ -163,13 +163,13 @@ class PropertyStack extends StatelessWidget {
                               ),
                               Image.asset(
                                 'assets/images/PropertiesGroup.png',
-                                width: 17.fSize,
-                                height: 17.fSize,
+                                width: 15.fSize,
+                                height: 15.fSize,
                               ),
-                              SizedBox(width: 2.width),
+                              SizedBox(width: 1.fSize),
                               Text(
                                 '${locationByMonth.first['totalUnits'] ?? 0} Total(${locationByMonth.first['occupancy'] ?? '85'}% Occupancy)',
-                                style: const TextStyle(fontSize: 9),
+                                style: const TextStyle(fontSize: 7),
                               ),
                             ],
                           ),

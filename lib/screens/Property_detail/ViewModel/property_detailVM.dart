@@ -55,11 +55,16 @@ class PropertyDetailVM extends ChangeNotifier {
   get contractType => null;
 
   Future<void> fetchData(List<Map<String, dynamic>> newLocationByMonth) async {
+    isLoading = true;
+    notifyListeners();
+    
     locationByMonth = newLocationByMonth;
     _users = await userRepository.getUsers();
     
     if (locationByMonth.isEmpty) {
       print('Warning: locationByMonth is empty');
+      isLoading = false;
+      notifyListeners();
       return;
     }
     
@@ -68,8 +73,6 @@ class PropertyDetailVM extends ChangeNotifier {
     if (selectedView.isEmpty) {
       selectedView = 'Overview';
     }
-
-    notifyListeners();
 
     switch (property.toUpperCase()) {
       case "EXPRESSIONZ":
@@ -291,6 +294,7 @@ class PropertyDetailVM extends ChangeNotifier {
     }
     selectedAnnualYearValue = _selectedYearValue;
     isLoading = false;
+    print('PropertyDetailVM: Data loading completed. TypeItems count: ${typeItems.length}');
     notifyListeners();
   }
 
@@ -382,7 +386,7 @@ class PropertyDetailVM extends ChangeNotifier {
             unit.stranscode == 'NOPROF',
         orElse: () => SingleUnitByMonth(total: 0.00));
 
-    await Future.delayed(const Duration(milliseconds: 1000));
+    // Remove artificial delay for better performance
     _isDateLoading = false;
     notifyListeners();
   }
@@ -406,9 +410,8 @@ class PropertyDetailVM extends ChangeNotifier {
         ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : '';
     // selectedYearValue = newSelectedYear;
-    await Future.delayed(const Duration(milliseconds: 1000));
+    // Remove artificial delay for better performance
     _isMonthLoadng = false;
-
     notifyListeners();
   }
 

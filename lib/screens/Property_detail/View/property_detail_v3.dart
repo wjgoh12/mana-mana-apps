@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
@@ -260,87 +261,9 @@ class _property_detail_v3State extends State<property_detail_v3> {
                               ],
                             ),
                             SizedBox(height: 10.fSize),
-                            Container(
+                            OptimizedPropertyDropdown(
+                              model: model,
                               width: 370.fSize,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.grey, width: 0.5),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                underline: const SizedBox(),
-                                dropdownStyleData: DropdownStyleData(
-                                  width: 370.fSize,
-                                  offset: const Offset(-12.5, -1),
-                                  useSafeArea: true,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: const Border(
-                                      left: BorderSide(
-                                          color: Colors.grey, width: 0.5),
-                                      right: BorderSide(
-                                          color: Colors.grey, width: 0.5),
-                                      bottom: BorderSide(
-                                          color: Colors.grey, width: 0.5),
-                                    ),
-                                    borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(4),
-                                      bottomRight: Radius.circular(4),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                  maxHeight: 200,
-                                ),
-                                items: [
-                                  const DropdownMenuItem<String>(
-                                    value: 'Overview',
-                                    child: Text('Overview'),
-                                  ),
-                                  ...model.typeItems
-                                      .map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    },
-                                  ).toList(),
-                                ],
-                                onChanged: (String? newValue) {
-                                  if (newValue != null) {
-                                    if (newValue == 'Overview') {
-                                      model.updateSelectedView('Overview');
-                                    } else {
-                                      final parts = newValue.split(' (');
-                                      if (parts.length == 2) {
-                                        final type = parts[0].trim();
-                                        final unit =
-                                            parts[1].replaceAll(')', '').trim();
-
-                                        model.updateSelectedView('UnitDetails');
-                                        model.updateSelectedTypeUnit(
-                                            type, unit);
-                                      }
-                                    }
-                                  }
-                                },
-                                hint: const Text('Select Unit'),
-                                value: model.selectedView == 'Overview'
-                                    ? 'Overview'
-                                    : (model.selectedType != null &&
-                                            model.selectedUnitNo != null)
-                                        ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
-                                        : null,
-                              ),
                             ),
                             SizedBox(height: 10.fSize),
                           ],
@@ -1741,4 +1664,185 @@ Widget _buildGradientText(String text) {
       colors: [Color(0xFF2900B7), Color(0xFF120051)],
     ),
   );
+}
+
+// Optimized Property Dropdown Widget
+class OptimizedPropertyDropdown extends StatefulWidget {
+  final PropertyDetailVM model;
+  final double width;
+
+  const OptimizedPropertyDropdown({
+    Key? key,
+    required this.model,
+    required this.width,
+  }) : super(key: key);
+
+  @override
+  State<OptimizedPropertyDropdown> createState() =>
+      _OptimizedPropertyDropdownState();
+}
+
+class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
+  List<DropdownMenuItem<String>>? _cachedItems;
+  List<String>? _lastTypeItems;
+  String? _cachedValue;
+
+  // Static decoration objects to avoid recreation
+  static final _containerDecoration = BoxDecoration(
+    border: Border.all(color: Colors.grey, width: 0.5),
+    borderRadius: BorderRadius.circular(4),
+  );
+
+  static final _dropdownDecoration = BoxDecoration(
+    color: Colors.white,
+    border: const Border(
+      left: BorderSide(color: Colors.grey, width: 0.5),
+      right: BorderSide(color: Colors.grey, width: 0.5),
+      bottom: BorderSide(color: Colors.grey, width: 0.5),
+    ),
+    borderRadius: const BorderRadius.only(
+      bottomLeft: Radius.circular(4),
+      bottomRight: Radius.circular(4),
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 8,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  );
+
+  static const _textStyle = TextStyle(fontSize: 12);
+  static const _hintText = Text('Select Unit');
+  static const _loadingText =
+      Text('Loading...', style: TextStyle(fontSize: 12, color: Colors.grey));
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: widget.model,
+      builder: (context, child) {
+        // Show loading state while data is being fetched
+        if (widget.model.isLoading || widget.model.typeItems.isEmpty) {
+          return Container(
+            width: widget.width,
+            decoration: _containerDecoration,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: DropdownButton2<String>(
+              isExpanded: true,
+              underline: const SizedBox(),
+              dropdownStyleData: DropdownStyleData(
+                width: widget.width,
+                offset: const Offset(-12.5, -1),
+                useSafeArea: true,
+                decoration: _dropdownDecoration,
+                maxHeight: 200,
+              ),
+              items: const [
+                DropdownMenuItem<String>(
+                  value: 'Overview',
+                  child: Text('Overview', style: _textStyle),
+                ),
+              ],
+              onChanged: (String? newValue) {
+                if (newValue == 'Overview') {
+                  widget.model.updateSelectedView('Overview');
+                }
+              },
+              hint: _loadingText,
+              value: 'Overview',
+            ),
+          );
+        }
+
+        // Only rebuild items if typeItems changed
+        if (_lastTypeItems == null ||
+            !_listEquals(_lastTypeItems!, widget.model.typeItems)) {
+          _buildCachedItems();
+          _lastTypeItems = List.from(widget.model.typeItems);
+        }
+
+        // Cache the computed value
+        final currentValue = _computeSelectedValue();
+        if (_cachedValue != currentValue) {
+          _cachedValue = currentValue;
+        }
+
+        return Container(
+          width: widget.width,
+          decoration: _containerDecoration,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: DropdownButton2<String>(
+            isExpanded: true,
+            underline: const SizedBox(),
+            dropdownStyleData: DropdownStyleData(
+              width: widget.width,
+              offset: const Offset(-12.5, -1),
+              useSafeArea: true,
+              decoration: _dropdownDecoration,
+              maxHeight: 200,
+            ),
+            items: _cachedItems,
+            onChanged: _handleChange,
+            hint: _hintText,
+            value: _cachedValue,
+          ),
+        );
+      },
+    );
+  }
+
+  void _buildCachedItems() {
+    _cachedItems = [
+      const DropdownMenuItem<String>(
+        value: 'Overview',
+        child: Text('Overview', style: _textStyle),
+      ),
+      ...widget.model.typeItems.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value, style: _textStyle),
+        );
+      }),
+    ];
+  }
+
+  String? _computeSelectedValue() {
+    if (widget.model.selectedView == 'Overview') {
+      return 'Overview';
+    }
+
+    if (widget.model.selectedType != null &&
+        widget.model.selectedUnitNo != null) {
+      return '${widget.model.selectedType!.trim()} (${widget.model.selectedUnitNo!.trim()})';
+    }
+
+    return null;
+  }
+
+  void _handleChange(String? newValue) {
+    if (newValue == null) return;
+
+    if (newValue == 'Overview') {
+      widget.model.updateSelectedView('Overview');
+    } else {
+      final parts = newValue.split(' (');
+      if (parts.length == 2) {
+        final type = parts[0].trim();
+        final unit = parts[1].replaceAll(')', '').trim();
+
+        widget.model.updateSelectedView('UnitDetails');
+        widget.model.updateSelectedTypeUnit(type, unit);
+      }
+    }
+  }
+
+  bool _listEquals(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
 }
