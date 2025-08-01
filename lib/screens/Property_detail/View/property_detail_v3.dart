@@ -617,6 +617,31 @@ class PropertyOverviewContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String monthNumberToName(int month) {
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sept',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
+      if (month >= 1 && month <= 12) {
+        return months[month - 1];
+      } else {
+        return 'Unknown';
+      }
+    }
+
+    DateTime now = DateTime.now();
+    String shortMonth = monthNumberToName(now.month);
+    String year = now.year.toString();
     double getTotalNetAfterPOB() {
       return model.unitByMonth
           .where((unit) => unit.slocation == model.property)
@@ -673,11 +698,11 @@ class PropertyOverviewContainer extends StatelessWidget {
                     Text(
                         '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation?.contains(locationByMonth.first['location']) == true).length - 1}'),
                     Text(
-                      DateFormat('MMMM yyyy').format(DateTime.now()),
+                      '$shortMonth $year',
                       style: const TextStyle(
                         fontSize: 10,
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -718,12 +743,11 @@ class PropertyOverviewContainer extends StatelessWidget {
                       ),
                       Text('%'),
                       Text(
-                          DateFormat('MMMM yyyy').format(
-                            DateTime.now(),
-                          ),
-                          style: const TextStyle(
-                            fontSize: 10,
-                          )),
+                        '$shortMonth $year',
+                        style: const TextStyle(
+                          fontSize: 10,
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -1004,6 +1028,31 @@ class UnitDetailsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String monthNumberToName(int month) {
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sept',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
+      if (month >= 1 && month <= 12) {
+        return months[month - 1];
+      } else {
+        return 'Unknown';
+      }
+    }
+
+    DateTime now = DateTime.now();
+    String shortMonth = monthNumberToName(now.month);
+    String year = now.year.toString();
     final NewDashboardVM_v3 model2 = NewDashboardVM_v3();
     return Container(
       color: Colors.white,
@@ -1129,20 +1178,16 @@ class UnitDetailsContainer extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               )),
                           SizedBox(height: 5.fSize),
-                          Text(
-                              'As of Month ' +
-                                  DateFormat('MMMM yyyy').format(
-                                    DateTime.now(),
-                                  ),
+                          Text('As of Month ' + '$shortMonth $year',
                               style: const TextStyle(
-                                fontSize: 10,
+                                fontSize: 7,
                               )),
                         ],
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                SizedBox(width: 8),
                 SizedBox(
                   width: 125,
                   height: 125,
@@ -1204,10 +1249,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Text(
-                              DateFormat('MMMM yyyy').format(
-                                DateTime.now(),
-                              ),
+                          Text('$shortMonth $year',
                               style: const TextStyle(
                                 fontSize: 10,
                               )),
@@ -1216,7 +1258,7 @@ class UnitDetailsContainer extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 8),
                 SizedBox(
                   width: 125,
                   height: 125,
@@ -1230,7 +1272,7 @@ class UnitDetailsContainer extends StatelessWidget {
                             color: Color(0xFF3E51FF).withOpacity(0.15),
                             blurRadius: 10,
                             offset: const Offset(0, 0),
-                          )
+                          ),
                         ]),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 15),
@@ -1278,10 +1320,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Text(
-                              DateFormat('MMMM yyyy').format(
-                                DateTime.now(),
-                              ),
+                          Text('$shortMonth $year',
                               style: const TextStyle(
                                 fontSize: 10,
                               )),
@@ -1605,7 +1644,7 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60.fSize,
+      height: 80.fSize,
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(

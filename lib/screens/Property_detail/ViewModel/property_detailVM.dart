@@ -57,17 +57,17 @@ class PropertyDetailVM extends ChangeNotifier {
   Future<void> fetchData(List<Map<String, dynamic>> newLocationByMonth) async {
     isLoading = true;
     notifyListeners();
-    
+
     locationByMonth = newLocationByMonth;
     _users = await userRepository.getUsers();
-    
+
     if (locationByMonth.isEmpty) {
       print('Warning: locationByMonth is empty');
       isLoading = false;
       notifyListeners();
       return;
     }
-    
+
     property = locationByMonth[0]['location'];
 
     if (selectedView.isEmpty) {
@@ -294,7 +294,7 @@ class PropertyDetailVM extends ChangeNotifier {
     }
     selectedAnnualYearValue = _selectedYearValue;
     isLoading = false;
-    print('PropertyDetailVM: Data loading completed. TypeItems count: ${typeItems.length}');
+    //print('PropertyDetailVM: Data loading completed. TypeItems count: ${typeItems.length}');
     notifyListeners();
   }
 
