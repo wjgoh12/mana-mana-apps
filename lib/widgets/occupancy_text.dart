@@ -5,7 +5,7 @@ import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.
 class OccupancyText extends StatefulWidget {
   final String? location;
   final String? unitNo;
-  final bool showTotal; // If true, shows total average across all properties
+  final bool showTotal;
   
   const OccupancyText({
     super.key,
@@ -19,58 +19,57 @@ class OccupancyText extends StatefulWidget {
 }
 
 class _OccupancyTextState extends State<OccupancyText> {
-  late Future<String> _occupancyFuture;
+  String _occupancyRate = '0';
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // Use WidgetsBinding.instance.addPostFrameCallback to ensure context is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeOccupancy();
+      _loadOccupancy();
     });
   }
 
-  void _initializeOccupancy() {
+  Future<void> _loadOccupancy() async {
     if (!mounted) return;
     
-    final viewModel = context.read<NewDashboardVM_v3>();
-    
-    if (widget.showTotal) {
-      // Show total average across all properties
-      _occupancyFuture = Future.value(viewModel.getTotalOccupancyRate());
-    } else if (widget.location != null && widget.unitNo != null) {
-      // Show specific unit occupancy
-      _occupancyFuture = viewModel.getUnitOccupancy(widget.location!, widget.unitNo!);
-    } else if (widget.location != null) {
-      // Show property average occupancy
-      _occupancyFuture = Future.value(viewModel.getOccupancyByLocation(widget.location!));
-    } else {
-      // Default to total average
-      _occupancyFuture = Future.value(viewModel.getTotalOccupancyRate());
-    }
-    
-    if (mounted) {
-      setState(() {});
+    try {
+      final viewModel = context.read<NewDashboardVM_v3>();
+      String occupancy;
+      
+      if (widget.showTotal) {
+        occupancy = viewModel.getTotalOccupancyRate();
+      } else if (widget.location != null && widget.unitNo != null) {
+        occupancy = await viewModel.getUnitOccupancy(widget.location!, widget.unitNo!);
+      } else if (widget.location != null) {
+        occupancy = viewModel.getOccupancyByLocation(widget.location!);
+      } else {
+        occupancy = viewModel.getTotalOccupancyRate();
+      }
+      
+      if (mounted) {
+        setState(() {
+          _occupancyRate = occupancy;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _occupancyRate = '0';
+          _isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
-      future: _occupancyFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading...', style: TextStyle(fontSize: 10));
-        } else if (snapshot.hasError) {
-          return const Text('Error', style: TextStyle(fontSize: 10));
-        } else if (snapshot.hasData) {
-          final occupancy = snapshot.data ?? '0';
-          return Text('($occupancy% Occupancy)',
-              style: const TextStyle(fontSize: 10));
-        } else {
-          return const Text('No data', style: TextStyle(fontSize: 10));
-        }
-      },
-    );
+    if (_isLoading) {
+      return const Text('Loading...', style: TextStyle(fontSize: 10));
+    }
+    
+    return Text('($_occupancyRate% Occupancy)',
+        style: const TextStyle(fontSize: 10));
   }
 }
