@@ -342,7 +342,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                         : null,
                               ),
                             ),
-                            SizedBox(height: 20.fSize),
+                            SizedBox(height: 10.fSize),
                           ],
                         ),
                       ),
@@ -717,8 +717,8 @@ class PropertyOverviewContainer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Container(
-                width: 175,
-                height: 175,
+                width: 160,
+                height: 160,
                 decoration: BoxDecoration(
                   color: const Color(0XFFFFFFFF),
                   borderRadius: BorderRadius.circular(12),
@@ -763,8 +763,8 @@ class PropertyOverviewContainer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Container(
-                width: 175,
-                height: 175,
+                width: 160,
+                height: 160,
                 decoration: BoxDecoration(
                   color: const Color(0XFFFFFFFF),
                   borderRadius: BorderRadius.circular(12),
@@ -793,7 +793,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                           fontSize: 12,
                         ),
                       ),
-                      Text('${locationByMonth.first['totalAssets'] ?? ''}'),
+                      Text('%'),
                       Text(
                           DateFormat('MMMM yyyy').format(
                             DateTime.now(),
@@ -809,11 +809,11 @@ class PropertyOverviewContainer extends StatelessWidget {
           ]),
           SizedBox(height: 10.fSize),
           Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 10),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
-                width: 175,
-                height: 175,
+                width: 160,
+                height: 160,
                 decoration: BoxDecoration(
                   color: const Color(0XFFFFFFFF),
                   borderRadius: BorderRadius.circular(10),
@@ -882,8 +882,8 @@ class PropertyOverviewContainer extends StatelessWidget {
               ),
               SizedBox(width: 17.fSize),
               Container(
-                width: 175,
-                height: 175,
+                width: 160,
+                height: 160,
                 decoration: BoxDecoration(
                   color: const Color(0XFFFFFFFF),
                   borderRadius: BorderRadius.circular(12),

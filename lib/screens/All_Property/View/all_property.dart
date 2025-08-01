@@ -5,7 +5,6 @@ import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.da
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
-import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
 
 class AllPropertyScreen extends StatelessWidget {
@@ -107,30 +106,30 @@ class AllPropertyScreen extends StatelessWidget {
           "Location: ${item['location']}, Month: ${item['month']}, Owners: ${item['owners']}, TotalUnits: ${item['totalUnits']}");
     }
 
-    String locationRoad = '';
-    switch (locationByMonth[0]['location'].toUpperCase()) {
-      case "EXPRESSIONZ":
-        locationRoad = "Jalan Tun Razak";
-        break;
-      case "CEYLONZ":
-        locationRoad = "Persiaran Raja Chulan";
-        break;
-      case "SCARLETZ":
-        locationRoad = "Jalan Yap Kwan Seng";
-        break;
-      case "MILLERZ":
-        locationRoad = "Old Klang Road";
-        break;
-      case "MOSSAZ":
-        locationRoad = "Empire City";
-        break;
-      case "PAXTONZ":
-        locationRoad = "Empire City";
-        break;
-      default:
-        locationRoad = "";
-        break;
-    }
+    // String locationRoad = '';
+    // switch (locationByMonth[0]['location'].toUpperCase()) {
+    //   case "EXPRESSIONZ":
+    //     locationRoad = "Jalan Tun Razak";
+    //     break;
+    //   case "CEYLONZ":
+    //     locationRoad = "Persiaran Raja Chulan";
+    //     break;
+    //   case "SCARLETZ":
+    //     locationRoad = "Jalan Yap Kwan Seng";
+    //     break;
+    //   case "MILLERZ":
+    //     locationRoad = "Old Klang Road";
+    //     break;
+    //   case "MOSSAZ":
+    //     locationRoad = "Empire City";
+    //     break;
+    //   case "PAXTONZ":
+    //     locationRoad = "Empire City";
+    //     break;
+    //   default:
+    //     locationRoad = "";
+    //     break;
+    // }
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(

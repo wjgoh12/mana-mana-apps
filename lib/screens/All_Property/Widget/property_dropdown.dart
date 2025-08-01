@@ -39,7 +39,7 @@ class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
     model2.fetchData(model.locationByMonth);
 
     return Container(
-      width: 205.fSize,
+      width: 220.fSize,
       child: DropdownButton2<String>(
         value: getDisplayText(),
         isExpanded: false,

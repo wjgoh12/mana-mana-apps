@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_rate_dropdown.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_bar_chart.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
