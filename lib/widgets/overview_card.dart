@@ -192,7 +192,7 @@ class OverviewCard extends StatelessWidget {
                                 //calculate the occupancy rate
                                 //in a method
                                 //then call here
-                                '${getOccupancyRate()}%',
+                                '${model.getTotalOccupancyRate()}%',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontFamily: 'Open Sans',
@@ -202,10 +202,9 @@ class OverviewCard extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 3),
                             child: Text(
-                              'As of Month ' +
-                                  DateFormat('MMMM yyyy').format(
-                                    DateTime.now(),
-                                  ),
+                              'As of Month ',
+                              //latest occupancy rate ,
+
                               style: const TextStyle(
                                 fontSize: 7.0,
                                 fontFamily: 'Open Sans',

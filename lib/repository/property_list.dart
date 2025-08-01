@@ -290,8 +290,8 @@ class PropertyListRepository {
   // Dummy occupancy data for property + unitNo
   final List<Map<String, dynamic>> _dummyOccupancyData = [
     {
-      "location": "CEYLONZ",
-      "unitNo": "12-05",
+      "location": "SCARLETZ",
+      "unitNo": "2000-2100-55",
       "year": 2024,
       "month": 9,
       "amount": 92.53
@@ -338,6 +338,33 @@ class PropertyListRepository {
           location: location, unitNo: unitNo);
     } else {
       throw Exception('Failed to fetch property occupancy rate');
+    }
+  }
+
+  Future<Map<String, dynamic>> getPropertyOccupancyByBody({
+    required String location,
+    required String unitNo,
+  }) async {
+    final Map<String, dynamic> data = {
+      "location": location,
+      "unitNo": unitNo,
+    };
+
+    try {
+      final res =
+          await _apiService.post(ApiEndpoint.propertyOccupancyRate, data: data);
+      if (res is Map<String, dynamic>) {
+        return res;
+      } else {
+        // Return dummy data for demo/testing
+        return {
+          "year": 2024,
+          "month": 9,
+          "amount": location == "CEYLONZ" && unitNo == "12-05" ? 92.53 : 85.00
+        };
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch property occupancy rate: $e');
     }
   }
 }

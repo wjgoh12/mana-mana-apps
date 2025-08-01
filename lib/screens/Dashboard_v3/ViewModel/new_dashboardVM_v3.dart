@@ -83,9 +83,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
     totalByMonth = await ownerPropertyListRepository.totalByMonth();
 
-    propertyOccupancy =
-        await ownerPropertyListRepository.getPropertyOccupancy();
-
     // Fetch property contract type data from API
     try {
       final contractResponse =
@@ -200,16 +197,73 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
     //_newsletters = await newsletterRepository.getNewsletters();
 
+    // Load property occupancy data for each location
+    try {
+      Map<String, dynamic> occupancyData = {};
+
+      // Get unique locations from propertyContractType
+      Set<String> locations = propertyContractType
+          .map((property) => property['location'] as String)
+          .toSet();
+
+      for (String location in locations) {
+        try {
+          // Get the first unit for this location to fetch occupancy
+          final unitForLocation = propertyContractType
+              .firstWhere((property) => property['location'] == location);
+
+          final occupancy =
+              await ownerPropertyListRepository.getPropertyOccupancy(
+            location: location,
+            unitNo: unitForLocation['unitNo'],
+          );
+
+          if (occupancy.containsKey('amount')) {
+            occupancyData[location] = occupancy;
+          }
+        } catch (e) {
+          print('Error fetching occupancy for $location: $e');
+        }
+      }
+
+      propertyOccupancy = occupancyData.isNotEmpty
+          ? occupancyData
+          : {
+              "SCARLETZ": {
+                "units": {
+                  "45-99.99": {"year": 2024, "month": 9, "amount": 92.53},
+                  "2000-2100-55": {"year": 2024, "month": 9, "amount": 85.00}
+                },
+                "average": 88.77
+              },
+              "EXPRESSIONZ": {
+                "units": {
+                  "12-34.56": {"year": 2024, "month": 9, "amount": 92.53}
+                },
+                "average": 92.53
+              }
+            };
+    } catch (e) {
+      print('Error loading property occupancy: $e');
+      propertyOccupancy = {
+        "SCARLETZ": {
+          "units": {
+            "45-99.99": {"year": 2024, "month": 9, "amount": 92.53},
+            "2000-2100-55": {"year": 2024, "month": 9, "amount": 85.00}
+          },
+          "average": 88.77
+        },
+        "EXPRESSIONZ": {
+          "units": {
+            "12-34.56": {"year": 2024, "month": 9, "amount": 92.53}
+          },
+          "average": 92.53
+        }
+      };
+    }
+
     isLoading = false;
     notifyListeners();
-
-    propertyOccupancy =
-        await ownerPropertyListRepository.getPropertyOccupancy();
-
-    // propertyOccupancy = [
-    //   {"year": 2024, "month": 9, "amount": 92.53},
-    //   {"year": 2024, "month": 9, "amount": 92.53}
-    // ];
   }
 
   Future<void> refreshData() async {
@@ -219,31 +273,184 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   }
 
   String getContractType(String location) {
-    final contract = propertyContractType
-        .firstWhere((contract) => contract['location'] == location);
-    return contract['contractType'] ?? '';
+    try {
+      final contract = propertyContractType
+          .firstWhere((contract) => contract['location'] == location);
+      return contract['contractType'] ?? '';
+    } catch (e) {
+      return '';
+    }
   }
 
-  String getOccupancyByLocation(String location) {
+  // 1. Get occupancy for a specific unit
+  Future<String> getUnitOccupancy(String location, String unitNo) async {
+    try {
+      final occupancy = await ownerPropertyListRepository.getPropertyOccupancy(
+          location: location, unitNo: unitNo);
+
+      if (occupancy.containsKey('amount') && occupancy['amount'] is num) {
+        return occupancy['amount'].toString();
+      }
+    } catch (e) {
+      print('Error getting unit occupancy for $location - $unitNo: $e');
+    }
+    return '0';
+  }
+
+  // 2. Get average occupancy for all units within a property/location
+  Future<String> getAverageOccupancyByLocation(String location) async {
+    // Get all units for this location
+    final unitsInLocation = propertyContractType
+        .where((property) => property['location'] == location)
+        .toList();
+
+    if (unitsInLocation.isEmpty) return '0.0';
+
+    double totalOccupancy = 0;
+    int validUnits = 0;
+
+    for (var unit in unitsInLocation) {
+      try {
+        final occupancy = await ownerPropertyListRepository
+            .getPropertyOccupancy(location: location, unitNo: unit['unitNo']);
+
+        if (occupancy.containsKey('amount') && occupancy['amount'] is num) {
+          totalOccupancy += occupancy['amount'].toDouble();
+          validUnits++;
+        }
+      } catch (e) {
+        print('Error getting occupancy for unit ${unit['unitNo']}: $e');
+      }
+    }
+
+    if (validUnits == 0) return '0.0';
+    return (totalOccupancy / validUnits).toStringAsFixed(1);
+  }
+
+  // 3. Get average occupancy across all properties (average of property averages)
+  Future<String> getTotalAverageOccupancyRate() async {
+    print("Calculating total average occupancy rate");
+
+    // Get unique locations
+    Set<String> locations = propertyContractType
+        .map((property) => property['location'] as String)
+        .toSet();
+
+    if (locations.isEmpty) return '0.0';
+
+    double totalPropertyAverages = 0;
+    int validProperties = 0;
+
+    for (String location in locations) {
+      final locationAverage = await getAverageOccupancyByLocation(location);
+      final averageValue = double.tryParse(locationAverage) ?? 0.0;
+
+      if (averageValue > 0) {
+        totalPropertyAverages += averageValue;
+        validProperties++;
+      }
+    }
+
+    if (validProperties == 0) return '0.0';
+    return (totalPropertyAverages / validProperties).toStringAsFixed(1);
+  }
+
+  // Get occupancy for a specific unit from cached data
+  String getUnitOccupancyFromCache(String location, String unitNo) {
+    // Check if propertyOccupancy contains error response
+    if (propertyOccupancy.containsKey('status')) {
+      return '0';
+    }
+
     // Try to get occupancy from propertyOccupancy map
     if (propertyOccupancy.containsKey(location)) {
-      return propertyOccupancy[location]['amount']?.toString() ?? '0';
+      final locationData = propertyOccupancy[location];
+      if (locationData is Map<String, dynamic> &&
+          locationData.containsKey('units') &&
+          locationData['units'] is Map<String, dynamic>) {
+        final units = locationData['units'] as Map<String, dynamic>;
+        if (units.containsKey(unitNo)) {
+          final unitData = units[unitNo];
+          if (unitData is Map<String, dynamic> &&
+              unitData.containsKey('amount')) {
+            return unitData['amount']?.toString() ?? '0';
+          }
+        }
+      }
     }
 
     return '0';
   }
 
-  String getTotalOccupancyRate() {
-    double total = 0;
-    print("propertyOccupancy: $propertyOccupancy");
+  // Legacy method - get average occupancy by location from cached data
+  String getOccupancyByLocation(String location) {
+    // Check if propertyOccupancy contains error response
+    if (propertyOccupancy.containsKey('status')) {
+      return '0';
+    }
 
-    propertyOccupancy.forEach((key, value) {
-      final amount = value['amount'];
-      if (amount is num) {
-        total += amount.toDouble();
+    // Try to get average occupancy from propertyOccupancy map
+    if (propertyOccupancy.containsKey(location)) {
+      final locationData = propertyOccupancy[location];
+      if (locationData is Map<String, dynamic>) {
+        // If new structure with average
+        if (locationData.containsKey('average')) {
+          return locationData['average']?.toString() ?? '0';
+        }
+        // Legacy structure support
+        else if (locationData.containsKey('amount')) {
+          return locationData['amount']?.toString() ?? '0';
+        }
       }
-    });
+    }
 
-    return total.toStringAsFixed(1); // or use toInt().toString() if no decimals
+    return '0';
+  }
+
+  // Calculate average occupancy rate across all properties
+  // (average of property averages: property1_avg + property2_avg + property3_avg) / number_of_properties
+  String getTotalOccupancyRate() {
+    //print("propertyOccupancy: $propertyOccupancy");
+
+    // Check if propertyOccupancy contains error response (has 'status' field)
+    if (propertyOccupancy.containsKey('status')) {
+      return '0.0';
+    }
+
+    // If we have cached data, use it for quick calculation
+    if (propertyOccupancy.isNotEmpty) {
+      double totalPropertyAverages = 0;
+      int validProperties = 0;
+
+      propertyOccupancy.forEach((key, value) {
+        if (value is Map<String, dynamic>) {
+          // New structure with average
+          if (value.containsKey('average')) {
+            final average = value['average'];
+            if (average is num) {
+              totalPropertyAverages += average.toDouble();
+              validProperties++;
+            }
+          }
+          // Legacy structure support
+          else if (value.containsKey('amount')) {
+            final amount = value['amount'];
+            if (amount is num) {
+              totalPropertyAverages += amount.toDouble();
+              validProperties++;
+            }
+          }
+        }
+      });
+
+      if (validProperties == 0) return '0.0';
+
+      // Calculate average: (property1_avg + property2_avg + property3_avg) / number_of_properties
+      // Example: (92.53 + 85.67 + 78.90) / 3 = 85.70
+      double averageOccupancyRate = totalPropertyAverages / validProperties;
+      return averageOccupancyRate.toStringAsFixed(1);
+    }
+
+    return '0.0';
   }
 }
