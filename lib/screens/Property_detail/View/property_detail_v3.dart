@@ -943,7 +943,7 @@ class ContractDetailsContainer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(left: 5, top: 5, bottom: 10),
+                        padding: EdgeInsets.only(left: 4, top: 5, bottom: 10),
                         child: Text(
                           'Contract Type',
                           style: TextStyle(
@@ -974,7 +974,7 @@ class ContractDetailsContainer extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.only(right: 3),
                   child: SizedBox(
                     width: 1,
                     height: 30,
@@ -1141,7 +1141,7 @@ class UnitDetailsContainer extends StatelessWidget {
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 SizedBox(
-                  width: 125,
+                  width: 110,
                   height: 125,
                   child: Container(
                     decoration: BoxDecoration(

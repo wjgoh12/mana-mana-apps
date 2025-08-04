@@ -177,10 +177,10 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
     //print(locationByMonth.first['owner']);
     // locationByMonth = [
-    //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 5, 'year': 2024},
-    //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 6, 'year': 2024},
-    //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 1, 'year': 2025},
-    //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 2, 'year': 2025}
+    //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 3, 'year': 2024},
+    //   {'total': 1842.01, 'location': 'CEYLONZ', 'month': 6, 'year': 2024},
+    //   //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 1, 'year': 2025},
+    //   //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 2, 'year': 2025}
     // ];
     try {
       unitLatestMonth = locationByMonth
@@ -392,23 +392,17 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     return '0';
   }
 
-  // Legacy method - get average occupancy by location from cached data
   String getOccupancyByLocation(String location) {
-    // Check if propertyOccupancy contains error response
     if (propertyOccupancy.containsKey('status')) {
       return '0';
     }
 
-    // Try to get average occupancy from propertyOccupancy map
     if (propertyOccupancy.containsKey(location)) {
       final locationData = propertyOccupancy[location];
       if (locationData is Map<String, dynamic>) {
-        // If new structure with average
         if (locationData.containsKey('average')) {
           return locationData['average']?.toString() ?? '0';
-        }
-        // Legacy structure support
-        else if (locationData.containsKey('amount')) {
+        } else if (locationData.containsKey('amount')) {
           return locationData['amount']?.toString() ?? '0';
         }
       }
@@ -417,12 +411,9 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     return '0';
   }
 
-  // Calculate average occupancy rate across all properties
-  // (average of property averages: property1_avg + property2_avg + property3_avg) / number_of_properties
   String getTotalOccupancyRate() {
     //print("propertyOccupancy: $propertyOccupancy");
 
-    // Check if propertyOccupancy contains error response (has 'status' field)
     if (propertyOccupancy.containsKey('status')) {
       return '0.0';
     }
@@ -434,16 +425,13 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
       propertyOccupancy.forEach((key, value) {
         if (value is Map<String, dynamic>) {
-          // New structure with average
           if (value.containsKey('average')) {
             final average = value['average'];
             if (average is num) {
               totalPropertyAverages += average.toDouble();
               validProperties++;
             }
-          }
-          // Legacy structure support
-          else if (value.containsKey('amount')) {
+          } else if (value.containsKey('amount')) {
             final amount = value['amount'];
             if (amount is num) {
               totalPropertyAverages += amount.toDouble();
