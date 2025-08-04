@@ -13,15 +13,6 @@ class PropertyListV3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final latestYear = model.locationByMonth
-        .map((p) => p['year'] as int)
-        .reduce((a, b) => a > b ? a : b);
-
-    final latestMonth = model.locationByMonth
-        .where((e) => e['year'] == latestYear)
-        .map((e) => e['month'] as int)
-        .reduce((a, b) => a > b ? a : b);
-
     if (model.isLoading) {
       return Container(
         decoration: BoxDecoration(
@@ -92,6 +83,15 @@ class PropertyListV3 extends StatelessWidget {
             // ),
           );
   }
+
+  int get latestYear => model.locationByMonth
+      .map((p) => p['year'] as int)
+      .reduce((a, b) => a > b ? a : b);
+
+  int get latestMonth => model.locationByMonth
+      .where((e) => e['year'] == latestYear)
+      .map((e) => e['month'] as int)
+      .reduce((a, b) => a > b ? a : b);
 }
 
 class PropertyImageStack extends StatelessWidget {

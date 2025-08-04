@@ -282,18 +282,20 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
-  // 1. Get occupancy for a specific unit
   Future<String> getUnitOccupancy(String location, String unitNo) async {
     try {
       final occupancy = await ownerPropertyListRepository.getPropertyOccupancy(
           location: location, unitNo: unitNo);
+      print('Occupancy data: $occupancy');
 
       // Check if it's an error response
       if (occupancy.containsKey('status')) {
+        print('Error response: ${occupancy['status']}');
         return '0';
       }
 
       if (occupancy.containsKey('amount') && occupancy['amount'] is num) {
+        print('Occupancy amount: ${occupancy['amount']}');
         return occupancy['amount'].toString();
       }
     } catch (e) {
@@ -302,7 +304,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     return '0';
   }
 
-  // 2. Get average occupancy for all units within a property/location
   Future<String> getAverageOccupancyByLocation(String location) async {
     // Get all units for this location
     final unitsInLocation = propertyContractType
@@ -337,7 +338,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     return (totalOccupancy / validUnits).toStringAsFixed(1);
   }
 
-  // 3. Get average occupancy across all properties (average of property averages)
   Future<String> getTotalAverageOccupancyRate() async {
     print("Calculating total average occupancy rate");
 

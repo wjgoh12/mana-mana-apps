@@ -61,7 +61,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
 
     final collapsedHeight = 100.fSize;
     final dropdownInvisibleHeight = 415.fSize;
-    final estatementStickyHeight = 600.fSize;
+    final estatementStickyHeight = 680.fSize;
 
     setState(() {
       isCollapsed = scrollOffset > collapsedHeight;
@@ -78,10 +78,10 @@ class _property_detail_v3State extends State<property_detail_v3> {
     double top = 0;
 
     if (isCollapsed) {
-      top += 85.fSize;
+      top += 80.fSize;
     }
     if (showStickyDropdown) {
-      top += 70.fSize;
+      top += 80.fSize;
     }
     return top;
   }
@@ -1045,6 +1045,13 @@ class UnitDetailsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final location = model.locationByMonth.first['location'] ?? 'Unknown';
+    final unitNo = model.selectedUnitNo ?? 'Unknown';
+
+    /// Converts a month number (1-12) to its corresponding month name.
+    ///
+    /// Returns 'Unknown' if [month] is not in the range 1-12.
+    ///
     String monthNumberToName(int month) {
       const months = [
         'Jan',
@@ -1188,12 +1195,33 @@ class UnitDetailsContainer extends StatelessWidget {
                               fontSize: 10,
                             ),
                           ),
-                          Text(
-                              '${model.locationByMonth.first['occupancy'] ?? ''}%',
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              )),
+                          FutureBuilder(
+                            future: model2.getUnitOccupancy(
+                              model.locationByMonth.first['location'],
+                              model.selectedUnitNo ?? '',
+                            ),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Text('Loading...',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold));
+                              } else if (snapshot.hasError) {
+                                return const Text('Error',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold));
+                              } else {
+                                return Text(
+                                  snapshot.data ?? '0%',
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                );
+                              }
+                            },
+                          ),
                           SizedBox(height: 5.fSize),
                           Text('As of Month ' + '$shortMonth $year',
                               style: const TextStyle(
@@ -1389,36 +1417,6 @@ class _EStatementContainerState extends State<EStatementContainer> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // if (widget.model.selectedYearValue == null ||
-        //     widget.model.selectedYearValue!.isEmpty) {
-        //   return Container(
-        //     decoration: const BoxDecoration(
-        //       color: Colors.white,
-        //     ),
-        //     height: 500,
-        //     child: Center(
-        //       child: Column(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         children: [
-        //           Icon(
-        //             Icons.calendar_today_outlined,
-        //             size: 48,
-        //             color: Colors.grey.shade400,
-        //           ),
-        //           SizedBox(height: 16),
-        //           Text(
-        //             'Please select a year to view statements',
-        //             style: TextStyle(
-        //               fontSize: 16,
-        //               color: Colors.grey.shade600,
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   );
-        // }
-
         final allItems = widget.model.unitByMonth;
         final filteredItems = allItems.where((item) {
           return item.iyear != null &&
@@ -1426,29 +1424,32 @@ class _EStatementContainerState extends State<EStatementContainer> {
                   widget.model.selectedYearValue.toString();
         }).toList();
         if (filteredItems.isEmpty) {
-          return Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-            ),
-            height: 200,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.description_outlined,
-                    size: 48,
-                    color: Colors.grey.shade400,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'No statements found !',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
+          return SingleChildScrollView(
+            physics: NeverScrollableScrollPhysics(),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              height: 500,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.description_outlined,
+                      size: 48,
+                      color: Colors.grey.shade400,
                     ),
-                  ),
-                ],
+                    SizedBox(height: 16),
+                    Text(
+                      'No statements found !',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -1476,15 +1477,12 @@ class _EStatementContainerState extends State<EStatementContainer> {
           }
         }
 
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-          ),
-          height: 500,
-          child: ListView.builder(
-            itemCount: filteredItems.length,
+        if (filteredItems.length > 6) {
+          // More than one screen, allow scrolling
+          return ListView.builder(
+            physics: const ClampingScrollPhysics(),
             shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+            itemCount: filteredItems.length,
             itemBuilder: (context, i) {
               final item = filteredItems[i];
 
@@ -1494,7 +1492,6 @@ class _EStatementContainerState extends State<EStatementContainer> {
               }
 
               return InkWell(
-                hoverColor: Colors.grey.shade50,
                 onTap: () => widget.model.downloadPdfStatement(context),
                 child: Container(
                   height: 50.fSize,
@@ -1502,14 +1499,40 @@ class _EStatementContainerState extends State<EStatementContainer> {
                   child: Row(
                     children: [
                       Text(
-                          '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}'),
+                        '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
+                      ),
                     ],
                   ),
                 ),
               );
             },
-          ),
-        );
+          );
+        } else {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: filteredItems.map((item) {
+              if (widget.model.selectedView != 'Overview' &&
+                  item.sunitno != widget.model.selectedUnitNo) {
+                return const SizedBox.shrink();
+              }
+
+              return InkWell(
+                onTap: () => widget.model.downloadPdfStatement(context),
+                child: Container(
+                  height: 50.fSize,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      Text(
+                        '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        }
       },
     );
   }
@@ -1528,7 +1551,7 @@ class StickyDropdownBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70.fSize,
+      height: 90.fSize,
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(
@@ -1661,7 +1684,7 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80.fSize,
+      height: 95.fSize,
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(
@@ -1682,10 +1705,25 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
             const Text('Year'),
             const SizedBox(width: 8),
             DropdownButton2<String>(
+              buttonStyleData: ButtonStyleData(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 1),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey, width: 0.5),
+
+                  //remove text underline of the dropdown bar
+                ),
+              ),
               value: widget.model.selectedYearValue,
               hint: widget.model.yearItems.isNotEmpty
-                  ? const Text('Select Year')
-                  : const Text('-'),
+                  ? const Text('Select Year',
+                      style: TextStyle(
+                          fontSize: 10, decoration: TextDecoration.none))
+                  : const Text('-',
+                      style: TextStyle(
+                          fontSize: 10, decoration: TextDecoration.none)),
               items: widget.yearOptions
                   .map((year) => DropdownMenuItem(
                         value: year,
@@ -1697,6 +1735,20 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
                   widget.model.updateSelectedYear(val);
                 }
               },
+              dropdownStyleData: DropdownStyleData(
+                offset: const Offset(0, 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, -1),
+                    ),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(width: 8),
           ],
