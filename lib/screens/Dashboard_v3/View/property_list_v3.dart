@@ -220,7 +220,10 @@ class PropertyImageStack extends StatelessWidget {
                                 ),
                               ),
                               // Show occupancy rate using async widget
-                              OccupancyText(),
+                              OccupancyText(
+                                  location: locationByMonth.first['location'],
+                                  unitNo: locationByMonth.first['unitNo'],
+                                  showTotal: true),
                             ],
                           ),
                         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/Widget/occupancy_percent_text.dart';
+import 'package:mana_mana_app/widgets/occupancy_text.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
@@ -295,7 +297,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                       ),
-                      height: 85.fSize,
+                      height: 110.fSize,
                       child: SafeArea(
                         bottom: false,
                         child: Row(
@@ -741,7 +743,12 @@ class PropertyOverviewContainer extends StatelessWidget {
                           fontSize: 12,
                         ),
                       ),
-                      Text('%'),
+                      OccupancyPercentText(
+                        type: OccupancyType.property,
+                        location: locationByMonth.first['location'],
+                      ),
+                      //want to use occupancy text widget but the format for this is different from occupancyText,
+                      //i want xx% only
                       Text(
                         '$shortMonth $year',
                         style: const TextStyle(
@@ -916,17 +923,17 @@ class ContractDetailsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: model.fetchData(locationByMonth),
-      builder: (context, snapshot) {
-        final hasData = snapshot.connectionState == ConnectionState.done;
+    return Builder(
+      //future: model.fetchData(locationByMonth),
+      builder: (context) {
+        final hasData = model.locationByMonth.isNotEmpty;
         final unitType = hasData && model.locationByMonth.isNotEmpty
             ? model.locationByMonth.first['unitType'] as String?
             : '';
 
         return Container(
           //alignment: Alignment.spaceBetween,
-          width: 400.fSize,
+          width: 420.fSize,
           height: 50.fSize,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50.fSize),
@@ -938,7 +945,7 @@ class ContractDetailsContainer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width / 2.5,
+                  width: MediaQuery.of(context).size.width / 2.95,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -947,13 +954,13 @@ class ContractDetailsContainer extends StatelessWidget {
                         child: Text(
                           'Contract Type',
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 9,
                           ),
                         ),
                       ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(left: 5, top: 5, bottom: 10),
+                            const EdgeInsets.only(left: 5, top: 5, bottom: 5),
                         child: Text(
                           (model.locationByMonth.isNotEmpty &&
                                   model.locationByMonth.first['owners'] != null)
@@ -961,10 +968,10 @@ class ContractDetailsContainer extends StatelessWidget {
                                   .where((owner) =>
                                       owner['unitNo'] == model.selectedUnitNo)
                                   .map((owner) => owner['contractType'] ?? '')
-                                  .join(' ')
+                                  .join('')
                               : '',
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Color(0xFF5092FF),
                             fontWeight: FontWeight.bold,
                           ),
@@ -989,7 +996,7 @@ class ContractDetailsContainer extends StatelessWidget {
                       padding: EdgeInsets.only(top: 5, bottom: 10),
                       child: Text('Contract End Date',
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 9,
                           )),
                     ),
                     Padding(
@@ -1001,11 +1008,21 @@ class ContractDetailsContainer extends StatelessWidget {
                             ? (model.locationByMonth.first['owners'] as List)
                                 .where((owner) =>
                                     owner['unitNo'] == model.selectedUnitNo)
-                                .map((owner) => owner['endDate'] ?? '')
-                                .join(' ')
+                                .map((owner) {
+                                final rawDate = owner['endDate'];
+                                if (rawDate == null || rawDate.isEmpty) {
+                                  return '';
+                                }
+                                try {
+                                  final date = DateTime.parse(rawDate);
+                                  return DateFormat('dd MMM yyyy').format(date);
+                                } catch (e) {
+                                  return rawDate;
+                                }
+                              }).join(' ')
                             : '',
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 11,
                           color: Color(0xFF5092FF),
                           fontWeight: FontWeight.bold,
                         ),
@@ -1877,7 +1894,14 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
     }
   }
 
-  bool _listEquals(List<String> a, List<String> b) {
+/*************  ✨ Windsurf Command ⭐  *************/
+  /// Compares two lists of strings for equality.
+  ///
+  /// Returns `true` if both lists have the same length and corresponding
+  /// elements are equal; otherwise, returns `false`.
+
+/*******  9ba8b57c-74a1-4b0c-8391-d7f98bdf01be  *******/ bool _listEquals(
+      List<String> a, List<String> b) {
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {
       if (a[i] != b[i]) return false;

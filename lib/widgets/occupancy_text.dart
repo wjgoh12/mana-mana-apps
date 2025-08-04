@@ -6,7 +6,7 @@ class OccupancyText extends StatefulWidget {
   final String? location;
   final String? unitNo;
   final bool showTotal;
-  
+
   const OccupancyText({
     super.key,
     this.location,
@@ -32,21 +32,22 @@ class _OccupancyTextState extends State<OccupancyText> {
 
   Future<void> _loadOccupancy() async {
     if (!mounted) return;
-    
+
     try {
       final viewModel = context.read<NewDashboardVM_v3>();
       String occupancy;
-      
+
       if (widget.showTotal) {
         occupancy = viewModel.getTotalOccupancyRate();
       } else if (widget.location != null && widget.unitNo != null) {
-        occupancy = await viewModel.getUnitOccupancy(widget.location!, widget.unitNo!);
+        occupancy =
+            await viewModel.getUnitOccupancy(widget.location!, widget.unitNo!);
       } else if (widget.location != null) {
         occupancy = viewModel.getOccupancyByLocation(widget.location!);
       } else {
         occupancy = viewModel.getTotalOccupancyRate();
       }
-      
+
       if (mounted) {
         setState(() {
           _occupancyRate = occupancy;
@@ -68,7 +69,7 @@ class _OccupancyTextState extends State<OccupancyText> {
     if (_isLoading) {
       return const Text('Loading...', style: TextStyle(fontSize: 10));
     }
-    
+
     return Text('($_occupancyRate% Occupancy)',
         style: const TextStyle(fontSize: 10));
   }
