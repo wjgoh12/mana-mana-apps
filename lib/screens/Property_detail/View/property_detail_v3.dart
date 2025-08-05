@@ -823,7 +823,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        DateFormat('MMMM yyyy').format(DateTime.now()),
+                        '$shortMonth $year',
                         style: const TextStyle(
                           fontSize: 10,
                         ),
@@ -892,7 +892,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Text(DateFormat('MMMM yyyy').format(DateTime.now()),
+                      Text('$shortMonth $year',
                           style: const TextStyle(
                             fontSize: 10,
                           )),
@@ -1202,13 +1202,14 @@ class UnitDetailsContainer extends StatelessWidget {
                               model.selectedUnitNo ?? '',
                             ),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Text('Loading...',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold));
-                              } else if (snapshot.hasError) {
+                              // if (snapshot.connectionState ==
+                              //     ConnectionState.waiting) {
+                              //   return const Text('Loading...',
+                              //       style: TextStyle(
+                              //           fontSize: 15,
+                              //           fontWeight: FontWeight.bold));
+                              // } else
+                              if (snapshot.hasError) {
                                 return const Text('Error',
                                     style: TextStyle(
                                         fontSize: 15,

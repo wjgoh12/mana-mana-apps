@@ -244,7 +244,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
               }
             };
     } catch (e) {
-      print('Error loading property occupancy: $e');
+      //print('Error loading property occupancy: $e');
       propertyOccupancy = {
         "SCARLETZ": {
           "units": {
@@ -313,12 +313,12 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     try {
       final occupancy = await ownerPropertyListRepository.getPropertyOccupancy(
           location: location, unitNo: unitNo);
-      print('Occupancy data: $occupancy');
+      //print('Occupancy data: $occupancy');
 
       if (occupancy.containsKey('status')) {
-        print('Error response: ${occupancy['status']}');
+        //print('Error response: ${occupancy['status']}');
         if (location == 'SCARLETZ' && unitNo == '45-99.99') {
-          return '92.5%';
+          return '92.53%';
         } else if (location == 'SCARLETZ' && unitNo == '2000-2100-55') {
           return '85.0%';
         } else {

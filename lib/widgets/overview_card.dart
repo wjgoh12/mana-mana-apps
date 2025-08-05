@@ -48,6 +48,31 @@ class OverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String monthNumberToName(int month) {
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sept',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
+      if (month >= 1 && month <= 12) {
+        return months[month - 1];
+      } else {
+        return 'Unknown';
+      }
+    }
+
+    DateTime now = DateTime.now();
+    String shortMonth = monthNumberToName(now.month);
+    String year = now.year.toString();
     final uniqueLocations =
         model.totalByMonth.map((e) => e['slocation']).toSet().toList();
 
@@ -202,9 +227,7 @@ class OverviewCard extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 3),
                             child: Text(
-                              'As of Month ',
-                              //latest occupancy rate ,
-
+                              'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first is Map<String, dynamic> && (model.propertyOccupancy.values.first as Map<String, dynamic>).containsKey('month') ? '${(model.propertyOccupancy.values.first as Map<String, dynamic>)['month']} ${(model.propertyOccupancy.values.first as Map<String, dynamic>)['year']}' : '$shortMonth $year'}',
                               style: const TextStyle(
                                 fontSize: 7.0,
                                 fontFamily: 'Open Sans',
@@ -317,9 +340,7 @@ class OverviewCard extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(left: 10),
                                 child: Text(
-                                  DateFormat('MMMM yyyy').format(
-                                    DateTime.now(),
-                                  ),
+                                  '$shortMonth $year',
                                   style: const TextStyle(
                                       fontSize: 8.0,
                                       fontStyle: FontStyle.normal),
@@ -439,6 +460,31 @@ class RevenueContainer extends StatelessWidget {
   }
 
   Widget _buildTitleRow() {
+    String monthNumberToName(int month) {
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sept',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
+      if (month >= 1 && month <= 12) {
+        return months[month - 1];
+      } else {
+        return 'Unknown';
+      }
+    }
+
+    DateTime now = DateTime.now();
+    String shortMonth = monthNumberToName(now.month);
+    String year = now.year.toString();
     return Row(
       children: [
         // SizedBox(width: 3.width),
@@ -456,10 +502,35 @@ class RevenueContainer extends StatelessWidget {
   }
 
   Widget _buildDateRow() {
+    String monthNumberToName(int month) {
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sept',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
+      if (month >= 1 && month <= 12) {
+        return months[month - 1];
+      } else {
+        return 'Unknown';
+      }
+    }
+
+    DateTime now = DateTime.now();
+    String shortMonth = monthNumberToName(now.month);
+    String year = now.year.toString();
     return Row(
       children: [
         Text(
-          DateFormat('MMMM yyyy').format(DateTime.now()),
+          '$shortMonth $year',
           style: TextStyle(
             fontFamily: 'Open Sans',
             fontSize: 10.fSize,
