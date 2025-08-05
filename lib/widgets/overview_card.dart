@@ -58,7 +58,7 @@ class OverviewCard extends StatelessWidget {
         'Jun',
         'Jul',
         'Aug',
-        'Sept',
+        'Sep',
         'Oct',
         'Nov',
         'Dec'
@@ -227,7 +227,7 @@ class OverviewCard extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 3),
                             child: Text(
-                              'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first is Map<String, dynamic> && (model.propertyOccupancy.values.first as Map<String, dynamic>).containsKey('month') ? '${(model.propertyOccupancy.values.first as Map<String, dynamic>)['month']} ${(model.propertyOccupancy.values.first as Map<String, dynamic>)['year']}' : '$shortMonth $year'}',
+                              'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first['units'] != null && model.propertyOccupancy.values.first['units'].values.first != null && model.propertyOccupancy.values.first['units'].values.first is Map<String, dynamic> ? '${monthNumberToName(model.propertyOccupancy.values.first['units'].values.first['month'])} ${model.propertyOccupancy.values.first['units'].values.first['year']}' : '$shortMonth $year'}',
                               style: const TextStyle(
                                 fontSize: 7.0,
                                 fontFamily: 'Open Sans',
@@ -470,7 +470,7 @@ class RevenueContainer extends StatelessWidget {
         'Jun',
         'Jul',
         'Aug',
-        'Sept',
+        'Sep',
         'Oct',
         'Nov',
         'Dec'
@@ -512,7 +512,7 @@ class RevenueContainer extends StatelessWidget {
         'Jun',
         'Jul',
         'Aug',
-        'Sept',
+        'Sep',
         'Oct',
         'Nov',
         'Dec'

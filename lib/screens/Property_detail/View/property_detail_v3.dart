@@ -627,7 +627,7 @@ class PropertyOverviewContainer extends StatelessWidget {
         'Jun',
         'Jul',
         'Aug',
-        'Sept',
+        'Sep',
         'Oct',
         'Nov',
         'Dec'
@@ -1047,6 +1047,28 @@ class UnitDetailsContainer extends StatelessWidget {
     final location = model.locationByMonth.first['location'] ?? 'Unknown';
     final unitNo = model.selectedUnitNo ?? 'Unknown';
 
+    String _monthNumberToName(int month) {
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
+      if (month >= 1 && month <= 12) {
+        return months[month - 1];
+      } else {
+        return 'Unknown';
+      }
+    }
+
     /// Converts a month number (1-12) to its corresponding month name.
     ///
     /// Returns 'Unknown' if [month] is not in the range 1-12.
@@ -1061,7 +1083,7 @@ class UnitDetailsContainer extends StatelessWidget {
         'Jun',
         'Jul',
         'Aug',
-        'Sept',
+        'Sep',
         'Oct',
         'Nov',
         'Dec'
@@ -1074,7 +1096,7 @@ class UnitDetailsContainer extends StatelessWidget {
     }
 
     DateTime now = DateTime.now();
-    String shortMonth = monthNumberToName(now.month);
+    String shortMonth = _monthNumberToName(now.month);
     String year = now.year.toString();
     final NewDashboardVM_v3 model2 = NewDashboardVM_v3();
     return Container(
@@ -1227,10 +1249,12 @@ class UnitDetailsContainer extends StatelessWidget {
                             },
                           ),
                           SizedBox(height: 5.fSize),
-                          Text('As of Month ' + '$shortMonth $year',
-                              style: const TextStyle(
-                                fontSize: 7,
-                              )),
+                          Text(
+                            'As of Month ${model2.propertyOccupancy.isNotEmpty ? _getLatestOccupancyDate(model2.propertyOccupancy, _monthNumberToName) : '$shortMonth $year'}',
+                            style: const TextStyle(
+                              fontSize: 7,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -1393,6 +1417,26 @@ class UnitDetailsContainer extends StatelessWidget {
       ),
     );
   }
+
+  String _getLatestOccupancyDate(Map<String, dynamic> propertyOccupancy,
+      String Function(int) monthNumberToName) {
+    int latestMonth = 0;
+    int latestYear = 0;
+    String latestMonthName = '';
+
+    propertyOccupancy.values.forEach((location) {
+      location['units'].values.forEach((unit) {
+        if (unit['year'] > latestYear ||
+            (unit['year'] == latestYear && unit['month'] > latestMonth)) {
+          latestMonth = unit['month'];
+          latestYear = unit['year'];
+          latestMonthName = monthNumberToName(latestMonth);
+        }
+      });
+    });
+
+    return '$latestMonthName $latestYear';
+  }
 }
 
 class EStatementContainer extends StatefulWidget {
@@ -1469,7 +1513,7 @@ class _EStatementContainerState extends State<EStatementContainer> {
             'Jun',
             'Jul',
             'Aug',
-            'Sept',
+            'Sep',
             'Oct',
             'Nov',
             'Dec'
@@ -1621,13 +1665,23 @@ class StickyDropdownBar extends StatelessWidget {
                       items: [
                         const DropdownMenuItem<String>(
                           value: 'Overview',
-                          child: Text('Overview'),
+                          child: Text(
+                            'Overview',
+                            style: TextStyle(
+                                fontSize: 12, decoration: TextDecoration.none),
+                          ),
                         ),
                         ...model.typeItems.map<DropdownMenuItem<String>>(
                           (String value) {
                             return DropdownMenuItem<String>(
                               value: value,
-                              child: Text(value),
+                              child: Text(
+                                value,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  decoration: TextDecoration.none,
+                                ),
+                              ),
                             );
                           },
                         ).toList(),
