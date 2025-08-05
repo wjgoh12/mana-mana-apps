@@ -325,11 +325,12 @@ class PropertyListRepository {
 
   Future<Map<String, dynamic>> getPropertyOccupancy(
       {String? location, String? unitNo}) async {
+    final data = <String, dynamic>{};
+    if (location != null) data['location'] = location;
+    if (unitNo != null) data['unitNo'] = unitNo;
+
     final res =
-        await _apiService.post(ApiEndpoint.propertyOccupancyRate, data: {
-      if (location != null) "location": location,
-      if (unitNo != null) "unitNo": unitNo,
-    });
+        await _apiService.post(ApiEndpoint.propertyOccupancyRate, data: data);
     if (res is Map<String, dynamic> && res.isNotEmpty) {
       return res;
     } else if (location != null && unitNo != null) {

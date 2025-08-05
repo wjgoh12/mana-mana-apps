@@ -34,15 +34,16 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
     _initFuture = _initializeData();
   }
 
-  @override
-  void dispose() {
-    _model.dispose();
-    _model2.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _model.dispose();
+  //   _model2.dispose();
+  //   super.dispose();
+  // }
 
   Future<void> _initializeData() async {
     try {
+      print('refetching data...');
       await _model.fetchData();
       await _model2.fetchData(_model.locationByMonth);
     } catch (e) {
@@ -77,7 +78,8 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+                    const Icon(Icons.error_outline,
+                        size: 64, color: Colors.grey),
                     const SizedBox(height: 16),
                     Text('Error: ${snapshot.error}'),
                     const SizedBox(height: 16),

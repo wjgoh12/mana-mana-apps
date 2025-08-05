@@ -277,9 +277,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
                           ? PropertyOverviewContainer(
                               model: model,
                               locationByMonth: widget.locationByMonth)
-                          : UnitDetailsContainer(
-                              model: model,
-                            ),
+                          : UnitDetailsContainer(model: model),
                     ),
                     SliverPadding(
                       padding: EdgeInsets.only(
@@ -1041,6 +1039,7 @@ class ContractDetailsContainer extends StatelessWidget {
 
 class UnitDetailsContainer extends StatelessWidget {
   final PropertyDetailVM model;
+
   const UnitDetailsContainer({super.key, required this.model});
 
   @override
@@ -1110,9 +1109,11 @@ class UnitDetailsContainer extends StatelessWidget {
               ),
               //SizedBox(width: 5.fSize),
               Container(
-                alignment: Alignment.topLeft,
+                alignment: Alignment.centerLeft,
                 width: 300,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -1195,7 +1196,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               fontSize: 10,
                             ),
                           ),
-                          FutureBuilder(
+                          FutureBuilder<String>(
                             future: model2.getUnitOccupancy(
                               model.locationByMonth.first['location'],
                               model.selectedUnitNo ?? '',
@@ -1211,13 +1212,15 @@ class UnitDetailsContainer extends StatelessWidget {
                                 return const Text('Error',
                                     style: TextStyle(
                                         fontSize: 15,
-                                        fontWeight: FontWeight.bold));
+                                        fontWeight: FontWeight
+                                            .bold)); // Fix: Removed 'widget.'
                               } else {
                                 return Text(
-                                  snapshot.data ?? '0%',
+                                  snapshot.data ?? '',
                                   style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 );
                               }
                             },
