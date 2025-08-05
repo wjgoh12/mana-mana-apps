@@ -1181,7 +1181,7 @@ class UnitDetailsContainer extends StatelessWidget {
           ),
           SizedBox(height: 2.height),
           Container(
-            height: 125,
+            // height: 125,
             color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -1527,33 +1527,41 @@ class _EStatementContainerState extends State<EStatementContainer> {
 
         if (filteredItems.length > 6) {
           // More than one screen, allow scrolling
-          return ListView.builder(
-            physics: const ClampingScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: filteredItems.length,
-            itemBuilder: (context, i) {
-              final item = filteredItems[i];
+          return Container(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    //physics: const ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: filteredItems.length,
+                    itemBuilder: (context, i) {
+                      final item = filteredItems[i];
 
-              if (widget.model.selectedView != 'Overview' &&
-                  item.sunitno != widget.model.selectedUnitNo) {
-                return const SizedBox.shrink();
-              }
+                      if (widget.model.selectedView != 'Overview' &&
+                          item.sunitno != widget.model.selectedUnitNo) {
+                        return const SizedBox.shrink();
+                      }
 
-              return InkWell(
-                onTap: () => widget.model.downloadPdfStatement(context),
-                child: Container(
-                  height: 50.fSize,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    children: [
-                      Text(
-                        '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
-                      ),
-                    ],
+                      return InkWell(
+                        onTap: () => widget.model.downloadPdfStatement(context),
+                        child: Container(
+                          height: 50.fSize,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              Text(
+                                '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
-              );
-            },
+              ],
+            ),
           );
         } else {
           return Column(

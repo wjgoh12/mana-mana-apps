@@ -8,7 +8,6 @@ class OccupancyBarChart extends StatelessWidget {
   const OccupancyBarChart({required this.isShowingMainData});
 
   final bool isShowingMainData;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,6 @@ class OccupancyBarChart extends StatelessWidget {
       );
 
   LineTouchData get lineTouchData1 => LineTouchData(
-    
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
           getTooltipColor: (touchedSpot) => Colors.blueGrey.withOpacity(0.8),
@@ -53,24 +51,26 @@ class OccupancyBarChart extends StatelessWidget {
           tooltipPadding: const EdgeInsets.all(8),
           getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
             return touchedBarSpots.map((barSpot) {
-              final percentage= barSpot.y * 10;
+              final percentage = barSpot.y * 20;
               final flSpot = barSpot.spotIndex;
               String month = '';
               switch (flSpot.toInt()) {
                 case 0:
-                  month = 'SEPT';
+                  month = '';
                   break;
                 case 1:
-                  month = 'OCT';
+                  month = 'SEPT';
                   break;
                 case 2:
+                  month = 'OCT';
+                  break;
+                case 3:
                   month = 'NOV';
                   break;
                 default:
                   month = 'Month ${flSpot.toInt()}';
               }
               return LineTooltipItem(
-                
                 '$month\n${percentage.toStringAsFixed(1)}%',
                 const TextStyle(
                   color: Colors.white,
@@ -136,22 +136,22 @@ class OccupancyBarChart extends StatelessWidget {
     );
     String text;
     switch (value.toInt()) {
-      case 1:
+      case 0:
         text = '0';
         break;
-      case 2:
+      case 1:
         text = '20';
         break;
-      case 3:
+      case 2:
         text = '40';
         break;
-      case 4:
+      case 3:
         text = '60';
         break;
-      case 5:
+      case 4:
         text = '80';
         break;
-        case 6:
+      case 5:
         text = '100';
         break;
       default:
@@ -161,16 +161,21 @@ class OccupancyBarChart extends StatelessWidget {
     return SideTitleWidget(
       axisSide: AxisSide.left,
       space: 0,
-      child: Text(
-        text,
-        style: style,
-        textAlign: TextAlign.center,
+      child: Container(
+        margin: const EdgeInsets.only(right: 10),
+        child: Text(
+          text,
+          style: style,
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
 
   SideTitles leftTitles() => SideTitles(
-        getTitlesWidget: leftTitleWidgets,
+        getTitlesWidget: (value, meta) {
+          return leftTitleWidgets(value, meta);
+        },
         showTitles: true,
         interval: 1,
         reservedSize: 40,
@@ -183,6 +188,9 @@ class OccupancyBarChart extends StatelessWidget {
     );
     Widget text;
     switch (value.toInt()) {
+      case 0:
+        text = const Text('', style: style);
+        break;
       case 2:
         text = const Text('SEPT', style: style);
         break;
@@ -218,8 +226,9 @@ class OccupancyBarChart extends StatelessWidget {
         show: true,
         border: Border(
           bottom: BorderSide(
-              color: AppColors.primary.withOpacity(0.2), width: 4),
-          left: const BorderSide(color: Colors.transparent),
+              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.5),
+              width: 2),
+          left: const BorderSide(color: Colors.black12, width: 1),
           right: const BorderSide(color: Colors.transparent),
           top: const BorderSide(color: Colors.transparent),
         ),
@@ -233,11 +242,12 @@ class OccupancyBarChart extends StatelessWidget {
         dotData: const FlDotData(show: true),
         belowBarData: BarAreaData(show: false),
         spots: const [
-          FlSpot(2, 2),
+          FlSpot(0, 0),
+          FlSpot(2, 3),
           // FlSpot(5, 1.4),
-          FlSpot(7, 3.4),
+          FlSpot(7, 2),
           // FlSpot(12, 2.2),
-          FlSpot(12, 1.8),
+          FlSpot(12, 2.5),
         ],
       );
 
@@ -378,7 +388,8 @@ class LineChart1State extends State<LineChart1> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(right: 16, left: 6),
-                  child: OccupancyBarChart(isShowingMainData: isShowingMainData),
+                  child:
+                      OccupancyBarChart(isShowingMainData: isShowingMainData),
                 ),
               ),
               const SizedBox(
@@ -389,8 +400,7 @@ class LineChart1State extends State<LineChart1> {
           IconButton(
             icon: Icon(
               Icons.refresh,
-              color:
-                  Colors.white.withOpacity(isShowingMainData ? 1.0 : 0.5),
+              color: Colors.white.withOpacity(isShowingMainData ? 1.0 : 0.5),
             ),
             onPressed: () {
               setState(() {
