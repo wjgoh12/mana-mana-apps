@@ -128,6 +128,8 @@ class AllPropertyScreen extends StatelessWidget {
     //     break;
     // }
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ListView(
           shrinkWrap: true,
