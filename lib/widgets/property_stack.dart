@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+import 'package:mana_mana_app/widgets/occupancy_text.dart';
 
 class PropertyStack extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
@@ -75,12 +74,12 @@ class PropertyStack extends StatelessWidget {
     return ResponsiveBuilder(builder: (context, sizingInformation) {
       final isMobile =
           sizingInformation.deviceScreenType == DeviceScreenType.mobile;
-      final width = isMobile ? 350.fSize : 340.fSize;
+      final width = isMobile ? 370.fSize : 360.fSize;
       final height = 207.fSize;
       // final position = 25.height;
-      final containerWidth = isMobile ? 370.fSize : 360.fSize;
+      final containerWidth = isMobile ? 390.fSize : 380.fSize;
       final containerHeight = 405.fSize;
-      final smallcontainerWidth = isMobile ? 335.fSize : 90.width;
+      final smallcontainerWidth = isMobile ? 355.fSize : 100.width;
       final smallcontainerHeight = 35.fSize;
 
       return Stack(
@@ -168,9 +167,13 @@ class PropertyStack extends StatelessWidget {
                               ),
                               SizedBox(width: 1.fSize),
                               Text(
-                                '${locationByMonth.first['totalUnits'] ?? 0} Total(${locationByMonth.first['occupancy'] ?? '85'}% Occupancy)',
+                                '${locationByMonth.first['totalUnits'] ?? (locationByMonth.first['owners'] as List?)?.map((owner) => owner['unitNo']).toSet().length ?? 0} Total ',
                                 style: const TextStyle(fontSize: 7),
                               ),
+                              OccupancyText(
+                                  location: locationByMonth.first['location'],
+                                  unitNo: locationByMonth.first['unitNo'],
+                                  showTotal: true),
                             ],
                           ),
                         ),
@@ -206,6 +209,7 @@ class PropertyStack extends StatelessWidget {
                                 for (var owner
                                     in locationByMonth.first['owners'] ??
                                         []) ...[
+                                  // Main owner avatar
                                   Padding(
                                     padding: const EdgeInsets.only(right: 5),
                                     child: Tooltip(
@@ -276,97 +280,96 @@ class PropertyStack extends StatelessWidget {
                     margin: const EdgeInsets.only(left: 10, right: 10),
                   ),
                   Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 1),
-                              child: Image.asset('assets/images/Wallet.png',
-                                  width: 45.fSize, height: 45.fSize),
-                            ),
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 1),
+                          child: Image.asset('assets/images/Wallet.png',
+                              width: 45.fSize, height: 45.fSize),
+                        ),
 
-                            const SizedBox(width: 5),
-                            SizedBox(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Total Net After POB',
-                                    style: TextStyle(
-                                      fontSize: 11,
+                        const SizedBox(width: 5),
+                        SizedBox(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Total Net After POB',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                ),
+                              ),
+                              Text(
+                                'RM ${locationByMonth.first['total'] ?? 0.0}',
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ), //totalNetAfterPob
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 1.width),
+                        //after pressed button, it will navigate to property detail page
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 10),
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => property_detail_v3(
+                                      locationByMonth: [locationByMonth.first],
                                     ),
                                   ),
+                                );
+                              },
+                              style: ButtonStyle(
+                                minimumSize:
+                                    WidgetStateProperty.all(const Size(20, 30)),
+                                side: WidgetStateProperty.all(
+                                    const BorderSide(color: Color(0xFF4CAF50))),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
                                   Text(
-                                    'RM ${locationByMonth.first['total'] ?? 0.0}',
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
+                                    'Details',
+                                    style: TextStyle(
+                                        fontSize: 15.fSize,
+                                        color: Colors.black),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  SizedBox(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/arrow.png',
+                                          width: 15.fSize,
+                                          height: 11.fSize,
+                                        ),
+                                        Text(
+                                          'Jom',
+                                          style: TextStyle(fontSize: 9.fSize),
+                                        ),
+                                      ],
                                     ),
-                                  ), //totalNetAfterPob
+                                  ),
                                 ],
                               ),
                             ),
-                            SizedBox(width: 10.width),
-                            //after pressed button, it will navigate to property detail page
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                margin: const EdgeInsets.only(
-                                    right: 10, bottom: 8, top: 10),
-                                child: TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              property_detail_v3(
-                                                  locationByMonth:
-                                                      locationByMonth),
-                                        ));
-                                  },
-                                  style: ButtonStyle(
-                                    minimumSize: WidgetStateProperty.all(
-                                        const Size(20, 30)),
-                                    side: WidgetStateProperty.all(
-                                        const BorderSide(
-                                            color: Color(0xFF4CAF50))),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Details',
-                                        style: TextStyle(
-                                            fontSize: 15.fSize,
-                                            color: Colors.black),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      SizedBox(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/arrow.png',
-                                              width: 15.fSize,
-                                              height: 11.fSize,
-                                            ),
-                                            Text(
-                                              'Jom',
-                                              style:
-                                                  TextStyle(fontSize: 9.fSize),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]))
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

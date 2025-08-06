@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/property_dropdown.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';
@@ -13,12 +13,8 @@ class AllPropertyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) {
-        final model = NewDashboardVM();
-        model.fetchData(); // Fetch data independently
-        return model;
-      },
-      child: Consumer<NewDashboardVM>(
+      create: (_) => NewDashboardVM_v3()..fetchData(),
+      child: Consumer<NewDashboardVM_v3>(
         builder: (context, model, child) {
           return Scaffold(
             backgroundColor: const Color(0XFFFFFFFF),
@@ -89,7 +85,7 @@ class AllPropertyScreen extends StatelessWidget {
   Widget _buildPropertyStack({
     required List<Map<String, dynamic>> locationByMonth,
     required BuildContext context,
-    required NewDashboardVM model,
+    required NewDashboardVM_v3 model,
   }) {
     final latestMonth = model.unitLatestMonth;
     final latestYear = model.locationByMonth
@@ -105,6 +101,7 @@ class AllPropertyScreen extends StatelessWidget {
       print(
           "Location: ${item['location']}, Month: ${item['month']}, Owners: ${item['owners']}, TotalUnits: ${item['totalUnits']}");
     }
+    print("locationByMonth length: ${model.locationByMonth.length}");
 
     // String locationRoad = '';
     // switch (locationByMonth[0]['location'].toUpperCase()) {
@@ -130,18 +127,45 @@ class AllPropertyScreen extends StatelessWidget {
     //     locationRoad = "";
     //     break;
     // }
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) =>
-                property_detail_v3(locationByMonth: locationByMonth),
-          ),
-        );
-      },
-      child: PropertyStack(
-        locationByMonth: latestLocationByMonth,
-      ),
+    return Column(
+      children: [
+        ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.only(left: 40),
+
+          scrollDirection: Axis.vertical,
+
+          // shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          children: [
+            // ...model.locationByMonth
+            //     .where((property) =>
+            //         property['year'] ==
+            //             model.locationByMonth
+            //                 .map((p) => p['year'])
+            //                 .reduce((a, b) => a > b ? a : b) &&
+            //         property['month'] == model.unitLatestMonth)
+            //     .expand((property) => [
+            //           PropertyImageStack(
+            //             locationByMonth: [property],
+            //           ),
+            //           const SizedBox(width: 20),
+            //         ])
+
+            ...model.locationByMonth
+                .where((property) => property['year'] == latestYear)
+                .toList()
+              ..sort((a, b) => (b['month'] as int)
+                  .compareTo(a['month'] as int)) // 👈 sort by month descending
+          ]
+              .expand((property) => [
+                    PropertyStack(locationByMonth: [property]),
+                    const SizedBox(width: 20),
+                  ])
+              .toList(),
+          // ViewAllProperty(model: model),
+        ),
+      ],
     );
   }
 }

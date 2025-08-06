@@ -44,11 +44,11 @@ class _property_detail_v3State extends State<property_detail_v3> {
   }
 
   @override
-  void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
+  // void dispose() {
+  //   _scrollController.removeListener(_onScroll);
+  //   _scrollController.dispose();
+  //   super.dispose();
+  // }
 
   // Add this method to disable scroll for Overview
   void _onScroll() {
@@ -61,7 +61,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
 
     final collapsedHeight = 100.fSize;
     final dropdownInvisibleHeight = 415.fSize;
-    final estatementStickyHeight = 680.fSize;
+    final estatementStickyHeight = 600.fSize;
 
     setState(() {
       isCollapsed = scrollOffset > collapsedHeight;
@@ -1473,7 +1473,7 @@ class _EStatementContainerState extends State<EStatementContainer> {
         }).toList();
         if (filteredItems.isEmpty) {
           return SingleChildScrollView(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,

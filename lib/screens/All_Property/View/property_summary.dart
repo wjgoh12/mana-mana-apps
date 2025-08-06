@@ -53,6 +53,58 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
     }
   }
 
+//   @override
+//   Widget build(BuildContext context) {
+//     return MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider.value(value: _model),
+//         ChangeNotifierProvider.value(value: _model2),
+//       ],
+//       child: Scaffold(
+//         backgroundColor: Colors.white,
+//         appBar: propertyAppBar(
+//           context,
+//           () => Navigator.of(context).pop(),
+//         ),
+//         body: FutureBuilder<void>(
+//           future: _initFuture,
+//           builder: (context, snapshot) {
+//             if (snapshot.connectionState == ConnectionState.waiting) {
+//               return const Center(child: CircularProgressIndicator());
+//             }
+
+//             if (snapshot.hasError) {
+//               return Center(
+//                 child: Column(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     const Icon(Icons.error_outline,
+//                         size: 64, color: Colors.grey),
+//                     const SizedBox(height: 16),
+//                     Text('Error: ${snapshot.error}'),
+//                     const SizedBox(height: 16),
+//                     ElevatedButton(
+//                       onPressed: () {
+//                         setState(() {
+//                           _initFuture = _initializeData();
+//                         });
+//                       },
+//                       child: const Text('Retry'),
+//                     ),
+//                   ],
+//                 ),
+//               );
+//             }
+
+//             return const _PropertySummaryContent();
+//           },
+//         ),
+//         bottomNavigationBar: const BottomNavBar(currentIndex: 1),
+//       ),
+//     );
+//   }
+// }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -66,39 +118,7 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
           context,
           () => Navigator.of(context).pop(),
         ),
-        body: FutureBuilder<void>(
-          future: _initFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (snapshot.hasError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.error_outline,
-                        size: 64, color: Colors.grey),
-                    const SizedBox(height: 16),
-                    Text('Error: ${snapshot.error}'),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _initFuture = _initializeData();
-                        });
-                      },
-                      child: const Text('Retry'),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return const _PropertySummaryContent();
-          },
-        ),
+        body: _PropertySummaryContent(),
         bottomNavigationBar: const BottomNavBar(currentIndex: 1),
       ),
     );

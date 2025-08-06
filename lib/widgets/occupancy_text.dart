@@ -67,10 +67,10 @@ class _OccupancyTextState extends State<OccupancyText> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Text('Loading...', style: TextStyle(fontSize: 10));
+      return const Text('Loading...', style: TextStyle(fontSize: 8));
     }
 
     return Text('($_occupancyRate% Occupancy)',
-        style: const TextStyle(fontSize: 10));
+        style: const TextStyle(fontSize: 8));
   }
 }

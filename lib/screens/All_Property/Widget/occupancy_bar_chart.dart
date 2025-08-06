@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/resources/app_colors.dart';
 
 class OccupancyBarChart extends StatelessWidget {
-  const OccupancyBarChart({required this.isShowingMainData});
+  const OccupancyBarChart({super.key, required this.isShowingMainData});
 
   final bool isShowingMainData;
 
@@ -236,7 +236,7 @@ class OccupancyBarChart extends StatelessWidget {
 
   LineChartBarData get lineChartBarData1_1 => LineChartBarData(
         isCurved: true,
-        color: Color(0XFF8C71E7),
+        color: const Color(0XFF8C71E7),
         barWidth: 5,
         isStrokeCapRound: true,
         dotData: const FlDotData(show: true),
