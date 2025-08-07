@@ -30,20 +30,33 @@ Widget topBar(context, function) {
               Padding(
                 padding: const EdgeInsets.only(left: 10, top: 10),
                 child: GradientText1(
-                    text: 'Owner\'s Portal',
-                    style: TextStyle(
-                      fontFamily: 'Open Sans',
-                      fontSize: 20.fSize,
-                      fontWeight: FontWeight.w800,
-                    ),
-                    gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                    )),
+                  text: 'Owner\'s Portal',
+                  style: TextStyle(
+                    fontFamily: 'Open Sans',
+                    fontSize: 20.fSize,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  gradient: const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                  ),
+                ),
               ),
             ],
           ),
+          actions: [
+            IconButton(
+              onPressed: () => print('Notification button pressed'),
+              icon: Image.asset(
+                'assets/images/Notification.png',
+                width: 8.width,
+                //opacity: const AlwaysStoppedAnimation(0),
+                height: 8.height,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
         ),
       ),
     ),

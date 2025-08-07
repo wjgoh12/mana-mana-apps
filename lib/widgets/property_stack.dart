@@ -282,7 +282,7 @@ class PropertyStack extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 1),
@@ -290,7 +290,7 @@ class PropertyStack extends StatelessWidget {
                               width: 45.fSize, height: 45.fSize),
                         ),
 
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 2),
                         SizedBox(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -312,7 +312,7 @@ class PropertyStack extends StatelessWidget {
                             ],
                           ),
                         ),
-                        SizedBox(width: 1.width),
+                        SizedBox(width: 25.width),
                         //after pressed button, it will navigate to property detail page
                         Positioned(
                           bottom: 0,

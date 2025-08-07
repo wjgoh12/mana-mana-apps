@@ -133,7 +133,7 @@ class AllPropertyScreen extends StatelessWidget {
       children: [
         ListView(
           shrinkWrap: true,
-          padding: const EdgeInsets.only(left: 40),
+          padding: const EdgeInsets.only(left: 30),
 
           scrollDirection: Axis.vertical,
 

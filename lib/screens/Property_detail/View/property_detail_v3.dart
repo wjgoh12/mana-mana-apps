@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/occupancy_percent_text.dart';
-import 'package:mana_mana_app/widgets/occupancy_text.dart';
-import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
+import 'package:provider/provider.dart';
 
 class property_detail_v3 extends StatefulWidget {
   final List<Map<String, dynamic>> locationByMonth;
@@ -35,10 +34,17 @@ class _property_detail_v3State extends State<property_detail_v3> {
   void initState() {
     super.initState();
     model = PropertyDetailVM();
+    model2 = NewDashboardVM_v3();
 
     if (widget.locationByMonth.isNotEmpty) {
       model.fetchData(widget.locationByMonth);
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final model2 = Provider.of<NewDashboardVM_v3>(context, listen: false);
+      model2.getAverageOccupancyByLocation(
+          widget.locationByMonth.first['location'] ?? '');
+    });
 
     _scrollController.addListener(_onScroll);
   }
@@ -96,6 +102,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
   Widget build(BuildContext context) {
     if (widget.locationByMonth.isEmpty) {
       return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text('Property Details'),
           leading: IconButton(
@@ -123,6 +130,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
       listenable: model,
       builder: (context, child) {
         return Scaffold(
+          backgroundColor: Colors.white,
           body: Stack(
             children: [
               if (isFullScreenEstatement)
@@ -276,6 +284,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
                       child: model.selectedView == 'Overview'
                           ? PropertyOverviewContainer(
                               model: model,
+                              model2: model2,
                               locationByMonth: widget.locationByMonth)
                           : UnitDetailsContainer(model: model),
                     ),
@@ -611,9 +620,13 @@ class AnnualStatementContainer extends StatelessWidget {
 
 class PropertyOverviewContainer extends StatelessWidget {
   final PropertyDetailVM model;
+  final NewDashboardVM_v3 model2;
   final List<Map<String, dynamic>> locationByMonth;
   const PropertyOverviewContainer(
-      {super.key, required this.model, required this.locationByMonth});
+      {super.key,
+      required this.model,
+      required this.model2,
+      required this.locationByMonth});
 
   @override
   Widget build(BuildContext context) {
@@ -696,7 +709,13 @@ class PropertyOverviewContainer extends StatelessWidget {
                       ),
                     ),
                     Text(
-                        '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation?.contains(locationByMonth.first['location']) == true).length - 1}'),
+                      '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation?.contains(locationByMonth.first['location']) == true).length - 1}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
                     Text(
                       '$shortMonth $year',
                       style: const TextStyle(
@@ -741,12 +760,16 @@ class PropertyOverviewContainer extends StatelessWidget {
                           fontSize: 12,
                         ),
                       ),
-                      OccupancyPercentText(
-                        type: OccupancyType.property,
-                        location: locationByMonth.first['location'],
+                      Text(
+                        //average occupancy rate of the specific property
+                        '${model2.getAverageOccupancyByLocation(locationByMonth.first['location'] ?? '')}%',
+
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                      //want to use occupancy text widget but the format for this is different from occupancyText,
-                      //i want xx% only
                       Text(
                         '$shortMonth $year',
                         style: const TextStyle(
@@ -905,6 +928,22 @@ class PropertyOverviewContainer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  double getAverageOccupancyRate() {
+    if (model.locationByMonth.isEmpty) return 0.0;
+
+    double totalOccupancy = 0.0;
+    int count = 0;
+
+    model.locationByMonth.forEach((location) {
+      if (location['occupancy'] != null) {
+        totalOccupancy += location['occupancy'];
+        count++;
+      }
+    });
+
+    return totalOccupancy / count;
   }
 }
 
@@ -1527,7 +1566,8 @@ class _EStatementContainerState extends State<EStatementContainer> {
 
         if (filteredItems.length > 6) {
           // More than one screen, allow scrolling
-          return Container(
+          return SizedBox(
+            height: 500,
             child: Column(
               children: [
                 Expanded(
@@ -1564,29 +1604,32 @@ class _EStatementContainerState extends State<EStatementContainer> {
             ),
           );
         } else {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: filteredItems.map((item) {
-              if (widget.model.selectedView != 'Overview' &&
-                  item.sunitno != widget.model.selectedUnitNo) {
-                return const SizedBox.shrink();
-              }
+          return SizedBox(
+            height: 800,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: filteredItems.map((item) {
+                if (widget.model.selectedView != 'Overview' &&
+                    item.sunitno != widget.model.selectedUnitNo) {
+                  return const SizedBox.shrink();
+                }
 
-              return InkWell(
-                onTap: () => widget.model.downloadPdfStatement(context),
-                child: Container(
-                  height: 50.fSize,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    children: [
-                      Text(
-                        '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
-                      ),
-                    ],
+                return InkWell(
+                  onTap: () => widget.model.downloadPdfStatement(context),
+                  child: Container(
+                    height: 50.fSize,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      children: [
+                        Text(
+                          '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           );
         }
       },
@@ -2012,14 +2055,7 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
     }
   }
 
-/*************  ✨ Windsurf Command ⭐  *************/
-  /// Compares two lists of strings for equality.
-  ///
-  /// Returns `true` if both lists have the same length and corresponding
-  /// elements are equal; otherwise, returns `false`.
-
-/*******  9ba8b57c-74a1-4b0c-8391-d7f98bdf01be  *******/ bool _listEquals(
-      List<String> a, List<String> b) {
+  bool _listEquals(List<String> a, List<String> b) {
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {
       if (a[i] != b[i]) return false;

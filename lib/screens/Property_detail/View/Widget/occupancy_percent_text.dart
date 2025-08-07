@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 
-enum OccupancyType { unit, property, total }
-
-class OccupancyPercentText extends StatefulWidget {
+class OccupancyPercentageText extends StatefulWidget {
   final String? location;
   final String? unitNo;
-  final OccupancyType type;
+  final bool showTotal;
 
-  const OccupancyPercentText({
+  const OccupancyPercentageText({
     super.key,
     this.location,
     this.unitNo,
-    this.type = OccupancyType.total,
+    this.showTotal = false,
   });
 
   @override
-  State<OccupancyPercentText> createState() => _OccupancyPercentTextState();
+  State<OccupancyPercentageText> createState() => _OccupancyTextState();
 }
 
-class _OccupancyPercentTextState extends State<OccupancyPercentText> {
+class _OccupancyTextState extends State<OccupancyPercentageText> {
   String _occupancyRate = '0';
   bool _isLoading = true;
 
@@ -40,25 +37,15 @@ class _OccupancyPercentTextState extends State<OccupancyPercentText> {
       final viewModel = context.read<NewDashboardVM_v3>();
       String occupancy;
 
-      switch (widget.type) {
-        case OccupancyType.unit:
-          if (widget.location != null && widget.unitNo != null) {
-            occupancy = await viewModel.getUnitOccupancy(
-                widget.location!, widget.unitNo!);
-          } else {
-            occupancy = '0';
-          }
-          break;
-        case OccupancyType.property:
-          if (widget.location != null) {
-            occupancy = viewModel.getOccupancyByLocation(widget.location!);
-          } else {
-            occupancy = '0';
-          }
-          break;
-        case OccupancyType.total:
-        default:
-          occupancy = viewModel.getTotalOccupancyRate();
+      if (widget.showTotal) {
+        occupancy = viewModel.getTotalOccupancyRate();
+      } else if (widget.location != null && widget.unitNo != null) {
+        occupancy =
+            await viewModel.getUnitOccupancy(widget.location!, widget.unitNo!);
+      } else if (widget.location != null) {
+        occupancy = viewModel.getOccupancyByLocation(widget.location!);
+      } else {
+        occupancy = viewModel.getTotalOccupancyRate();
       }
 
       if (mounted) {
@@ -67,7 +54,7 @@ class _OccupancyPercentTextState extends State<OccupancyPercentText> {
           _isLoading = false;
         });
       }
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         setState(() {
           _occupancyRate = '0';
@@ -80,12 +67,9 @@ class _OccupancyPercentTextState extends State<OccupancyPercentText> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Text('...', style: TextStyle(fontSize: 10));
+      return const Text('Loading...', style: TextStyle(fontSize: 11));
     }
 
-    return Text(
-      '$_occupancyRate%',
-      style: const TextStyle(fontSize: 10),
-    );
+    return Text('$_occupancyRate%', style: const TextStyle(fontSize: 11));
   }
 }

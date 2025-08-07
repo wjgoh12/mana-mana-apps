@@ -4,30 +4,30 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 
 PreferredSizeWidget propertyAppBar(context, function) {
   return PreferredSize(
-    preferredSize: Size.fromHeight(kToolbarHeight),
+    preferredSize: const Size.fromHeight(kToolbarHeight),
     child: Container(
       decoration: BoxDecoration(
-             border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1)),
-           ),
+        border:
+            Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1)),
+      ),
       child: AppBar(
         backgroundColor: Colors.white,
-        
+        elevation: 0,
         leadingWidth: 13.width,
         automaticallyImplyLeading: false,
         centerTitle: true,
-       
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
-                 radius: 20.fSize, // or tweak size as needed
-                 backgroundImage: const AssetImage(
-                  'assets/images/mana2logo.png',),
-                 backgroundColor: Colors.transparent,
-                 ),
-                 
+              radius: 20.fSize,
+              backgroundImage: const AssetImage(
+                'assets/images/mana2logo.png',
+              ),
+              backgroundColor: Colors.transparent,
+            ),
             Padding(
-              padding: const EdgeInsets.only(left:10,top:10),
+              padding: const EdgeInsets.only(left: 10, top: 10),
               child: GradientText1(
                   text: 'Property(s)',
                   style: TextStyle(
@@ -47,12 +47,3 @@ PreferredSizeWidget propertyAppBar(context, function) {
     ),
   );
 }
-
-   // leading: Padding(
-    //   padding: EdgeInsets.only(left: 7.width),
-    //   child: InkWell(
-    //       onTap: function,
-    //       child: Image.asset(
-    //         'assets/images/return.png',
-    //       )),
-    // ),

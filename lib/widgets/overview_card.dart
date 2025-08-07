@@ -294,8 +294,10 @@ class OverviewCard extends StatelessWidget {
                                       profit['month'] == month,
                                   orElse: () => {'total': 0.00},
                                 );
-                                final totalProfit = profitEntry['total'];
-                                final formatted = totalProfit
+                                double totalProfit = 0.0;
+                                String formatted = '';
+                                totalProfit += profitEntry['total'];
+                                formatted = totalProfit
                                     .toStringAsFixed(2)
                                     .replaceAllMapped(
                                       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
