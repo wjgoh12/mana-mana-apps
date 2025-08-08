@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
 import 'package:mana_mana_app/screens/Profile/View/personal_information.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
@@ -112,6 +113,69 @@ class OwnerProfile_v3 extends StatelessWidget {
                           ],
                         ),
                       ),
+                      SizedBox(height: 20.fSize),
+                      Container(
+                          width: 300,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD5D5FF),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            border: Border.all(
+                              color: const Color(0xFFB6B6FF),
+                              width: 2,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 8.0, bottom: 8.0, left: 8.0),
+                                child: CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: const Color(0xFFF9F8FF),
+                                  child: Image.asset(
+                                    'assets/images/property_wallet.png',
+                                    width: 42.fSize,
+                                    height: 42.fSize,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 15.fSize),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '3000',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12.fSize),
+                                        ),
+                                        Text(
+                                          ' Point',
+                                          style: TextStyle(fontSize: 12.fSize),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    'Expired on 31/12/2023',
+                                    style: TextStyle(
+                                      fontSize: 10.fSize,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -240,6 +304,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                           ),
                         ],
                       ),
+                      SizedBox(height: 12.fSize),
                       InkWell(
                         focusColor: Colors.transparent,
                         highlightColor: Colors.transparent,
