@@ -231,6 +231,60 @@ class OwnerProfile_v3 extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
+                            child: Text('Redemption',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 18.fSize,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                          ),
+                        ],
+                      ),
+                      InkWell(
+                        focusColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        //this widget responds to touch actions
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (_) => OwnerProfile_v3()),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor:
+                                    Color.fromARGB(255, 255, 243, 248),
+                                child: Image.asset(
+                                  'assets/images/property.png',
+                                  width: 42.fSize,
+                                  height: 42.fSize,
+                                ),
+                              ),
+                              SizedBox(width: 20.fSize),
+                              Text(
+                                'Property Redemption',
+                                style: TextStyle(
+                                  fontSize: 16.fSize,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Spacer(),
+                              const Icon(Icons.arrow_forward_ios,
+                                  size: 20, color: Colors.grey),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 25.fSize),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
                             child: Text('Contact Us',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
