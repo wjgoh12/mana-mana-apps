@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
@@ -69,45 +71,134 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
-            Text(
+            const SizedBox(height: 60),
+            const Text(
               'Booking History',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
-              width: 380,
-              height: 300.fSize,
-              child: Card(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF3E51FF).withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(left: 10),
+                scrollDirection: Axis.vertical,
+                child: Table(
+                  border: TableBorder.all(color: Colors.transparent),
+                  columnWidths: const {
+                    0: FlexColumnWidth(1.5),
+                    1: FlexColumnWidth(2),
+                    2: FlexColumnWidth(2),
+                    3: FlexColumnWidth(1),
+                  },
+                  children: const [
+                    TableRow(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Location'),
-                            Text('Check-In Date'),
-                            Text('Check-Out Date'),
-                            Text('Points \nUsed'),
-                          ],
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Location',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF3E51FF)),
+                          ),
                         ),
-                        SizedBox(height: 10),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: 6, // Replace with actual data length
-                            itemBuilder: (context, index) {
-                              return BookingHistoryRecord();
-                            },
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Check-In Date',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF3E51FF)),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Check-Out Date',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF3E51FF),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Points Used',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF3E51FF),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  )),
+
+                    TableRow(
+                      children: [
+                        SizedBox(
+                          height: 30,
+                          child: Text('Location'),
+                        ),
+                        SizedBox(
+                          height: 30,
+                          child: Text('2023-10-01'),
+                        ),
+                        SizedBox(
+                          height: 30,
+                          child: Text('2023-10-05'),
+                        ),
+                        SizedBox(
+                          height: 30,
+                          child: Text('500'),
+                        ),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        SizedBox(height: 30, child: Text('Location')),
+                        SizedBox(height: 30, child: Text('2023-10-01')),
+                        SizedBox(height: 30, child: Text('2023-10-05')),
+                        SizedBox(height: 30, child: Text('500')),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        SizedBox(height: 30, child: Text('Location')),
+                        SizedBox(height: 30, child: Text('2023-10-01')),
+                        SizedBox(height: 30, child: Text('2023-10-05')),
+                        SizedBox(height: 30, child: Text('500')),
+                      ],
+                    ),
+                    //...bookings.map(
+                    // (item) {
+                    // return
+                    //  TableRow(
+                    //   children: [
+                    //     Text(item['location'] ?? ''),
+                    //     Text(item['checkInDate'] ?? ''),
+                    //     Text(item['checkOutDate'] ?? ''),
+                    //     Text(item['pointsUsed']?.toString() ?? ''),
+                    //   ],
+                    // ),
+                    // },
+                    // ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
