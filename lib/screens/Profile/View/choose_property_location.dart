@@ -51,7 +51,8 @@ class ChoosePropertyLocation extends StatelessWidget {
               mainAxisSpacing: 8,
               padding: EdgeInsets.all(16),
               children: [
-                _buildLocationCard(context, 'MILLERZ'),
+                _buildLocationCard(context, 'SCARLETZ'),
+                _buildLocationCard(context, 'CEYLONZ'),
               ],
             ),
           )
