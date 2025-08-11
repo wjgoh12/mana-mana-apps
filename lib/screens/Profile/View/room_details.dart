@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/Profile/Data/roomtype.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RoomDetails extends StatefulWidget {
   final RoomType room;
@@ -23,10 +27,26 @@ class RoomDetails extends StatefulWidget {
 }
 
 class _RoomDetailsState extends State<RoomDetails> {
+  final TextEditingController _guestNameController = TextEditingController();
+  void sendEmailToCS(String content) async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: 'cs@yourcompany.com',
+      query: Uri.encodeFull('subject=Booking Request&body=$content'),
+    );
+
+    if (await canLaunchUrl(emailUri)) {
+      await launchUrl(emailUri);
+    } else {
+      throw 'Could not launch email app';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String totalPoints() {
-      return (widget.room.points * widget.nights).toString();
+      final formatter = NumberFormat('#,###');
+      return formatter.format(widget.room.points * widget.nights);
     }
 
     return Scaffold(
@@ -107,19 +127,30 @@ class _RoomDetailsState extends State<RoomDetails> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Check-In'),
-                          Text(
-                            widget.checkIn != null
-                                ? DateFormat('EEE, MMM d, yyyy')
-                                    .format(widget.checkIn!)
-                                : '-',
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                              color: Color(0xFF3E51FF),
-                              fontWeight: FontWeight.bold,
+                          Card(
+                            color: Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Check-In'),
+                                  Text(
+                                    widget.checkIn != null
+                                        ? DateFormat('EEE, MMM d, yyyy')
+                                            .format(widget.checkIn!)
+                                        : '-',
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFF3E51FF),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 20),
                           const Text('No. of Rooms'),
                           Text(
                             '${widget.room.quantity}',
@@ -132,25 +163,36 @@ class _RoomDetailsState extends State<RoomDetails> {
                         ],
                       ),
 
-                      const SizedBox(width: 80),
+                      const SizedBox(width: 70),
 
                       /// Right column: Check-out & total points
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Check-Out'),
-                          Text(
-                            widget.checkOut != null
-                                ? DateFormat('EEE, MMM d, yyyy')
-                                    .format(widget.checkOut!)
-                                : '-',
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                              color: Color(0xFF3E51FF),
-                              fontWeight: FontWeight.bold,
+                          Card(
+                            color: Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Check-Out'),
+                                  Text(
+                                    widget.checkOut != null
+                                        ? DateFormat('EEE, MMM d, yyyy')
+                                            .format(widget.checkOut!)
+                                        : '-',
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFF3E51FF),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 20),
                           const Text('Total Points Redeemed'),
                           Text(
                             '${totalPoints()}',
@@ -166,6 +208,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                   ),
                   const SizedBox(height: 20),
                   TextField(
+                    controller: _guestNameController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15.0),
@@ -179,13 +222,84 @@ class _RoomDetailsState extends State<RoomDetails> {
                         color: Colors.grey,
                       ),
                     ),
-                  )
+                  ),
+                  MyCheckboxWidget(),
+                  SizedBox(height: 10),
+                  const Text('Booking request will be submitted for review.'),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          // Handle submit action
+                          //email to CS team
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Booking request submitted!')),
+                          );
+                          // Send email to CS team
+                          final emailContent = '''
+                            Booking request submitted!
+                            Guest Name: ${_guestNameController.text}
+                            Check-In: ${widget.checkIn}
+                            Check-Out: ${widget.checkOut}
+                            Total Points: ${totalPoints()}
+                          ''';
+                          sendEmailToCS(emailContent);
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFF3E51FF),
+                          ),
+                          fixedSize: MaterialStateProperty.all<Size>(
+                            Size(300, 40),
+                          ),
+                        ),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class MyCheckboxWidget extends StatefulWidget {
+  @override
+  State<MyCheckboxWidget> createState() => _MyCheckboxWidgetState();
+}
+
+class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
+  bool isChecked = false; // start unchecked
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Checkbox(
+          value: isChecked,
+          onChanged: (value) {
+            setState(() {
+              isChecked = value ?? false;
+              print('Checkbox is now: $isChecked');
+            });
+          },
+        ),
+        const Text('Tick box to confirm T&C'),
+      ],
     );
   }
 }

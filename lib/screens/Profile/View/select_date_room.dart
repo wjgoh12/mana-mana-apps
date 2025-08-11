@@ -250,6 +250,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 }
 
 Widget _buildRoomTypeCard(BuildContext context, String roomType, int point) {
+  final formatter = NumberFormat('#,###');
+  final formattedPoints = formatter.format(point);
   return Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(8.0),
@@ -290,7 +292,7 @@ Widget _buildRoomTypeCard(BuildContext context, String roomType, int point) {
                 ),
               ),
               Text(
-                '${point.toString()} points',
+                '${formattedPoints.toString()} points',
                 style: TextStyle(
                   // fontWeight: FontWeight.bold,
                   color: Colors.white,
