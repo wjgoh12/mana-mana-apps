@@ -61,6 +61,17 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF3E51FF).withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: SizedBox(
                 height: 350,
                 child: ListView.builder(
@@ -219,9 +230,10 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: Color(0xFF3E51FF).withOpacity(0.15),
@@ -257,7 +269,7 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
                   Text(
                     'Available Points',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                     ),
                   ),
                   SizedBox(height: 5),

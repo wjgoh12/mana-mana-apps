@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -41,6 +42,7 @@ class _RecentActivityState extends State<RecentActivity> {
                   return RecentActivityRecord(
                     unitName: item.sunitno ?? 'Unknown Unit',
                     propertyName: item.slocation ?? 'Unknown Property',
+                    propertyData: item.toJson(),
                   );
                 }).toList(),
               ),
@@ -55,9 +57,14 @@ class _RecentActivityState extends State<RecentActivity> {
 class RecentActivityRecord extends StatelessWidget {
   final String unitName;
   final String propertyName;
+  final Map<String, dynamic> propertyData; // 🆕 full data
 
-  const RecentActivityRecord(
-      {super.key, required this.unitName, required this.propertyName});
+  const RecentActivityRecord({
+    super.key,
+    required this.unitName,
+    required this.propertyName,
+    required this.propertyData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,16 +75,12 @@ class RecentActivityRecord extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => property_detail_v3(
-              locationByMonth: [
-                {
-                  'location': propertyName,
-                  'unitNo': unitName,
-                },
-              ],
+              locationByMonth: [propertyData], // 🆕 send whole thing
             ),
           ),
         );
       },
+      // UI unchanged below
       child: Container(
         width: 400.fSize,
         height: 80.fSize,

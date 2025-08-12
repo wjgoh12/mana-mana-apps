@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/Profile/Data/roomtype.dart';
+import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RoomDetails extends StatefulWidget {
@@ -34,14 +35,17 @@ class _RoomDetailsState extends State<RoomDetails> {
   void sendEmailToCS(String content) async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
-      path: 'cs@yourcompany.com',
-      query: Uri.encodeFull('subject=Booking Request&body=$content'),
+      path: 'wjingggoh15@gmail.com',
+      queryParameters: {
+        'subject': 'Booking Request',
+        'body': content,
+      },
     );
 
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri);
     } else {
-      throw 'Could not launch email app';
+      debugPrint('Could not launch email app');
     }
   }
 
@@ -243,15 +247,18 @@ class _RoomDetailsState extends State<RoomDetails> {
                     children: [
                       TextButton(
                         onPressed: () {
+                          bool isValid = true;
                           // Handle submit action
-                          if (_guestNameController.text.isEmpty) {
+                          if (_guestNameController.text.trim().isEmpty) {
+                            isValid = false;
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Please enter guest name'),
                               ),
                             );
-                            return;
-                          } else if (!_isChecked) {
+                          }
+                          if (!_isChecked) {
+                            isValid = false;
                             setState(() {
                               _highlightCheckBox = true;
                             });
@@ -266,17 +273,43 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 //highlight the checkbox
                               ),
                             );
-                            return;
                           }
                           // Send email to CS team
-                          final emailContent = '''
-                            Booking request submitted!
-                            Guest Name: ${_guestNameController.text}
-                            Check-In: ${widget.checkIn}
-                            Check-Out: ${widget.checkOut}
-                            Total Points: ${totalPoints()}
-                          ''';
-                          sendEmailToCS(emailContent);
+                          if (isValid) {
+                            final emailContent = '''
+                              Booking request submitted!
+                              Guest Name: ${_guestNameController.text}
+                              Check-In: ${widget.checkIn}
+                              Check-Out: ${widget.checkOut}
+                              Total Points: ${totalPoints()}
+                              ''';
+                            sendEmailToCS(emailContent);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Booking Request Submit!'),
+                              ),
+                            );
+                            // Navigate back to propertyRedemption page
+                            // Navigator.pushAndRemoveUntil(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             const PropertyRedemption()),
+                            //     ModalRoute.withName(
+                            //         '/Profile/View/owner_profile_v3.dart'));
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const PropertyRedemption(),
+                              ),
+                              (route) => route.isFirst,
+                            );
+
+                            // The return type 'PropertyRedemption' isn't a 'void', as required by the closure's context.
+                            // The `return` statement here was causing the error because the `onPressed` callback expects a `void` return.
+                          }
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
@@ -321,25 +354,30 @@ class MyCheckboxWidget extends StatefulWidget {
 }
 
 class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
-  bool isChecked = false; // start unchecked
+  late bool isChecked;
 
-  void toggleIsChecked(bool value) {
-    setState(() {
-      isChecked = value;
-    });
+  @override
+  void initState() {
+    super.initState();
+    isChecked = widget.initialValue;
   }
 
   @override
   Widget build(BuildContext context) {
+    bool showError = false;
     return Row(
       children: [
         Checkbox(
           value: isChecked,
+          side: BorderSide(
+            color: showError ? Colors.red : Colors.grey,
+            width: 2,
+          ),
           onChanged: (value) {
             setState(() {
               isChecked = value ?? false;
-              print('Checkbox is now: $isChecked');
             });
+            widget.onChecked(isChecked);
           },
         ),
         const Text('Tick box to confirm T&C'),

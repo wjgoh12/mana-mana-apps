@@ -2,14 +2,24 @@ class RoomType {
   final String name;
   final String image;
   final int points;
-  final int quantity; // mutable so it can change when user selects
+  int quantity;
 
   RoomType({
     required this.name,
     required this.image,
     required this.points,
-    this.quantity = 1, // default to 1 room
+    this.quantity = 1,
   });
+
+  // Create RoomType from API JSON
+  factory RoomType.fromJson(Map<String, dynamic> json) {
+    return RoomType(
+      name: json['name'] ?? '',
+      image: json['image'] ?? '',
+      points: json['points'] ?? 0,
+      quantity: json['quantity'] ?? 1,
+    );
+  }
 }
 
 final List<RoomType> roomTypes = [

@@ -760,15 +760,36 @@ class PropertyOverviewContainer extends StatelessWidget {
                           fontSize: 12,
                         ),
                       ),
-                      Text(
-                        //average occupancy rate of the specific property
-                        '${model2.getAverageOccupancyByLocation(locationByMonth.first['location'] ?? '')}%',
-
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                      FutureBuilder<String>(
+                        future: model2.getAverageOccupancyByLocation(
+                          locationByMonth.isNotEmpty
+                              ? locationByMonth.first['location'] ?? ''
+                              : '',
                         ),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text(
+                              'Loading...',
+                              style: TextStyle(fontSize: 12),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text(
+                              'Error',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.red),
+                            );
+                          } else {
+                            return Text(
+                              '${snapshot.data ?? '0'}%',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            );
+                          }
+                        },
                       ),
                       Text(
                         '$shortMonth $year',

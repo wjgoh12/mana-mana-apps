@@ -87,7 +87,7 @@ Widget _buildLocationCard(BuildContext context, String location) {
                   borderRadius: BorderRadius.circular(8.fSize),
                   image: DecorationImage(
                     image: AssetImage(
-                        'assets/images/${location.toUpperCase()}.png'),
+                        'assets/images/${location.toUpperCase()}_BUILDING.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -95,10 +95,14 @@ Widget _buildLocationCard(BuildContext context, String location) {
             ),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 3),
         Text(
           location,
-          style: TextStyle(fontSize: 16.fSize, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 20.fSize,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF3E51FF),
+          ),
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
