@@ -28,6 +28,9 @@ class RoomDetails extends StatefulWidget {
 
 class _RoomDetailsState extends State<RoomDetails> {
   final TextEditingController _guestNameController = TextEditingController();
+  bool _isChecked = false; // Checkbox state
+  bool _highlightCheckBox = false;
+
   void sendEmailToCS(String content) async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
@@ -223,7 +226,14 @@ class _RoomDetailsState extends State<RoomDetails> {
                       ),
                     ),
                   ),
-                  MyCheckboxWidget(),
+                  MyCheckboxWidget(
+                    initialValue: _isChecked,
+                    onChecked: (value) {
+                      setState(() {
+                        _isChecked = value;
+                      });
+                    },
+                  ),
                   SizedBox(height: 10),
                   const Text('Booking request will be submitted for review.'),
                   SizedBox(height: 20),
@@ -234,11 +244,30 @@ class _RoomDetailsState extends State<RoomDetails> {
                       TextButton(
                         onPressed: () {
                           // Handle submit action
-                          //email to CS team
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Booking request submitted!')),
-                          );
+                          if (_guestNameController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please enter guest name'),
+                              ),
+                            );
+                            return;
+                          } else if (!_isChecked) {
+                            setState(() {
+                              _highlightCheckBox = true;
+                            });
+                            Future.delayed(const Duration(seconds: 1), () {
+                              setState(() {
+                                _highlightCheckBox = false;
+                              });
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please confirm T&C'),
+                                //highlight the checkbox
+                              ),
+                            );
+                            return;
+                          }
                           // Send email to CS team
                           final emailContent = '''
                             Booking request submitted!
@@ -278,12 +307,27 @@ class _RoomDetailsState extends State<RoomDetails> {
 }
 
 class MyCheckboxWidget extends StatefulWidget {
+  final bool initialValue;
+  final ValueChanged<bool> onChecked;
+
+  const MyCheckboxWidget({
+    Key? key,
+    this.initialValue = false,
+    required this.onChecked,
+  }) : super(key: key);
+
   @override
   State<MyCheckboxWidget> createState() => _MyCheckboxWidgetState();
 }
 
 class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
   bool isChecked = false; // start unchecked
+
+  void toggleIsChecked(bool value) {
+    setState(() {
+      isChecked = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

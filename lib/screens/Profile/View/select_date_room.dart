@@ -202,7 +202,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 1.3,
+                childAspectRatio: 1,
               ),
               itemCount: roomTypes.length,
               itemBuilder: (context, index) {
@@ -264,7 +264,7 @@ Widget _buildRoomTypeCard(BuildContext context, String roomType, int point) {
       children: [
         Container(
           width: 200,
-          height: 85,
+          height: 130,
           child: ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(8.0),

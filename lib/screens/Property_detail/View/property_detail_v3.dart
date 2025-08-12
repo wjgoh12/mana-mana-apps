@@ -765,7 +765,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                         '${model2.getAverageOccupancyByLocation(locationByMonth.first['location'] ?? '')}%',
 
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),

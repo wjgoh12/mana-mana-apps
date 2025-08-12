@@ -64,7 +64,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               child: SizedBox(
                 height: 350,
                 child: ListView.builder(
-                  itemCount: 6, // Replace with actual data length
+                  itemCount: 1, // Replace with actual data length
                   itemBuilder: (context, index) {
                     return PropertyPointRecord();
                   },
@@ -151,7 +151,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                       children: [
                         SizedBox(
                           height: 30,
-                          child: Text('Location'),
+                          child: Text('Ceylonz'),
                         ),
                         SizedBox(
                           height: 30,
@@ -239,14 +239,15 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
             );
           },
           child: const Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Property Name',
+                'Ceylonz 9-11-3',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  color: Color(0xFF3E51FF),
                 ),
               ),
               SizedBox(width: 30),
@@ -261,10 +262,11 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    '1000/10000',
+                    '14000/20000',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
+                      color: Color(0xFF3E51FF),
                     ),
                   ),
                 ],

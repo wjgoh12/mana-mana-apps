@@ -43,18 +43,17 @@ class ChoosePropertyLocation extends StatelessWidget {
                   colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
                 )),
           ),
-          Expanded(
-            child: GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-              padding: EdgeInsets.all(16),
-              children: [
-                _buildLocationCard(context, 'SCARLETZ'),
-                _buildLocationCard(context, 'CEYLONZ'),
-              ],
-            ),
+          GridView.count(
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            padding: EdgeInsets.all(16),
+            childAspectRatio: 0.7,
+            children: [
+              _buildLocationCard(context, 'Scarletz'),
+              _buildLocationCard(context, 'Ceylonz'),
+            ],
           )
         ],
       ),
@@ -66,8 +65,8 @@ Widget _buildLocationCard(BuildContext context, String location) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
+      //mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
         Expanded(
           child: Card(
             elevation: 2,
@@ -84,10 +83,11 @@ Widget _buildLocationCard(BuildContext context, String location) {
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
-                child: ClipRRect(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.fSize),
-                  child: Image.asset(
-                    'assets/images/${location.toUpperCase()}.png',
+                  image: DecorationImage(
+                    image: AssetImage(
+                        'assets/images/${location.toUpperCase()}.png'),
                     fit: BoxFit.cover,
                   ),
                 ),

@@ -11,7 +11,8 @@ class OwnerProfileVM extends ChangeNotifier {
   List<OwnerPropertyList> _ownerUnits = [];
   List<OwnerPropertyList> get ownerUnits => _ownerUnits;
   final UserRepository userRepository = UserRepository();
-  final PropertyListRepository ownerPropertyListRepository = PropertyListRepository();
+  final PropertyListRepository ownerPropertyListRepository =
+      PropertyListRepository();
 
   bool get showMyInfo => _showMyInfo;
 
