@@ -323,17 +323,19 @@ class PropertyImageStack extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
-                    child: Row(children: [
-                      Image.asset('assets/images/map_pin.png',
-                          width: 14.fSize, height: 17.fSize),
-                      const SizedBox(width: 2),
-                      Text(
-                        '$locationRoad',
-                        style: const TextStyle(
-                          fontSize: 10,
+                    child: Row(
+                      children: [
+                        Image.asset('assets/images/map_pin.png',
+                            width: 14.fSize, height: 17.fSize),
+                        const SizedBox(width: 2),
+                        Text(
+                          '$locationRoad',
+                          style: const TextStyle(
+                            fontSize: 10,
+                          ),
                         ),
-                      ),
-                    ]),
+                      ],
+                    ),
                   ),
 
                   //divider
@@ -343,87 +345,85 @@ class PropertyImageStack extends StatelessWidget {
                     margin: const EdgeInsets.only(left: 10, right: 10, top: 2),
                   ),
                   Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: Image.asset('assets/images/Wallet.png',
+                              width: 45.fSize, height: 45.fSize),
+                        ),
+                        const SizedBox(width: 2),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 3),
-                              child: Image.asset('assets/images/Wallet.png',
-                                  width: 45.fSize, height: 45.fSize),
+                            const Text(
+                              'Total Net After POB',
+                              style: TextStyle(
+                                fontSize: 11,
+                              ),
                             ),
-                            const SizedBox(width: 2),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Text(
+                              'RM ${locationByMonth.first['total']}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ), //totalNetAfterPob
+                          ],
+                        ),
+                        const Spacer(),
+                        Container(
+                          margin: const EdgeInsets.only(right: 10, bottom: 3),
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => property_detail_v3(
+                                        locationByMonth: [
+                                          locationByMonth.first
+                                        ]),
+                                  ));
+                            },
+                            style: ButtonStyle(
+                              minimumSize:
+                                  WidgetStateProperty.all(const Size(20, 30)),
+                              side: WidgetStateProperty.all(
+                                  const BorderSide(color: Color(0xFF4CAF50))),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text(
-                                  'Total Net After POB',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                  ),
-                                ),
                                 Text(
-                                  'RM ${locationByMonth.first['total']}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ), //totalNetAfterPob
-                              ],
-                            ),
-                            const Spacer(),
-                            Container(
-                              margin:
-                                  const EdgeInsets.only(right: 10, bottom: 3),
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            property_detail_v3(
-                                                locationByMonth: [
-                                              locationByMonth.first
-                                            ]),
-                                      ));
-                                },
-                                style: ButtonStyle(
-                                  minimumSize: WidgetStateProperty.all(
-                                      const Size(20, 30)),
-                                  side: WidgetStateProperty.all(
-                                      const BorderSide(
-                                          color: Color(0xFF4CAF50))),
+                                  'Details',
+                                  style: TextStyle(
+                                      fontSize: 15.fSize, color: Colors.black),
                                 ),
-                                child: Row(
+                                const SizedBox(width: 5),
+                                Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text(
-                                      'Details',
-                                      style: TextStyle(
-                                          fontSize: 15.fSize,
-                                          color: Colors.black),
+                                    Image.asset(
+                                      'assets/images/arrow.png',
+                                      width: 15.fSize,
+                                      height: 11.fSize,
                                     ),
-                                    const SizedBox(width: 5),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Image.asset(
-                                          'assets/images/arrow.png',
-                                          width: 15.fSize,
-                                          height: 11.fSize,
-                                        ),
-                                        Text(
-                                          'Jom',
-                                          style: TextStyle(fontSize: 9.fSize),
-                                        ),
-                                      ],
+                                    Text(
+                                      'Jom',
+                                      style: TextStyle(fontSize: 9.fSize),
                                     ),
                                   ],
                                 ),
-                              ),
+                              ],
                             ),
-                          ]))
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

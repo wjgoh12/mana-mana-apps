@@ -51,6 +51,7 @@ class _RoomDetailsState extends State<RoomDetails> {
 
   @override
   Widget build(BuildContext context) {
+    bool showError = !_isChecked;
     String totalPoints() {
       final formatter = NumberFormat('#,###');
       return formatter.format(widget.room.points * widget.nights);
@@ -130,7 +131,6 @@ class _RoomDetailsState extends State<RoomDetails> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      /// Left column: Check-in & rooms
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -169,10 +169,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                           ),
                         ],
                       ),
-
                       const SizedBox(width: 70),
-
-                      /// Right column: Check-out & total points
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -232,15 +229,16 @@ class _RoomDetailsState extends State<RoomDetails> {
                   ),
                   MyCheckboxWidget(
                     initialValue: _isChecked,
+                    highlight: _highlightCheckBox,
                     onChecked: (value) {
                       setState(() {
                         _isChecked = value;
                       });
                     },
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   const Text('Booking request will be submitted for review.'),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -262,11 +260,16 @@ class _RoomDetailsState extends State<RoomDetails> {
                             setState(() {
                               _highlightCheckBox = true;
                             });
-                            Future.delayed(const Duration(seconds: 1), () {
-                              setState(() {
-                                _highlightCheckBox = false;
-                              });
-                            });
+                            // Future.delayed(
+                            //   const Duration(seconds: 1),
+                            //   () {
+                            //     setState(
+                            //       () {
+                            //         _highlightCheckBox = false;
+                            //       },
+                            //     );
+                            //   },
+                            // );
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Please confirm T&C'),
@@ -298,6 +301,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                             //             const PropertyRedemption()),
                             //     ModalRoute.withName(
                             //         '/Profile/View/owner_profile_v3.dart'));
+
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -342,11 +346,13 @@ class _RoomDetailsState extends State<RoomDetails> {
 class MyCheckboxWidget extends StatefulWidget {
   final bool initialValue;
   final ValueChanged<bool> onChecked;
+  final bool highlight; // NEW
 
   const MyCheckboxWidget({
     Key? key,
     this.initialValue = false,
     required this.onChecked,
+    this.highlight = false,
   }) : super(key: key);
 
   @override
@@ -363,14 +369,22 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
   }
 
   @override
+  void didUpdateWidget(covariant MyCheckboxWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update local state if parent changes initialValue
+    if (oldWidget.initialValue != widget.initialValue) {
+      isChecked = widget.initialValue;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    bool showError = false;
     return Row(
       children: [
         Checkbox(
           value: isChecked,
           side: BorderSide(
-            color: showError ? Colors.red : Colors.grey,
+            color: widget.highlight ? Colors.red : Colors.grey,
             width: 2,
           ),
           onChanged: (value) {

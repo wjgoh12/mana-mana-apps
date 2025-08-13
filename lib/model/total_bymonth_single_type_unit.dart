@@ -8,7 +8,7 @@ class SingleUnitByMonth {
   String? stranscode;
 
   SingleUnitByMonth(
-      {this.total,
+      {this.total = 0.0,
       this.slocation,
       this.stype,
       this.sunitno,
