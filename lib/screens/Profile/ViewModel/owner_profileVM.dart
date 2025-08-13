@@ -50,6 +50,7 @@ class OwnerProfileVM extends ChangeNotifier {
   Future<void> fetchData() async {
     _users = await userRepository.getUsers();
     _ownerUnits = await ownerPropertyListRepository.getOwnerUnit();
+    //_ownerBookingHistory = await ownerBookingHistoryRepository.getOwnerBookingHistory();???
     notifyListeners();
   }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/property_dropdown.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/property_stack.dart';

@@ -1,18 +1,12 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_rate_box.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/recent_activity.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/property_dropdown.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/overview_card.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
-import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +19,6 @@ class PropertySummaryScreen extends StatefulWidget {
 
 class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
   final NewDashboardVM_v3 _model = NewDashboardVM_v3();
-  final PropertyDetailVM _model2 = PropertyDetailVM();
   late Future<void> _initFuture;
 
   @override
@@ -42,16 +35,95 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
   // }
 
   Future<void> _initializeData() async {
-    try {
-      print('refetching data...');
-      await _model.fetchData();
-      await _model2.fetchData(_model.locationByMonth);
-    } catch (e) {
-      // Handle error appropriately
-      debugPrint('Error initializing data: $e');
-      rethrow;
-    }
+    print('refetching data...');
+    await _model.fetchData();
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => _model,
+      child: Consumer<NewDashboardVM_v3>(
+        builder: (context, model, child) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: propertyAppBar(
+              context,
+              () => Navigator.of(context).pop(),
+            ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.only(left: 15, top: 5, right: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Expanded(
+                        flex: 0,
+                        child: PropertyTitleDropdown(currentPage: 'Summary'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: OverviewCard(model: model),
+                  ),
+                  SizedBox(height: 10.fSize),
+                  OccupancyRateBox(),
+                  RecentActivity(
+                      locationByMonth: model.locationByMonth, ownerData: []),
+                ],
+              ),
+            ),
+            bottomNavigationBar: const BottomNavBar(currentIndex: 1),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Extract content to optimize rebuilds
+class _PropertySummaryContent extends StatelessWidget {
+  const _PropertySummaryContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer2<NewDashboardVM_v3, PropertyDetailVM>(
+      builder: (context, model, model2, child) {
+        print('locationByMonth length: ${model.locationByMonth.length}');
+        return SingleChildScrollView(
+          padding: const EdgeInsets.only(left: 15, top: 5, right: 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Expanded(
+                    flex: 0,
+                    child: PropertyTitleDropdown(currentPage: 'Summary'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: OverviewCard(model: model),
+              ),
+              SizedBox(height: 10.fSize),
+              OccupancyRateBox(),
+              RecentActivity(
+                  locationByMonth: model.locationByMonth,
+                  ownerData: model2.ownerData),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -104,60 +176,3 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
 //     );
 //   }
 // }
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: _model),
-        ChangeNotifierProvider.value(value: _model2),
-      ],
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: propertyAppBar(
-          context,
-          () => Navigator.of(context).pop(),
-        ),
-        body: _PropertySummaryContent(),
-        bottomNavigationBar: const BottomNavBar(currentIndex: 1),
-      ),
-    );
-  }
-}
-
-// Extract content to optimize rebuilds
-class _PropertySummaryContent extends StatelessWidget {
-  const _PropertySummaryContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer2<NewDashboardVM_v3, PropertyDetailVM>(
-      builder: (context, model, model2, child) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(left: 15, top: 5, right: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  Expanded(
-                    flex: 0,
-                    child: PropertyTitleDropdown(currentPage: 'Summary'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: OverviewCard(model: model),
-              ),
-              SizedBox(height: 10.fSize),
-              OccupancyRateBox(),
-              RecentActivity(model: model2),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}

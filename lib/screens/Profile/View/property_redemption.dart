@@ -15,6 +15,7 @@ class PropertyRedemption extends StatefulWidget {
 
 class _PropertyRedemptionState extends State<PropertyRedemption> {
   final NewDashboardVM_v3 model = NewDashboardVM_v3();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +83,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 ),
               ),
             ),
-            const SizedBox(height: 60),
+            const SizedBox(height: 30),
             const Text(
               'Booking History',
               style: TextStyle(
@@ -160,40 +161,25 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
 
                     TableRow(
                       children: [
-                        SizedBox(
-                          height: 30,
-                          child: Text('Ceylonz'),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('Ceylonz 9-11-3'),
                         ),
-                        SizedBox(
-                          height: 30,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Text('2023-10-01'),
                         ),
-                        SizedBox(
-                          height: 30,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Text('2023-10-05'),
                         ),
-                        SizedBox(
-                          height: 30,
-                          child: Text('500'),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('1000'),
                         ),
                       ],
                     ),
-                    TableRow(
-                      children: [
-                        SizedBox(height: 30, child: Text('Location')),
-                        SizedBox(height: 30, child: Text('2023-10-01')),
-                        SizedBox(height: 30, child: Text('2023-10-05')),
-                        SizedBox(height: 30, child: Text('500')),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        SizedBox(height: 30, child: Text('Location')),
-                        SizedBox(height: 30, child: Text('2023-10-01')),
-                        SizedBox(height: 30, child: Text('2023-10-05')),
-                        SizedBox(height: 30, child: Text('500')),
-                      ],
-                    ),
+
                     //...bookings.map(
                     // (item) {
                     // return
@@ -293,18 +279,32 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
 }
 
 class BookingHistoryRecord extends StatelessWidget {
-  const BookingHistoryRecord({super.key});
+  final String location;
+  final String checkInDate;
+  final String checkOutDate;
+  final String pointsUsed;
+
+  const BookingHistoryRecord({
+    super.key,
+    required this.location,
+    required this.checkInDate,
+    required this.checkOutDate,
+    required this.pointsUsed,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      child: const Row(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Location Name'),
-          Text('2023-10-01'),
-          Text('2023-10-05'),
-          Text('500'),
+          Text(location),
+          // You can add more Text widgets for checkInDate, checkOutDate, pointsUsed if want
+          // For example:
+          Text(checkInDate),
+          Text(checkOutDate),
+          Text(pointsUsed),
         ],
       ),
     );

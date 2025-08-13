@@ -12,8 +12,15 @@ import 'package:provider/provider.dart';
 
 class property_detail_v3 extends StatefulWidget {
   final List<Map<String, dynamic>> locationByMonth;
-  const property_detail_v3({required this.locationByMonth, Key? key})
-      : super(key: key);
+  final String? initialType;
+  final String? initialUnitNo;
+
+  const property_detail_v3({
+    required this.locationByMonth,
+    this.initialType,
+    this.initialUnitNo,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<property_detail_v3> createState() => _property_detail_v3State();
@@ -40,6 +47,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
       model.fetchData(widget.locationByMonth);
     }
 
+    model.updateSelectedView('UnitDetails');
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final model2 = Provider.of<NewDashboardVM_v3>(context, listen: false);
       model2.getAverageOccupancyByLocation(
@@ -47,6 +56,11 @@ class _property_detail_v3State extends State<property_detail_v3> {
     });
 
     _scrollController.addListener(_onScroll);
+
+    if (widget.initialType != null && widget.initialUnitNo != null) {
+      model.updateSelectedView('UnitDetails');
+      model.updateSelectedTypeUnit(widget.initialType!, widget.initialUnitNo!);
+    }
   }
 
   @override

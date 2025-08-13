@@ -8,19 +8,8 @@ class PropertyStack extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
   const PropertyStack({
     super.key,
-    // required this.image,
-    // required this.text1,
-    // required this.text2,
-    // required this.text3,
-    // required this.total,
     required this.locationByMonth,
   });
-
-  // final String image;
-  // final String text1;
-  // final String text2;
-  // final String text3;
-  // final double total;
 
   String getInitials(String name) {
     if (name.isEmpty) return '';
