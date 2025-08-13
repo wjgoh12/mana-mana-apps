@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/resources/app_colors.dart';
 
 class OccupancyBarChart extends StatelessWidget {
-  const OccupancyBarChart({super.key, required this.isShowingMainData});
+  const OccupancyBarChart(
+      {super.key, required this.isShowingMainData, required this.period});
 
   final bool isShowingMainData;
+  final String period;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class OccupancyBarChart extends StatelessWidget {
         borderData: borderData,
         lineBarsData: lineBarsData1,
         minX: 0,
-        maxX: 14,
+        maxX: getMaxX(),
         maxY: 6,
         minY: 0,
       );
@@ -36,51 +38,144 @@ class OccupancyBarChart extends StatelessWidget {
         borderData: borderData,
         lineBarsData: lineBarsData2,
         minX: 0,
-        maxX: 14,
+        maxX: getMaxX(),
         maxY: 6,
         minY: 0,
       );
 
+  double getMaxX() {
+    switch (period) {
+      case 'Quarterly':
+        return 3; // Q1-Q4
+      case 'Yearly':
+        return 3; // last 4 years
+      case 'Monthly':
+      default:
+        return 14; // keep current monthly
+    }
+  }
+
+  List<FlSpot> getSpots() {
+    switch (period) {
+      case 'Quarterly':
+        return const [
+          FlSpot(0, 2),
+          FlSpot(1, 3),
+          FlSpot(2, 1.5),
+          FlSpot(3, 4),
+        ];
+      case 'Yearly':
+        return const [
+          FlSpot(0, 1.5),
+          FlSpot(1, 3),
+          FlSpot(2, 2),
+          FlSpot(3, 4.5),
+        ];
+      case 'Monthly':
+      default:
+        return const [
+          FlSpot(0, 0),
+          FlSpot(2, 3),
+          FlSpot(7, 2),
+          FlSpot(12, 2.5),
+        ];
+    }
+  }
+
+  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
+    );
+
+    switch (period) {
+      case 'Quarterly':
+        const labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+        return SideTitleWidget(
+          axisSide: AxisSide.bottom,
+          space: 10,
+          child: Text(labels[value.toInt() % 4], style: style),
+        );
+      case 'Yearly':
+        return SideTitleWidget(
+          axisSide: AxisSide.bottom,
+          space: 10,
+          child: Text('Year ${2020 + value.toInt()}', style: style),
+        );
+      case 'Monthly':
+      default:
+        String text;
+        switch (value.toInt()) {
+          case 2:
+            text = 'SEPT';
+            break;
+          case 7:
+            text = 'OCT';
+            break;
+          case 12:
+            text = 'NOV';
+            break;
+          default:
+            text = '';
+            break;
+        }
+        return SideTitleWidget(
+          axisSide: AxisSide.bottom,
+          space: 10,
+          child: Text(text, style: style),
+        );
+    }
+  }
+
   LineTouchData get lineTouchData1 => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
-          getTooltipColor: (touchedSpot) => Colors.blueGrey.withOpacity(0.8),
-          // Add these properties for better tooltip display
-          //tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-          tooltipRoundedRadius: 8,
-          tooltipPadding: const EdgeInsets.all(8),
-          getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
-            return touchedBarSpots.map((barSpot) {
-              final percentage = barSpot.y * 20;
-              final flSpot = barSpot.spotIndex;
-              String month = '';
-              switch (flSpot.toInt()) {
-                case 0:
-                  month = '';
-                  break;
-                case 1:
-                  month = 'SEPT';
-                  break;
-                case 2:
-                  month = 'OCT';
-                  break;
-                case 3:
-                  month = 'NOV';
-                  break;
-                default:
-                  month = 'Month ${flSpot.toInt()}';
-              }
-              return LineTooltipItem(
-                '$month\n${percentage.toStringAsFixed(1)}%',
-                const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              );
-            }).toList();
-          },
-        ),
+            getTooltipColor: (touchedSpot) => Colors.blueGrey.withOpacity(0.8),
+            // Add these properties for better tooltip display
+            //tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+            tooltipRoundedRadius: 8,
+            tooltipPadding: const EdgeInsets.all(8),
+            getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
+              return touchedBarSpots.map((barSpot) {
+                final percentage = barSpot.y * 20;
+                final index = barSpot.spotIndex;
+                String label = '';
+
+                switch (period) {
+                  case 'Monthly':
+                    switch (index) {
+                      case 2:
+                        label = 'SEPT';
+                        break;
+                      case 7:
+                        label = 'OCT';
+                        break;
+                      case 12:
+                        label = 'NOV';
+                        break;
+                      default:
+                        label = '';
+                    }
+                    break;
+                  case 'Quarterly':
+                    const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+                    label = quarters[index % 4];
+                    break;
+                  case 'Yearly':
+                    label = 'Year ${2020 + index}';
+                    break;
+                }
+
+                return LineTooltipItem(
+                  '$label\n${percentage.toStringAsFixed(1)}%',
+                  const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                );
+              }).toList();
+            }),
       );
 
   FlTitlesData get titlesData1 => FlTitlesData(
@@ -99,9 +194,18 @@ class OccupancyBarChart extends StatelessWidget {
       );
 
   List<LineChartBarData> get lineBarsData1 => [
-        lineChartBarData1_1,
+        //lineChartBarData1_1,
         // lineChartBarData1_2,
         // lineChartBarData1_3,
+        LineChartBarData(
+          isCurved: true,
+          color: const Color(0XFF8C71E7),
+          barWidth: 5,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(show: true),
+          belowBarData: BarAreaData(show: false),
+          spots: getSpots(),
+        ),
       ];
 
   LineTouchData get lineTouchData2 => const LineTouchData(
@@ -181,37 +285,37 @@ class OccupancyBarChart extends StatelessWidget {
         reservedSize: 40,
       );
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
-    );
-    Widget text;
-    switch (value.toInt()) {
-      case 0:
-        text = const Text('', style: style);
-        break;
-      case 2:
-        text = const Text('SEPT', style: style);
-        break;
-      case 7:
-        text = const Text('OCT', style: style);
-        break;
-      case 12:
-        text = const Text('NOV', style: style);
-        break;
-      default:
-        text = const Text('');
-        break;
-    }
+  // Widget bottomTitleWidgets(double value, TitleMeta meta) {
+  //   const style = TextStyle(
+  //     fontWeight: FontWeight.bold,
+  //     fontSize: 12,
+  //   );
+  //   Widget text;
+  //   switch (value.toInt()) {
+  //     case 0:
+  //       text = const Text('', style: style);
+  //       break;
+  //     case 2:
+  //       text = const Text('SEPT', style: style);
+  //       break;
+  //     case 7:
+  //       text = const Text('OCT', style: style);
+  //       break;
+  //     case 12:
+  //       text = const Text('NOV', style: style);
+  //       break;
+  //     default:
+  //       text = const Text('');
+  //       break;
+  //   }
 
-    return SideTitleWidget(
-      axisSide: AxisSide.bottom,
-      //meta: meta,
-      space: 10,
-      child: text,
-    );
-  }
+  //   return SideTitleWidget(
+  //     axisSide: AxisSide.bottom,
+  //     //meta: meta,
+  //     space: 10,
+  //     child: text,
+  //   );
+  // }
 
   SideTitles get bottomTitles => SideTitles(
         showTitles: true,
@@ -353,6 +457,7 @@ class LineChart1 extends StatefulWidget {
 
 class LineChart1State extends State<LineChart1> {
   late bool isShowingMainData;
+  String selectedPeriod = 'Monthly';
 
   @override
   void initState() {
@@ -388,8 +493,10 @@ class LineChart1State extends State<LineChart1> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(right: 16, left: 6),
-                  child:
-                      OccupancyBarChart(isShowingMainData: isShowingMainData),
+                  child: OccupancyBarChart(
+                    isShowingMainData: isShowingMainData,
+                    period: selectedPeriod,
+                  ),
                 ),
               ),
               const SizedBox(

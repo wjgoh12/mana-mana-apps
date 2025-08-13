@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class OccupancyPeriodDropdown extends StatefulWidget {
-  const OccupancyPeriodDropdown({super.key});
+  final String selectedValue;
+  final ValueChanged<String> onChanged;
+
+  const OccupancyPeriodDropdown(
+      {super.key, required this.selectedValue, required this.onChanged});
 
   @override
   State<OccupancyPeriodDropdown> createState() =>
@@ -37,17 +41,16 @@ class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
       child: Padding(
         padding: EdgeInsets.only(right: 10.fSize, top: 10.fSize),
         child: Container(
-          width: 152.fSize,
+          width: 130.fSize,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.fSize),
-            color: Color(0xFFF0F2FD),
+            color: const Color(0xFFF0F2FD),
           ),
           child: DropdownButton2<String>(
-            value: selectedValue,
+            underline: const SizedBox(),
+            value: widget.selectedValue,
             onChanged: (value) {
-              setState(() {
-                selectedValue = value;
-              });
+              if (value != null) widget.onChanged(value);
             },
             items: period.entries.map((entry) {
               return DropdownMenuItem<String>(
@@ -65,7 +68,7 @@ class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
               );
             }).toList(),
             dropdownStyleData: DropdownStyleData(
-                width: 152.fSize,
+                width: 130.fSize,
                 offset: const Offset(0.5, 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(

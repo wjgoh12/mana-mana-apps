@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:mana_mana_app/screens/Property_detail/View/Widget/occupancy_percent_text.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
@@ -315,7 +314,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
                     left: 0,
                     right: 0,
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.white,
                       ),
                       height: 110.fSize,
@@ -1849,6 +1848,7 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
             const Text('Year'),
             const SizedBox(width: 8),
             DropdownButton2<String>(
+              underline: const SizedBox(),
               buttonStyleData: ButtonStyleData(
                 height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 1),
@@ -1862,12 +1862,16 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
               ),
               value: widget.model.selectedYearValue,
               hint: widget.model.yearItems.isNotEmpty
-                  ? const Text('Select Year',
+                  ? const Text(
+                      'Select Year',
                       style: TextStyle(
-                          fontSize: 10, decoration: TextDecoration.none))
-                  : const Text('-',
+                          fontSize: 10, decoration: TextDecoration.none),
+                    )
+                  : const Text(
+                      '-',
                       style: TextStyle(
-                          fontSize: 10, decoration: TextDecoration.none)),
+                          fontSize: 10, decoration: TextDecoration.none),
+                    ),
               items: widget.yearOptions
                   .map((year) => DropdownMenuItem(
                         value: year,
@@ -1884,9 +1888,15 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
+                  border: const Border(
+                    left: BorderSide(color: Colors.grey, width: 0.5),
+                    right: BorderSide(color: Colors.grey, width: 0.5),
+                    bottom: BorderSide(color: Colors.grey, width: 0.5),
+                    // top: BorderSide.none  // so no border at top
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withOpacity(0),
                       blurRadius: 10,
                       offset: const Offset(0, -1),
                     ),
@@ -1918,7 +1928,6 @@ Widget _buildGradientText(String text) {
   );
 }
 
-// Optimized Property Dropdown Widget
 class OptimizedPropertyDropdown extends StatefulWidget {
   final PropertyDetailVM model;
   final double width;

@@ -39,13 +39,9 @@ class OccupancyRateBox extends StatefulWidget {
 }
 
 class _OccupancyRateBoxState extends State<OccupancyRateBox> {
+  String selectedPeriod = 'Monthly';
   @override
   Widget build(BuildContext context) {
-    // final dataList=[
-    //   ...List.generate(6,
-    //   (index) => _BarData(labelColor1,60, 100))
-    // ];
-
     return Container(
       alignment: Alignment.topLeft,
       width: 390,
@@ -61,13 +57,13 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
+              const Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(left: 10, top: 15),
                   child: Text('Occupancy Rate',
@@ -78,7 +74,17 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
                 ),
               ),
               Flexible(
-                child: OccupancyPeriodDropdown(),
+                child: OccupancyPeriodDropdown(
+                  selectedValue: selectedPeriod,
+                  onChanged: (value) {
+                    setState(
+                      () {
+                        selectedPeriod = value;
+                        // You can also trigger chart update here if needed
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -86,7 +92,10 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: OccupancyBarChart(isShowingMainData: true),
+              child: OccupancyBarChart(
+                isShowingMainData: true,
+                period: selectedPeriod,
+              ),
             ),
           ),
         ],

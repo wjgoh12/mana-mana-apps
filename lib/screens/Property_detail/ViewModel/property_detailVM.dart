@@ -8,6 +8,7 @@ import 'package:mana_mana_app/screens/Property_detail/View/AnnualStatementPdfVie
 import 'package:mana_mana_app/screens/Property_detail/View/PdfViewerScreen.dart';
 
 class PropertyDetailVM extends ChangeNotifier {
+  double total = 0.0;
   List<Map<String, dynamic>> locationByMonth = [];
   String locationRoad = '';
   String property = '';
