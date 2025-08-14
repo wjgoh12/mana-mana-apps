@@ -39,34 +39,11 @@ class PropertyListV3 extends StatelessWidget {
           )
         : SizedBox(
             height: 450.fSize,
-            // child: NotificationListener<ScrollNotification>(
-            //   onNotification: (notif) {
-            //     if (notif is ScrollStartNotification &&
-            //         notif.metrics.axis == Axis.horizontal) {
-            //       // e.g. disable outer scroll if needed
-            //       return true;
-            //     }
-            //     return false; // allow notifications to continue
-            //   },
             child: ListView(
               scrollDirection: Axis.horizontal,
               // shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
               children: [
-                // ...model.locationByMonth
-                //     .where((property) =>
-                //         property['year'] ==
-                //             model.locationByMonth
-                //                 .map((p) => p['year'])
-                //                 .reduce((a, b) => a > b ? a : b) &&
-                //         property['month'] == model.unitLatestMonth)
-                //     .expand((property) => [
-                //           PropertyImageStack(
-                //             locationByMonth: [property],
-                //           ),
-                //           const SizedBox(width: 20),
-                //         ])
-
                 ...model.locationByMonth
                     .where((property) => property['year'] == latestYear)
                     .toList()
@@ -99,17 +76,8 @@ class PropertyImageStack extends StatelessWidget {
 
   const PropertyImageStack({
     Key? key,
-    // required this.image,
-    // required this.label,
-    // required this.location,
-    // required this.amount,
     required this.locationByMonth,
   }) : super(key: key);
-
-  // final String image;
-  // final String label;
-  // final String location;
-  // final String amount;
 
   @override
   Widget build(BuildContext context) {
@@ -137,8 +105,6 @@ class PropertyImageStack extends StatelessWidget {
         locationRoad = "";
         break;
     }
-    // final NewDashboardVM_v3 model = NewDashboardVM_v3();
-    // model.fetchData();
 
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
@@ -371,7 +337,7 @@ class PropertyImageStack extends StatelessWidget {
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
-                            ), //totalNetAfterPob
+                            ),
                           ],
                         ),
                         const Spacer(),
@@ -383,9 +349,9 @@ class PropertyImageStack extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => property_detail_v3(
-                                        locationByMonth: [
-                                          locationByMonth.first
-                                        ]),
+                                      locationByMonth: [locationByMonth.first],
+                                      initialTab: 'overview',
+                                    ),
                                   ));
                             },
                             style: ButtonStyle(

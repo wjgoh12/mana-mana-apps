@@ -100,7 +100,7 @@ class OccupancyBarChart extends StatelessWidget {
         return SideTitleWidget(
           axisSide: AxisSide.bottom,
           space: 10,
-          child: Text('Year ${2020 + value.toInt()}', style: style),
+          child: Text('${2020 + value.toInt()}', style: style),
         );
       case 'Monthly':
       default:

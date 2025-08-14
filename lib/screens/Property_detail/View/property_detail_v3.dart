@@ -13,11 +13,13 @@ class property_detail_v3 extends StatefulWidget {
   final List<Map<String, dynamic>> locationByMonth;
   final String? initialType;
   final String? initialUnitNo;
+  final String initialTab;
 
   const property_detail_v3({
     required this.locationByMonth,
     this.initialType,
     this.initialUnitNo,
+    this.initialTab = 'overview',
     Key? key,
   }) : super(key: key);
 
@@ -32,6 +34,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
   bool showStickyDropdown = false;
   bool showStickyEstatement = false;
   bool isFullScreenEstatement = false;
+  late String currentTab;
 
   final GlobalKey _originalDropdownKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
@@ -39,6 +42,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
   @override
   void initState() {
     super.initState();
+
     model = PropertyDetailVM();
     model2 = NewDashboardVM_v3();
 
@@ -46,7 +50,18 @@ class _property_detail_v3State extends State<property_detail_v3> {
       model.fetchData(widget.locationByMonth);
     }
 
-    model.updateSelectedView('UnitDetails');
+// Only update selectedView if initialTab is provided
+    switch (widget.initialTab) {
+      case 'unitDetails':
+        model.updateSelectedView('UnitDetails');
+        break;
+      case 'recentActivity':
+        model.updateSelectedView('RecentActivity');
+        break;
+      default:
+        model.updateSelectedView('Overview');
+    }
+    //model.updateSelectedView('UnitDetails');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final model2 = Provider.of<NewDashboardVM_v3>(context, listen: false);
@@ -60,6 +75,16 @@ class _property_detail_v3State extends State<property_detail_v3> {
       model.updateSelectedView('UnitDetails');
       model.updateSelectedTypeUnit(widget.initialType!, widget.initialUnitNo!);
     }
+
+    currentTab = widget.initialTab;
+  }
+
+  void switchTab(String tab) {
+    setState(
+      () {
+        currentTab = tab;
+      },
+    );
   }
 
   @override
@@ -111,6 +136,18 @@ class _property_detail_v3State extends State<property_detail_v3> {
     });
   }
 
+  Widget getCurrentTabWidget() {
+    switch (currentTab) {
+      case 'unitDetails':
+        return UnitDetailsContainer(model: model);
+      default:
+        return PropertyOverviewContainer(
+            model: model,
+            model2: model2,
+            locationByMonth: widget.locationByMonth);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.locationByMonth.isEmpty) {
@@ -123,13 +160,16 @@ class _property_detail_v3State extends State<property_detail_v3> {
             icon: const Icon(Icons.arrow_back),
           ),
         ),
-        body: const Center(
+        body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.grey),
-              SizedBox(height: 16),
-              Text(
+              SliverToBoxAdapter(
+                child: getCurrentTabWidget(),
+              ),
+              const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
+              const Text(
                 'No property data available',
                 style: TextStyle(fontSize: 18, color: Colors.grey),
               ),

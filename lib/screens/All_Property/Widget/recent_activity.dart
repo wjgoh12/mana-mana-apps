@@ -75,6 +75,7 @@ class RecentActivity extends StatelessWidget {
                       locationByMonth: [locationByMonth.first],
                       initialType: fullProperty['type'],
                       initialUnitNo: fullProperty['unitNo'],
+                      initialTab: 'unitDetails',
                     ),
                   ),
                 ),
