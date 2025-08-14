@@ -25,8 +25,6 @@ class RecentActivity extends StatelessWidget {
         ),
       );
     }
-    print('DEBUG locationByMonth: $locationByMonth');
-    print('DEBUG ownerData: $ownerData');
 
     return ListView.builder(
       itemCount: locationByMonth.length,

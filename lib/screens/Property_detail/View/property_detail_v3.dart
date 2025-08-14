@@ -1157,6 +1157,16 @@ class UnitDetailsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final totalPro = model.selectedUnitPro?.total ?? 0.0;
+    final formattedTotalPro = totalPro.toStringAsFixed(2).replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+
+    final totalBlc = model.selectedUnitBlc?.total ?? 0.0;
+    final formattedTotalBlc = totalBlc.toStringAsFixed(2).replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        );
+
     final location = model.locationByMonth.first['location'] ?? 'Unknown';
     final unitNo = model.selectedUnitNo ?? 'Unknown';
 
@@ -1424,8 +1434,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                   ),
                                 ),
                                 TextSpan(
-                                  text:
-                                      '${model.selectedUnitPro.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+                                  text: '$formattedTotalPro',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
@@ -1495,8 +1504,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                   ),
                                 ),
                                 TextSpan(
-                                  text:
-                                      '${model.selectedUnitBlc.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
+                                  text: '$formattedTotalBlc',
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,

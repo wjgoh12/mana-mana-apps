@@ -100,7 +100,7 @@ class AllPropertyScreen extends StatelessWidget {
       print(
           "Location: ${item['location']}, Month: ${item['month']}, Owners: ${item['owners']}, TotalUnits: ${item['totalUnits']}");
     }
-    print("locationByMonth length: ${model.locationByMonth.length}");
+    // print("locationByMonth length: ${model.locationByMonth.length}");
 
     // String locationRoad = '';
     // switch (locationByMonth[0]['location'].toUpperCase()) {

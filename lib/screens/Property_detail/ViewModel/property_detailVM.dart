@@ -62,12 +62,12 @@ class PropertyDetailVM extends ChangeNotifier {
     locationByMonth = newLocationByMonth;
     _users = await userRepository.getUsers();
 
-    if (locationByMonth.isEmpty) {
-      print('Warning: locationByMonth is empty');
-      isLoading = false;
-      notifyListeners();
-      return;
-    }
+    // if (locationByMonth.isEmpty) {
+    //   print('Warning: locationByMonth is empty');
+    //   isLoading = false;
+    //   notifyListeners();
+    //   return;
+    // }
 
     property = locationByMonth[0]['location'];
 
