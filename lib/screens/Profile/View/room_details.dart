@@ -142,14 +142,19 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Check-In'),
+                                  const Text(
+                                    'Check-In',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                    ),
+                                  ),
                                   Text(
                                     widget.checkIn != null
                                         ? DateFormat('EEE, MMM d, yyyy')
                                             .format(widget.checkIn!)
                                         : '-',
                                     style: const TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 12,
                                         color: Color(0xFF3E51FF),
                                         fontWeight: FontWeight.bold),
                                   )
@@ -158,18 +163,31 @@ class _RoomDetailsState extends State<RoomDetails> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          const Text('No. of Rooms'),
-                          Text(
-                            '${widget.room.quantity}',
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                              color: Color(0xFF3E51FF),
-                              fontWeight: FontWeight.bold,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'No. of Rooms',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                  ),
+                                ),
+                                Text(
+                                  '${widget.room.quantity}',
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    color: Color(0xFF3E51FF),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 70),
+                      const SizedBox(width: 35),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -181,14 +199,19 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Check-Out'),
+                                  const Text(
+                                    'Check-Out',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                    ),
+                                  ),
                                   Text(
                                     widget.checkOut != null
                                         ? DateFormat('EEE, MMM d, yyyy')
                                             .format(widget.checkOut!)
                                         : '-',
                                     style: const TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 12,
                                         color: Color(0xFF3E51FF),
                                         fontWeight: FontWeight.bold),
                                   )
@@ -197,7 +220,12 @@ class _RoomDetailsState extends State<RoomDetails> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          const Text('Total Points Redeemed'),
+                          const Text(
+                            'Total Points Redeemed',
+                            style: TextStyle(
+                              fontSize: 11,
+                            ),
+                          ),
                           Text(
                             '${totalPoints()}',
                             style: const TextStyle(

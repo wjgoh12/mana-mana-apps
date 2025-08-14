@@ -1061,7 +1061,7 @@ class ContractDetailsContainer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(left: 4, top: 5, bottom: 10),
+                        padding: EdgeInsets.only(left: 4, top: 8, bottom: 10),
                         child: Text(
                           'Contract Type',
                           style: TextStyle(
@@ -1104,7 +1104,7 @@ class ContractDetailsContainer extends StatelessWidget {
                 Row(
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(top: 5, bottom: 10),
+                      padding: EdgeInsets.only(top: 8, bottom: 10),
                       child: Text('Contract End Date',
                           style: TextStyle(
                             fontSize: 9,
@@ -1315,16 +1315,16 @@ class UnitDetailsContainer extends StatelessWidget {
                   height: 125,
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xFF3E51FF).withOpacity(0.15),
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          )
-                        ]),
+                      color: Colors.white,
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF3E51FF).withOpacity(0.15),
+                          blurRadius: 10,
+                          offset: const Offset(0, 0),
+                        ),
+                      ],
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 15),
                       child: Column(
@@ -1355,11 +1355,12 @@ class UnitDetailsContainer extends StatelessWidget {
                               //           fontWeight: FontWeight.bold));
                               // } else
                               if (snapshot.hasError) {
-                                return const Text('Error',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight
-                                            .bold)); // Fix: Removed 'widget.'
+                                return const Text(
+                                  'Error',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                );
                               } else {
                                 return Text(
                                   snapshot.data ?? '',
@@ -1383,22 +1384,22 @@ class UnitDetailsContainer extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 SizedBox(
                   width: 125,
                   height: 125,
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xFF3E51FF).withOpacity(0.15),
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          )
-                        ]),
+                      color: Colors.white,
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xFF3E51FF).withOpacity(0.15),
+                          blurRadius: 10,
+                          offset: const Offset(0, 0),
+                        ),
+                      ],
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 15),
                       child: Column(
@@ -1444,10 +1445,12 @@ class UnitDetailsContainer extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Text('$shortMonth $year',
-                              style: const TextStyle(
-                                fontSize: 10,
-                              )),
+                          Text(
+                            '$shortMonth $year',
+                            style: const TextStyle(
+                              fontSize: 10,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -1459,16 +1462,16 @@ class UnitDetailsContainer extends StatelessWidget {
                   height: 125,
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xFF3E51FF).withOpacity(0.15),
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          ),
-                        ]),
+                      color: Colors.white,
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF3E51FF).withOpacity(0.15),
+                          blurRadius: 10,
+                          offset: const Offset(0, 0),
+                        ),
+                      ],
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 15),
                       child: Column(

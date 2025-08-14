@@ -119,80 +119,90 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     TableRow(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.only(bottom: 10, top: 10),
                           child: Text(
                             'Location',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF3E51FF)),
+                                color: Color(0xFF3E51FF),
+                                fontSize: 13),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.only(bottom: 10, top: 10),
                           child: Text(
                             'Check-In Date',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF3E51FF)),
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF3E51FF),
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.only(bottom: 10, top: 10),
                           child: Text(
                             'Check-Out Date',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF3E51FF),
+                              fontSize: 13,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.only(bottom: 10, top: 10),
                           child: Text(
                             'Points Used',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF3E51FF),
+                              fontSize: 13,
                             ),
                           ),
                         ),
                       ],
                     ),
-
                     TableRow(
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text('Ceylonz 9-11-3'),
+                          child: Text(
+                            'Ceylonz 9-11-3',
+                            style: TextStyle(
+                              fontSize: 11,
+                            ),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text('2023-10-01'),
+                          child: Text(
+                            '2023-10-01',
+                            style: TextStyle(
+                              fontSize: 11,
+                            ),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text('2023-10-05'),
+                          child: Text(
+                            '2023-10-05',
+                            style: TextStyle(
+                              fontSize: 11,
+                            ),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text('1000'),
+                          child: Text(
+                            '1000',
+                            style: TextStyle(
+                              fontSize: 11,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-
-                    //...bookings.map(
-                    // (item) {
-                    // return
-                    //  TableRow(
-                    //   children: [
-                    //     Text(item['location'] ?? ''),
-                    //     Text(item['checkInDate'] ?? ''),
-                    //     Text(item['checkOutDate'] ?? ''),
-                    //     Text(item['pointsUsed']?.toString() ?? ''),
-                    //   ],
-                    // ),
-                    // },
-                    // ),
                   ],
                 ),
               ),
@@ -243,33 +253,34 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
               Text(
                 'Ceylonz 9-11-3',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF3E51FF),
                 ),
               ),
-              SizedBox(width: 30),
+              SizedBox(width: 15),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Available Points',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 11,
                     ),
                   ),
                   SizedBox(height: 5),
                   Text(
                     '14000/20000',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF3E51FF),
                     ),
                   ),
                 ],
               ),
-              Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+              Spacer(),
+              Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 13),
             ],
           ),
         ),
@@ -299,11 +310,24 @@ class BookingHistoryRecord extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(location),
-          // You can add more Text widgets for checkInDate, checkOutDate, pointsUsed if want
-          // For example:
-          Text(checkInDate),
-          Text(checkOutDate),
+          Text(
+            location,
+            style: TextStyle(
+              fontSize: 11,
+            ),
+          ),
+          Text(
+            checkInDate,
+            style: TextStyle(
+              fontSize: 11,
+            ),
+          ),
+          Text(
+            checkOutDate,
+            style: TextStyle(
+              fontSize: 11,
+            ),
+          ),
           Text(pointsUsed),
         ],
       ),

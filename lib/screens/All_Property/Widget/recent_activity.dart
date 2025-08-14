@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
+import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,8 @@ class RecentActivity extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PropertyDetailVM model = PropertyDetailVM();
+
     if (locationByMonth.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(16),
@@ -38,17 +41,16 @@ class RecentActivity extends StatelessWidget {
           (prop) =>
               prop['location'] == item['location'] &&
               prop['unitNo'] == item['unitNo'],
-          orElse: () => item, // fallback
+          orElse: () => item,
         );
-        final owner = ownerData.firstWhere(
-          (o) =>
-              o.location?.trim().toLowerCase() ==
-                  location?.trim().toLowerCase() &&
-              o.unitno?.trim().toLowerCase() == unitNo.trim().toLowerCase(),
-          orElse: () =>
-              OwnerPropertyList(type: '', unitno: 'Unknown Unit', location: ''),
-        );
-
+        // final owner = ownerData.firstWhere(
+        //   (o) =>
+        //       o.location?.trim().toLowerCase() ==
+        //           location?.trim().toLowerCase() &&
+        //       o.unitno?.trim().toLowerCase() == unitNo.trim().toLowerCase(),
+        //   orElse: () =>
+        //       OwnerPropertyList(type: '', unitno: 'Unknown Unit', location: ''),
+        // );
         // final isMobile =
         //     sizingInformation.deviceScreenType == DeviceScreenType.mobile;
         // final width = isMobile ? 370.fSize : 360.fSize;
@@ -81,7 +83,7 @@ class RecentActivity extends StatelessWidget {
             },
             child: Container(
               width: double.infinity,
-              height: 85.fSize,
+              height: 106.fSize,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -103,7 +105,7 @@ class RecentActivity extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Statement for Unit ${owner.unitno} has been issued for $location',
+                          'Statement for Unit ${fullProperty['unitNo']} has been issued for $location',
                           style: TextStyle(
                             fontSize: 11.fSize,
                             color: const Color(0xFF888888),
@@ -122,7 +124,6 @@ class RecentActivity extends StatelessWidget {
                     ),
                   ),
 
-                  // right arrow
                   const SizedBox(width: 8),
                   const Icon(Icons.arrow_forward_ios,
                       size: 16, color: Colors.black54),

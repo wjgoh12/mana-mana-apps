@@ -254,7 +254,7 @@ class PropertyDetailVM extends ChangeNotifier {
       unitLatestMonth = filteredMonths
           .reduce((value, element) => value > element ? value : element);
     } else {
-      unitLatestMonth = 0; // or handle accordingly
+      unitLatestMonth = 0;
     }
 
     selectedUnitBlc = unitByMonth.firstWhere(
@@ -338,7 +338,6 @@ class PropertyDetailVM extends ChangeNotifier {
         ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : '';
 
-    // Update the latest year and month for this specific unit
     var filteredYears = unitByMonth
         .where((unit) =>
             unit.slocation == property &&

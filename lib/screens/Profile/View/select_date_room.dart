@@ -121,7 +121,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             ),
             const SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +202,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 1,
+                childAspectRatio: 0.9,
               ),
               itemCount: roomTypes.length,
               itemBuilder: (context, index) {

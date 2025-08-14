@@ -6,15 +6,15 @@ class UserRepository {
   final ApiService _apiService = ApiService();
 
   Future<List<User>> getUsers() async {
-    return await _apiService.post(ApiEndpoint.ownerUserData).then((res) {
-      try {
-        return [User.fromJson(res)];
-      } catch (e) {
-        // print("Error parsing user data: $e");
-        return [];
-      }
-    });
+    return await _apiService.post(ApiEndpoint.ownerUserData).then(
+      (res) {
+        try {
+          return [User.fromJson(res)];
+        } catch (e) {
+          // print("Error parsing user data: $e");
+          return [];
+        }
+      },
+    );
   }
-
-  
 }
