@@ -60,6 +60,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Select Date and Room'),
       ),
@@ -211,7 +212,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     onTap: () {
                       if (_rangeStart == null || _rangeEnd == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text(
                               'Please select both Check-in and Check-out dates before proceeding.',
                             ),
