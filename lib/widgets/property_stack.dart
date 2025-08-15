@@ -109,18 +109,6 @@ class PropertyStack extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Positioned(
-                      //   top:30,
-                      //   right:30,
-                      //   child:SizedBox(
-                      //     child:InkWell(
-                      //       //_togglePin(),
-                      //       child:Image.asset('assets/images/Pin.png'),
-                      //     ),
-                      //   )
-                      // ),
-
-                      // Overlay small label on pic
                       Positioned(
                         top: (containerHeight - smallcontainerHeight) / 2,
                         left: (containerWidth - smallcontainerWidth) / 2,
@@ -297,7 +285,7 @@ class PropertyStack extends StatelessWidget {
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                 ),
-                              ), //totalNetAfterPob
+                              ),
                             ],
                           ),
                         ),

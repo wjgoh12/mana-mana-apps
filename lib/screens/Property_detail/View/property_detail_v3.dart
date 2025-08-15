@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/Widget/occupancy_percent_text.dart';
+import 'package:mana_mana_app/widgets/occupancy_text.dart';
+import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/typeunit_selection_dropdown.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
-import 'package:provider/provider.dart';
 
 class property_detail_v3 extends StatefulWidget {
   final List<Map<String, dynamic>> locationByMonth;
@@ -46,8 +48,18 @@ class _property_detail_v3State extends State<property_detail_v3> {
     model = PropertyDetailVM();
     model2 = NewDashboardVM_v3();
 
+    print('PropertyDetailV3: initState called');
+    print('PropertyDetailV3: locationByMonth length: ${widget.locationByMonth.length}');
+
     if (widget.locationByMonth.isNotEmpty) {
+      print('PropertyDetailV3: Calling model.fetchData');
       model.fetchData(widget.locationByMonth);
+    }
+
+    // Load occupancy data for the dashboard view model
+    if (widget.locationByMonth.isNotEmpty) {
+      print('PropertyDetailV3: Calling model2.fetchData');
+      model2.fetchData();
     }
 
 // Only update selectedView if initialTab is provided
@@ -64,9 +76,11 @@ class _property_detail_v3State extends State<property_detail_v3> {
     //model.updateSelectedView('UnitDetails');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final model2 = Provider.of<NewDashboardVM_v3>(context, listen: false);
-      model2.getAverageOccupancyByLocation(
-          widget.locationByMonth.first['location'] ?? '');
+      if (widget.locationByMonth.isNotEmpty) {
+        print('PropertyDetailV3: Post frame callback - calling getAverageOccupancyByLocation');
+        model2.getAverageOccupancyByLocation(
+            widget.locationByMonth.first['location'] ?? '');
+      }
     });
 
     _scrollController.addListener(_onScroll);
@@ -179,231 +193,238 @@ class _property_detail_v3State extends State<property_detail_v3> {
       );
     }
 
-    return ListenableBuilder(
-      listenable: model,
-      builder: (context, child) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          body: Stack(
-            children: [
-              if (isFullScreenEstatement)
-                Container(
-                  color: Colors.white,
-                  child: SafeArea(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 50.fSize,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border(
-                              bottom: BorderSide(
-                                  color: Colors.grey.shade300, width: 1),
+    return ChangeNotifierProvider<NewDashboardVM_v3>(
+      create: (_) => model2,
+      child: ListenableBuilder(
+        listenable: model,
+        builder: (context, child) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            body: Stack(
+              children: [
+                if (isFullScreenEstatement)
+                  Container(
+                    color: Colors.white,
+                    child: SafeArea(
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 50.fSize,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border(
+                                bottom: BorderSide(
+                                    color: Colors.grey.shade300, width: 1),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.shade300,
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade300,
-                                blurRadius: 10,
-                                offset: const Offset(0, 1),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: _toggleFullScreenEstatement,
+                                  icon: const Icon(Icons.close),
+                                ),
+                                const Text(
+                                  'eStatements',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const Spacer(),
+                                const Text('Year'),
+                                const SizedBox(width: 8),
+                                DropdownButton2<String>(
+                                  value: model.selectedYearValue,
+                                  hint: const Text('Select Year'),
+                                  items: model.yearItems
+                                      .map((year) => DropdownMenuItem(
+                                            value: year,
+                                            child: Text(year),
+                                          ))
+                                      .toList(),
+                                  onChanged: (val) {
+                                    if (val != null) {
+                                      model.updateSelectedYear(val);
+                                    }
+                                  },
+                                ),
+                                const SizedBox(width: 16),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: EStatementContainer(model: model),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (!isFullScreenEstatement)
+                  CustomScrollView(
+                    controller: _scrollController,
+                    physics: model.selectedView == 'Overview'
+                        ? const NeverScrollableScrollPhysics() // Lock scroll for Overview
+                        : const AlwaysScrollableScrollPhysics(), // Allow scroll for UnitDetails
+                    slivers: [
+                      SliverAppBar(
+                        automaticallyImplyLeading: false,
+                        expandedHeight: 290.fSize,
+                        pinned: true,
+                        backgroundColor: Colors.white,
+                        flexibleSpace: FlexibleSpaceBar(
+                          background: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              widget.locationByMonth.first['location'] != null
+                                  ? Image.asset(
+                                      'assets/images/${widget.locationByMonth.first['location'].toString().toUpperCase()}.png',
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          color: Colors.grey.shade300,
+                                          child: const Center(
+                                            child: Icon(
+                                                Icons.image_not_supported,
+                                                size: 64),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : Container(
+                                      color: Colors.grey.shade300,
+                                      child: const Center(
+                                        child: Icon(Icons.image_not_supported,
+                                            size: 64),
+                                      ),
+                                    ),
+                              Positioned(
+                                top: 30,
+                                left: 10,
+                                child: IconButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  icon: Image.asset(
+                                      'assets/images/GroupBack.png'),
+                                ),
                               ),
                             ],
                           ),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: Container(
+                          key: _originalDropdownKey,
+                          decoration: const BoxDecoration(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                            color: Colors.white,
+                          ),
+                          padding: EdgeInsets.only(top: 30.fSize),
+                          child: Column(
+                            children: [
+                              Text(
+                                widget.locationByMonth.first['location']
+                                        ?.toString() ??
+                                    'Unknown Property',
+                                style: const TextStyle(fontSize: 30),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset('assets/images/map_pin.png',
+                                      width: 14.fSize, height: 17.fSize),
+                                  Text(model.locationRoad),
+                                ],
+                              ),
+                              SizedBox(height: 10.fSize),
+                              OptimizedPropertyDropdown(
+                                model: model,
+                                width: 370.fSize,
+                              ),
+                              SizedBox(height: 10.fSize),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: model.selectedView == 'Overview'
+                            ? PropertyOverviewContainer(
+                                model: model,
+                                model2: model2,
+                                locationByMonth: widget.locationByMonth)
+                            : UnitDetailsContainer(model: model),
+                      ),
+                      SliverPadding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.height * 1.5),
+                      ),
+                    ],
+                  ),
+                if (!isFullScreenEstatement) ...[
+                  if (isCollapsed)
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        height: 110.fSize,
+                        child: SafeArea(
+                          bottom: false,
                           child: Row(
                             children: [
                               IconButton(
-                                onPressed: _toggleFullScreenEstatement,
-                                icon: const Icon(Icons.close),
-                              ),
-                              const Text(
-                                'eStatements',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              const Spacer(),
-                              const Text('Year'),
-                              const SizedBox(width: 8),
-                              DropdownButton2<String>(
-                                value: model.selectedYearValue,
-                                hint: const Text('Select Year'),
-                                items: model.yearItems
-                                    .map((year) => DropdownMenuItem(
-                                          value: year,
-                                          child: Text(year),
-                                        ))
-                                    .toList(),
-                                onChanged: (val) {
-                                  if (val != null) {
-                                    model.updateSelectedYear(val);
-                                  }
-                                },
-                              ),
-                              const SizedBox(width: 16),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: EStatementContainer(model: model),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              if (!isFullScreenEstatement)
-                CustomScrollView(
-                  controller: _scrollController,
-                  physics: model.selectedView == 'Overview'
-                      ? const NeverScrollableScrollPhysics() // Lock scroll for Overview
-                      : const AlwaysScrollableScrollPhysics(), // Allow scroll for UnitDetails
-                  slivers: [
-                    SliverAppBar(
-                      automaticallyImplyLeading: false,
-                      expandedHeight: 290.fSize,
-                      pinned: true,
-                      backgroundColor: Colors.white,
-                      flexibleSpace: FlexibleSpaceBar(
-                        background: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            widget.locationByMonth.first['location'] != null
-                                ? Image.asset(
-                                    'assets/images/${widget.locationByMonth.first['location'].toString().toUpperCase()}.png',
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        color: Colors.grey.shade300,
-                                        child: const Center(
-                                          child: Icon(Icons.image_not_supported,
-                                              size: 64),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Container(
-                                    color: Colors.grey.shade300,
-                                    child: const Center(
-                                      child: Icon(Icons.image_not_supported,
-                                          size: 64),
-                                    ),
-                                  ),
-                            Positioned(
-                              top: 30,
-                              left: 10,
-                              child: IconButton(
                                 onPressed: () => Navigator.of(context).pop(),
                                 icon:
                                     Image.asset('assets/images/GroupBack.png'),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Property(s)',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    SliverToBoxAdapter(
-                      child: Container(
-                        key: _originalDropdownKey,
-                        decoration: const BoxDecoration(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                          color: Colors.white,
-                        ),
-                        padding: EdgeInsets.only(top: 30.fSize),
-                        child: Column(
-                          children: [
-                            Text(
-                              widget.locationByMonth.first['location']
-                                      ?.toString() ??
-                                  'Unknown Property',
-                              style: const TextStyle(fontSize: 30),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset('assets/images/map_pin.png',
-                                    width: 14.fSize, height: 17.fSize),
-                                Text(model.locationRoad),
-                              ],
-                            ),
-                            SizedBox(height: 10.fSize),
-                            OptimizedPropertyDropdown(
-                              model: model,
-                              width: 370.fSize,
-                            ),
-                            SizedBox(height: 10.fSize),
-                          ],
-                        ),
+                  if (showStickyDropdown)
+                    Positioned(
+                      top: isCollapsed ? 85.fSize : 0,
+                      left: 0,
+                      right: 0,
+                      child: StickyDropdownBar(
+                        model: model,
+                        locationByMonth: widget.locationByMonth,
                       ),
                     ),
-                    SliverToBoxAdapter(
-                      child: model.selectedView == 'Overview'
-                          ? PropertyOverviewContainer(
-                              model: model,
-                              model2: model2,
-                              locationByMonth: widget.locationByMonth)
-                          : UnitDetailsContainer(model: model),
-                    ),
-                    SliverPadding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 1.5),
-                    ),
-                  ],
-                ),
-              if (!isFullScreenEstatement) ...[
-                if (isCollapsed)
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                      ),
-                      height: 110.fSize,
-                      child: SafeArea(
-                        bottom: false,
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              icon: Image.asset('assets/images/GroupBack.png'),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Property(s)',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                  if (showStickyEstatement)
+                    Positioned(
+                      top: _calculateStickyEstatementTop(),
+                      left: 0,
+                      right: 0,
+                      child: StickyEstatementBar(
+                        onBack: () => Navigator.pop(context),
+                        onFullScreen: _toggleFullScreenEstatement,
+                        yearOptions: model.yearItems,
+                        model: model,
                       ),
                     ),
-                  ),
-                if (showStickyDropdown)
-                  Positioned(
-                    top: isCollapsed ? 85.fSize : 0,
-                    left: 0,
-                    right: 0,
-                    child: StickyDropdownBar(
-                      model: model,
-                      locationByMonth: widget.locationByMonth,
-                    ),
-                  ),
-                if (showStickyEstatement)
-                  Positioned(
-                    top: _calculateStickyEstatementTop(),
-                    left: 0,
-                    right: 0,
-                    child: StickyEstatementBar(
-                      onBack: () => Navigator.pop(context),
-                      onFullScreen: _toggleFullScreenEstatement,
-                      yearOptions: model.yearItems,
-                      model: model,
-                    ),
-                  ),
+                ],
               ],
-            ],
-          ),
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -813,35 +834,16 @@ class PropertyOverviewContainer extends StatelessWidget {
                           fontSize: 12,
                         ),
                       ),
-                      FutureBuilder<String>(
-                        future: model2.getAverageOccupancyByLocation(
-                          locationByMonth.isNotEmpty
-                              ? locationByMonth.first['location'] ?? ''
-                              : '',
-                        ),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Text(
-                              'Loading...',
-                              style: TextStyle(fontSize: 12),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text(
-                              'Error',
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.red),
-                            );
-                          } else {
-                            return Text(
-                              '${snapshot.data ?? '0'}%',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            );
-                          }
+                      // Use Consumer instead of ListenableBuilder for better reactivity
+                      Consumer<NewDashboardVM_v3>(
+                        builder: (context, dashboardVM, child) {
+                          return OccupancyText(
+                            location: locationByMonth.first['location'],
+                            unitNo: null,
+                            showTotal: true,
+                            showPercentageOnly: true,
+                            viewModel: dashboardVM,
+                          );
                         },
                       ),
                       Text(
@@ -1581,8 +1583,8 @@ class _EStatementContainerState extends State<EStatementContainer> {
       builder: (context, child) {
         if (_lastPrintedValue != widget.model.selectedYearValue) {
           _lastPrintedValue = widget.model.selectedYearValue;
-          print(
-              'selectedYearValue changed to: ${widget.model.selectedYearValue}');
+          // print(
+          //     'selectedYearValue changed to: ${widget.model.selectedYearValue}');
         }
 
         if (widget.model.isDateLoading) {

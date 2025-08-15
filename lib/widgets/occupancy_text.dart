@@ -6,12 +6,16 @@ class OccupancyText extends StatefulWidget {
   final String? location;
   final String? unitNo;
   final bool showTotal;
+  final bool showPercentageOnly;
+  final NewDashboardVM_v3? viewModel;
 
   const OccupancyText({
     super.key,
     this.location,
     this.unitNo,
     this.showTotal = false,
+    this.showPercentageOnly = false,
+    this.viewModel,
   });
 
   @override
@@ -19,58 +23,94 @@ class OccupancyText extends StatefulWidget {
 }
 
 class _OccupancyTextState extends State<OccupancyText> {
-  String _occupancyRate = '0';
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadOccupancy();
-    });
-  }
-
-  Future<void> _loadOccupancy() async {
-    if (!mounted) return;
-
-    try {
-      final viewModel = context.read<NewDashboardVM_v3>();
-      String occupancy;
-
-      if (widget.showTotal) {
-        occupancy = viewModel.getTotalOccupancyRate();
-      } else if (widget.location != null && widget.unitNo != null) {
-        occupancy =
-            await viewModel.getUnitOccupancy(widget.location!, widget.unitNo!);
-      } else if (widget.location != null) {
-        occupancy = viewModel.getOccupancyByLocation(widget.location!);
-      } else {
-        occupancy = viewModel.getTotalOccupancyRate();
-      }
-
-      if (mounted) {
-        setState(() {
-          _occupancyRate = occupancy;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _occupancyRate = '0';
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Text('Loading...', style: TextStyle(fontSize: 8));
-    }
+    final viewModel = widget.viewModel ?? context.read<NewDashboardVM_v3>();
 
-    return Text('($_occupancyRate% Occupancy)',
-        style: const TextStyle(fontSize: 8));
+    // print('OccupancyText: build called');
+    // print('OccupancyText: viewModel provided: ${widget.viewModel != null}');
+    // print('OccupancyText: viewModel from context: ${viewModel != null}');
+    // print('OccupancyText: viewModel.isLoading: ${viewModel.isLoading}');
+    // print('OccupancyText: viewModel.propertyOccupancy: ${viewModel.propertyOccupancy}');
+
+    return ListenableBuilder(
+      listenable: viewModel,
+      builder: (context, child) {
+        String occupancy;
+
+        // print('OccupancyText: ListenableBuilder rebuild');
+        // print('OccupancyText: viewModel.isLoading: ${viewModel.isLoading}');
+        // print(
+        //     'OccupancyText: viewModel.propertyOccupancy: ${viewModel.propertyOccupancy}');
+
+        try {
+          if (widget.showTotal) {
+            occupancy = viewModel.getTotalOccupancyRate();
+            // print(
+            //     'OccupancyText: showTotal=true, occupancy=$occupancy, isLoading=${viewModel.isLoading}');
+          } else if (widget.location != null && widget.unitNo != null) {
+            // For unit-specific occupancy, we need to handle async
+            return FutureBuilder<String>(
+              future:
+                  viewModel.getUnitOccupancy(widget.location!, widget.unitNo!),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text('Loading...',
+                      style: TextStyle(fontSize: 8));
+                }
+                if (snapshot.hasError) {
+                  return const Text('Error', style: TextStyle(fontSize: 8));
+                }
+
+                final unitOccupancy = snapshot.data ?? '0';
+                // print('OccupancyText: Unit occupancy=$unitOccupancy');
+
+                if (widget.showPercentageOnly) {
+                  return Text('$unitOccupancy%',
+                      style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black));
+                }
+
+                return Text('($unitOccupancy% Occupancy)',
+                    style: const TextStyle(fontSize: 8));
+              },
+            );
+          } else if (widget.location != null) {
+            occupancy = viewModel.getOccupancyByLocation(widget.location!);
+            // print(
+            //     'OccupancyText: location=${widget.location}, occupancy=$occupancy');
+          } else {
+            occupancy = viewModel.getTotalOccupancyRate();
+            // print('OccupancyText: no location/unit, occupancy=$occupancy');
+          }
+
+          // Check if data is still loading
+          if (viewModel.isLoading || occupancy == '0' || occupancy.isEmpty) {
+            // print(
+            //     'OccupancyText: Showing loading, isLoading=${viewModel.isLoading}, occupancy=$occupancy');
+            return const Text('0.0%', style: TextStyle(fontSize: 12));
+          }
+
+          // print(
+          //     'OccupancyText: Final occupancy=$occupancy, showPercentageOnly=${widget.showPercentageOnly}');
+
+          if (widget.showPercentageOnly) {
+            return Text('$occupancy%',
+                style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black));
+          }
+
+          return Text('($occupancy% Occupancy)',
+              style: const TextStyle(fontSize: 8));
+        } catch (e) {
+          print('OccupancyText: Error occurred: $e');
+          return const Text('0.0%', style: TextStyle(fontSize: 12));
+        }
+      },
+    );
   }
 }
