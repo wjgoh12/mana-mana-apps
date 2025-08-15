@@ -702,6 +702,28 @@ class PropertyOverviewContainer extends StatelessWidget {
       required this.model2,
       required this.locationByMonth});
 
+  // Helper method to calculate total Monthly Profit for the property
+  double _getTotalMonthlyProfit() {
+    if (model.unitByMonth.isEmpty) return 0.0;
+    
+    return model.unitByMonth
+        .where((unit) => 
+            unit.slocation == locationByMonth.first['location'] &&
+            unit.stranscode == 'NOPROF')
+        .fold(0.0, (sum, unit) => sum + (unit.total ?? 0.0));
+  }
+
+  // Helper method to calculate total Net After POB for the property
+  double _getTotalNetAfterPOB() {
+    if (model.unitByMonth.isEmpty) return 0.0;
+    
+    return model.unitByMonth
+        .where((unit) => 
+            unit.slocation == locationByMonth.first['location'] &&
+            unit.stranscode == 'OWNBAL')
+        .fold(0.0, (sum, unit) => sum + (unit.total ?? 0.0));
+  }
+
   @override
   Widget build(BuildContext context) {
     String monthNumberToName(int month) {
@@ -729,11 +751,6 @@ class PropertyOverviewContainer extends StatelessWidget {
     DateTime now = DateTime.now();
     String shortMonth = monthNumberToName(now.month);
     String year = now.year.toString();
-    double getTotalNetAfterPOB() {
-      return model.unitByMonth
-          .where((unit) => unit.slocation == model.property)
-          .fold(0.0, (sum, unit) => sum + (model.selectedUnitBlc ?? 0.0));
-    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -910,8 +927,9 @@ class PropertyOverviewContainer extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text:
-                                  '${model.locationByMonth.first['total'] ?? ''}',
+                              text: model.selectedView == 'Overview' 
+                                  ? '${_getTotalMonthlyProfit().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}'
+                                  : '${model.selectedUnitPro?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -980,8 +998,9 @@ class PropertyOverviewContainer extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text:
-                                  '${model.locationByMonth.first['total'] ?? ''}',
+                              text: model.selectedView == 'Overview' 
+                                  ? '${_getTotalNetAfterPOB().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}'
+                                  : '${model.selectedUnitBlc?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -1161,7 +1180,9 @@ class UnitDetailsContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final totalPro = model.selectedUnitPro?.total ?? 0.0;
     final formattedTotalPro = totalPro.toStringAsFixed(2).replaceAllMapped(
-        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
 
     final totalBlc = model.selectedUnitBlc?.total ?? 0.0;
     final formattedTotalBlc = totalBlc.toStringAsFixed(2).replaceAllMapped(
