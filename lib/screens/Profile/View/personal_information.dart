@@ -125,8 +125,12 @@ class _PersonalInformationState extends State<PersonalInformation> {
 }
 
 Widget _buildData({required String data}) {
-  return Text(
-    data,
-    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+  return SizedBox(
+    width: 200,
+    child: Text(
+      data,
+      maxLines: 2,
+      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+    ),
   );
 }

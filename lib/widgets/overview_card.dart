@@ -251,107 +251,134 @@ class OverviewCard extends StatelessWidget {
             child: Column(
               children: [
                 //3rd
+//3rd
                 Card(
                   margin: const EdgeInsets.only(bottom: 20),
                   color: const Color(0xFF9EEAFF),
                   child: SizedBox(
-                      width: 190.fSize,
-                      height: 83.fSize,
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: CircleAvatar(
-                                radius: 23.fSize,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  'assets/images/OverviewMonthlyProfit.png',
-                                  width: 30.fSize,
-                                  height: 28.fSize,
-                                )),
+                    width: 190.fSize,
+                    height: 83.fSize,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: CircleAvatar(
+                            radius: 23.fSize,
+                            backgroundColor: Colors.white,
+                            child: Image.asset(
+                              'assets/images/OverviewMonthlyProfit.png',
+                              width: 30.fSize,
+                              height: 28.fSize,
+                            ),
                           ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(left: 10, top: 10),
-                                child: Text(
-                                  'Monthly Profit',
-                                  style: TextStyle(
-                                      fontSize: 10.0,
-                                      fontFamily: 'Open Sans',
-                                      fontWeight: FontWeight.normal),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 10, top: 10),
+                              child: Text(
+                                'Monthly Profit',
+                                style: TextStyle(
+                                  fontSize: 10.0,
+                                  fontFamily: 'Open Sans',
+                                  fontWeight: FontWeight.normal,
                                 ),
                               ),
-                              ...model.monthlyBlcOwner.map((entry) {
-                                final year = entry['year'];
-                                final month = entry['month'];
-                                final profitEntry =
-                                    model.monthlyProfitOwner.firstWhere(
-                                  (profit) =>
-                                      profit['year'] == year &&
-                                      profit['month'] == month,
-                                  orElse: () => {'total': 0.00},
-                                );
-                                double totalProfit = 0.0;
-                                String formatted = '';
-                                totalProfit += profitEntry['total'];
-                                formatted = totalProfit
-                                    .toStringAsFixed(2)
-                                    .replaceAllMapped(
-                                      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                      (m) => '${m[1]},',
-                                    );
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        WidgetSpan(
-                                          alignment:
-                                              PlaceholderAlignment.baseline,
-                                          baseline: TextBaseline.alphabetic,
-                                          child: Transform.translate(
-                                            offset: const Offset(0, -4),
-                                            child: const Text(
-                                              'RM',
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                fontFamily: 'Open Sans',
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
+                            ),
+                            Builder(
+                              builder: (context) {
+                                if (model.monthlyBlcOwner.isNotEmpty) {
+                                  // Get the latest month entry (assuming list is sorted newest first)
+                                  final latestEntry =
+                                      model.monthlyBlcOwner.first;
+                                  final year = latestEntry['year'];
+                                  final month = latestEntry['month'];
+
+                                  final profitEntry =
+                                      model.monthlyProfitOwner.firstWhere(
+                                    (profit) =>
+                                        profit['year'] == year &&
+                                        profit['month'] == month,
+                                    orElse: () => {'total': 0.00},
+                                  );
+
+                                  final totalProfit =
+                                      (profitEntry['total'] ?? 0.0).toDouble();
+                                  final formatted = totalProfit
+                                      .toStringAsFixed(2)
+                                      .replaceAllMapped(
+                                        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                                        (m) => '${m[1]},',
+                                      );
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          WidgetSpan(
+                                            alignment:
+                                                PlaceholderAlignment.baseline,
+                                            baseline: TextBaseline.alphabetic,
+                                            child: Transform.translate(
+                                              offset: const Offset(0, -4),
+                                              child: const Text(
+                                                'RM',
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  fontFamily: 'Open Sans',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        TextSpan(
-                                          text: formatted,
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            fontFamily: 'Open Sans',
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
+                                          TextSpan(
+                                            text: formatted,
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontFamily: 'Open Sans',
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Text(
-                                  '$shortMonth $year',
-                                  style: const TextStyle(
-                                      fontSize: 8.0,
-                                      fontStyle: FontStyle.normal),
+                                  );
+                                } else {
+                                  return const Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      'RM0.00',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontFamily: 'Open Sans',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(
+                                '$shortMonth $year',
+                                style: const TextStyle(
+                                  fontSize: 8.0,
+                                  fontStyle: FontStyle.normal,
                                 ),
                               ),
-                            ],
-                          )
-                        ],
-                      )),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
 
                 //4th

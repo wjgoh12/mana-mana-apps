@@ -26,7 +26,9 @@ class PropertyListV3 extends StatelessWidget {
       );
     }
 
-    return model.locationByMonth.isEmpty
+    List<Map<String, dynamic>> sequencedProperties =
+        _getPropertiesSequencedByLatestTransactions();
+    return sequencedProperties.isEmpty
         ? Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -40,23 +42,26 @@ class PropertyListV3 extends StatelessWidget {
         : SizedBox(
             height: 450.fSize,
             child: ListView(
-              scrollDirection: Axis.horizontal,
-              // shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              children: [
-                ...model.locationByMonth
-                    .where((property) => property['year'] == latestYear)
-                    .toList()
-                  ..sort((a, b) => (b['month'] as int).compareTo(
-                      a['month'] as int)) // 👈 sort by month descending
-              ]
-                  .expand((property) => [
-                        PropertyImageStack(locationByMonth: [property]),
-                        const SizedBox(width: 20),
-                      ])
-                  .toList(),
-              // ViewAllProperty(model: model),
-            ),
+                scrollDirection: Axis.horizontal,
+                // shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  //   ...model.locationByMonth
+                  //       .where((property) => property['year'] == latestYear)
+                  //       .toList()
+                  //     ..sort((a, b) =>
+                  //         (b['month'] as int).compareTo(a['month'] as int))
+                  // ]
+                  //     .expand((property) => [
+                  //           PropertyImageStack(locationByMonth: [property]),
+                  //           const SizedBox(width: 20),
+                  //         ])
+                  //     .toList(),
+                  // ViewAllProperty(model: model),
+                  ...sequencedProperties.map((property) => PropertyImageStack(
+                        locationByMonth: [property],
+                      )),
+                ]),
             // ),
           );
   }
@@ -69,6 +74,46 @@ class PropertyListV3 extends StatelessWidget {
       .where((e) => e['year'] == latestYear)
       .map((e) => e['month'] as int)
       .reduce((a, b) => a > b ? a : b);
+
+  /// Get all properties belonging to the owner, sequenced by latest transactions (left to right)
+  List<Map<String, dynamic>> _getPropertiesSequencedByLatestTransactions() {
+    if (model.locationByMonth.isEmpty) {
+      return [];
+    }
+
+    final Map<String, List<Map<String, dynamic>>> propertiesByLocation = {};
+
+    for (final property in model.locationByMonth) {
+      final location = property['location'];
+      if (!propertiesByLocation.containsKey(location)) {
+        propertiesByLocation[location] = [];
+      }
+      propertiesByLocation[location]!.add(property);
+    }
+
+    final Map<String, Map<String, dynamic>> latestTransactionByLocation = {};
+
+    propertiesByLocation.forEach((location, properties) {
+      properties.sort((a, b) {
+        final aDate = a['year'] * 100 + a['month'];
+        final bDate = b['year'] * 100 + b['month'];
+        return bDate.compareTo(aDate);
+      });
+
+      latestTransactionByLocation[location] = properties.first;
+    });
+
+    final List<Map<String, dynamic>> sequencedProperties =
+        latestTransactionByLocation.values.toList();
+
+    sequencedProperties.sort((a, b) {
+      final aDate = a['year'] * 100 + a['month'];
+      final bDate = b['year'] * 100 + b['month'];
+      return bDate.compareTo(aDate); // Latest first (left to right)
+    });
+
+    return sequencedProperties;
+  }
 }
 
 class PropertyImageStack extends StatelessWidget {

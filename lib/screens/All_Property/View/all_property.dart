@@ -86,46 +86,32 @@ class AllPropertyScreen extends StatelessWidget {
     required BuildContext context,
     required NewDashboardVM_v3 model,
   }) {
-    final latestMonth = model.unitLatestMonth;
-    final latestYear = model.locationByMonth
-        .map((p) => p['year'])
-        .reduce((a, b) => a > b ? a : b);
+    // Group by location & pick latest month/year
+    final Map<String, Map<String, dynamic>> latestByLocation = {};
 
-    final latestLocationByMonth = model.locationByMonth
-        .where((p) => p['year'] == latestYear && p['month'] == latestMonth)
-        .toList();
-
-    //print("Filtered data passed to PropertyStack:");
-    for (var item in latestLocationByMonth) {
-      print(
-          "Location: ${item['location']}, Month: ${item['month']}, Owners: ${item['owners']}, TotalUnits: ${item['totalUnits']}");
+    for (var property in model.locationByMonth) {
+      final location = property['location'] as String;
+      if (!latestByLocation.containsKey(location)) {
+        latestByLocation[location] = property;
+      } else {
+        final existing = latestByLocation[location]!;
+        final isNewer = (property['year'] > existing['year']) ||
+            (property['year'] == existing['year'] &&
+                property['month'] > existing['month']);
+        if (isNewer) {
+          latestByLocation[location] = property;
+        }
+      }
     }
-    // print("locationByMonth length: ${model.locationByMonth.length}");
 
-    // String locationRoad = '';
-    // switch (locationByMonth[0]['location'].toUpperCase()) {
-    //   case "EXPRESSIONZ":
-    //     locationRoad = "Jalan Tun Razak";
-    //     break;
-    //   case "CEYLONZ":
-    //     locationRoad = "Persiaran Raja Chulan";
-    //     break;
-    //   case "SCARLETZ":
-    //     locationRoad = "Jalan Yap Kwan Seng";
-    //     break;
-    //   case "MILLERZ":
-    //     locationRoad = "Old Klang Road";
-    //     break;
-    //   case "MOSSAZ":
-    //     locationRoad = "Empire City";
-    //     break;
-    //   case "PAXTONZ":
-    //     locationRoad = "Empire City";
-    //     break;
-    //   default:
-    //     locationRoad = "";
-    //     break;
-    // }
+    // Convert to list & sort by newest first
+    final latestProperties = latestByLocation.values.toList()
+      ..sort((a, b) {
+        final yearDiff = (b['year'] as int).compareTo(a['year'] as int);
+        if (yearDiff != 0) return yearDiff;
+        return (b['month'] as int).compareTo(a['month'] as int);
+      });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -133,38 +119,13 @@ class AllPropertyScreen extends StatelessWidget {
         ListView(
           shrinkWrap: true,
           padding: const EdgeInsets.only(left: 30),
-
-          scrollDirection: Axis.vertical,
-
-          // shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
-          children: [
-            // ...model.locationByMonth
-            //     .where((property) =>
-            //         property['year'] ==
-            //             model.locationByMonth
-            //                 .map((p) => p['year'])
-            //                 .reduce((a, b) => a > b ? a : b) &&
-            //         property['month'] == model.unitLatestMonth)
-            //     .expand((property) => [
-            //           PropertyImageStack(
-            //             locationByMonth: [property],
-            //           ),
-            //           const SizedBox(width: 20),
-            //         ])
-
-            ...model.locationByMonth
-                .where((property) => property['year'] == latestYear)
-                .toList()
-              ..sort((a, b) => (b['month'] as int)
-                  .compareTo(a['month'] as int)) // 👈 sort by month descending
-          ]
+          children: latestProperties
               .expand((property) => [
                     PropertyStack(locationByMonth: [property]),
                     const SizedBox(width: 20),
                   ])
               .toList(),
-          // ViewAllProperty(model: model),
         ),
       ],
     );
