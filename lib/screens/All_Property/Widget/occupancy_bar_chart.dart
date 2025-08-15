@@ -140,10 +140,11 @@ class OccupancyBarChart extends StatelessWidget {
                 final percentage = barSpot.y * 20;
                 final index = barSpot.spotIndex;
                 String label = '';
+                final xValue = barSpot.x;
 
                 switch (period) {
                   case 'Monthly':
-                    switch (index) {
+                    switch (xValue.toInt()) {
                       case 2:
                         label = 'SEPT';
                         break;
