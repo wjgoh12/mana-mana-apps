@@ -18,6 +18,17 @@ class OwnerProfile_v3 extends StatelessWidget {
   Widget build(BuildContext context) {
     final OwnerProfileVM model = OwnerProfileVM();
     model.fetchData();
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) =>
+        (value / 375.0) * screenWidth; // base width
+    double responsiveHeight(double value) =>
+        (value / 812.0) * screenHeight; // base height
+    double responsiveFont(double value) =>
+        (value / 812.0) * screenHeight; // font scaling
+
     return ListenableBuilder(
         listenable: model,
         builder: (context, child) {
@@ -45,7 +56,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                           text: 'Profile',
                           style: TextStyle(
                             fontFamily: 'Open Sans',
-                            fontSize: 20.fSize,
+                            fontSize: responsiveFont(20),
                             fontWeight: FontWeight.w800,
                           ),
                           gradient: const LinearGradient(
@@ -58,12 +69,13 @@ class OwnerProfile_v3 extends StatelessWidget {
                 ),
               ),
               body: Padding(
-                padding: const EdgeInsets.only(bottom: 100),
+                padding: EdgeInsets.only(bottom: responsiveHeight(100)),
                 child: Container(
                   decoration: const BoxDecoration(color: Colors.white),
                   child: SingleChildScrollView(
                       child: Padding(
-                    padding: const EdgeInsets.only(left: 10, top: 15),
+                    padding: EdgeInsets.only(
+                        left: responsiveWidth(10), top: responsiveHeight(15)),
                     child: Column(children: [
                       DecoratedBox(
                         decoration: const BoxDecoration(
@@ -72,7 +84,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                         child: Row(
                           children: [
                             CircleAvatar(
-                              radius: 30, // circle radius
+                              radius: 30,
                               backgroundColor: const Color(0xFFF5F5FF),
                               child: Image.asset(
                                 'assets/images/Group.png',
@@ -88,7 +100,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                                     ? Text(
                                         model.users.first.ownerFullName ?? '',
                                         style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: responsiveFont(20),
                                           fontWeight: FontWeight.bold,
                                           foreground: Paint()
                                             ..shader = const LinearGradient(
@@ -131,8 +143,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                           child: Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 8.0, bottom: 8.0, left: 8.0),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 8.0),
                                 child: CircleAvatar(
                                   radius: 20,
                                   backgroundColor: const Color(0xFFF9F8FF),

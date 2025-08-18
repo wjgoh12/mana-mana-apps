@@ -27,13 +27,6 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
     _initFuture = _initializeData();
   }
 
-  // @override
-  // void dispose() {
-  //   _model.dispose();
-  //   _model2.dispose();
-  //   super.dispose();
-  // }
-
   Future<void> _initializeData() async {
     print('refetching data...');
     await _model.fetchData();
@@ -45,38 +38,58 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
       create: (_) => _model,
       child: Consumer<NewDashboardVM_v3>(
         builder: (context, model, child) {
-          return Scaffold(
-            backgroundColor: Colors.white,
-            appBar: propertyAppBar(
-              context,
-              () => Navigator.of(context).pop(),
-            ),
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.only(left: 15, top: 5, right: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              // Screen width and height
+              final screenWidth = constraints.maxWidth;
+              final screenHeight = constraints.maxHeight;
+
+              // Scale factors
+              double padding = screenWidth * 0.04; // ~4% of width
+              double smallGap = screenHeight * 0.015;
+              double mediumGap = screenHeight * 0.02;
+
+              return Scaffold(
+                backgroundColor: Colors.white,
+                appBar: propertyAppBar(
+                  context,
+                  () => Navigator.of(context).pop(),
+                ),
+                body: SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    left: padding,
+                    right: padding,
+                    top: smallGap,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 0,
-                        child: PropertyTitleDropdown(currentPage: 'Summary'),
+                      const Row(
+                        children: [
+                          Expanded(
+                            flex: 0,
+                            child:
+                                PropertyTitleDropdown(currentPage: 'Summary'),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: mediumGap),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: padding),
+                        child: OverviewCard(model: model),
+                      ),
+                      SizedBox(height: smallGap),
+                      OccupancyRateBox(),
+                      RecentActivity(
+                        locationByMonth: model.locationByMonth,
+                        ownerData: [],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: OverviewCard(model: model),
-                  ),
-                  SizedBox(height: 10.fSize),
-                  OccupancyRateBox(),
-                  RecentActivity(
-                      locationByMonth: model.locationByMonth, ownerData: []),
-                ],
-              ),
-            ),
-            bottomNavigationBar: const BottomNavBar(currentIndex: 1),
+                ),
+                bottomNavigationBar: const BottomNavBar(currentIndex: 1),
+              );
+            },
           );
         },
       ),
@@ -84,7 +97,7 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
   }
 }
 
-// Extract content to optimize rebuilds
+// Extract content to optimize rebuilds (optional)
 class _PropertySummaryContent extends StatelessWidget {
   const _PropertySummaryContent();
 
@@ -114,8 +127,9 @@ class _PropertySummaryContent extends StatelessWidget {
               SizedBox(height: 10.fSize),
               OccupancyRateBox(),
               RecentActivity(
-                  locationByMonth: model.locationByMonth,
-                  ownerData: model2.ownerData),
+                locationByMonth: model.locationByMonth,
+                ownerData: model2.ownerData,
+              ),
             ],
           ),
         );
@@ -123,56 +137,3 @@ class _PropertySummaryContent extends StatelessWidget {
     );
   }
 }
-
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MultiProvider(
-//       providers: [
-//         ChangeNotifierProvider.value(value: _model),
-//         ChangeNotifierProvider.value(value: _model2),
-//       ],
-//       child: Scaffold(
-//         backgroundColor: Colors.white,
-//         appBar: propertyAppBar(
-//           context,
-//           () => Navigator.of(context).pop(),
-//         ),
-//         body: FutureBuilder<void>(
-//           future: _initFuture,
-//           builder: (context, snapshot) {
-//             if (snapshot.connectionState == ConnectionState.waiting) {
-//               return const Center(child: CircularProgressIndicator());
-//             }
-
-//             if (snapshot.hasError) {
-//               return Center(
-//                 child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     const Icon(Icons.error_outline,
-//                         size: 64, color: Colors.grey),
-//                     const SizedBox(height: 16),
-//                     Text('Error: ${snapshot.error}'),
-//                     const SizedBox(height: 16),
-//                     ElevatedButton(
-//                       onPressed: () {
-//                         setState(() {
-//                           _initFuture = _initializeData();
-//                         });
-//                       },
-//                       child: const Text('Retry'),
-//                     ),
-//                   ],
-//                 ),
-//               );
-//             }
-
-//             return const _PropertySummaryContent();
-//           },
-//         ),
-//         bottomNavigationBar: const BottomNavBar(currentIndex: 1),
-//       ),
-//     );
-//   }
-// }

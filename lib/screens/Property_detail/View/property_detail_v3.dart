@@ -49,7 +49,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
     model2 = NewDashboardVM_v3();
 
     print('PropertyDetailV3: initState called');
-    print('PropertyDetailV3: locationByMonth length: ${widget.locationByMonth.length}');
+    print(
+        'PropertyDetailV3: locationByMonth length: ${widget.locationByMonth.length}');
 
     if (widget.locationByMonth.isNotEmpty) {
       print('PropertyDetailV3: Calling model.fetchData');
@@ -77,7 +78,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.locationByMonth.isNotEmpty) {
-        print('PropertyDetailV3: Post frame callback - calling getAverageOccupancyByLocation');
+        print(
+            'PropertyDetailV3: Post frame callback - calling getAverageOccupancyByLocation');
         model2.getAverageOccupancyByLocation(
             widget.locationByMonth.first['location'] ?? '');
       }
@@ -696,18 +698,20 @@ class PropertyOverviewContainer extends StatelessWidget {
   final PropertyDetailVM model;
   final NewDashboardVM_v3 model2;
   final List<Map<String, dynamic>> locationByMonth;
-  const PropertyOverviewContainer(
-      {super.key,
-      required this.model,
-      required this.model2,
-      required this.locationByMonth});
+
+  const PropertyOverviewContainer({
+    super.key,
+    required this.model,
+    required this.model2,
+    required this.locationByMonth,
+  });
 
   // Helper method to calculate total Monthly Profit for the property
   double _getTotalMonthlyProfit() {
     if (model.unitByMonth.isEmpty) return 0.0;
-    
+
     return model.unitByMonth
-        .where((unit) => 
+        .where((unit) =>
             unit.slocation == locationByMonth.first['location'] &&
             unit.stranscode == 'NOPROF')
         .fold(0.0, (sum, unit) => sum + (unit.total ?? 0.0));
@@ -716,9 +720,9 @@ class PropertyOverviewContainer extends StatelessWidget {
   // Helper method to calculate total Net After POB for the property
   double _getTotalNetAfterPOB() {
     if (model.unitByMonth.isEmpty) return 0.0;
-    
+
     return model.unitByMonth
-        .where((unit) => 
+        .where((unit) =>
             unit.slocation == locationByMonth.first['location'] &&
             unit.stranscode == 'OWNBAL')
         .fold(0.0, (sum, unit) => sum + (unit.total ?? 0.0));
@@ -741,19 +745,22 @@ class PropertyOverviewContainer extends StatelessWidget {
         'Nov',
         'Dec'
       ];
-      if (month >= 1 && month <= 12) {
-        return months[month - 1];
-      } else {
-        return 'Unknown';
-      }
+      return (month >= 1 && month <= 12) ? months[month - 1] : 'Unknown';
     }
 
     DateTime now = DateTime.now();
     String shortMonth = monthNumberToName(now.month);
     String year = now.year.toString();
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
+    double responsiveHeight(double value) => (value / 812.0) * screenHeight;
+    double responsiveFont(double value) => (value / 812.0) * screenHeight;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.symmetric(horizontal: responsiveWidth(10)),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -766,260 +773,183 @@ class PropertyOverviewContainer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Container(
-                width: 160,
-                height: 160,
-                decoration: BoxDecoration(
-                  color: const Color(0XFFFFFFFF),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF3E51FF).withOpacity(0.15),
-                      blurRadius: 10,
-                      offset: const Offset(0, 0),
-                    ),
-                  ],
-                ),
-                child: Column(
+            _overviewBox(
+              context,
+              width: responsiveWidth(160),
+              height: responsiveHeight(160),
+              image: 'assets/images/PropertyOverview1.png',
+              imageWidth: responsiveWidth(67),
+              imageHeight: responsiveHeight(59),
+              title: 'Total Assets',
+              value:
+                  '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation?.contains(locationByMonth.first['location']) == true).length - 1}',
+              subtitle: '$shortMonth $year',
+              responsiveFont: responsiveFont,
+            ),
+            SizedBox(width: responsiveWidth(17)),
+            _overviewBox(
+              context,
+              width: responsiveWidth(160),
+              height: responsiveHeight(160),
+              image: 'assets/images/PropertyOverview2.png',
+              imageWidth: responsiveWidth(65),
+              imageHeight: responsiveHeight(38),
+              title: 'Occupancy Rate',
+              subtitle: '$shortMonth $year',
+              child: Consumer<NewDashboardVM_v3>(
+                builder: (context, dashboardVM, child) {
+                  return OccupancyText(
+                    location: locationByMonth.first['location'],
+                    unitNo: null,
+                    showTotal: true,
+                    showPercentageOnly: true,
+                    viewModel: dashboardVM,
+                  );
+                },
+              ),
+              responsiveFont: responsiveFont,
+            ),
+          ]),
+          SizedBox(height: responsiveHeight(10)),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            _overviewBox(
+              context,
+              width: responsiveWidth(160),
+              height: responsiveHeight(160),
+              image: 'assets/images/PropertyOverview3.png',
+              imageWidth: responsiveWidth(59),
+              imageHeight: responsiveHeight(58),
+              title: 'Monthly Profit',
+              subtitle: '$shortMonth $year',
+              child: RichText(
+                text: TextSpan(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 30),
-                      child: Image.asset(
-                        'assets/images/PropertyOverview1.png',
-                        width: 67.fSize,
-                        height: 59.fSize,
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.baseline,
+                      baseline: TextBaseline.alphabetic,
+                      child: Transform.translate(
+                        offset: const Offset(0, -4),
+                        child: Text(
+                          'RM',
+                          style: TextStyle(
+                            fontSize: responsiveFont(12),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(height: 5.fSize),
-                    const Text(
-                      'Total Assets',
+                    TextSpan(
+                      text: model.selectedView == 'Overview'
+                          ? '${_getTotalMonthlyProfit().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}'
+                          : '${model.selectedUnitPro?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},') ?? '0.00'}',
                       style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation?.contains(locationByMonth.first['location']) == true).length - 1}',
-                      style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: responsiveFont(16),
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                     ),
-                    Text(
-                      '$shortMonth $year',
-                      style: const TextStyle(
-                        fontSize: 10,
-                      ),
-                    )
                   ],
                 ),
               ),
+              responsiveFont: responsiveFont,
             ),
-            SizedBox(width: 17.fSize),
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Container(
-                width: 160,
-                height: 160,
-                decoration: BoxDecoration(
-                  color: const Color(0XFFFFFFFF),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF3E51FF).withOpacity(0.15),
-                      blurRadius: 10,
-                      offset: const Offset(0, 0),
+            SizedBox(width: responsiveWidth(17)),
+            _overviewBox(
+              context,
+              width: responsiveWidth(160),
+              height: responsiveHeight(160),
+              image: 'assets/images/PropertyOverview4.png',
+              imageWidth: responsiveWidth(57),
+              imageHeight: responsiveHeight(59),
+              title: 'Total Net After POB',
+              subtitle: '$shortMonth $year',
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.baseline,
+                      baseline: TextBaseline.alphabetic,
+                      child: Transform.translate(
+                        offset: const Offset(0, -4),
+                        child: Text(
+                          'RM',
+                          style: TextStyle(
+                            fontSize: responsiveFont(12),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                    TextSpan(
+                      text: model.selectedView == 'Overview'
+                          ? '${_getTotalNetAfterPOB().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}'
+                          : '${model.selectedUnitBlc?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},') ?? '0.00'}',
+                      style: TextStyle(
+                        fontSize: responsiveFont(16),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                   ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 45),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 5.fSize),
-                      Image.asset(
-                        'assets/images/PropertyOverview2.png',
-                        width: 65.fSize,
-                        height: 38.fSize,
-                      ),
-                      SizedBox(height: 5.fSize),
-                      const Text(
-                        'Occupancy Rate',
-                        style: TextStyle(
-                          fontSize: 12,
-                        ),
-                      ),
-                      // Use Consumer instead of ListenableBuilder for better reactivity
-                      Consumer<NewDashboardVM_v3>(
-                        builder: (context, dashboardVM, child) {
-                          return OccupancyText(
-                            location: locationByMonth.first['location'],
-                            unitNo: null,
-                            showTotal: true,
-                            showPercentageOnly: true,
-                            viewModel: dashboardVM,
-                          );
-                        },
-                      ),
-                      Text(
-                        '$shortMonth $year',
-                        style: const TextStyle(
-                          fontSize: 10,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
               ),
+              responsiveFont: responsiveFont,
             ),
           ]),
-          SizedBox(height: 10.fSize),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(
-                width: 160,
-                height: 160,
-                decoration: BoxDecoration(
-                  color: const Color(0XFFFFFFFF),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF3E51FF).withOpacity(0.15),
-                      blurRadius: 10,
-                      offset: const Offset(0, 0),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/PropertyOverview3.png',
-                        width: 59.fSize,
-                        height: 58.fSize,
-                      ),
-                      const Text(
-                        'Monthly Profit',
-                        style: TextStyle(
-                          fontSize: 12,
-                        ),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            WidgetSpan(
-                              alignment: PlaceholderAlignment.baseline,
-                              baseline: TextBaseline.alphabetic,
-                              child: Transform.translate(
-                                offset: const Offset(0, -4),
-                                child: const Text(
-                                  'RM',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            TextSpan(
-                              text: model.selectedView == 'Overview' 
-                                  ? '${_getTotalMonthlyProfit().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}'
-                                  : '${model.selectedUnitPro?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        '$shortMonth $year',
-                        style: const TextStyle(
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(width: 17.fSize),
-              Container(
-                width: 160,
-                height: 160,
-                decoration: BoxDecoration(
-                  color: const Color(0XFFFFFFFF),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF3E51FF).withOpacity(0.15),
-                      blurRadius: 10,
-                      offset: const Offset(0, 0),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/PropertyOverview4.png',
-                        width: 57.fSize,
-                        height: 59.fSize,
-                      ),
-                      const Text(
-                        'Total Net After POB',
-                        style: TextStyle(
-                          fontSize: 12,
-                        ),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            WidgetSpan(
-                              alignment: PlaceholderAlignment.baseline,
-                              baseline: TextBaseline.alphabetic,
-                              child: Transform.translate(
-                                offset: const Offset(0, -4),
-                                child: const Text(
-                                  'RM',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            TextSpan(
-                              text: model.selectedView == 'Overview' 
-                                  ? '${_getTotalNetAfterPOB().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}'
-                                  : '${model.selectedUnitBlc?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},') ?? '0.00'}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text('$shortMonth $year',
-                          style: const TextStyle(
-                            fontSize: 10,
-                          )),
-                    ],
-                  ),
-                ),
-              ),
-            ]),
+        ],
+      ),
+    );
+  }
+
+  /// ✅ Reusable Box Widget
+  Widget _overviewBox(
+    BuildContext context, {
+    required double width,
+    required double height,
+    required String image,
+    required double imageWidth,
+    required double imageHeight,
+    required String title,
+    String? value,
+    String? subtitle,
+    Widget? child,
+    required double Function(double) responsiveFont,
+  }) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0XFFFFFFFF),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF3E51FF).withOpacity(0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 0),
           ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(image, width: imageWidth, height: imageHeight),
+          SizedBox(height: responsiveFont(5)),
+          Text(title, style: TextStyle(fontSize: responsiveFont(12))),
+          if (value != null)
+            Text(value,
+                style: TextStyle(
+                  fontSize: responsiveFont(14),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                )),
+          if (child != null) child,
+          if (subtitle != null)
+            Text(
+              subtitle,
+              style: TextStyle(fontSize: responsiveFont(10)),
+            ),
         ],
       ),
     );
@@ -1031,12 +961,12 @@ class PropertyOverviewContainer extends StatelessWidget {
     double totalOccupancy = 0.0;
     int count = 0;
 
-    model.locationByMonth.forEach((location) {
+    for (var location in model.locationByMonth) {
       if (location['occupancy'] != null) {
         totalOccupancy += location['occupancy'];
         count++;
       }
-    });
+    }
 
     return totalOccupancy / count;
   }
@@ -1047,122 +977,149 @@ class ContractDetailsContainer extends StatelessWidget {
   final NewDashboardVM_v3 model2;
   final List<Map<String, dynamic>> locationByMonth;
 
-  const ContractDetailsContainer(
-      {super.key,
-      required this.model,
-      required this.model2,
-      required this.locationByMonth});
+  const ContractDetailsContainer({
+    super.key,
+    required this.model,
+    required this.model2,
+    required this.locationByMonth,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
+    double responsiveHeight(double value) => (value / 812.0) * screenHeight;
+    double responsiveFont(double value) => (value / 812.0) * screenHeight;
+
     return Builder(
-      //future: model.fetchData(locationByMonth),
       builder: (context) {
         final hasData = model.locationByMonth.isNotEmpty;
         final unitType = hasData && model.locationByMonth.isNotEmpty
             ? model.locationByMonth.first['unitType'] as String?
             : '';
 
-        return Container(
-          //alignment: Alignment.spaceBetween,
-          width: 420.fSize,
-          height: 50.fSize,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50.fSize),
-            border: Border.all(color: const Color(0xFF5092FF)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width / 2.95,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+        return Padding(
+          padding: EdgeInsets.all(responsiveWidth(10)),
+          child: Container(
+            width: responsiveWidth(420),
+            height: responsiveHeight(50),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(responsiveHeight(50)),
+              border: Border.all(color: const Color(0xFF5092FF)),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: responsiveWidth(8)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: screenWidth / 2.95,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: responsiveWidth(4),
+                            top: responsiveHeight(8),
+                            bottom: responsiveHeight(10),
+                          ),
+                          child: Text(
+                            'Contract Type',
+                            style: TextStyle(
+                              fontSize: responsiveFont(9),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: responsiveWidth(5),
+                            top: responsiveHeight(5),
+                            bottom: responsiveHeight(5),
+                          ),
+                          child: Text(
+                            (model.locationByMonth.isNotEmpty &&
+                                    model.locationByMonth.first['owners'] !=
+                                        null)
+                                ? (model.locationByMonth.first['owners']
+                                        as List)
+                                    .where((owner) =>
+                                        owner['unitNo'] == model.selectedUnitNo)
+                                    .map((owner) => owner['contractType'] ?? '')
+                                    .join('')
+                                : '',
+                            style: TextStyle(
+                              fontSize: responsiveFont(11),
+                              color: const Color(0xFF5092FF),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: responsiveWidth(3)),
+                    child: SizedBox(
+                      width: responsiveWidth(1),
+                      height: responsiveHeight(30),
+                      child: Container(
+                        color: const Color(0xFF5092FF),
+                      ),
+                    ),
+                  ),
+                  Row(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 4, top: 8, bottom: 10),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: responsiveHeight(8),
+                          bottom: responsiveHeight(10),
+                        ),
                         child: Text(
-                          'Contract Type',
+                          'Contract End Date',
                           style: TextStyle(
-                            fontSize: 9,
+                            fontSize: responsiveFont(9),
                           ),
                         ),
                       ),
                       Padding(
-                        padding:
-                            const EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                        padding: EdgeInsets.only(
+                          left: responsiveWidth(3),
+                          top: responsiveHeight(5),
+                          bottom: responsiveHeight(10),
+                        ),
                         child: Text(
                           (model.locationByMonth.isNotEmpty &&
                                   model.locationByMonth.first['owners'] != null)
                               ? (model.locationByMonth.first['owners'] as List)
                                   .where((owner) =>
                                       owner['unitNo'] == model.selectedUnitNo)
-                                  .map((owner) => owner['contractType'] ?? '')
-                                  .join('')
+                                  .map((owner) {
+                                  final rawDate = owner['endDate'];
+                                  if (rawDate == null || rawDate.isEmpty) {
+                                    return '';
+                                  }
+                                  try {
+                                    final date = DateTime.parse(rawDate);
+                                    return DateFormat('dd MMM yyyy')
+                                        .format(date);
+                                  } catch (e) {
+                                    return rawDate;
+                                  }
+                                }).join(' ')
                               : '',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF5092FF),
+                          style: TextStyle(
+                            fontSize: responsiveFont(11),
+                            color: const Color(0xFF5092FF),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 3),
-                  child: SizedBox(
-                    width: 1,
-                    height: 30,
-                    child: Container(
-                      color: const Color(0xFF5092FF),
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 8, bottom: 10),
-                      child: Text('Contract End Date',
-                          style: TextStyle(
-                            fontSize: 9,
-                          )),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 3, top: 5, bottom: 10),
-                      child: Text(
-                        (model.locationByMonth.isNotEmpty &&
-                                model.locationByMonth.first['owners'] != null)
-                            ? (model.locationByMonth.first['owners'] as List)
-                                .where((owner) =>
-                                    owner['unitNo'] == model.selectedUnitNo)
-                                .map((owner) {
-                                final rawDate = owner['endDate'];
-                                if (rawDate == null || rawDate.isEmpty) {
-                                  return '';
-                                }
-                                try {
-                                  final date = DateTime.parse(rawDate);
-                                  return DateFormat('dd MMM yyyy').format(date);
-                                } catch (e) {
-                                  return rawDate;
-                                }
-                              }).join(' ')
-                            : '',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Color(0xFF5092FF),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -1180,9 +1137,9 @@ class UnitDetailsContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final totalPro = model.selectedUnitPro?.total ?? 0.0;
     final formattedTotalPro = totalPro.toStringAsFixed(2).replaceAllMapped(
-        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-        (Match m) => '${m[1]},',
-      );
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        );
 
     final totalBlc = model.selectedUnitBlc?.total ?? 0.0;
     final formattedTotalBlc = totalBlc.toStringAsFixed(2).replaceAllMapped(
@@ -2180,4 +2137,19 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
     }
     return true;
   }
+}
+
+class ResponsiveScale {
+  final BuildContext context;
+  late double screenWidth;
+  late double screenHeight;
+
+  ResponsiveScale(this.context) {
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+  }
+
+  double width(double value) => (value / 375.0) * screenWidth; // base width
+  double height(double value) => (value / 812.0) * screenHeight; // base height
+  double font(double value) => (value / 812.0) * screenHeight; // font scaling
 }

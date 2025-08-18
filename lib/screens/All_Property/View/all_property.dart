@@ -86,6 +86,10 @@ class AllPropertyScreen extends StatelessWidget {
     required BuildContext context,
     required NewDashboardVM_v3 model,
   }) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final isTablet = MediaQuery.of(context).size.shortestSide >= 600;
+    final horizontalPadding = isMobile ? 16.0 : 40.0;
+
     // Group by location & pick latest month/year
     final Map<String, Map<String, dynamic>> latestByLocation = {};
 
@@ -118,7 +122,7 @@ class AllPropertyScreen extends StatelessWidget {
       children: [
         ListView(
           shrinkWrap: true,
-          padding: const EdgeInsets.only(left: 30),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           physics: const BouncingScrollPhysics(),
           children: latestProperties
               .expand((property) => [

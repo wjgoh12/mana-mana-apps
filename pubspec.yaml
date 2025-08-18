@@ -69,6 +69,7 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^27.2.5
   share_plus: ^10.1.4
   jwt_decoder: ^2.0.1
+  responsive_framework: ^1.5.1
 
 dev_dependencies:
   flutter_test:

@@ -61,15 +61,28 @@ class PropertyStack extends StatelessWidget {
     //model.fetchData();
 
     return ResponsiveBuilder(builder: (context, sizingInformation) {
+      final screenWidth = sizingInformation.screenSize.width;
       final isMobile =
           sizingInformation.deviceScreenType == DeviceScreenType.mobile;
-      final width = isMobile ? 370.fSize : 360.fSize;
-      final height = 207.fSize;
+
       // final position = 25.height;
-      final containerWidth = isMobile ? 390.fSize : 380.fSize;
-      final containerHeight = 405.fSize;
-      final smallcontainerWidth = isMobile ? 355.fSize : 100.width;
-      final smallcontainerHeight = 35.fSize;
+      final containerWidth = isMobile ? screenWidth * 0.95 : screenWidth * 0.85;
+      final containerHeight = isMobile ? 405.0 : 500.0;
+
+      final width = containerWidth - 20;
+      final height = isMobile ? containerHeight * 0.5 : containerHeight * 0.55;
+
+      final smallContainerWidth =
+          isMobile ? containerWidth * 0.85 : containerWidth * 0.6;
+      final smallContainerHeight = isMobile ? 35.0 : 45.0;
+
+      final ownerAvatarRadius = isMobile ? 13.0 : 16.0;
+      final ownerFontSize = isMobile ? 12.0 : 14.0;
+
+      final roadFontSize = isMobile ? 8.0 : 10.0;
+      final totalFontSize = isMobile ? 7.0 : 9.0;
+
+      final horizontalPadding = isMobile ? 16.0 : 40.0;
 
       return Stack(
         clipBehavior: Clip.none,
@@ -89,114 +102,133 @@ class PropertyStack extends StatelessWidget {
                 ),
               ],
             ),
-            child: SizedBox(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: SizedBox(
-                            width: width,
-                            height: height,
-                            child: Image.asset(
-                              'assets/images/${(locationByMonth.first['location'] ?? '').toString().toUpperCase()}.png',
-                              fit: BoxFit.cover,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: SizedBox(
+                          width: width,
+                          height: height,
+                          child: Image.asset(
+                            'assets/images/${(locationByMonth.first['location'] ?? '').toString().toUpperCase()}.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: (containerHeight - smallContainerHeight) / 2,
+                      left: (containerWidth - smallContainerWidth) / 2,
+                      child: Container(
+                        width: smallContainerWidth.toDouble(),
+                        height: smallContainerHeight.toDouble(),
+                        padding: const EdgeInsets.only(left: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(1),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Image.asset('assets/images/map_pin.png',
+                                width: 15.fSize, height: 15.fSize),
+                            Text(
+                              '$locationRoad',
+                              style: const TextStyle(fontSize: 8),
                             ),
-                          ),
+                            SizedBox(
+                              width: 1.width,
+                              height: 30.fSize,
+                            ),
+                            const VerticalDivider(
+                              color: Colors.grey,
+                              thickness: 1,
+                            ),
+                            Image.asset(
+                              'assets/images/PropertiesGroup.png',
+                              width: 15.fSize,
+                              height: 15.fSize,
+                            ),
+                            SizedBox(width: 1.fSize),
+                            Text(
+                              '${locationByMonth.first['totalUnits'] ?? (locationByMonth.first['owners'] as List?)?.map((owner) => owner['unitNo']).toSet().length ?? 0} Total ',
+                              style: const TextStyle(fontSize: 7),
+                            ),
+                            OccupancyText(
+                                location: locationByMonth.first['location'],
+                                unitNo: locationByMonth.first['unitNo'],
+                                showTotal: true),
+                          ],
                         ),
                       ),
-                      Positioned(
-                        top: (containerHeight - smallcontainerHeight) / 2,
-                        left: (containerWidth - smallcontainerWidth) / 2,
-                        child: Container(
-                          width: smallcontainerWidth,
-                          height: smallcontainerHeight,
-                          padding: const EdgeInsets.only(left: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(1),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Image.asset('assets/images/map_pin.png',
-                                  width: 15.fSize, height: 15.fSize),
-                              Text(
-                                '$locationRoad',
-                                style: const TextStyle(fontSize: 8),
-                              ),
-                              SizedBox(
-                                width: 1.width,
-                                height: 30.fSize,
-                              ),
-                              const VerticalDivider(
-                                color: Colors.grey,
-                                thickness: 1,
-                              ),
-                              Image.asset(
-                                'assets/images/PropertiesGroup.png',
-                                width: 15.fSize,
-                                height: 15.fSize,
-                              ),
-                              SizedBox(width: 1.fSize),
-                              Text(
-                                '${locationByMonth.first['totalUnits'] ?? (locationByMonth.first['owners'] as List?)?.map((owner) => owner['unitNo']).toSet().length ?? 0} Total ',
-                                style: const TextStyle(fontSize: 7),
-                              ),
-                              OccupancyText(
-                                  location: locationByMonth.first['location'],
-                                  unitNo: locationByMonth.first['unitNo'],
-                                  showTotal: true),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
 
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10, top: 5),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/images/Group.png',
-                          width: 24.fSize,
-                          height: 24.fSize,
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 5),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/Group.png',
+                        width: 24.fSize,
+                        height: 24.fSize,
+                      ),
+                      SizedBox(width: 2.width),
+                      Text(
+                        'Owner(s)',
+                        style: TextStyle(
+                          fontFamily: 'Open Sans',
+                          fontSize: 13.fSize,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
                         ),
-                        SizedBox(width: 2.width),
-                        Text(
-                          'Owner(s)',
-                          style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontSize: 13.fSize,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(width: 10.fSize),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                for (var owner
-                                    in locationByMonth.first['owners'] ??
-                                        []) ...[
-                                  // Main owner avatar
+                      ),
+                      SizedBox(width: 10.fSize),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              for (var owner
+                                  in locationByMonth.first['owners'] ?? []) ...[
+                                // Main owner avatar
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 5),
+                                  child: Tooltip(
+                                    message:
+                                        owner['ownerName'] ?? 'Unknown Owner',
+                                    child: CircleAvatar(
+                                      radius: 13,
+                                      backgroundColor: Colors.blue,
+                                      child: Text(
+                                        getInitials(owner['ownerName'] ?? ''),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Co-owner avatar if exists
+                                if (owner['coOwnerName'] != null &&
+                                    owner['coOwnerName'].toString().isNotEmpty)
                                   Padding(
                                     padding: const EdgeInsets.only(right: 5),
                                     child: Tooltip(
-                                      message:
-                                          owner['ownerName'] ?? 'Unknown Owner',
+                                      message: owner['coOwnerName'],
                                       child: CircleAvatar(
                                         radius: 13,
-                                        backgroundColor: Colors.blue,
+                                        backgroundColor: Colors.green,
                                         child: Text(
-                                          getInitials(owner['ownerName'] ?? ''),
+                                          getInitials(owner['coOwnerName']),
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 12,
@@ -206,149 +238,121 @@ class PropertyStack extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  // Co-owner avatar if exists
-                                  if (owner['coOwnerName'] != null &&
-                                      owner['coOwnerName']
-                                          .toString()
-                                          .isNotEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 5),
-                                      child: Tooltip(
-                                        message: owner['coOwnerName'],
-                                        child: CircleAvatar(
-                                          radius: 13,
-                                          backgroundColor: Colors.green,
-                                          child: Text(
-                                            getInitials(owner['coOwnerName']),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                ],
                               ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 2.height),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12),
-                    child: Text(
-                      locationByMonth.first['location'] ?? '',
-                      style: const TextStyle(
-                        fontSize: 21,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  //divider
-                  Container(
-                    height: 1,
-                    color: Colors.grey,
-                    margin: const EdgeInsets.only(left: 10, right: 10),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 1),
-                          child: Image.asset('assets/images/Wallet.png',
-                              width: 45.fSize, height: 45.fSize),
-                        ),
-
-                        const SizedBox(width: 2),
-                        SizedBox(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Total Net After POB',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                ),
-                              ),
-                              Text(
-                                'RM ${locationByMonth.first['total'] ?? 0.0}',
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
                             ],
                           ),
                         ),
-                        SizedBox(width: 25.width),
-                        //after pressed button, it will navigate to property detail page
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 10),
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => property_detail_v3(
-                                      locationByMonth: [locationByMonth.first],
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 2.height),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Text(
+                    locationByMonth.first['location'] ?? '',
+                    style: const TextStyle(
+                      fontSize: 21,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                //divider
+                Container(
+                  height: 1,
+                  color: Colors.grey,
+                  margin: const EdgeInsets.only(left: 10, right: 10),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 1),
+                        child: Row(
+                          children: [
+                            Image.asset('assets/images/Wallet.png',
+                                width: 45.fSize, height: 45.fSize),
+                            const SizedBox(width: 2),
+                            SizedBox(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Total Net After POB',
+                                    style: TextStyle(
+                                      fontSize: 11,
                                     ),
                                   ),
-                                );
-                              },
-                              style: ButtonStyle(
-                                minimumSize:
-                                    WidgetStateProperty.all(const Size(20, 30)),
-                                side: WidgetStateProperty.all(
-                                    const BorderSide(color: Color(0xFF4CAF50))),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
                                   Text(
-                                    'Details',
-                                    style: TextStyle(
-                                        fontSize: 15.fSize,
-                                        color: Colors.black),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  SizedBox(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Image.asset(
-                                          'assets/images/arrow.png',
-                                          width: 15.fSize,
-                                          height: 11.fSize,
-                                        ),
-                                        Text(
-                                          'Jom',
-                                          style: TextStyle(fontSize: 9.fSize),
-                                        ),
-                                      ],
+                                    'RM ${locationByMonth.first['total'] ?? 0.0}',
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+
+                      //SizedBox(width: 25.width),
+                      //after pressed button, it will navigate to property detail page
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => property_detail_v3(
+                                locationByMonth: [locationByMonth.first],
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          minimumSize:
+                              WidgetStateProperty.all(const Size(20, 30)),
+                          side: WidgetStateProperty.all(
+                              const BorderSide(color: Color(0xFF4CAF50))),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Details',
+                              style: TextStyle(
+                                  fontSize: 15.fSize, color: Colors.black),
+                            ),
+                            const SizedBox(width: 5),
+                            SizedBox(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/arrow.png',
+                                    width: 15.fSize,
+                                    height: 11.fSize,
+                                  ),
+                                  Text(
+                                    'Jom',
+                                    style: TextStyle(fontSize: 9.fSize),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           )
         ],

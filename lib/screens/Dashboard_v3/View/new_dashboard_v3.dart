@@ -31,6 +31,13 @@ class NewDashboardV3 extends StatelessWidget {
           final ScrollController newsletterScrollController =
               ScrollController();
           final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
+          final isMobile = MediaQuery.of(context).size.width < 600;
+          final screenWidth = MediaQuery.of(context).size.width;
+          final screenHeight = MediaQuery.of(context).size.height;
+          //final double horizontalPadding = isMobile ? 16.0 : 40.0;
+          final horizontalPadding = screenWidth * 0.05; // 5% of screen width
+          final titleFontSize = screenWidth * 0.05; // 5% of width
+          final rowHeight = screenHeight * 0.06; // 6% of height
 
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: const SystemUiOverlayStyle(
@@ -85,8 +92,10 @@ class NewDashboardV3 extends StatelessWidget {
                     child: Column(
                       children: [
                         Container(
-                          width: 100.width,
-                          padding: EdgeInsets.all(7.width),
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding),
+                          alignment: Alignment.center,
                           color: Colors.white,
                           child: Column(
                             children: [
@@ -179,8 +188,9 @@ class NewDashboardV3 extends StatelessWidget {
 
                         // Overview section
                         Container(
-                          width: 100.width,
-                          padding: EdgeInsets.symmetric(horizontal: 7.width),
+                          width: screenWidth,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding),
                           color: Colors.white,
                           child: Column(
                             children: [
@@ -207,8 +217,9 @@ class NewDashboardV3 extends StatelessWidget {
 
                         // Properties section
                         Container(
-                          width: 100.width,
-                          padding: EdgeInsets.symmetric(horizontal: 7.width),
+                          width: screenWidth,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding),
                           color: Colors.white,
                           child: Column(
                             children: [
@@ -238,12 +249,13 @@ class NewDashboardV3 extends StatelessWidget {
                           ),
                         ),
 
-                        //   SizedBox(height: 2.height),
+                        SizedBox(height: 2.height),
 
                         // Newsletter section
                         Container(
-                          width: 100.width,
-                          padding: EdgeInsets.symmetric(horizontal: 7.width),
+                          width: screenWidth,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding),
                           color: Colors.white,
                           child: Column(
                             children: [

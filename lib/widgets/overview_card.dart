@@ -63,362 +63,355 @@ class OverviewCard extends StatelessWidget {
         'Nov',
         'Dec'
       ];
-      if (month >= 1 && month <= 12) {
-        return months[month - 1];
-      } else {
-        return 'Unknown';
-      }
+      return (month >= 1 && month <= 12) ? months[month - 1] : 'Unknown';
     }
 
     DateTime now = DateTime.now();
     String shortMonth = monthNumberToName(now.month);
     String year = now.year.toString();
+
     final uniqueLocations =
         model.totalByMonth.map((e) => e['slocation']).toSet().toList();
 
     final locationCount = uniqueLocations.length;
-    final activeLocations = model.totalByMonth.where(
-        (e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE');
+    final isMobile = Responsive.isMobile(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // 🔑 Responsive multipliers
+    final cardWidth = isMobile ? screenWidth * 0.9 : screenWidth * 0.45;
+    final smallCardHeight = screenHeight * 0.12; // ~12% of height
+    final largeCardHeight = screenHeight * 0.25; // ~25% of height
 
     return SizedBox(
       width: double.infinity,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Left Column
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //1st
-              Card(
-                margin: const EdgeInsets.only(bottom: 20),
-                child: Container(
-                  width: 190.fSize,
-                  height: 130.fSize,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(12), // Match card's border radius
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/overviewContainer1.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Stack(children: [
-                          Positioned(
-                            left: 10,
-                            top: 10,
-                            child: CircleAvatar(
-                              radius: 20.fSize,
-                              backgroundColor: Colors.white,
-                              child: Image.asset(
-                                'assets/images/OverviewProperty.png',
-                                width: 18.fSize,
-                                height: 22.fSize,
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.only(right: 15),
-                                  child: Text(
-                                    '$locationCount',
-                                    //call total number of locations
-                                    //total Properties
-
-                                    style: TextStyle(
-                                      fontSize: 40.fSize,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  )),
-                              const SizedBox(
-                                  width: 1), // spacing between text and image
-                            ],
-                          )
-                        ]),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Total Properties',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10.fSize,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Managed: ${locationCount} ',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13.fSize,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ]),
-                ),
-              ),
-
-              //2nd
-              Card(
-                margin: const EdgeInsets.only(bottom: 20),
-                color: const Color(0xFFFFE7B8),
-                child: SizedBox(
-                  width: 190.fSize,
-                  height: 83.fSize,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 10),
-                              child: CircleAvatar(
-                                radius: 19.fSize,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  'assets/images/OverviewOccupancy.png',
-                                  width: 30.fSize,
-                                  height: 20.fSize,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 8, top: 10),
-                            child: Text(
-                              'Occupancy Rate',
-                              style: TextStyle(
-                                fontSize: 8.0,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                          //hard coded
-                          Padding(
-                            padding: EdgeInsets.only(left: 8),
-                            child: Text(
-
-                                //calculate the occupancy rate
-                                //in a method
-                                //then call here
-                                '${model.getTotalOccupancyRate()}%',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'Open Sans',
-                                  fontWeight: FontWeight.bold,
-                                )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 3),
-                            child: Text(
-                              'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first['units'] != null && model.propertyOccupancy.values.first['units'].values.first != null && model.propertyOccupancy.values.first['units'].values.first is Map<String, dynamic> ? '${monthNumberToName(model.propertyOccupancy.values.first['units'].values.first['month'])} ${model.propertyOccupancy.values.first['units'].values.first['year']}' : '$shortMonth $year'}',
-                              style: const TextStyle(
-                                fontSize: 7.0,
-                                fontFamily: 'Open Sans',
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(width: 20), // spacing between columns
-
-          // Right Column
-          Flexible(
-            child: Column(
+      child: isMobile
+          ? Column(
+              // 📱 stack on mobile
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //3rd
-//3rd
-                Card(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  color: const Color(0xFF9EEAFF),
-                  child: SizedBox(
-                    width: 190.fSize,
-                    height: 83.fSize,
-                    child: Row(
+                _buildLeftColumn(context, cardWidth, smallCardHeight,
+                    largeCardHeight, locationCount, shortMonth, year),
+                const SizedBox(height: 20),
+                _buildRightColumn(context, cardWidth, smallCardHeight,
+                    largeCardHeight, shortMonth, year),
+              ],
+            )
+          : Row(
+              // 💻 side by side on larger screens
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildLeftColumn(context, cardWidth, smallCardHeight,
+                    largeCardHeight, locationCount, shortMonth, year),
+                const SizedBox(width: 20),
+                Flexible(
+                  child: _buildRightColumn(context, cardWidth, smallCardHeight,
+                      largeCardHeight, shortMonth, year),
+                ),
+              ],
+            ),
+    );
+  }
+
+  /// Left Column
+  Widget _buildLeftColumn(
+      BuildContext context,
+      double cardWidth,
+      double smallCardHeight,
+      double largeCardHeight,
+      int locationCount,
+      String shortMonth,
+      String year) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 1st big card
+        Card(
+          margin: const EdgeInsets.only(bottom: 20),
+          child: Container(
+            width: cardWidth,
+            height: largeCardHeight,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: const DecorationImage(
+                image: AssetImage('assets/images/overviewContainer1.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Positioned(
+                      left: 10,
+                      top: 10,
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.white,
+                        child: Image.asset(
+                          'assets/images/OverviewProperty.png',
+                          width: 18,
+                          height: 22,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: CircleAvatar(
-                            radius: 23.fSize,
-                            backgroundColor: Colors.white,
-                            child: Image.asset(
-                              'assets/images/OverviewMonthlyProfit.png',
-                              width: 30.fSize,
-                              height: 28.fSize,
+                          padding: const EdgeInsets.only(right: 15),
+                          child: Text(
+                            '$locationCount',
+                            style: const TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 10, top: 10),
-                              child: Text(
-                                'Monthly Profit',
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontFamily: 'Open Sans',
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                            Builder(
-                              builder: (context) {
-                                if (model.monthlyBlcOwner.isNotEmpty) {
-                                  // Get the latest month entry (assuming list is sorted newest first)
-                                  final latestEntry =
-                                      model.monthlyBlcOwner.first;
-                                  final year = latestEntry['year'];
-                                  final month = latestEntry['month'];
-
-                                  final profitEntry =
-                                      model.monthlyProfitOwner.firstWhere(
-                                    (profit) =>
-                                        profit['year'] == year &&
-                                        profit['month'] == month,
-                                    orElse: () => {'total': 0.00},
-                                  );
-
-                                  final totalProfit =
-                                      (profitEntry['total'] ?? 0.0).toDouble();
-                                  final formatted = totalProfit
-                                      .toStringAsFixed(2)
-                                      .replaceAllMapped(
-                                        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                        (m) => '${m[1]},',
-                                      );
-
-                                  return Padding(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          WidgetSpan(
-                                            alignment:
-                                                PlaceholderAlignment.baseline,
-                                            baseline: TextBaseline.alphabetic,
-                                            child: Transform.translate(
-                                              offset: const Offset(0, -4),
-                                              child: const Text(
-                                                'RM',
-                                                style: TextStyle(
-                                                  fontSize: 11,
-                                                  fontFamily: 'Open Sans',
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: formatted,
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                              fontFamily: 'Open Sans',
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return const Padding(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      'RM0.00',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'Open Sans',
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                '$shortMonth $year',
-                                style: const TextStyle(
-                                  fontSize: 8.0,
-                                  fontStyle: FontStyle.normal,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        const SizedBox(width: 1),
                       ],
-                    ),
+                    )
+                  ],
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Total Properties',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 ),
-
-                //4th
-                Card(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  color: const Color(0xFFDBC7FF),
-                  child: Container(
-                    width: 190.fSize,
-                    height: 130.fSize,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                          12), // Match card's border radius
-                      image: DecorationImage(
-                        image:
-                            AssetImage('assets/images/overviewContainer4.png'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 5),
-                        child: Column(
-                          children: [
-                            RevenueContainer(
-                                title:
-                                    '${model.revenueLastestYear} Accumulated Profit​',
-                                icon: Icons.home_outlined,
-                                overallRevenue: false,
-                                model: model),
-                          ],
-                        ),
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Managed: $locationCount ',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+
+        // 2nd small card
+        Card(
+          margin: const EdgeInsets.only(bottom: 20),
+          color: const Color(0xFFFFE7B8),
+          child: SizedBox(
+            width: cardWidth,
+            height: smallCardHeight,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: CircleAvatar(
+                    radius: 19,
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      'assets/images/OverviewOccupancy.png',
+                      width: 30,
+                      height: 20,
+                    ),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text('Occupancy Rate',
+                          style: TextStyle(fontSize: 10)),
+                    ),
+                    Text(
+                      '${model.getTotalOccupancyRate()}%',
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                    Text('As of $shortMonth $year',
+                        style: const TextStyle(fontSize: 9)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Right Column
+  /// Right Column
+  Widget _buildRightColumn(
+    BuildContext context,
+    double cardWidth,
+    double smallCardHeight,
+    double largeCardHeight,
+    String shortMonth,
+    String year,
+  ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Column(
+      children: [
+        // Monthly Profit Card
+        Card(
+          margin: EdgeInsets.only(bottom: screenHeight * 0.02),
+          color: const Color(0xFF9EEAFF),
+          child: SizedBox(
+            width: cardWidth, // responsive width
+            height: smallCardHeight, // responsive height
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: screenWidth * 0.025),
+                  child: CircleAvatar(
+                    radius: 19,
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      'assets/images/OverviewMonthlyProfit.png',
+                      width: 30,
+                      height: 20,
+                    ),
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: screenWidth * 0.025, top: screenHeight * 0.015),
+                      child: const Text(
+                        'Monthly Profit',
+                        style: TextStyle(
+                          fontSize: 10.0,
+                          fontFamily: 'Open Sans',
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                    Builder(
+                      builder: (context) {
+                        if (model.monthlyBlcOwner.isNotEmpty) {
+                          final latestEntry = model.monthlyBlcOwner.first;
+                          final year = latestEntry['year'];
+                          final month = latestEntry['month'];
+
+                          final profitEntry =
+                              model.monthlyProfitOwner.firstWhere(
+                            (profit) =>
+                                profit['year'] == year &&
+                                profit['month'] == month,
+                            orElse: () => {'total': 0.00},
+                          );
+
+                          final totalProfit =
+                              (profitEntry['total'] ?? 0.0).toDouble();
+                          final formatted =
+                              totalProfit.toStringAsFixed(2).replaceAllMapped(
+                                    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                                    (m) => '${m[1]},',
+                                  );
+
+                          return Padding(
+                            padding: EdgeInsets.only(left: screenWidth * 0.025),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.baseline,
+                                    baseline: TextBaseline.alphabetic,
+                                    child: Transform.translate(
+                                      offset: const Offset(0, -4),
+                                      child: const Text(
+                                        'RM',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontFamily: 'Open Sans',
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: formatted,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'Open Sans',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Padding(
+                            padding: EdgeInsets.only(left: screenWidth * 0.025),
+                            child: const Text(
+                              'RM0.00',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'Open Sans',
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: screenWidth * 0.025),
+                      child: Text(
+                        '$shortMonth $year',
+                        style: const TextStyle(
+                          fontSize: 8.0,
+                          fontStyle: FontStyle.normal,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // 4th big card (example, adjust content if needed)
+        Card(
+          margin: EdgeInsets.only(bottom: screenHeight * 0.02),
+          color: const Color(0xFFDBC7FF),
+          child: Container(
+            width: cardWidth,
+            height: largeCardHeight,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: const DecorationImage(
+                image: AssetImage('assets/images/overviewContainer4.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(screenWidth * 0.02),
+              child: RevenueContainer(
+                title: '${model.revenueLastestYear} Accumulated Profit',
+                icon: Icons.home_outlined,
+                overallRevenue: false,
+                model: model,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -438,23 +431,24 @@ class RevenueContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return SizedBox(
-      width: 190.fSize,
-      height: 130.fSize,
+      width:
+          Responsive.isMobile(context) ? screenWidth * 0.9 : screenWidth * 0.4,
+      height:
+          Responsive.isMobile(context) ? screenWidth * 0.8 : screenWidth * 0.5,
       child: Stack(
         children: [
           GestureDetector(
             // onTap: () => model.updateOverallRevenueAmount(),
             child: Container(
-              padding: !Responsive.isMobile(context)
-                  ? EdgeInsets.only(left: 1.height, right: 1.height)
-                  : EdgeInsets.all(1.height),
+              padding: EdgeInsets.all(screenWidth * 0.02),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: (0.5).height,
-                  ),
                   _buildTitleRow(),
+                  SizedBox(height: 8),
                   //SizedBox(height: (1.5).height),
                   _buildAmountText(),
                   _buildDateRow(),
@@ -465,13 +459,16 @@ class RevenueContainer extends StatelessWidget {
                         children: [
                           Transform.translate(
                             offset: Offset(0, -6),
-                            child: CircleAvatar(
-                              radius: 20.fSize,
-                              backgroundColor: Colors.white,
-                              child: Image.asset(
-                                'assets/images/OverviewAccumulatedProfit.png',
-                                width: 26.fSize,
-                                height: 24.fSize,
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: CircleAvatar(
+                                radius: 20.fSize,
+                                backgroundColor: Colors.white,
+                                child: Image.asset(
+                                  'assets/images/OverviewAccumulatedProfit.png',
+                                  width: 30.fSize,
+                                  height: 20.fSize,
+                                ),
                               ),
                             ),
                           ),
