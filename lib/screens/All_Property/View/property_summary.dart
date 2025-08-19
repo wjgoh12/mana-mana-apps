@@ -28,7 +28,7 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
   }
 
   Future<void> _initializeData() async {
-    print('refetching data...');
+    debugPrint('refetching data...');
     await _model.fetchData();
   }
 
@@ -44,10 +44,15 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
               final screenWidth = constraints.maxWidth;
               final screenHeight = constraints.maxHeight;
 
-              // Scale factors
-              double padding = screenWidth * 0.04; // ~4% of width
-              double smallGap = screenHeight * 0.015;
-              double mediumGap = screenHeight * 0.02;
+              // Scale factors (tweak as needed)
+              final double baseWidth = 390;
+              final double baseHeight = 844;
+              final double scaleW = screenWidth / baseWidth;
+              final double scaleH = screenHeight / baseHeight;
+
+              // Shortcut for scaled spacing
+              double spacing(double value) => value * scaleH;
+              double font(double size) => size * scaleW;
 
               return Scaffold(
                 backgroundColor: Colors.white,
@@ -56,13 +61,12 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
                   () => Navigator.of(context).pop(),
                 ),
                 body: SingleChildScrollView(
-                  padding: EdgeInsets.only(
-                    left: padding,
-                    right: padding,
-                    top: smallGap,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: spacing(12),
+                    vertical: spacing(8),
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Row(
                         children: [
@@ -73,16 +77,23 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: mediumGap),
+                      SizedBox(height: spacing(16)),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: padding),
+                        padding: EdgeInsets.symmetric(horizontal: spacing(8)),
                         child: OverviewCard(model: model),
                       ),
-                      SizedBox(height: smallGap),
-                      OccupancyRateBox(),
-                      RecentActivity(
-                        locationByMonth: model.locationByMonth,
-                        ownerData: [],
+                      SizedBox(height: spacing(12)),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: spacing(8)),
+                        child: OccupancyRateBox(),
+                      ),
+                      SizedBox(height: spacing(12)),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: spacing(8)),
+                        child: RecentActivity(
+                          locationByMonth: model.locationByMonth,
+                          ownerData: [],
+                        ),
                       ),
                     ],
                   ),

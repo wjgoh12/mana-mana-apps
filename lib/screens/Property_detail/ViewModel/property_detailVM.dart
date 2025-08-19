@@ -29,8 +29,8 @@ class PropertyDetailVM extends ChangeNotifier {
   String? get selectedYearValue => _selectedYearValue;
   PropertyDetailVM() {
     _selectedYearValue = null; // Explicitly set to null
-    print(
-        'PropertyDetailVM constructor - selectedYearValue initialized to: $_selectedYearValue');
+    // print(
+    //     'PropertyDetailVM constructor - selectedYearValue initialized to: $_selectedYearValue');
   }
   String? selectedMonthValue;
   String? selectedAnnualYearValue;

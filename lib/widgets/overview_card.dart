@@ -492,16 +492,13 @@ class RevenueContainer extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Positioned(
-                          bottom: 0,
-                          child: CircleAvatar(
-                            radius: 20.fSize,
-                            backgroundColor: Colors.white,
-                            child: Image.asset(
-                              'assets/images/OverviewAccumulatedProfit.png',
-                              width: 26.fSize,
-                              height: 24.fSize,
-                            ),
+                        CircleAvatar(
+                          radius: 20.fSize,
+                          backgroundColor: Colors.white,
+                          child: Image.asset(
+                            'assets/images/OverviewAccumulatedProfit.png',
+                            width: 26.fSize,
+                            height: 24.fSize,
                           ),
                         ),
                       ],

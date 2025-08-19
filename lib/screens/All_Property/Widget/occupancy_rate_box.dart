@@ -42,17 +42,24 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
   String selectedPeriod = 'Monthly';
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // scale factors (adjust as you like)
+    final width = screenWidth * 0.9; // 90% of screen width
+    final height = screenHeight * 0.4; // 40% of screen height
+    final fontScale = screenWidth / 390; // relative to your original 390 width
+
     return Container(
-      alignment: Alignment.topLeft,
-      width: 390,
-      height: 320,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10 * fontScale),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF3E51FF).withOpacity(0.15),
-            blurRadius: 10,
+            color: const Color(0xFF3E51FF).withOpacity(0.15),
+            blurRadius: 10 * fontScale,
             offset: const Offset(0, 0),
           ),
         ],
@@ -63,35 +70,35 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Expanded(
+              Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(left: 10, top: 15),
-                  child: Text('Occupancy Rate',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                      )),
+                  padding: EdgeInsets.only(
+                      left: 10 * fontScale, top: 15 * fontScale),
+                  child: Text(
+                    'Occupancy Rate',
+                    style: TextStyle(
+                      fontSize: 17 * fontScale,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
               Flexible(
                 child: OccupancyPeriodDropdown(
                   selectedValue: selectedPeriod,
                   onChanged: (value) {
-                    setState(
-                      () {
-                        selectedPeriod = value;
-                        // You can also trigger chart update here if needed
-                      },
-                    );
+                    setState(() {
+                      selectedPeriod = value;
+                    });
                   },
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 10 * fontScale),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.0 * fontScale),
               child: OccupancyBarChart(
                 isShowingMainData: true,
                 period: selectedPeriod,
