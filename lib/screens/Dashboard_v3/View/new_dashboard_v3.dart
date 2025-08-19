@@ -88,7 +88,7 @@ class NewDashboardV3 extends StatelessWidget {
                     isRefreshing.value = false;
                   },
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 0),
+                    padding: const EdgeInsets.only(top: 6),
                     child: Column(
                       children: [
                         Container(

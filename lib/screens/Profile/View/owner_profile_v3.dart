@@ -127,7 +127,9 @@ class OwnerProfile_v3 extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20.fSize),
-                      Container(
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
                           width: 300,
                           height: 60,
                           decoration: BoxDecoration(
@@ -188,7 +190,9 @@ class OwnerProfile_v3 extends StatelessWidget {
                                 ],
                               ),
                             ],
-                          )),
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         children: [

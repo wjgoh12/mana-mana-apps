@@ -153,33 +153,32 @@ class PropertyImageStack extends StatelessWidget {
 
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
-        final screenWidth = sizingInformation.screenSize.width;
         final isMobile =
             sizingInformation.deviceScreenType == DeviceScreenType.mobile;
+        final screenWidth = MediaQuery.of(context).size.width;
+        final screenHeight = MediaQuery.of(context).size.height;
 
-        // final position = 25.height;
         final containerWidth =
-            isMobile ? screenWidth * 0.95 : screenWidth * 0.85;
-        final containerHeight = isMobile ? 405.0 : 500.0;
-        final width = containerWidth - 20;
-        final height =
-            isMobile ? containerHeight * 0.5 : containerHeight * 0.55;
-        final smallContainerWidth =
-            isMobile ? containerWidth * 0.85 : containerWidth * 0.6;
-        final smallContainerHeight = isMobile ? 35.0 : 45.0;
+            isMobile ? screenWidth * 0.85 : screenWidth * 0.43;
+        final containerHeight =
+            isMobile ? screenHeight * 0.5 : screenHeight * 0.55;
 
-        final double horizontalPadding = isMobile ? 14 : 40;
-        //final arrowTop = 30.height;
-        //final arrowLeft = isMobile ? 37.5.width : 27.5.width;
+        final imageWidth = containerWidth * 0.95;
+        final imageHeight = containerHeight * 0.45;
+
+        final smallContainerWidth = containerWidth * 0.45;
+        final smallContainerHeight = containerHeight * 0.08;
+        final horizontalPadding = containerWidth * 0.03;
 
         return Stack(
           clipBehavior: Clip.none,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              padding: EdgeInsets.only(right: horizontalPadding),
               child: Container(
                 width: containerWidth,
                 height: containerHeight,
+                margin: const EdgeInsets.only(left: 5),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   color: Colors.white,
@@ -202,8 +201,8 @@ class PropertyImageStack extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(6),
                             child: SizedBox(
-                              width: width,
-                              height: height,
+                              width: imageWidth,
+                              height: imageHeight,
                               child: Image.asset(
                                 'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
                                 fit: BoxFit.cover,
@@ -212,11 +211,13 @@ class PropertyImageStack extends StatelessWidget {
                           ),
                         ),
                         Positioned(
-                          top: (containerHeight - smallContainerHeight) / 2,
-                          left: (containerWidth - smallContainerWidth) / 2 - 25,
+                          bottom: 3,
+                          left: (containerWidth - smallContainerWidth) / 2 - 15,
                           child: Container(
-                            width: smallContainerWidth + 50,
+                            width: smallContainerWidth + containerWidth * 0.1,
                             height: smallContainerHeight,
+                            margin:
+                                EdgeInsets.only(bottom: containerHeight * 0.01),
                             padding: const EdgeInsets.only(left: 8),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(1),

@@ -178,8 +178,8 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     //print(locationByMonth.first['owner']);
     // locationByMonth = [
     //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 3, 'year': 2024},
-    //   {'total': 1842.01, 'location': 'CEYLONZ', 'month': 6, 'year': 2024},
-    //   //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 1, 'year': 2025},
+    //   {'total': 1874.01, 'location': 'CEYLONZ', 'month': 6, 'year': 2024},
+    //   {'total': 2500.01, 'location': 'PAXTONZ', 'month': 1, 'year': 2025},
     //   //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 2, 'year': 2025}
     // ];
     try {
