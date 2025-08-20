@@ -286,7 +286,7 @@ Widget _buildRoomTypeCard(BuildContext context, String roomType, int point) {
             children: [
               Text(
                 roomType,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -294,7 +294,7 @@ Widget _buildRoomTypeCard(BuildContext context, String roomType, int point) {
               ),
               Text(
                 '${formattedPoints.toString()} points',
-                style: TextStyle(
+                style: const TextStyle(
                   // fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),

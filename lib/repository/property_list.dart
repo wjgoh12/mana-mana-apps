@@ -368,4 +368,20 @@ class PropertyListRepository {
       throw Exception('Failed to fetch property occupancy rate: $e');
     }
   }
+
+  Future<Map<String, dynamic>> getPropertyBlockDate({
+    required String location,
+    required String startDate,
+    required String endDate,
+    required String contentType,
+  }) async =>
+      await _apiService.post(
+        ApiEndpoint.getCalendarBlockDate,
+        data: {
+          "state": location,
+          "dateFrom": startDate,
+          "dateTo": endDate,
+          "contentType": contentType,
+        },
+      );
 }

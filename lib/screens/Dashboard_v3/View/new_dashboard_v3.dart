@@ -249,7 +249,7 @@ class NewDashboardV3 extends StatelessWidget {
                           ),
                         ),
 
-                        SizedBox(height: 2.height),
+                        //SizedBox(height: 2.height),
 
                         // Newsletter section
                         Container(

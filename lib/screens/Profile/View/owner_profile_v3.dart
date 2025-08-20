@@ -75,7 +75,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                   child: SingleChildScrollView(
                       child: Padding(
                     padding: EdgeInsets.only(
-                        left: responsiveWidth(10), top: responsiveHeight(15)),
+                        left: responsiveWidth(15), top: responsiveHeight(15)),
                     child: Column(children: [
                       DecoratedBox(
                         decoration: const BoxDecoration(
@@ -127,11 +127,12 @@ class OwnerProfile_v3 extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20.fSize),
-                      Align(
-                        alignment: Alignment.centerLeft,
+                      Padding(
+                        padding: EdgeInsets.only(left: 42.fSize),
                         child: Container(
-                          width: 300,
-                          height: 60,
+                          alignment: Alignment.centerLeft,
+                          width: responsiveWidth(300),
+                          height: responsiveHeight(60),
                           decoration: BoxDecoration(
                             color: const Color(0xFFD5D5FF),
                             borderRadius: const BorderRadius.all(
@@ -172,11 +173,12 @@ class OwnerProfile_v3 extends StatelessWidget {
                                           '3000',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 12.fSize),
+                                              fontSize: responsiveFont(12)),
                                         ),
                                         Text(
                                           ' Point',
-                                          style: TextStyle(fontSize: 12.fSize),
+                                          style: TextStyle(
+                                              fontSize: responsiveFont(12)),
                                         )
                                       ],
                                     ),
@@ -184,7 +186,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                                   Text(
                                     'Expired on 31/12/2023',
                                     style: TextStyle(
-                                      fontSize: 10.fSize,
+                                      fontSize: responsiveFont(10),
                                     ),
                                   ),
                                 ],

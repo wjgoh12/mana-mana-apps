@@ -161,7 +161,7 @@ class PropertyImageStack extends StatelessWidget {
         final containerWidth =
             isMobile ? screenWidth * 0.85 : screenWidth * 0.43;
         final containerHeight =
-            isMobile ? screenHeight * 0.5 : screenHeight * 0.55;
+            isMobile ? screenHeight * 0.5 : screenHeight * 0.4;
 
         final imageWidth = containerWidth * 0.95;
         final imageHeight = containerHeight * 0.45;

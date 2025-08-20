@@ -61,26 +61,20 @@ class PropertyStack extends StatelessWidget {
     //model.fetchData();
 
     return ResponsiveBuilder(builder: (context, sizingInformation) {
-      final screenWidth = sizingInformation.screenSize.width;
       final isMobile =
           sizingInformation.deviceScreenType == DeviceScreenType.mobile;
+      final screenWidth = MediaQuery.of(context).size.width;
+      final screenHeight = MediaQuery.of(context).size.height;
 
-      // final position = 25.height;
-      final containerWidth = isMobile ? screenWidth * 0.95 : screenWidth * 0.85;
-      final containerHeight = isMobile ? 405.0 : 500.0;
+      final containerWidth = isMobile ? screenWidth * 0.9 : screenWidth * 0.5;
+      final containerHeight =
+          isMobile ? screenHeight * 0.4 : screenHeight * 0.45;
 
-      final width = containerWidth - 20;
-      final height = isMobile ? containerHeight * 0.5 : containerHeight * 0.55;
+      final imageWidth = containerWidth * 0.95;
+      final imageHeight = containerHeight * 0.45;
 
-      final smallContainerWidth =
-          isMobile ? containerWidth * 0.85 : containerWidth * 0.6;
-      final smallContainerHeight = isMobile ? 35.0 : 45.0;
-
-      final ownerAvatarRadius = isMobile ? 13.0 : 16.0;
-      final ownerFontSize = isMobile ? 12.0 : 14.0;
-
-      final roadFontSize = isMobile ? 8.0 : 10.0;
-      final totalFontSize = isMobile ? 7.0 : 9.0;
+      final smallContainerWidth = containerWidth * 0.45;
+      final smallContainerHeight = containerHeight * 0.08;
 
       final horizontalPadding = isMobile ? 16.0 : 40.0;
 
@@ -90,7 +84,7 @@ class PropertyStack extends StatelessWidget {
           Container(
             width: containerWidth,
             height: containerHeight,
-            margin: const EdgeInsets.only(left: 5),
+            margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: Colors.white,
@@ -104,6 +98,7 @@ class PropertyStack extends StatelessWidget {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Stack(
                   children: [
@@ -112,8 +107,8 @@ class PropertyStack extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(6),
                         child: SizedBox(
-                          width: width,
-                          height: height,
+                          width: imageWidth,
+                          height: imageHeight,
                           child: Image.asset(
                             'assets/images/${(locationByMonth.first['location'] ?? '').toString().toUpperCase()}.png',
                             fit: BoxFit.cover,
@@ -122,12 +117,14 @@ class PropertyStack extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      top: (containerHeight - smallContainerHeight) / 2,
-                      left: (containerWidth - smallContainerWidth) / 2,
+                      bottom: 0,
+                      left: (containerWidth - smallContainerWidth) / 2 -
+                          smallContainerWidth * 0.25,
                       child: Container(
-                        width: smallContainerWidth.toDouble(),
-                        height: smallContainerHeight.toDouble(),
-                        padding: const EdgeInsets.only(left: 10),
+                        width: smallContainerWidth + containerWidth * 0.2,
+                        height: smallContainerHeight,
+                        margin: EdgeInsets.only(bottom: containerHeight * 0.02),
+                        // padding: const EdgeInsets.only(left: 10),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(1),
                           borderRadius: BorderRadius.circular(5),

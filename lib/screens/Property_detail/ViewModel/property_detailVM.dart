@@ -11,6 +11,7 @@ class PropertyDetailVM extends ChangeNotifier {
   double total = 0.0;
   List<Map<String, dynamic>> locationByMonth = [];
   String locationRoad = '';
+  String locationState = '';
   String property = '';
 
   String? selectedType;
@@ -96,6 +97,30 @@ class PropertyDetailVM extends ChangeNotifier {
         break;
       default:
         locationRoad = "";
+        break;
+    }
+
+    switch (property.toUpperCase()) {
+      case "EXPRESSIONZ":
+        locationState = "Kuala Lumpur";
+        break;
+      case "CEYLONZ":
+        locationState = "Kuala Lumpur";
+        break;
+      case "SCARLETZ":
+        locationState = "Kuala Lumpur";
+        break;
+      case "MILLERZ":
+        locationState = "Old Klang Road";
+        break;
+      case "MOSSAZ":
+        locationState = "Empire City";
+        break;
+      case "PAXTONZ":
+        locationState = "Empire City";
+        break;
+      default:
+        locationState = "";
         break;
     }
     ownerData = await ownerPropertyListRepository.getOwnerUnit();
