@@ -5,6 +5,7 @@ import 'package:mana_mana_app/screens/All_Property/View/property_summary.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
+import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 import 'package:mana_mana_app/widgets/overview_card.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
@@ -274,7 +275,8 @@ class NewDashboardV3 extends StatelessWidget {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => Newsletter(),
+                                            builder: (context) =>
+                                                AllNewsletter(),
                                           ),
                                         );
                                       },
