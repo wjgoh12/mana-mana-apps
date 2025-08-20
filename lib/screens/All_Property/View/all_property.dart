@@ -103,7 +103,9 @@ class AllPropertyScreen extends StatelessWidget {
         final property = latestProperties[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 20.0),
-          child: PropertyStack(locationByMonth: [property]),
+          child: Center(
+            child: PropertyStack(locationByMonth: [property]),
+          ),
         );
       },
     );

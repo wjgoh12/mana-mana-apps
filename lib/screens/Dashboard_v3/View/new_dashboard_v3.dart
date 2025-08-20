@@ -289,7 +289,7 @@ class NewDashboardV3 extends StatelessWidget {
                                 model: model,
                                 controller: newsletterScrollController,
                               ),
-                              const SizedBox(height: 60),
+                              //const SizedBox(height: 60),
                             ],
                           ),
                         ),

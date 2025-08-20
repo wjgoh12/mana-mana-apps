@@ -47,7 +47,8 @@ class NewsletterListV3 extends StatelessWidget {
         : Builder(builder: (context) {
             final screenHeight = MediaQuery.of(context).size.height;
             final isMobile = MediaQuery.of(context).size.width < 600;
-            final sectionHeight = (isMobile ? screenHeight * 0.45 : screenHeight * 0.35) + 12.0;
+            final sectionHeight =
+                (isMobile ? screenHeight * 0.45 : screenHeight * 0.35) + 12.0;
 
             // Determine latest year in dataset
             final int latestYear = model.locationByMonth
@@ -86,8 +87,8 @@ class NewsletterListV3 extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.zero,
-                  itemBuilder: (context, index) => NewsletterImageStack(
-                      locationByMonth: [items[index]]),
+                  itemBuilder: (context, index) =>
+                      NewsletterImageStack(locationByMonth: [items[index]]),
                   separatorBuilder: (_, __) => const SizedBox(width: 40),
                   itemCount: items.length,
                 ),
@@ -143,7 +144,6 @@ class NewsletterImageStack extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Image at top
                   Stack(
                     children: [
                       Padding(

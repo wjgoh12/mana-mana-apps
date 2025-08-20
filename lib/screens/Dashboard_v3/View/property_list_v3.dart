@@ -46,7 +46,7 @@ class PropertyListV3 extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: ListView(
                   scrollDirection: Axis.horizontal,
-                  // shrinkWrap: true,
+                  shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   children: [
                     //   ...model.locationByMonth
@@ -75,9 +75,9 @@ class PropertyListV3 extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
     // Keep in sync with PropertyImageStack's containerHeight formula
     final double containerHeight =
-        isMobile ? screenHeight * 0.5 : screenHeight * 0.35;
+        isMobile ? screenHeight * 0.42 : screenHeight * 0.35;
     // Add a small breathing space to prevent clipping
-    return containerHeight + 16.0;
+    return containerHeight;
   }
 
   int get latestYear => model.locationByMonth
@@ -175,7 +175,7 @@ class PropertyImageStack extends StatelessWidget {
         final containerWidth =
             isMobile ? screenWidth * 0.85 : screenWidth * 0.43;
         final containerHeight =
-            isMobile ? screenHeight * 0.5 : screenHeight * 0.35;
+            isMobile ? screenHeight * 0.4 : screenHeight * 0.35;
 
         final imageWidth = containerWidth * 0.95;
         final imageHeight = containerHeight * 0.48;
