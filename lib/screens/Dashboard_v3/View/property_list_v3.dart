@@ -40,30 +40,44 @@ class PropertyListV3 extends StatelessWidget {
             ),
           )
         : SizedBox(
-            height: 450.fSize,
-            child: ListView(
-                scrollDirection: Axis.horizontal,
-                // shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  //   ...model.locationByMonth
-                  //       .where((property) => property['year'] == latestYear)
-                  //       .toList()
-                  //     ..sort((a, b) =>
-                  //         (b['month'] as int).compareTo(a['month'] as int))
-                  // ]
-                  //     .expand((property) => [
-                  //           PropertyImageStack(locationByMonth: [property]),
-                  //           const SizedBox(width: 20),
-                  //         ])
-                  //     .toList(),
-                  // ViewAllProperty(model: model),
-                  ...sequencedProperties.map((property) => PropertyImageStack(
-                        locationByMonth: [property],
-                      )),
-                ]),
+            // Match the section height to the actual card height to avoid extra gap
+            height: _computeSectionHeight(context),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  // shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    //   ...model.locationByMonth
+                    //       .where((property) => property['year'] == latestYear)
+                    //       .toList()
+                    //     ..sort((a, b) =>
+                    //         (b['month'] as int).compareTo(a['month'] as int))
+                    // ]
+                    //     .expand((property) => [
+                    //           PropertyImageStack(locationByMonth: [property]),
+                    //           const SizedBox(width: 20),
+                    //         ])
+                    //     .toList(),
+                    // ViewAllProperty(model: model),
+                    ...sequencedProperties.map((property) => PropertyImageStack(
+                          locationByMonth: [property],
+                        )),
+                  ]),
+            ),
             // ),
           );
+  }
+
+  double _computeSectionHeight(BuildContext context) {
+    final bool isMobile = MediaQuery.of(context).size.width < 600;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    // Keep in sync with PropertyImageStack's containerHeight formula
+    final double containerHeight =
+        isMobile ? screenHeight * 0.5 : screenHeight * 0.35;
+    // Add a small breathing space to prevent clipping
+    return containerHeight + 16.0;
   }
 
   int get latestYear => model.locationByMonth
@@ -161,14 +175,14 @@ class PropertyImageStack extends StatelessWidget {
         final containerWidth =
             isMobile ? screenWidth * 0.85 : screenWidth * 0.43;
         final containerHeight =
-            isMobile ? screenHeight * 0.5 : screenHeight * 0.4;
+            isMobile ? screenHeight * 0.5 : screenHeight * 0.35;
 
         final imageWidth = containerWidth * 0.95;
-        final imageHeight = containerHeight * 0.45;
+        final imageHeight = containerHeight * 0.48;
 
         final smallContainerWidth = containerWidth * 0.45;
         final smallContainerHeight = containerHeight * 0.08;
-        final horizontalPadding = containerWidth * 0.03;
+        final horizontalPadding = containerWidth * 0.035;
 
         return Stack(
           clipBehavior: Clip.none,

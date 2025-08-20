@@ -46,7 +46,7 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     // scale factors (adjust as you like)
-    final width = screenWidth * 0.9; // 90% of screen width
+    final width = screenWidth * 0.92; // 90% of screen width
     final height = screenHeight * 0.4; // 40% of screen height
     final fontScale = screenWidth / 390; // relative to your original 390 width
 
@@ -77,7 +77,7 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
                   child: Text(
                     'Occupancy Rate',
                     style: TextStyle(
-                      fontSize: 17 * fontScale,
+                      fontSize: 15 * fontScale,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

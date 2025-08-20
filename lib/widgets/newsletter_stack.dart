@@ -5,10 +5,13 @@ import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart'
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-
 class newsletterStack extends StatelessWidget {
-  const newsletterStack({super.key,required this.image,required this.text1,required this.text2});
-  
+  const newsletterStack(
+      {super.key,
+      required this.image,
+      required this.text1,
+      required this.text2});
+
   final String image;
   final String text1;
   final String text2;
@@ -17,206 +20,204 @@ class newsletterStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-    children: [
-      ResponsiveBuilder(
-     builder: (context, sizingInformation) {
-      final isMobile =
-            sizingInformation.deviceScreenType == DeviceScreenType.mobile;
-      final width = isMobile ? 150.fSize : 140.fSize;
-        final height = 150.fSize;
-        final containerWidth = isMobile ? 400.fSize : 390.fSize;
-        final containerHeight = 170.fSize;
-        final smallcontainerWidth = isMobile? 50.fSize: 40.width;
-        final smallcontainerHeight = 60.fSize;
-        
-       return Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            width: containerWidth,
-        height: containerHeight,
-        margin: const EdgeInsets.only(left: 5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Color(0xFF3E51FF).withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 0),
-            ),
-          ],
-        ),
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-                      Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: SizedBox(
-                    width: width,
-                    height: height,
-                    child: Image.asset(
-                      'assets/images/newsletter_image.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
+      children: [
+        ResponsiveBuilder(builder: (context, sizingInformation) {
+          final isMobile =
+              sizingInformation.deviceScreenType == DeviceScreenType.mobile;
+          final screenWidth = MediaQuery.of(context).size.width;
+          final screenHeight = MediaQuery.of(context).size.height;
 
-              Positioned(
-                left:15,
-                bottom:15,
-                child:Container(
-                  width: smallcontainerWidth,
-                  height: smallcontainerHeight,
-                  decoration: const BoxDecoration(
-                    color: Color(0XFF3E51FF),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(DateTime.now().day.toString(),
-                      style:TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.fSize
-                      )
-                      ),
-                     Text(
-                        [
-                          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-                        ][DateTime.now().month - 1],
-                      style:TextStyle(
-                        color: Colors.white,
-                        fontSize: 11.fSize,
+          final width = isMobile ? 150.fSize : 140.fSize;
+          final height = 150.fSize;
+          final containerWidth = isMobile ? 400.fSize : 390.fSize;
+          final containerHeight = isMobile ? 170.fSize : 240.fSize;
+          final smallcontainerWidth = isMobile ? 50.fSize : 40.fSize;
+          final smallcontainerHeight = isMobile ? 65.fSize : 60.fSize;
+
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: containerWidth,
+                height: containerHeight,
+                margin: const EdgeInsets.only(left: 5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF3E51FF).withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: SizedBox(
+                              width: width,
+                              height: height,
+                              child: Image.asset(
+                                'assets/images/newsletter_image.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                      )
-                    ]
-                         ),
-                ),
-                
-                 )
-              ],
-            ),
-            Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-              children:[
-                Padding(
-                  padding: const EdgeInsets.only(top:10 ),
-                  child: Row(
-                   children:[
-                    Image.asset(
-                    'assets/images/newsletter_icon.png',
-                        width: 24.fSize,
-                        height: 24.fSize,
-                     ),
-                     SizedBox(width: 2.fSize),
-                     Text('Anis Shazwani',
-                     style:TextStyle(
-                      fontSize: 14.fSize
-                     )
-                     )
-                   ]
-                  ),
-                ),
-                const SizedBox(height: 2),
-                ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 225.fSize, maxHeight: 50.fSize),
-                  child: const Text(
-                    'Scarletz Suites: Your Chic Urban Stay in the Heart of Kuala Lumpur with a Touch of Luxury',
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                 ),
-                ),
-
-                SizedBox(
-                  width: 220.fSize,
-                  height:37,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: (){},
-                        child: Row(
-                          children: [
-                            Text('Read More',
-                            style: TextStyle(
-                              fontSize: 11.fSize,
-                              color:Colors.black,
+                        Positioned(
+                          left: 15,
+                          bottom: 15,
+                          child: Container(
+                            width: smallcontainerWidth,
+                            height: smallcontainerHeight,
+                            decoration: const BoxDecoration(
+                              color: Color(0XFF3E51FF),
                             ),
-                            ),
-                            const SizedBox(width: 5),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Image.asset(
-                                 'assets/images/arrow.png',
-                                 width:15.fSize,
-                                 height: 9.fSize,
-                                ),
-                                Text(
-                                  'Jom',
+                            child: Column(children: [
+                              Text(DateTime.now().day.toString(),
                                   style: TextStyle(
-                                    fontSize: 9.fSize,
-                                    color:Colors.black,
-                                    ),
+                                      color: Colors.white, fontSize: 20.fSize)),
+                              Text(
+                                [
+                                  'Jan',
+                                  'Feb',
+                                  'Mar',
+                                  'Apr',
+                                  'May',
+                                  'Jun',
+                                  'Jul',
+                                  'Aug',
+                                  'Sep',
+                                  'Oct',
+                                  'Nov',
+                                  'Dec'
+                                ][DateTime.now().month - 1],
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11.fSize,
                                 ),
-                              ],
+                              )
+                            ]),
+                          ),
+                        )
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Row(children: [
+                            Image.asset(
+                              'assets/images/newsletter_icon.png',
+                              width: 24.fSize,
+                              height: 24.fSize,
                             ),
-                          ],
+                            SizedBox(width: 2.fSize),
+                            Text('Anis Shazwani',
+                                style: TextStyle(fontSize: 14.fSize))
+                          ]),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 0.5,
-                  width:215.fSize,
-                  color: Colors.grey,
-                ),
-
-             Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    '60 Views',
-                    style: TextStyle(
-                      fontSize: 10,
+                        const SizedBox(height: 2),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                              maxWidth: 225.fSize, maxHeight: 50.fSize),
+                          child: const Text(
+                            'Scarletz Suites: Your Chic Urban Stay in the Heart of Kuala Lumpur with a Touch of Luxury',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 220.fSize,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  minimumSize: Size(0, 0),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                onPressed: () {},
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Read More',
+                                      style: TextStyle(
+                                        fontSize: 11.fSize,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/arrow.png',
+                                          width: 15.fSize,
+                                          height: 9.fSize,
+                                        ),
+                                        Text(
+                                          'Jom',
+                                          style: TextStyle(
+                                            fontSize: 9.fSize,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          height: 0.5,
+                          width: 215.fSize,
+                          color: Colors.grey,
+                        ),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('60 Views',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                  )),
+                              SizedBox(width: 2.fSize),
+                              const Text(
+                                '10 Comments',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                ),
+                              ),
+                              SizedBox(width: 2.fSize),
+                              PostLike(),
+                            ]),
+                      ],
                     )
-                  ),
-                  SizedBox(width: 2.fSize),
-                  
-                  const Text(
-                    '10 Comments',
-                  style: TextStyle(
-                    fontSize: 10,
-                  ),
-                  ),
-                  SizedBox(width: 2.fSize),
-                  PostLike(),
-                ]
-              ),
-              ],
-            )
-          ],
-        ),
-          )
-        ],
-         );
-     }
-   ),
-    ],
-  );
+                  ],
+                ),
+              )
+            ],
+          );
+        }),
+      ],
+    );
   }
 }
-
 
 class PostLike extends StatefulWidget {
   @override
@@ -233,16 +234,10 @@ class _PostLikeState extends State<PostLike> {
       size: 15.0,
       likeCount: _likeCount,
       likeCountPadding: const EdgeInsets.only(left: 4),
-      likeBuilder: (liked) => Icon(
-        Icons.favorite, 
-        color: liked ? Colors.red : Colors.grey, 
-        size: 15
-        ),
-      countBuilder: (count, liked, text) => 
-      Text(
-        text, 
-        style: TextStyle(color: liked ? Colors.red : Colors.grey)
-        ),
+      likeBuilder: (liked) => Icon(Icons.favorite,
+          color: liked ? Colors.red : Colors.grey, size: 15),
+      countBuilder: (count, liked, text) =>
+          Text(text, style: TextStyle(color: liked ? Colors.red : Colors.grey)),
       onTap: (liked) async {
         setState(() {
           isLiked = !liked;

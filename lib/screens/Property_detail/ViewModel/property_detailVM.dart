@@ -142,21 +142,26 @@ class PropertyDetailVM extends ChangeNotifier {
       }
     }
 
-    typeItems = ownerData
+    // Build typeItems from API ownerData and de-duplicate to avoid same display values multiple times
+    final List<String> builtTypeItems = ownerData
         .where((types) => types.location == property)
         .map((types) => '${types.type} (${types.unitno})')
         .toList();
+    final Set<String> seen = <String>{};
+    typeItems = builtTypeItems.where((e) => seen.add(e)).toList();
     // old data
     // typeItems = ownerData
     //     .where((types) => types.location == property)
     //     .map((types) => '${types.type} (${types.unitno})')
     //     .toList();
     if (typeItems.isNotEmpty) {
-      selectedType =
-          selectedType == '' ? typeItems.first.split(" (")[0] : selectedType;
-      selectedUnitNo = selectedUnitNo == ''
-          ? typeItems.first.split(" (")[1].replaceAll(")", "")
-          : selectedUnitNo;
+      // If initial values were provided (e.g., from navigation), respect them
+      if (selectedType == null || selectedType!.isEmpty) {
+        selectedType = typeItems.first.split(" (")[0];
+      }
+      if (selectedUnitNo == null || selectedUnitNo!.isEmpty) {
+        selectedUnitNo = typeItems.first.split(" (")[1].replaceAll(")", "");
+      }
     }
 
     unitByMonth = await ownerPropertyListRepository.getUnitByMonth();
@@ -346,7 +351,7 @@ class PropertyDetailVM extends ChangeNotifier {
 
     _selectedYearValue = yearItems.isNotEmpty
         ? yearItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
-        : '';
+        : null;
 
     monthItems = unitByMonth
         .where((item) =>
@@ -361,7 +366,7 @@ class PropertyDetailVM extends ChangeNotifier {
 
     selectedMonthValue = monthItems.isNotEmpty
         ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
-        : '';
+        : null;
 
     var filteredYears = unitByMonth
         .where((unit) =>
@@ -433,7 +438,7 @@ class PropertyDetailVM extends ChangeNotifier {
       ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
     selectedMonthValue = monthItems.isNotEmpty
         ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
-        : '';
+        : null;
     // selectedYearValue = newSelectedYear;
     // Remove artificial delay for better performance
     _isMonthLoadng = false;

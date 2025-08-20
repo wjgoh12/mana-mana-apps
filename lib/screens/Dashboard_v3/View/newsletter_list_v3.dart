@@ -1,13 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter_read_details.dart';
-import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:like_button/like_button.dart';
@@ -22,7 +18,7 @@ class NewsletterListV3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const AllNewsletter allNewsletter = AllNewsletter();
-    model.fetchData();
+    // Do not fetch here to avoid repeated fetches and potential duplicates
 
     if (model.isLoading) {
       return Container(
@@ -48,33 +44,56 @@ class NewsletterListV3 extends StatelessWidget {
               child: Text('No properties available'),
             ),
           )
-        : SizedBox(
-            height: 450.fSize,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.zero,
-              children: [
-                ...model.locationByMonth
-                    .where((property) =>
-                        property['year'] ==
-                            model.locationByMonth
-                                .map((p) => p['year'])
-                                .reduce((a, b) => a > b ? a : b) &&
-                        property['month'] == model.unitLatestMonth)
-                    .expand((property) => [
-                          NewsletterImageStack(
-                            locationByMonth: [property],
-                          ),
-                          const SizedBox(width: 40),
-                        ])
-                    .toList(),
-                const SizedBox(width: 5),
-                // ViewAllProperty(model: model),
-              ],
-            ),
-          );
+        : Builder(builder: (context) {
+            final screenHeight = MediaQuery.of(context).size.height;
+            final isMobile = MediaQuery.of(context).size.width < 600;
+            final sectionHeight = (isMobile ? screenHeight * 0.45 : screenHeight * 0.35) + 12.0;
+
+            // Determine latest year in dataset
+            final int latestYear = model.locationByMonth
+                .map((p) => p['year'] as int)
+                .reduce((a, b) => a > b ? a : b);
+
+            // Filter by latest year and latest month
+            final List<Map<String, dynamic>> filtered = model.locationByMonth
+                .where((property) =>
+                    property['year'] == latestYear &&
+                    property['month'] == model.unitLatestMonth)
+                .cast<Map<String, dynamic>>()
+                .toList();
+
+            // Deduplicate by location (normalized) so a location appears at most once
+            final Set<String> seenLocations = <String>{};
+            final List<Map<String, dynamic>> uniqueByLocation = [];
+            for (final prop in filtered) {
+              final String loc =
+                  (prop['location'] ?? '').toString().trim().toUpperCase();
+              if (seenLocations.add(loc)) {
+                uniqueByLocation.add(prop);
+              }
+            }
+
+            // Show only one newsletter card
+            final List<Map<String, dynamic>> items =
+                uniqueByLocation.take(1).toList();
+
+            return SizedBox(
+              height: sectionHeight,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  itemBuilder: (context, index) => NewsletterImageStack(
+                      locationByMonth: [items[index]]),
+                  separatorBuilder: (_, __) => const SizedBox(width: 40),
+                  itemCount: items.length,
+                ),
+              ),
+            );
+          });
   }
 }
 
@@ -92,13 +111,13 @@ class NewsletterImageStack extends StatelessWidget {
 
       final containerWidth = isMobile ? screenWidth * 0.85 : screenWidth * 0.43;
       final containerHeight =
-          isMobile ? screenHeight * 0.5 : screenHeight * 0.55;
+          isMobile ? screenHeight * 0.45 : screenHeight * 0.35;
 
       final imageWidth = containerWidth * 0.95;
-      final imageHeight = containerHeight * 0.45;
+      final imageHeight = containerHeight * 0.5;
 
       final smallcontainerWidth = isMobile ? 50.fSize : 40.fSize;
-      final smallcontainerHeight = isMobile ? 50.fSize : 55.fSize;
+      final smallcontainerHeight = isMobile ? 65.fSize : 60.fSize;
       final horizontalPadding = screenWidth * 0.01;
 
       return Stack(

@@ -1005,8 +1005,8 @@ class ContractDetailsContainer extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.all(responsiveWidth(10)),
           child: Container(
-            width: responsiveWidth(420),
-            height: responsiveHeight(50),
+            width: responsiveWidth(380),
+            height: responsiveHeight(40),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(responsiveHeight(50)),
               border: Border.all(color: const Color(0xFF5092FF)),
@@ -1023,7 +1023,7 @@ class ContractDetailsContainer extends StatelessWidget {
                     children: [
                       Text(
                         'Contract Type ',
-                        style: TextStyle(fontSize: responsiveFont(9)),
+                        style: TextStyle(fontSize: responsiveFont(10)),
                       ),
                       Text(
                         (model.locationByMonth.isNotEmpty &&
@@ -1061,7 +1061,7 @@ class ContractDetailsContainer extends StatelessWidget {
                     children: [
                       Text(
                         'Contract End Date ',
-                        style: TextStyle(fontSize: responsiveFont(9)),
+                        style: TextStyle(fontSize: responsiveFont(10)),
                       ),
                       Text(
                         (model.locationByMonth.isNotEmpty &&
@@ -1214,7 +1214,7 @@ class UnitDetailsContainer extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(width: 5.fSize),
+              //SizedBox(width: 5.fSize),
               Container(
                 alignment: Alignment.centerLeft,
                 width: 300,

@@ -41,33 +41,10 @@ class AllPropertyScreen extends StatelessWidget {
                           shrinkWrap: true,
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           children: [
-                            GestureDetector(
-                              child: SizedBox(
-                                child: Column(
-                                  children: model.locationByMonth
-                                      .map((property) => property['location'])
-                                      .toSet()
-                                      .map((uniqueLocation) {
-                                    final property = model.locationByMonth
-                                        .firstWhere((p) =>
-                                            p['location'] == uniqueLocation);
-                                    return SizedBox(
-                                      child: Column(
-                                        children: [
-                                          GestureDetector(
-                                            child: _buildPropertyStack(
-                                              locationByMonth: [property],
-                                              context: context,
-                                              model: model,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 20),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
+                            _buildPropertyStack(
+                              locationByMonth: model.locationByMonth,
+                              context: context,
+                              model: model,
                             ),
                           ],
                         ),
@@ -92,8 +69,9 @@ class AllPropertyScreen extends StatelessWidget {
 
     // Group by location & pick latest month/year
     final Map<String, Map<String, dynamic>> latestByLocation = {};
+    final List<Map<String, dynamic>> source = locationByMonth;
 
-    for (var property in model.locationByMonth) {
+    for (var property in source) {
       final location = property['location'] as String;
       if (!latestByLocation.containsKey(location)) {
         latestByLocation[location] = property;
@@ -116,22 +94,18 @@ class AllPropertyScreen extends StatelessWidget {
         return (b['month'] as int).compareTo(a['month'] as int);
       });
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          physics: const BouncingScrollPhysics(),
-          children: latestProperties
-              .expand((property) => [
-                    PropertyStack(locationByMonth: [property]),
-                    const SizedBox(width: 20),
-                  ])
-              .toList(),
-        ),
-      ],
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+      itemCount: latestProperties.length,
+      itemBuilder: (context, index) {
+        final property = latestProperties[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: PropertyStack(locationByMonth: [property]),
+        );
+      },
     );
   }
 }
