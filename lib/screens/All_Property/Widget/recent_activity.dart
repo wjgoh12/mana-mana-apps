@@ -30,109 +30,106 @@ class RecentActivity extends StatelessWidget {
     }
 
     return ListView.builder(
-      itemCount: locationByMonth.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        final item = locationByMonth[index];
-        final location = item['location'] ?? 'Unknown Location';
-        final unitNo = item['unitNo'] ?? 'Unknown Unit';
-        final fullProperty = locationByMonth.firstWhere(
-          (prop) =>
-              prop['location'] == item['location'] &&
-              prop['unitNo'] == item['unitNo'],
-          orElse: () => item,
-        );
-        // final owner = ownerData.firstWhere(
-        //   (o) =>
-        //       o.location?.trim().toLowerCase() ==
-        //           location?.trim().toLowerCase() &&
-        //       o.unitno?.trim().toLowerCase() == unitNo.trim().toLowerCase(),
-        //   orElse: () =>
-        //       OwnerPropertyList(type: '', unitno: 'Unknown Unit', location: ''),
-        // );
-        // final isMobile =
-        //     sizingInformation.deviceScreenType == DeviceScreenType.mobile;
-        // final width = isMobile ? 370.fSize : 360.fSize;
-        // final height = 207.fSize;
-        // // final position = 25.height;
-        // final containerWidth = isMobile ? 390.fSize : 380.fSize;
-        // final containerHeight = 405.fSize;
-        // final smallcontainerWidth = isMobile ? 355.fSize : 100.width;
-        // final smallcontainerHeight = 35.fSize;
+        itemCount: locationByMonth.length,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          final item = locationByMonth[index];
+          final location = item['location'] ?? 'Unknown Location';
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ChangeNotifierProvider<NewDashboardVM_v3>(
-                    create: (_) => NewDashboardVM_v3(),
-                    child: property_detail_v3(
-                      locationByMonth: [locationByMonth.first],
-                      initialType: fullProperty['type'],
-                      initialUnitNo: fullProperty['unitNo'],
-                      initialTab: 'unitDetails',
-                    ),
-                  ),
-                ),
-              );
+          // Safely access the first owner (if exists)
+          final owners = (item['owners'] as List?) ?? [];
+          final firstOwner = owners.isNotEmpty ? owners.first : null;
+
+          final unitNo = firstOwner != null
+              ? firstOwner['unitNo'] ?? 'Unknown Unit'
+              : 'Unknown Unit';
+          final type = firstOwner != null ? firstOwner['type'] ?? '' : '';
+
+          // Find the matching property by location + unitNo (avoid duplicates)
+          final fullProperty = locationByMonth.firstWhere(
+            (prop) {
+              final propOwners = (prop['owners'] as List?) ?? [];
+              final propFirstOwner =
+                  propOwners.isNotEmpty ? propOwners.first : null;
+              return prop['location'] == location &&
+                  (propFirstOwner?['unitNo'] == unitNo);
             },
-            child: Container(
-              width: double.infinity,
-              height: 106.fSize,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.fSize),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 0),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  // left text
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Statement for Unit ${fullProperty['unitNo']} has been issued for $location',
-                          style: TextStyle(
-                            fontSize: 11.fSize,
-                            color: const Color(0xFF888888),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          location,
-                          style: TextStyle(
-                            fontSize: 14.fSize,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
+            orElse: () => item,
+          );
+
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ChangeNotifierProvider<NewDashboardVM_v3>(
+                      create: (_) => NewDashboardVM_v3(),
+                      child: property_detail_v3(
+                        locationByMonth: [fullProperty],
+                        initialType: type,
+                        initialUnitNo: unitNo,
+                        initialTab: 'unitDetails',
+                      ),
                     ),
                   ),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                height: 106.fSize,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.fSize),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 6,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // left text
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Statement for Unit $unitNo has been issued for $location',
+                            style: TextStyle(
+                              fontSize: 11.fSize,
+                              color: const Color(0xFF888888),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            location,
+                            style: TextStyle(
+                              fontSize: 14.fSize,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                  const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward_ios,
-                      size: 16, color: Colors.black54),
-                ],
+                    const SizedBox(width: 8),
+                    const Icon(Icons.arrow_forward_ios,
+                        size: 16, color: Colors.black54),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        });
   }
 }

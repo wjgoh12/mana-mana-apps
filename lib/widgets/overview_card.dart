@@ -83,10 +83,18 @@ class OverviewCard extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = Responsive.isMobile(context);
 
-// Base card width
     final cardWidth = isMobile ? screenWidth * 0.42 : screenWidth * 0.45;
     final cardHeightSmall = isMobile ? screenWidth * 0.20 : screenWidth * 0.13;
     final cardHeightLarge = isMobile ? screenWidth * 0.28 : screenWidth * 0.21;
+
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) =>
+        (value / 375.0) * screenWidth; // base width
+    double responsiveHeight(double value) =>
+        (value / 812.0) * screenHeight; // base height
+    double responsiveFont(double value) =>
+        (value / 812.0) * screenHeight; // font scaling
 
     return Center(
       child: Column(
@@ -104,13 +112,12 @@ class OverviewCard extends StatelessWidget {
                   children: [
                     //1st
                     Card(
-                      margin: const EdgeInsets.only(bottom: 20),
+                      margin: EdgeInsets.only(bottom: responsiveHeight(10)),
                       child: Container(
                         width: cardWidth,
                         height: cardHeightLarge,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              12), // Match card's border radius
+                          borderRadius: BorderRadius.circular(12),
                           image: DecorationImage(
                             image: AssetImage(
                                 'assets/images/overviewContainer1.png'),
@@ -184,7 +191,7 @@ class OverviewCard extends StatelessWidget {
 
                     //2nd
                     Card(
-                      margin: const EdgeInsets.only(bottom: 20),
+                      margin: EdgeInsets.only(bottom: responsiveHeight(10)),
                       color: const Color(0xFFFFE7B8),
                       child: SizedBox(
                         width: cardWidth,
@@ -260,7 +267,7 @@ class OverviewCard extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(width: 20), // spacing between columns
+                SizedBox(width: responsiveWidth(7)), // spacing between columns
 
                 // Right Column
                 Flexible(
@@ -268,7 +275,7 @@ class OverviewCard extends StatelessWidget {
                     children: [
                       //3rd
                       Card(
-                        margin: const EdgeInsets.only(bottom: 20),
+                        margin: EdgeInsets.only(bottom: responsiveHeight(10)),
                         color: const Color(0xFF9EEAFF),
                         child: SizedBox(
                           width: cardWidth,
@@ -488,7 +495,6 @@ class RevenueContainer extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: responsivePadding),
                 child: Column(
-                  //crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
                       height: (0.5).height,
