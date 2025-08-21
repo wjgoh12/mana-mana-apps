@@ -1343,7 +1343,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                     return Text(
                                       snapshot.data ?? '',
                                       style: TextStyle(
-                                        fontSize: responsiveFont(15),
+                                        fontSize: responsiveFont(10),
                                         fontWeight: FontWeight.bold,
                                       ),
                                     );
