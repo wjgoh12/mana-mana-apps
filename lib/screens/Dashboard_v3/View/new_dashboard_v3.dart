@@ -34,11 +34,18 @@ class NewDashboardV3 extends StatelessWidget {
           final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
           final isMobile = MediaQuery.of(context).size.width < 600;
           final screenWidth = MediaQuery.of(context).size.width;
-          final screenHeight = MediaQuery.of(context).size.height;
+
           //final double horizontalPadding = isMobile ? 16.0 : 40.0;
           final horizontalPadding = screenWidth * 0.05; // 5% of screen width
-          final titleFontSize = screenWidth * 0.05; // 5% of width
-          final rowHeight = screenHeight * 0.06; // 6% of height
+
+          final screenHeight = MediaQuery.of(context).size.height;
+
+          double responsiveWidth(double value) =>
+              (value / 375.0) * screenWidth; // base width
+          double responsiveHeight(double value) =>
+              (value / 812.0) * screenHeight; // base height
+          double responsiveFont(double value) =>
+              (value / 812.0) * screenHeight; // font scaling
 
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: const SystemUiOverlayStyle(
@@ -278,7 +285,7 @@ class NewDashboardV3 extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 15),
+                              SizedBox(height: responsiveHeight(15)),
                               NewsletterListV3(
                                 model: model,
                                 controller: newsletterScrollController,

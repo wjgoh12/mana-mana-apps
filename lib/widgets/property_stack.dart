@@ -132,7 +132,6 @@ class PropertyStack extends StatelessWidget {
                             smallContainerWidth + containerWidth * 0.2),
                         height: smallContainerHeight,
                         margin: EdgeInsets.only(bottom: containerHeight * 0.02),
-                        // padding: const EdgeInsets.only(left: 10),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(1),
                           borderRadius: BorderRadius.circular(5),
@@ -215,7 +214,7 @@ class PropertyStack extends StatelessWidget {
                                         getInitials(owner['ownerName'] ?? ''),
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: responsiveFont(12),
+                                          fontSize: responsiveFont(10),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
