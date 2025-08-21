@@ -18,6 +18,16 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) =>
+        (value / 375.0) * screenWidth; // base width
+    double responsiveHeight(double value) =>
+        (value / 812.0) * screenHeight; // base height
+    double responsiveFont(double value) =>
+        (value / 812.0) * screenHeight; // font scaling
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -55,7 +65,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
         ),
       ),
       body: Container(
-        height: 900,
+        height: responsiveHeight(900),
         color: Colors.white,
         padding: EdgeInsets.all(16),
         child: Column(
@@ -74,7 +84,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: SizedBox(
-                height: 350,
+                height: responsiveHeight(350),
                 child: ListView.builder(
                   itemCount: 1, // Replace with actual data length
                   itemBuilder: (context, index) {
@@ -83,15 +93,15 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 ),
               ),
             ),
-            const SizedBox(height: 30),
-            const Text(
+            SizedBox(height: responsiveHeight(30)),
+            Text(
               'Booking History',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: responsiveFont(18),
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: responsiveHeight(10)),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
@@ -105,101 +115,106 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 ],
               ),
               child: SingleChildScrollView(
-                padding: EdgeInsets.only(left: 10),
+                padding: EdgeInsets.all(16),
                 scrollDirection: Axis.vertical,
-                child: Table(
-                  border: TableBorder.all(color: Colors.transparent),
-                  columnWidths: const {
-                    0: FlexColumnWidth(1.5),
-                    1: FlexColumnWidth(2),
-                    2: FlexColumnWidth(2),
-                    3: FlexColumnWidth(1),
-                  },
-                  children: const [
-                    TableRow(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Table(
+                      border: TableBorder.all(color: Colors.transparent),
+                      columnWidths: {
+                        0: FlexColumnWidth(responsiveWidth(1.5)),
+                        1: FlexColumnWidth(responsiveWidth(2)),
+                        2: FlexColumnWidth(responsiveWidth(2)),
+                        3: FlexColumnWidth(responsiveWidth(1)),
+                      },
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10, top: 10),
-                          child: Text(
-                            'Location',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF3E51FF),
-                                fontSize: 13),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10, top: 10),
-                          child: Text(
-                            'Check-In Date',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF3E51FF),
-                              fontSize: 13,
+                        TableRow(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10, top: 10),
+                              child: Text(
+                                'Location',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF3E51FF),
+                                    fontSize: responsiveFont(13)),
+                              ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10, top: 10),
-                          child: Text(
-                            'Check-Out Date',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF3E51FF),
-                              fontSize: 13,
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10, top: 10),
+                              child: Text(
+                                'Check-In Date',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF3E51FF),
+                                  fontSize: responsiveFont(13),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10, top: 10),
-                          child: Text(
-                            'Points Used',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF3E51FF),
-                              fontSize: 13,
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10, top: 10),
+                              child: Text(
+                                'Check-Out Date',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF3E51FF),
+                                  fontSize: responsiveFont(13),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Ceylonz 9-11-3',
-                            style: TextStyle(
-                              fontSize: 11,
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10, top: 10),
+                              child: Text(
+                                'Points Used',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF3E51FF),
+                                  fontSize: responsiveFont(13),
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '2023-10-01',
-                            style: TextStyle(
-                              fontSize: 11,
+                        TableRow(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Ceylonz 9-11-3',
+                                style: TextStyle(
+                                  fontSize: responsiveFont(11),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '2023-10-05',
-                            style: TextStyle(
-                              fontSize: 11,
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                '2023-10-01',
+                                style: TextStyle(
+                                  fontSize: responsiveFont(11),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '1000',
-                            style: TextStyle(
-                              fontSize: 11,
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                '2023-10-05',
+                                style: TextStyle(
+                                  fontSize: responsiveFont(11),
+                                ),
+                              ),
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                '1000',
+                                style: TextStyle(
+                                  fontSize: responsiveFont(11),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -225,6 +240,16 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
   final NewDashboardVM_v3 model = NewDashboardVM_v3();
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) =>
+        (value / 375.0) * screenWidth; // base width
+    double responsiveHeight(double value) =>
+        (value / 812.0) * screenHeight; // base height
+    double responsiveFont(double value) =>
+        (value / 812.0) * screenHeight; // font scaling
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
@@ -246,33 +271,33 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
               MaterialPageRoute(builder: (_) => ChoosePropertyLocation()),
             );
           },
-          child: const Row(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Ceylonz 9-11-3',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: responsiveFont(16),
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF3E51FF),
                 ),
               ),
-              SizedBox(width: 15),
+              SizedBox(width: responsiveWidth(17)),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Available Points',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: responsiveFont(11),
                     ),
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: responsiveHeight(6)),
                   Text(
                     '14000/20000',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: responsiveFont(11),
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF3E51FF),
                     ),

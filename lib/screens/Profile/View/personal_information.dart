@@ -20,6 +20,16 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) =>
+        (value / 375.0) * screenWidth; // base width
+    double responsiveHeight(double value) =>
+        (value / 812.0) * screenHeight; // base height
+    double responsiveFont(double value) =>
+        (value / 812.0) * screenHeight; // font scaling
+
     return FutureBuilder<void>(
       future: _fetchFuture,
       builder: (context, snapshot) {
@@ -33,12 +43,12 @@ class _PersonalInformationState extends State<PersonalInformation> {
               icon: Image.asset('assets/images/personal_info_back.png'),
               onPressed: () => Navigator.pop(context),
             ),
-            title: const Text(
+            title: Text(
               'Personal Information',
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: responsiveFont(20),
               ),
             ),
             bottom: PreferredSize(
@@ -57,7 +67,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 Row(
                   children: [
                     _buildRow(icon: 'personal_info_name.png', label: 'Name'),
-                    const SizedBox(width: 8),
+                    SizedBox(width: responsiveWidth(8)),
                     model.users.isNotEmpty
                         ? _buildData(
                             data: model.users.first.ownerFullName ?? '')
@@ -69,7 +79,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                     _buildRow(
                         icon: 'personal_info_contact.png',
                         label: 'Contact No.'),
-                    const SizedBox(width: 8),
+                    SizedBox(width: responsiveWidth(8)),
                     model.users.isNotEmpty
                         ? _buildData(data: model.users.first.ownerContact ?? '')
                         : const Text('Loading...'),
@@ -78,7 +88,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 Row(
                   children: [
                     _buildRow(icon: 'personal_info_email.png', label: 'Email'),
-                    const SizedBox(width: 8),
+                    SizedBox(width: responsiveWidth(8)),
                     model.users.isNotEmpty
                         ? _buildData(data: model.users.first.email ?? '')
                         : const Text('Loading...'),
@@ -88,7 +98,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                   children: [
                     _buildRow(
                         icon: 'personal_info_address.png', label: 'Address'),
-                    const SizedBox(width: 8),
+                    SizedBox(width: responsiveWidth(8)),
                     model.users.isNotEmpty
                         ? _buildData(data: model.users.first.ownerAddress ?? '')
                         : const Text('Loading...'),
@@ -103,8 +113,18 @@ class _PersonalInformationState extends State<PersonalInformation> {
   }
 
   Widget _buildRow({required String icon, required String label}) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) =>
+        (value / 375.0) * screenWidth; // base width
+    double responsiveHeight(double value) =>
+        (value / 812.0) * screenHeight; // base height
+    double responsiveFont(double value) =>
+        (value / 812.0) * screenHeight; // font scaling
+
     return SizedBox(
-      width: 150,
+      width: responsiveWidth(150),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
         child: Row(
@@ -112,25 +132,36 @@ class _PersonalInformationState extends State<PersonalInformation> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset('assets/images/$icon'),
-            const SizedBox(width: 10),
+            SizedBox(width: responsiveWidth(10)),
             Text(
               label,
-              style: const TextStyle(fontSize: 13),
+              style: TextStyle(fontSize: responsiveFont(13)),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-Widget _buildData({required String data}) {
-  return SizedBox(
-    width: 200,
-    child: Text(
-      data,
-      maxLines: 2,
-      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-    ),
-  );
+  Widget _buildData({required String data}) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) =>
+        (value / 375.0) * screenWidth; // base width
+    double responsiveHeight(double value) =>
+        (value / 812.0) * screenHeight; // base height
+    double responsiveFont(double value) =>
+        (value / 812.0) * screenHeight; // font scaling
+
+    return SizedBox(
+      width: responsiveWidth(180),
+      child: Text(
+        data,
+        maxLines: 2,
+        style: TextStyle(
+            fontSize: responsiveFont(15), fontWeight: FontWeight.bold),
+      ),
+    );
+  }
 }

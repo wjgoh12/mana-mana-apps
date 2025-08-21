@@ -65,6 +65,12 @@ class PropertyStack extends StatelessWidget {
           sizingInformation.deviceScreenType == DeviceScreenType.mobile;
       final screenWidth = MediaQuery.of(context).size.width;
       final screenHeight = MediaQuery.of(context).size.height;
+      double responsiveWidth(double value) =>
+          (value / 375.0) * screenWidth; // base width
+      double responsiveHeight(double value) =>
+          (value / 812.0) * screenHeight; // base height
+      double responsiveFont(double value) =>
+          (value / 812.0) * screenHeight; // font scaling
 
       final containerWidth = isMobile ? screenWidth * 0.9 : screenWidth * 0.5;
       final containerHeight =
@@ -101,6 +107,7 @@ class PropertyStack extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Stack(
+                  alignment: Alignment.bottomCenter,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -117,11 +124,12 @@ class PropertyStack extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      bottom: 0,
-                      left: (containerWidth - smallContainerWidth) / 2 -
-                          smallContainerWidth * 0.25,
+                      bottom: 0.02,
+                      // left: (containerWidth - smallContainerWidth) / 2 -
+                      //     smallContainerWidth * 0.25,
                       child: Container(
-                        width: smallContainerWidth + containerWidth * 0.2,
+                        width: responsiveWidth(
+                            smallContainerWidth + containerWidth * 0.2),
                         height: smallContainerHeight,
                         margin: EdgeInsets.only(bottom: containerHeight * 0.02),
                         // padding: const EdgeInsets.only(left: 10),
@@ -136,7 +144,7 @@ class PropertyStack extends StatelessWidget {
                                 width: 15.fSize, height: 15.fSize),
                             Text(
                               '$locationRoad',
-                              style: const TextStyle(fontSize: 8),
+                              style: TextStyle(fontSize: responsiveFont(8)),
                             ),
                             SizedBox(
                               width: 1.width,
@@ -154,7 +162,7 @@ class PropertyStack extends StatelessWidget {
                             SizedBox(width: 1.fSize),
                             Text(
                               '${locationByMonth.first['totalUnits'] ?? (locationByMonth.first['owners'] as List?)?.map((owner) => owner['unitNo']).toSet().length ?? 0} Total ',
-                              style: const TextStyle(fontSize: 7),
+                              style: TextStyle(fontSize: responsiveFont(8)),
                             ),
                             OccupancyText(
                                 location: locationByMonth.first['location'],
@@ -173,15 +181,15 @@ class PropertyStack extends StatelessWidget {
                     children: [
                       Image.asset(
                         'assets/images/Group.png',
-                        width: 24.fSize,
-                        height: 24.fSize,
+                        width: responsiveWidth(24),
+                        height: responsiveHeight(24),
                       ),
                       SizedBox(width: 2.width),
                       Text(
                         'Owner(s)',
                         style: TextStyle(
                           fontFamily: 'Open Sans',
-                          fontSize: 13.fSize,
+                          fontSize: responsiveFont(13),
                           fontWeight: FontWeight.w500,
                           color: Colors.black,
                         ),
@@ -205,9 +213,9 @@ class PropertyStack extends StatelessWidget {
                                       backgroundColor: Colors.blue,
                                       child: Text(
                                         getInitials(owner['ownerName'] ?? ''),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 12,
+                                          fontSize: responsiveFont(12),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),

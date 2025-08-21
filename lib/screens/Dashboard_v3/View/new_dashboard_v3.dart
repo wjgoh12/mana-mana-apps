@@ -260,36 +260,32 @@ class NewDashboardV3 extends StatelessWidget {
                           color: Colors.white,
                           child: Column(
                             children: [
-                              SizedBox(
-                                height: 40.fSize,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topLeft,
-                                      child: _buildSectionTitle('Newsletter'),
-                                    ),
-                                    _seeAllButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  _buildSectionTitle('Newsletter'),
+                                  _seeAllButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
                                             builder: (context) =>
-                                                AllNewsletter(),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
+                                                AllNewsletter()),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 15),
                               NewsletterListV3(
                                 model: model,
                                 controller: newsletterScrollController,
                               ),
-                              //const SizedBox(height: 60),
+                              SizedBox(
+                                  height: kBottomNavigationBarHeight +
+                                      20), // prevent blocking
                             ],
                           ),
                         ),

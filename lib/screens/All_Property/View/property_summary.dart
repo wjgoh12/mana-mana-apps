@@ -137,6 +137,11 @@ class _PropertySummaryContent extends StatelessWidget {
               ),
               SizedBox(height: 10.fSize),
               OccupancyRateBox(),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Text('Recent Activity',
+                    style: TextStyle(fontSize: 16.fSize)),
+              ),
               RecentActivity(
                 locationByMonth: model.locationByMonth,
                 ownerData: model2.ownerData,

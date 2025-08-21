@@ -466,6 +466,15 @@ class RevenueContainer extends StatelessWidget {
     final cardHeightSmall = isMobile ? screenWidth * 0.20 : screenWidth * 0.13;
     final cardHeightLarge = isMobile ? screenWidth * 0.28 : screenWidth * 0.21;
 
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double responsiveWidth(double value) =>
+        (value / 375.0) * screenWidth; // base width
+    double responsiveHeight(double value) =>
+        (value / 812.0) * screenHeight; // base height
+    double responsiveFont(double value) =>
+        (value / 812.0) * screenHeight; // font scaling
+
     double responsivePadding = isMobile ? 10 : 20;
     return SizedBox(
       width: cardWidth,
@@ -486,7 +495,7 @@ class RevenueContainer extends StatelessWidget {
                     ),
                     _buildTitleRow(),
                     //SizedBox(height: (1.5).height),
-                    _buildAmountText(),
+                    _buildAmountText(context),
                     _buildDateRow(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -596,7 +605,7 @@ class RevenueContainer extends StatelessWidget {
     );
   }
 
-  Widget _buildAmountText() {
+  Widget _buildAmountText(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -608,10 +617,11 @@ class RevenueContainer extends StatelessWidget {
                 baseline: TextBaseline.alphabetic,
                 child: Transform.translate(
                   offset: const Offset(0, -4),
-                  child: const Text(
+                  child: Text(
                     'RM',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize:
+                          (11 / 812.0) * MediaQuery.of(context).size.height,
                       fontFamily: 'Open Sans',
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -635,7 +645,7 @@ class RevenueContainer extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Open Sans',
                   fontWeight: FontWeight.bold,
-                  fontSize: 15.fSize,
+                  fontSize: (15 / 812.0) * MediaQuery.of(context).size.height,
                 ),
               );
             }
