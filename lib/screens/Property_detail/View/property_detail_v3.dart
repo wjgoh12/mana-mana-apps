@@ -17,12 +17,14 @@ class property_detail_v3 extends StatefulWidget {
   final String? initialType;
   final String? initialUnitNo;
   final String initialTab;
+  final NewDashboardVM_v3 model;
 
   const property_detail_v3({
     required this.locationByMonth,
     this.initialType,
     this.initialUnitNo,
     this.initialTab = 'overview',
+    required this.model,
     Key? key,
   }) : super(key: key);
 
@@ -168,6 +170,9 @@ class _property_detail_v3State extends State<property_detail_v3> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "API response: ${widget.locationByMonth},\n statement monthyear: ${model.monthItems} ${model.yearItems}");
+
     if (widget.locationByMonth.isEmpty) {
       return Scaffold(
         backgroundColor: Colors.white,
@@ -751,8 +756,8 @@ class PropertyOverviewContainer extends StatelessWidget {
     }
 
     DateTime now = DateTime.now();
-    String shortMonth = monthNumberToName(now.month);
-    String year = now.year.toString();
+    String shortMonth = monthNumberToName(model.unitLatestMonth);
+    String year = model.unitLatestYear.toString();
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -784,7 +789,7 @@ class PropertyOverviewContainer extends StatelessWidget {
               imageHeight: responsiveHeight(59),
               title: 'Total Assets',
               value:
-                  '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation?.contains(locationByMonth.first['location']) == true).length - 1}',
+                  '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).length}',
               subtitle: '$shortMonth $year',
               responsiveFont: responsiveFont,
             ),
@@ -1005,7 +1010,7 @@ class ContractDetailsContainer extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.all(responsiveWidth(10)),
           child: Container(
-            width: responsiveWidth(380),
+            width: double.infinity, // <-- makes it flexible
             height: responsiveHeight(40),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(responsiveHeight(50)),
@@ -1021,23 +1026,32 @@ class ContractDetailsContainer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'Contract Type ',
-                        style: TextStyle(fontSize: responsiveFont(10)),
+                      Flexible(
+                        // <-- prevents text overflow
+                        child: Text(
+                          'Contract Type ',
+                          style: TextStyle(fontSize: responsiveFont(10)),
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                        ),
                       ),
-                      Text(
-                        (model.locationByMonth.isNotEmpty &&
-                                model.locationByMonth.first['owners'] != null)
-                            ? (model.locationByMonth.first['owners'] as List)
-                                .where((owner) =>
-                                    owner['unitNo'] == model.selectedUnitNo)
-                                .map((owner) => owner['contractType'] ?? '')
-                                .join('')
-                            : '',
-                        style: TextStyle(
-                          fontSize: responsiveFont(11),
-                          color: const Color(0xFF5092FF),
-                          fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Text(
+                          (model.locationByMonth.isNotEmpty &&
+                                  model.locationByMonth.first['owners'] != null)
+                              ? (model.locationByMonth.first['owners'] as List)
+                                  .where((owner) =>
+                                      owner['unitNo'] == model.selectedUnitNo)
+                                  .map((owner) => owner['contractType'] ?? '')
+                                  .join('')
+                              : '-',
+                          style: TextStyle(
+                            fontSize: responsiveFont(11),
+                            color: const Color(0xFF5092FF),
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                         ),
                       ),
                     ],
@@ -1050,6 +1064,9 @@ class ContractDetailsContainer extends StatelessWidget {
                   child: VerticalDivider(
                     color: const Color(0xFF5092FF),
                     thickness: 1,
+                    width: 0,
+                    indent: 0,
+                    endIndent: 0,
                   ),
                 ),
 
@@ -1059,33 +1076,42 @@ class ContractDetailsContainer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'Contract End Date ',
-                        style: TextStyle(fontSize: responsiveFont(10)),
+                      Flexible(
+                        child: Text(
+                          'Contract End Date ',
+                          style: TextStyle(fontSize: responsiveFont(8)),
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                        ),
                       ),
-                      Text(
-                        (model.locationByMonth.isNotEmpty &&
-                                model.locationByMonth.first['owners'] != null)
-                            ? (model.locationByMonth.first['owners'] as List)
-                                .where((owner) =>
-                                    owner['unitNo'] == model.selectedUnitNo)
-                                .map((owner) {
-                                final rawDate = owner['endDate'];
-                                if (rawDate == null || rawDate.isEmpty) {
-                                  return '';
-                                }
-                                try {
-                                  final date = DateTime.parse(rawDate);
-                                  return DateFormat('dd MMM yyyy').format(date);
-                                } catch (e) {
-                                  return rawDate;
-                                }
-                              }).join(' ')
-                            : '',
-                        style: TextStyle(
-                          fontSize: responsiveFont(11),
-                          color: const Color(0xFF5092FF),
-                          fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Text(
+                          (model.locationByMonth.isNotEmpty &&
+                                  model.locationByMonth.first['owners'] != null)
+                              ? (model.locationByMonth.first['owners'] as List)
+                                  .where((owner) =>
+                                      owner['unitNo'] == model.selectedUnitNo)
+                                  .map((owner) {
+                                  final rawDate = owner['endDate'];
+                                  if (rawDate == null || rawDate.isEmpty) {
+                                    return '-';
+                                  }
+                                  try {
+                                    final date = DateTime.parse(rawDate);
+                                    return DateFormat('dd MMM yyyy')
+                                        .format(date);
+                                  } catch (e) {
+                                    return rawDate;
+                                  }
+                                }).join(' ')
+                              : 'null',
+                          style: TextStyle(
+                            fontSize: responsiveFont(9),
+                            color: const Color(0xFF5092FF),
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                         ),
                       ),
                     ],
@@ -1354,7 +1380,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               Text(
                                 'As of Month ${model2.propertyOccupancy.isNotEmpty ? _getLatestOccupancyDate(model2.propertyOccupancy, _monthNumberToName) : '$shortMonth $year'}',
                                 style: TextStyle(
-                                  fontSize: responsiveFont(10),
+                                  fontSize: responsiveFont(8),
                                 ),
                               ),
                             ],
@@ -1582,11 +1608,24 @@ class _EStatementContainerState extends State<EStatementContainer> {
         }
 
         final allItems = widget.model.unitByMonth;
+        final seen = <String>{};
         final filteredItems = allItems.where((item) {
-          return item.iyear != null &&
+          final isSameYear = item.iyear != null &&
               item.iyear.toString() ==
                   widget.model.selectedYearValue.toString();
+
+          if (!isSameYear) return false;
+
+          final key =
+              '${item.slocation}-${item.sunitno}-${item.imonth}-${item.iyear}';
+          if (seen.contains(key)) {
+            return false; // duplicate, skip
+          } else {
+            seen.add(key);
+            return true; // first occurrence, keep
+          }
         }).toList();
+
         if (filteredItems.isEmpty) {
           return SingleChildScrollView(
             physics: const NeverScrollableScrollPhysics(),
