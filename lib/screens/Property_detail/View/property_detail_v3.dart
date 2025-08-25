@@ -1022,7 +1022,7 @@ class ContractDetailsContainer extends StatelessWidget {
                       Flexible(
                         // <-- prevents text overflow
                         child: Text(
-                          'Contract Type ',
+                          'Contract Type  ',
                           style: TextStyle(fontSize: responsiveFont(10)),
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
@@ -1030,14 +1030,24 @@ class ContractDetailsContainer extends StatelessWidget {
                       ),
                       Flexible(
                         child: Text(
-                          (model.locationByMonth.isNotEmpty &&
-                                  model.locationByMonth.first['owners'] != null)
-                              ? (model.locationByMonth.first['owners'] as List)
-                                  .where((owner) =>
-                                      owner['unitNo'] == model.selectedUnitNo)
-                                  .map((owner) => owner['contractType'] ?? '')
-                                  .join('')
-                              : '-',
+                          // compute contract string, fallback to '-' when empty or missing
+                          (() {
+                            if (model.locationByMonth.isEmpty) return '-';
+                            final owners = model.locationByMonth.first['owners']
+                                as List<dynamic>?;
+                            if (owners == null || owners.isEmpty) return '-';
+                            final matches = owners
+                                .where((owner) =>
+                                    owner['unitNo'] == model.selectedUnitNo)
+                                .map((owner) => (owner['contractType'] ?? '')
+                                    .toString()
+                                    .trim())
+                                .where((s) => s.isNotEmpty)
+                                .toList();
+                            if (matches.isEmpty) return '-';
+                            return matches.join(', ');
+                          })(),
+
                           style: TextStyle(
                             fontSize: responsiveFont(11),
                             color: const Color(0xFF5092FF),
@@ -1071,7 +1081,7 @@ class ContractDetailsContainer extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          'Contract End Date ',
+                          'Contract End Date  ',
                           style: TextStyle(fontSize: responsiveFont(8)),
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
@@ -1079,25 +1089,35 @@ class ContractDetailsContainer extends StatelessWidget {
                       ),
                       Flexible(
                         child: Text(
-                          (model.locationByMonth.isNotEmpty &&
-                                  model.locationByMonth.first['owners'] != null)
-                              ? (model.locationByMonth.first['owners'] as List)
-                                  .where((owner) =>
-                                      owner['unitNo'] == model.selectedUnitNo)
-                                  .map((owner) {
-                                  final rawDate = owner['endDate'];
-                                  if (rawDate == null || rawDate.isEmpty) {
-                                    return '-';
-                                  }
+                          (() {
+                            if (model.locationByMonth.isEmpty) return '-';
+                            final owners = model.locationByMonth.first['owners']
+                                as List<dynamic>?;
+                            if (owners == null || owners.isEmpty) return '-';
+
+                            final matches = owners
+                                .where((owner) =>
+                                    owner['unitNo'] == model.selectedUnitNo)
+                                .map((owner) {
+                                  final raw = owner['endDate'];
+                                  if (raw == null) return null;
+                                  final rawStr = raw.toString().trim();
+                                  if (rawStr.isEmpty) return null;
                                   try {
-                                    final date = DateTime.parse(rawDate);
+                                    final date = DateTime.parse(rawStr);
                                     return DateFormat('dd MMM yyyy')
                                         .format(date);
                                   } catch (e) {
-                                    return rawDate;
+                                    return rawStr; // fallback to raw string if parse fails
                                   }
-                                }).join(' ')
-                              : 'null',
+                                })
+                                .where((s) => s != null && s.isNotEmpty)
+                                .cast<String>()
+                                .toList();
+
+                            if (matches.isEmpty) return '-';
+                            return matches.join(', ');
+                          })(),
                           style: TextStyle(
                             fontSize: responsiveFont(9),
                             color: const Color(0xFF5092FF),
