@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   // change dev and prod
-  initApp('prod');
+  initApp('dev');
   runApp(ChangeNotifierProvider(
     create: (context) => NewDashboardVM()..fetchData(),
     child: const MaterialApp(

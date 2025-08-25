@@ -227,23 +227,23 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         }
       }
 
-      propertyOccupancy = occupancyData.isNotEmpty
-          ? occupancyData
-          : {
-              "SCARLETZ": {
-                "units": {
-                  "45-99.99": {"year": 2024, "month": 9, "amount": 92.53},
-                  "2000-2100-55": {"year": 2024, "month": 9, "amount": 85.00}
-                },
-                "average": 88.77
-              },
-              "EXPRESSIONZ": {
-                "units": {
-                  "12-34.56": {"year": 2024, "month": 9, "amount": 92.53}
-                },
-                "average": 92.53
-              }
-            };
+      propertyOccupancy = occupancyData.isNotEmpty ? occupancyData : {};
+
+      // : {
+      //     "SCARLETZ": {
+      //       "units": {
+      //         "45-99.99": {"year": 2024, "month": 9, "amount": 92.53},
+      //         "2000-2100-55": {"year": 2024, "month": 9, "amount": 85.00}
+      //       },
+      //       "average": 88.77
+      //     },
+      //     "EXPRESSIONZ": {
+      //       "units": {
+      //         "12-34.56": {"year": 2024, "month": 9, "amount": 92.53}
+      //       },
+      //       "average": 92.53
+      //     }
+      //   };
     } catch (e) {
       //print('Error loading property occupancy: $e');
       propertyOccupancy = {

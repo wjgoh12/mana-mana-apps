@@ -13,6 +13,7 @@ class PropertyListV3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('total assets: ${model.locationByMonth.length}');
     if (model.isLoading) {
       return Container(
         decoration: BoxDecoration(
@@ -434,6 +435,7 @@ class PropertyImageStack extends StatelessWidget {
                                             locationByMonth.first
                                           ],
                                           initialTab: 'overview',
+                                          model: NewDashboardVM_v3(),
                                         ),
                                       ));
                                 },

@@ -25,7 +25,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.dfs.manamanaowners"
     compileSdkVersion 35
-    ndkVersion flutter.ndkVersion
+    ndkVersion "26.1.10909125"
 
     defaultConfig {
         applicationId "com.dfs.manamanaowners"
@@ -74,4 +74,16 @@ android {
 
 flutter {
     source "../.."
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.google.errorprone:error_prone_annotations:2.23.0"
+    implementation "javax.annotation:javax.annotation-api:1.3.2"
+    implementation "org.bouncycastle:bcprov-jdk15to18:1.78.1"
+    implementation "com.huawei.hms:hianalytics:6.9.0.301"
+    implementation 'com.huawei.hms:base:6.12.0.300'
+    implementation 'com.huawei.hms:hianalytics:6.12.0.300'
+    implementation 'net.zetetic:android-database-sqlcipher:4.5.3@aar'
+    implementation 'io.reactivex:rxjava:1.3.8'
 }

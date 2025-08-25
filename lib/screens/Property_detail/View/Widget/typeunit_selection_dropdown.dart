@@ -17,7 +17,8 @@ class TypeUnitSelectionDropdown extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<TypeUnitSelectionDropdown> createState() => _TypeUnitSelectionDropdownState();
+  State<TypeUnitSelectionDropdown> createState() =>
+      _TypeUnitSelectionDropdownState();
 }
 
 class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown> {
@@ -56,7 +57,26 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    print('TypeUnitSelectionDropdown initialized');
+    print('Initial list items: ${widget.list}');
+  }
+
+  @override
+  void didUpdateWidget(TypeUnitSelectionDropdown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.list != widget.list) {
+      print('Unit dropdown items updated');
+      print('Previous items: ${oldWidget.list}');
+      print('New items: ${widget.list}');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print('Building TypeUnitSelectionDropdown');
+    print('Current list items: ${widget.list}');
     // Calculate max width based on longest text
     double maxTextWidth = widget.list.fold(0.0, (maxWidth, item) {
       final textSpan = TextSpan(
@@ -79,7 +99,9 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown> {
         isExpanded: true,
         hint: Text(
           widget.list.isNotEmpty
-              ? (widget.label == "Month" ? _getMonthName(widget.list.first) : widget.list.first)
+              ? (widget.label == "Month"
+                  ? _getMonthName(widget.list.first)
+                  : widget.list.first)
               : '',
           style: TextStyle(
             color: const Color(0XFF4313E9),
@@ -106,9 +128,12 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown> {
             .toList(),
         value: selectedValue,
         onChanged: (String? value) {
+          print('Unit dropdown value changed');
+          print('Selected value: $value');
           setState(() {
             selectedValue = value;
           });
+          print('State updated with new value: $selectedValue');
           widget.onChanged(value);
         },
         buttonStyleData: ButtonStyleData(

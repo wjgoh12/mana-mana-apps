@@ -20,7 +20,8 @@ class TypeUnitSelection extends StatelessWidget {
           list: model.typeItems,
           onChanged: (_) {
             model.updateSelectedTypeUnit(
-                _!.split(" (")[0], _.split(" (")[1].replaceAll(")", ""));
+                _!.replaceAll(RegExp(r' \([^)]*\)$'), ''),
+                _.split(' ').last.replaceAll(RegExp(r'[()]'), ''));
           },
         ),
       ],

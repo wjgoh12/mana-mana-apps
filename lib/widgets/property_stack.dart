@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -315,6 +316,7 @@ class PropertyStack extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => property_detail_v3(
                                 locationByMonth: [locationByMonth.first],
+                                model: NewDashboardVM_v3(),
                               ),
                             ),
                           );

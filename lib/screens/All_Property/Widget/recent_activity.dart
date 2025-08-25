@@ -74,6 +74,7 @@ class RecentActivity extends StatelessWidget {
                         initialType: type,
                         initialUnitNo: unitNo,
                         initialTab: 'unitDetails',
+                        model: NewDashboardVM_v3(),
                       ),
                     ),
                   ),
