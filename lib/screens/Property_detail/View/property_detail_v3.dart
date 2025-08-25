@@ -51,10 +51,6 @@ class _property_detail_v3State extends State<property_detail_v3> {
     model = PropertyDetailVM();
     model2 = NewDashboardVM_v3();
 
-    print('PropertyDetailV3: initState called');
-    print(
-        'PropertyDetailV3: locationByMonth length: ${widget.locationByMonth.length}');
-
     if (widget.locationByMonth.isNotEmpty) {
       print('PropertyDetailV3: Calling model.fetchData');
       model.fetchData(widget.locationByMonth);
@@ -170,9 +166,6 @@ class _property_detail_v3State extends State<property_detail_v3> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "API response: ${widget.locationByMonth},\n statement monthyear: ${model.monthItems} ${model.yearItems}");
-
     if (widget.locationByMonth.isEmpty) {
       return Scaffold(
         backgroundColor: Colors.white,
@@ -1767,19 +1760,41 @@ class StickyDropdownBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 1) Dedupe preserving order (simple)
+    final deduped = <String>[];
+    for (final v in model.typeItems) {
+      if (!deduped.contains(v)) deduped.add(v);
+    }
+
+    // 2) Build items (Overview + deduped list)
+    final items = <DropdownMenuItem<String>>[
+      const DropdownMenuItem(value: 'Overview', child: Text('Overview')),
+      ...deduped.map((v) => DropdownMenuItem(value: v, child: Text(v))),
+    ];
+
+    // 3) Compute value only if it exactly exists in the deduped list
+    String? dropdownValue;
+    if (model.selectedView == 'Overview') {
+      dropdownValue = 'Overview';
+    } else if (model.selectedType != null && model.selectedUnitNo != null) {
+      final candidate =
+          '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})';
+      dropdownValue = deduped.contains(candidate) ? candidate : null;
+    } else {
+      dropdownValue = null;
+    }
+
     return Container(
       height: 90.fSize,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade300, width: 1),
-        ),
+        border:
+            Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: Offset(0, 2))
         ],
       ),
       child: SafeArea(
@@ -1787,16 +1802,12 @@ class StickyDropdownBar extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 flex: 1,
                 child: Text(
                   locationByMonth.first['location'] ?? '',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
               Expanded(
@@ -1813,71 +1824,35 @@ class StickyDropdownBar extends StatelessWidget {
                     child: DropdownButton2<String>(
                       isExpanded: true,
                       underline: const SizedBox(),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        maxHeight: 200,
-                      ),
+                      dropdownStyleData: DropdownStyleData(maxHeight: 200),
                       iconStyleData: const IconStyleData(
-                        icon: Icon(Icons.keyboard_arrow_down),
-                        iconSize: 20,
-                      ),
-                      items: [
-                        const DropdownMenuItem<String>(
-                          value: 'Overview',
-                          child: Text(
-                            'Overview',
-                            style: TextStyle(
-                                fontSize: 12, decoration: TextDecoration.none),
-                          ),
-                        ),
-                        ...model.typeItems.map<DropdownMenuItem<String>>(
-                          (String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  decoration: TextDecoration.none,
-                                ),
-                              ),
-                            );
-                          },
-                        ).toList(),
-                      ],
+                          icon: Icon(Icons.keyboard_arrow_down)),
+                      items: items,
+                      value: dropdownValue, // only set when exact match found
+                      hint: const Text('Select Unit'),
                       onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          if (newValue == 'Overview') {
-                            model.updateSelectedView('Overview');
-                          } else {
-                            final parts = newValue.split(' (');
-                            if (parts.length == 2) {
-                              final type = parts[0].trim();
-                              final unit = parts[1].replaceAll(')', '').trim();
+                        if (newValue == null) return;
+                        if (newValue == 'Overview') {
+                          model.updateSelectedView('Overview');
+                          return;
+                        }
 
-                              model.updateSelectedView('UnitDetails');
-                              model.updateSelectedTypeUnit(type, unit);
-                            }
-                          }
+                        // Simple, robust parsing: take LAST (...) as unit
+                        final unitMatch =
+                            RegExp(r'\(([^)]*)\)\s*$').firstMatch(newValue);
+                        final unit = unitMatch?.group(1)?.trim();
+                        final type = newValue
+                            .replaceAll(RegExp(r'\s*\([^)]*\)\s*$'), '')
+                            .trim();
+
+                        if (unit != null && unit.isNotEmpty) {
+                          model.updateSelectedView('UnitDetails');
+                          model.updateSelectedTypeUnit(type, unit);
+                        } else {
+                          // no parentheses found -> go to Overview (change if you want different behavior)
+                          model.updateSelectedView('Overview');
                         }
                       },
-                      hint: const Text('Select Unit'),
-                      value: model.selectedView == 'Overview'
-                          ? 'Overview'
-                          : (model.selectedType != null &&
-                                  model.selectedUnitNo != null)
-                              ? '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})'
-                              : null,
                     ),
                   ),
                 ),
@@ -2035,7 +2010,7 @@ class OptimizedPropertyDropdown extends StatefulWidget {
 
 class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
   List<DropdownMenuItem<String>>? _cachedItems;
-  List<String>? _lastTypeItems;
+  List<String>? _lastTypeItems; // will store deduped list
   String? _cachedValue;
 
   // Static decoration objects to avoid recreation
@@ -2074,7 +2049,7 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
     return ListenableBuilder(
       listenable: widget.model,
       builder: (context, child) {
-        // Show loading state while data is being fetched
+        // loading or empty
         if (widget.model.isLoading || widget.model.typeItems.isEmpty) {
           return Container(
             width: widget.width,
@@ -2107,15 +2082,57 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
           );
         }
 
-        // Only rebuild items if typeItems changed
-        if (_lastTypeItems == null ||
-            !_listEquals(_lastTypeItems!, widget.model.typeItems)) {
-          _buildCachedItems();
-          _lastTypeItems = List.from(widget.model.typeItems);
+        // --- Dedupe typeItems preserving order ---
+        final deduped = <String>[];
+        for (final v in widget.model.typeItems) {
+          if (!deduped.contains(v)) deduped.add(v);
         }
 
-        // Cache the computed value
-        final currentValue = _computeSelectedValue();
+        // Rebuild cached items only when deduped list changed
+        if (_lastTypeItems == null || !_listEquals(_lastTypeItems!, deduped)) {
+          _cachedItems = [
+            const DropdownMenuItem<String>(
+              value: 'Overview',
+              child: Text('Overview', style: _textStyle),
+            ),
+            ...deduped.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value, style: _textStyle),
+              );
+            }).toList(),
+          ];
+          _lastTypeItems = List.from(deduped);
+        }
+
+        // Compute selected value safely (only if exact match exists)
+        String? currentValue;
+        if (widget.model.selectedView == 'Overview') {
+          currentValue = 'Overview';
+        } else if (widget.model.selectedType != null &&
+            widget.model.selectedUnitNo != null) {
+          final candidate =
+              '${widget.model.selectedType!.trim()} (${widget.model.selectedUnitNo!.trim()})';
+
+          if (deduped.contains(candidate)) {
+            currentValue = candidate;
+          } else {
+            // Try a single case-insensitive match if exact not found
+            final matches = deduped
+                .where((e) => e.toLowerCase() == candidate.toLowerCase())
+                .toList();
+            if (matches.length == 1) {
+              currentValue = matches.first;
+            } else {
+              // fallback: null (prevents the Dropdown assert)
+              currentValue = null;
+            }
+          }
+        } else {
+          currentValue = null;
+        }
+
+        // Update cached value if changed
         if (_cachedValue != currentValue) {
           _cachedValue = currentValue;
         }
@@ -2144,48 +2161,28 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
     );
   }
 
-  void _buildCachedItems() {
-    _cachedItems = [
-      const DropdownMenuItem<String>(
-        value: 'Overview',
-        child: Text('Overview', style: _textStyle),
-      ),
-      ...widget.model.typeItems.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value, style: _textStyle),
-        );
-      }),
-    ];
-  }
-
-  String? _computeSelectedValue() {
-    if (widget.model.selectedView == 'Overview') {
-      return 'Overview';
-    }
-
-    if (widget.model.selectedType != null &&
-        widget.model.selectedUnitNo != null) {
-      return '${widget.model.selectedType!.trim()} (${widget.model.selectedUnitNo!.trim()})';
-    }
-
-    return null;
-  }
-
   void _handleChange(String? newValue) {
     if (newValue == null) return;
 
     if (newValue == 'Overview') {
       widget.model.updateSelectedView('Overview');
-    } else {
-      final parts = newValue.split(' (');
-      if (parts.length == 2) {
-        final type = parts[0].trim();
-        final unit = parts[1].replaceAll(')', '').trim();
+      return;
+    }
 
-        widget.model.updateSelectedView('UnitDetails');
-        widget.model.updateSelectedTypeUnit(type, unit);
-      }
+    // Robust parsing: take LAST (...) as unit
+    // Example: "Paxton (High floor) (p-15-22)"
+    final unitMatch = RegExp(r'\(([^)]*)\)\s*$').firstMatch(newValue);
+    final unit = unitMatch?.group(1)?.trim();
+
+    // Type is everything before the last (...) group
+    final type = newValue.replaceAll(RegExp(r'\s*\([^)]*\)\s*$'), '').trim();
+
+    if (unit != null && unit.isNotEmpty) {
+      widget.model.updateSelectedView('UnitDetails');
+      widget.model.updateSelectedTypeUnit(type, unit);
+    } else {
+      // No parentheses found -> choose behaviour (here we go back to Overview)
+      widget.model.updateSelectedView('Overview');
     }
   }
 
