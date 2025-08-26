@@ -93,41 +93,41 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       propertyContractType = [];
     }
 
-    if (propertyContractType.isEmpty) {
-      propertyContractType = [
-        {
-          "location": "SCARLETZ",
-          "type": "D",
-          "unitNo": "45-99.99",
-          "ownerName": "Emily Johnson",
-          "coOwnerName": "Marian",
-          "contractType": "PS",
-          "startDate": "2025-02-07",
-          "endDate": "2028-06-12"
-        },
-        {
-          "location": "SCARLETZ",
-          "type": "P2B",
-          "unitNo": "2000-2100-55",
-          "ownerName": "Tan Ah Ming",
-          "coOwnerName": null,
-          "contractType": "A",
-          "startDate": "2024-12-01",
-          "endDate": "2027-12-01"
-        },
-        {
-          "location": "EXPRESSIONZ",
-          "type": "B",
-          "unitNo": "12-34.56",
-          "ownerName": "Jane Smith",
-          "coOwnerName": "Bob Smith",
-          "contractType": "PS",
-          "startDate": "2024-01-15",
-          "endDate": "2027-01-15"
-        }
-      ];
-      //print(propertyContractType);
-    }
+    // if (propertyContractType.isEmpty) {
+    //   propertyContractType = [
+    //     {
+    //       "location": "SCARLETZ",
+    //       "type": "D",
+    //       "unitNo": "45-99.99",
+    //       "ownerName": "Emily Johnson",
+    //       "coOwnerName": "Marian",
+    //       "contractType": "PS",
+    //       "startDate": "2025-02-07",
+    //       "endDate": "2028-06-12"
+    //     },
+    //     {
+    //       "location": "SCARLETZ",
+    //       "type": "P2B",
+    //       "unitNo": "2000-2100-55",
+    //       "ownerName": "Tan Ah Ming",
+    //       "coOwnerName": null,
+    //       "contractType": "A",
+    //       "startDate": "2024-12-01",
+    //       "endDate": "2027-12-01"
+    //     },
+    //     {
+    //       "location": "EXPRESSIONZ",
+    //       "type": "B",
+    //       "unitNo": "12-34.56",
+    //       "ownerName": "Jane Smith",
+    //       "coOwnerName": "Bob Smith",
+    //       "contractType": "PS",
+    //       "startDate": "2024-01-15",
+    //       "endDate": "2027-01-15"
+    //     }
+    //   ];
+    //   //print(propertyContractType);
+    // }
 
     // totalByMonth = [
     //   {'total': 4200.31, 'transcode': 'NOPROF', 'month': 5, 'year': 2024},
@@ -316,16 +316,16 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           location: location, unitNo: unitNo);
       //print('Occupancy data: $occupancy');
 
-      if (occupancy.containsKey('status')) {
-        //print('Error response: ${occupancy['status']}');
-        if (location == 'SCARLETZ' && unitNo == '45-99.99') {
-          return '92.53%';
-        } else if (location == 'SCARLETZ' && unitNo == '2000-2100-55') {
-          return '85.0%';
-        } else {
-          return '0%';
-        }
-      }
+      // if (occupancy.containsKey('status')) {
+      //   //print('Error response: ${occupancy['status']}');
+      //   if (location == 'SCARLETZ' && unitNo == '45-99.99') {
+      //     return '92.53%';
+      //   } else if (location == 'SCARLETZ' && unitNo == '2000-2100-55') {
+      //     return '85.0%';
+      //   } else {
+      //     return '0%';
+      //   }
+      // }
 
       if (occupancy.containsKey('amount') && occupancy['amount'] is num) {
         print('Occupancy amount: ${occupancy['amount']}');
