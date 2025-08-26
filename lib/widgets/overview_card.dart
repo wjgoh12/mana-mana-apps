@@ -235,17 +235,13 @@ class OverviewCard extends StatelessWidget {
                                 //hard coded
                                 Padding(
                                   padding: EdgeInsets.only(left: 8),
-                                  child: Text(
-
-                                      //calculate the occupancy rate
-                                      //in a method
-                                      //then call here
-                                      '${model.getTotalOccupancyRate()}%',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontFamily: 'Open Sans',
-                                        fontWeight: FontWeight.bold,
-                                      )),
+                                  child:
+                                      Text('${model.getTotalOccupancyRate()}%',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: 'Open Sans',
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 3),

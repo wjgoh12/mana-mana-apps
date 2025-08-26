@@ -277,50 +277,17 @@ class PropertyListRepository {
     return ownerUnits.length;
   }
 
-  Future<Map<String, dynamic>> getPropertyContractType() async {
-    return await _apiService.post(ApiEndpoint.propertyContractType).then((res) {
-      if (res is Map<String, dynamic>) {
-        return res;
-      } else {
-        throw Exception('Failed to fetch property contract type');
-      }
-    });
-  }
+  Future<List<dynamic>> getPropertyContractType({required String email}) async {
+    final data = {'email': email};
 
-  // Dummy occupancy data for property + unitNo
-  final List<Map<String, dynamic>> _dummyOccupancyData = [
-    {
-      "location": "SCARLETZ",
-      "unitNo": "2000-2100-55",
-      "year": 2024,
-      "month": 9,
-      "amount": 92.53
-    },
-    {
-      "location": "SCARLETZ",
-      "unitNo": "45-99.99",
-      "year": 2025,
-      "month": 7,
-      "amount": 85.00
-    },
-    // Add more as needed
-  ];
+    final res = await _apiService.postJson(ApiEndpoint.propertyContractType,
+        data: data);
 
-  /// Get dummy occupancy data by location and unitNo
-  Future<Map<String, dynamic>> getDummyPropertyOccupancy(
-      {required String location, required String unitNo}) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    final found = _dummyOccupancyData.firstWhere(
-      (item) => item['location'] == location && item['unitNo'] == unitNo,
-      orElse: () => {
-        "location": location,
-        "unitNo": unitNo,
-        "year": DateTime.now().year,
-        "month": DateTime.now().month,
-        "amount": 0.0
-      },
-    );
-    return found;
+    if (res is List) {
+      return res;
+    } else {
+      throw Exception('Failed to fetch property contract type');
+    }
   }
 
   Future<Map<String, dynamic>> getPropertyOccupancy(
@@ -329,14 +296,10 @@ class PropertyListRepository {
     if (location != null) data['location'] = location;
     if (unitNo != null) data['unitNo'] = unitNo;
 
-    final res =
-        await _apiService.post(ApiEndpoint.propertyOccupancyRate, data: data);
+    final res = await _apiService.postJson(ApiEndpoint.propertyOccupancyRate,
+        data: data);
     if (res is Map<String, dynamic> && res.isNotEmpty) {
       return res;
-    } else if (location != null && unitNo != null) {
-      // fallback to dummy
-      return await getDummyPropertyOccupancy(
-          location: location, unitNo: unitNo);
     } else {
       throw Exception('Failed to fetch property occupancy rate');
     }
@@ -352,8 +315,8 @@ class PropertyListRepository {
     };
 
     try {
-      final res =
-          await _apiService.post(ApiEndpoint.propertyOccupancyRate, data: data);
+      final res = await _apiService.postJson(ApiEndpoint.propertyOccupancyRate,
+          data: data);
       if (res is Map<String, dynamic>) {
         return res;
       } else {

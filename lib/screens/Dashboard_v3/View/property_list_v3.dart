@@ -296,62 +296,76 @@ class PropertyImageStack extends StatelessWidget {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                  children: [
+                                  children: () {
+                                    final seen =
+                                        <String>{}; // track unique names
+                                    final ownerWidgets = <Widget>[];
+
                                     for (var owner
                                         in locationByMonth.first['owners'] ??
-                                            []) ...[
-                                      // Main owner avatar
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 5),
-                                        child: Tooltip(
-                                          message: owner['ownerName'] ??
-                                              'Unknown Owner',
-                                          child: CircleAvatar(
-                                            radius: 13,
-                                            backgroundColor: Colors.blue,
-                                            child: Text(
-                                              getInitials(
-                                                  owner['ownerName'] ?? ''),
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      // Co-owner avatar if exists
-                                      if (owner['coOwnerName'] != null &&
-                                          owner['coOwnerName']
-                                              .toString()
-                                              .isNotEmpty)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 5),
-                                          child: Tooltip(
-                                            message: owner['coOwnerName'],
-                                            child: CircleAvatar(
-                                              radius: 13,
-                                              backgroundColor: Colors.green,
-                                              child: Text(
-                                                getInitials(
-                                                    owner['coOwnerName']),
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
+                                            []) {
+                                      final ownerName =
+                                          owner['ownerName'] ?? '';
+                                      final coOwnerName =
+                                          owner['coOwnerName'] ?? '';
+
+                                      // ✅ Add main owner if not already added
+                                      if (ownerName.isNotEmpty &&
+                                          seen.add(ownerName)) {
+                                        ownerWidgets.add(
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 5),
+                                            child: Tooltip(
+                                              message: ownerName,
+                                              child: CircleAvatar(
+                                                radius: 13,
+                                                backgroundColor: Colors.blue,
+                                                child: Text(
+                                                  getInitials(ownerName),
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                    ],
-                                  ],
+                                        );
+                                      }
+
+                                      // ✅ Add co-owner if not already added
+                                      if (coOwnerName.isNotEmpty &&
+                                          seen.add(coOwnerName)) {
+                                        ownerWidgets.add(
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 5),
+                                            child: Tooltip(
+                                              message: coOwnerName,
+                                              child: CircleAvatar(
+                                                radius: 13,
+                                                backgroundColor: Colors.green,
+                                                child: Text(
+                                                  getInitials(coOwnerName),
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                    return ownerWidgets;
+                                  }(),
                                 ),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ),

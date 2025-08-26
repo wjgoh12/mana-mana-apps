@@ -8,6 +8,9 @@ import 'package:mana_mana_app/repository/user_repo.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 
 class NewDashboardVM_v3 extends ChangeNotifier {
+  bool contractTypeLoaded = false;
+  bool occupancyRateLoaded = false;
+
   bool isLoading = true;
   final UserRepository userRepository = UserRepository();
   final PropertyListRepository ownerPropertyListRepository =
@@ -84,13 +87,21 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     totalByMonth = await ownerPropertyListRepository.totalByMonth();
 
     // Fetch property contract type data from API
+// Fetch property contract type data from API
     try {
-      final contractResponse =
-          await ownerPropertyListRepository.getPropertyContractType();
-      propertyContractType = contractResponse['data'] ?? [];
+      final contractResponse = await ownerPropertyListRepository
+          .getPropertyContractType(email: "testing1@gmail.com");
+
+      // The API directly returns a list, not wrapped in { data: [...] }
+      propertyContractType = List<Map<String, dynamic>>.from(contractResponse);
+
+      contractTypeLoaded = propertyContractType.isNotEmpty;
+      print(
+          "✅ Contract type fetched: $contractTypeLoaded, count=${propertyContractType.length}");
     } catch (e) {
-      print('Error fetching property contract type: $e');
+      print('❌ Error fetching property contract type: $e');
       propertyContractType = [];
+      contractTypeLoaded = false;
     }
 
     // if (propertyContractType.isEmpty) {
@@ -199,17 +210,16 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     //_newsletters = await newsletterRepository.getNewsletters();
 
     // Load property occupancy data for each location
+    // Load property occupancy data for each location
     try {
       Map<String, dynamic> occupancyData = {};
 
-      // Get unique locations from propertyContractType
       Set<String> locations = propertyContractType
           .map((property) => property['location'] as String)
           .toSet();
 
       for (String location in locations) {
         try {
-          // Get the first unit for this location to fetch occupancy
           final unitForLocation = propertyContractType
               .firstWhere((property) => property['location'] == location);
 
@@ -223,44 +233,18 @@ class NewDashboardVM_v3 extends ChangeNotifier {
             occupancyData[location] = occupancy;
           }
         } catch (e) {
-          print('Error fetching occupancy for $location: $e');
+          print('❌ Error fetching occupancy for $location: $e');
         }
       }
 
       propertyOccupancy = occupancyData.isNotEmpty ? occupancyData : {};
-
-      // : {
-      //     "SCARLETZ": {
-      //       "units": {
-      //         "45-99.99": {"year": 2024, "month": 9, "amount": 92.53},
-      //         "2000-2100-55": {"year": 2024, "month": 9, "amount": 85.00}
-      //       },
-      //       "average": 88.77
-      //     },
-      //     "EXPRESSIONZ": {
-      //       "units": {
-      //         "12-34.56": {"year": 2024, "month": 9, "amount": 92.53}
-      //       },
-      //       "average": 92.53
-      //     }
-      //   };
+      occupancyRateLoaded = propertyOccupancy.isNotEmpty; // ✅ success flag
+      print(
+          "✅ Occupancy rate fetched: $occupancyRateLoaded, count=${propertyOccupancy.length}");
     } catch (e) {
-      //print('Error loading property occupancy: $e');
-      propertyOccupancy = {
-        "SCARLETZ": {
-          "units": {
-            "45-99.99": {"year": 2024, "month": 9, "amount": 92.53},
-            "2000-2100-55": {"year": 2024, "month": 9, "amount": 85.00}
-          },
-          "average": 88.77
-        },
-        "EXPRESSIONZ": {
-          "units": {
-            "12-34.56": {"year": 2024, "month": 9, "amount": 92.53}
-          },
-          "average": 92.53
-        }
-      };
+      print('❌ Error loading property occupancy: $e');
+      propertyOccupancy = {};
+      occupancyRateLoaded = false;
     }
 
     isLoading = false;
@@ -329,7 +313,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
       if (occupancy.containsKey('amount') && occupancy['amount'] is num) {
         print('Occupancy amount: ${occupancy['amount']}');
-        return '${occupancy['amount'].toStringAsFixed(1)}%';
+        return '${occupancy['amount'].toStringAsFixed(2)}%';
       } else {
         return '0%';
       }
@@ -447,43 +431,35 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   }
 
   String getTotalOccupancyRate() {
-    //print("propertyOccupancy: $propertyOccupancy");
+    if (propertyOccupancy.isEmpty) return '0.0';
 
-    if (propertyOccupancy.containsKey('status')) {
-      return '0.0';
-    }
+    double totalPropertyAverages = 0;
+    int validProperties = 0;
 
-    // If we have cached data, use it for quick calculation
-    if (propertyOccupancy.isNotEmpty) {
-      double totalPropertyAverages = 0;
-      int validProperties = 0;
-
-      propertyOccupancy.forEach((key, value) {
-        if (value is Map<String, dynamic>) {
-          if (value.containsKey('average')) {
-            final average = value['average'];
-            if (average is num) {
-              totalPropertyAverages += average.toDouble();
+    propertyOccupancy.forEach((key, value) {
+      if (value is Map<String, dynamic>) {
+        // ✅ only accept if it has units and average/amount > 0
+        if (value.containsKey('units') && (value['units'] as Map).isNotEmpty) {
+          if (value.containsKey('average') && value['average'] is num) {
+            final avg = value['average'] as num;
+            if (avg > 0) {
+              totalPropertyAverages += avg.toDouble();
               validProperties++;
             }
-          } else if (value.containsKey('amount')) {
-            final amount = value['amount'];
-            if (amount is num) {
-              totalPropertyAverages += amount.toDouble();
+          } else if (value.containsKey('amount') && value['amount'] is num) {
+            final amt = value['amount'] as num;
+            if (amt > 0) {
+              totalPropertyAverages += amt.toDouble();
               validProperties++;
             }
           }
         }
-      });
+      }
+    });
 
-      if (validProperties == 0) return '0.0';
+    if (validProperties == 0) return '0.0';
 
-      // Calculate average: (property1_avg + property2_avg + property3_avg) / number_of_properties
-      // Example: (92.53 + 85.67 + 78.90) / 3 = 85.70
-      double averageOccupancyRate = totalPropertyAverages / validProperties;
-      return averageOccupancyRate.toStringAsFixed(1);
-    }
-
-    return '0.0';
+    double averageOccupancyRate = totalPropertyAverages / validProperties;
+    return averageOccupancyRate.toStringAsFixed(1);
   }
 }

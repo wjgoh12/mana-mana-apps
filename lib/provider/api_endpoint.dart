@@ -13,7 +13,7 @@ class ApiEndpoint {
   static const String propertyContractType =
       '/mobile/enqs/getPropertyOverviewContractType';
   static const String propertyOccupancyRate =
-      '/mobile/enqs/propertyOverviewOccupancyRate';
+      '/mobile/enqs/propertyOverviewOccupanceRate';
   static const String getCalendarBlockDate =
       '/mobile/enqs/getCalendarBlockedDates';
   static const String getAllRedemptionDate =
