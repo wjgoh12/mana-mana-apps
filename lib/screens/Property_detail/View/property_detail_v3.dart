@@ -77,8 +77,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.locationByMonth.isNotEmpty) {
-        print(
-            'PropertyDetailV3: Post frame callback - calling getAverageOccupancyByLocation');
+        // print(
+        //     'PropertyDetailV3: Post frame callback - calling getAverageOccupancyByLocation');
         model2.getAverageOccupancyByLocation(
             widget.locationByMonth.first['location'] ?? '');
       }
@@ -730,6 +730,11 @@ class PropertyOverviewContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        'unit list: ${model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList()}');
+    print(
+        'unit list: ${model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}');
+
     String monthNumberToName(int month) {
       const months = [
         'Jan',
@@ -782,7 +787,7 @@ class PropertyOverviewContainer extends StatelessWidget {
               imageHeight: responsiveHeight(59),
               title: 'Total Assets',
               value:
-                  '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).length}',
+                  '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}',
               subtitle: '$shortMonth $year',
               responsiveFont: responsiveFont,
             ),
@@ -1108,7 +1113,7 @@ class ContractDetailsContainer extends StatelessWidget {
                                     return DateFormat('dd MMM yyyy')
                                         .format(date);
                                   } catch (e) {
-                                    return rawStr; // fallback to raw string if parse fails
+                                    return rawStr;
                                   }
                                 })
                                 .where((s) => s != null && s.isNotEmpty)
