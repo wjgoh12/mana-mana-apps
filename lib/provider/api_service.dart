@@ -54,9 +54,9 @@ class ApiService {
       body: json.encode(data ?? {}),
     );
 
-    debugPrint("➡️ POST BYTES URL: $baseUrl$url");
-    debugPrint("📤 Request body: ${json.encode(data ?? {})}");
-    debugPrint("📥 Response status: ${response.statusCode}");
+    // debugPrint("➡️ POST BYTES URL: $baseUrl$url");
+    // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
+    // debugPrint("📥 Response status: ${response.statusCode}");
 
     if (response.body.isEmpty) return null;
 
@@ -84,10 +84,10 @@ class ApiService {
       body: json.encode(data ?? {}),
     );
 
-    debugPrint("➡️ POST JSON URL: $baseUrl$url");
-    debugPrint("📤 Request body: ${json.encode(data ?? {})}");
-    debugPrint("📥 Response status: ${response.statusCode}");
-    debugPrint("📥 Response body: ${response.body}");
+    // debugPrint("➡️ POST JSON URL: $baseUrl$url");
+    // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
+    // debugPrint("📥 Response status: ${response.statusCode}");
+    // debugPrint("📥 Response body: ${response.body}");
 
     if (response.body.isEmpty) return null;
 

@@ -235,13 +235,44 @@ class OverviewCard extends StatelessWidget {
                                 //hard coded
                                 Padding(
                                   padding: EdgeInsets.only(left: 8),
-                                  child:
-                                      Text('${model.getTotalOccupancyRate()}%',
-                                          style: const TextStyle(
+                                  child: FutureBuilder<String>(
+                                    future: model.locationByMonth.isNotEmpty
+                                        ? model
+                                            .calculateTotalOccupancyForLocation(
+                                                model.locationByMonth
+                                                    .first['location'])
+                                        : Future.value('0.0'),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Text(
+                                          'Loading...',
+                                          style: TextStyle(
                                             fontSize: 12,
-                                            fontFamily: 'Open Sans',
                                             fontWeight: FontWeight.bold,
-                                          )),
+                                          ),
+                                        );
+                                      }
+                                      if (snapshot.hasError) {
+                                        return const Text(
+                                          'Error',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      }
+                                      final occupancy = snapshot.data ?? '0.0';
+                                      return Text(
+                                        '$occupancy%',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 3),

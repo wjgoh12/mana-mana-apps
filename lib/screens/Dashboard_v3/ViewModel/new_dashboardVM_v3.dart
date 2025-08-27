@@ -88,9 +88,11 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
     // Fetch property contract type data from API
 // Fetch property contract type data from API
+
     try {
+      final email = _users.isNotEmpty ? _users.first.email ?? '' : '';
       final contractResponse = await ownerPropertyListRepository
-          .getPropertyContractType(email: "testing1@gmail.com");
+          .getPropertyContractType(email: email);
 
       // The API directly returns a list, not wrapped in { data: [...] }
       propertyContractType = List<Map<String, dynamic>>.from(contractResponse);
@@ -298,21 +300,9 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     try {
       final occupancy = await ownerPropertyListRepository.getPropertyOccupancy(
           location: location, unitNo: unitNo);
-      //print('Occupancy data: $occupancy');
-
-      // if (occupancy.containsKey('status')) {
-      //   //print('Error response: ${occupancy['status']}');
-      //   if (location == 'SCARLETZ' && unitNo == '45-99.99') {
-      //     return '92.53%';
-      //   } else if (location == 'SCARLETZ' && unitNo == '2000-2100-55') {
-      //     return '85.0%';
-      //   } else {
-      //     return '0%';
-      //   }
-      // }
 
       if (occupancy.containsKey('amount') && occupancy['amount'] is num) {
-        print('Occupancy amount: ${occupancy['amount']}');
+        //print('Occupancy amount: ${occupancy['amount']}');
         return '${occupancy['amount'].toStringAsFixed(2)}%';
       } else {
         return '0%';
@@ -321,6 +311,46 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       print('Error getting unit occupancy for $location - $unitNo: $e');
     }
     return '0%';
+  }
+
+  final Map<int, String> _monthNumberToName = {
+    1: 'Jan',
+    2: 'Feb',
+    3: 'Mar',
+    4: 'Apr',
+    5: 'May',
+    6: 'Jun',
+    7: 'Jul',
+    8: 'Aug',
+    9: 'Sep',
+    10: 'Oct',
+    11: 'Nov',
+    12: 'Dec',
+  };
+
+  Future<String> getUnitOccupancyMonthYear(
+      String location, String unitNo) async {
+    try {
+      final occupancy = await ownerPropertyListRepository.getPropertyOccupancy(
+          location: location, unitNo: unitNo);
+
+      if (occupancy.containsKey('month') && occupancy.containsKey('year')) {
+        final monthNum = occupancy['month'];
+        final year = occupancy['year'];
+        final monthName = _monthNumberToName[monthNum] ?? '';
+        return '$monthName $year';
+      } else {
+        // fallback to current month/year if API data missing
+        final now = DateTime.now();
+        final monthName = _monthNumberToName[now.month] ?? '';
+        return '$monthName ${now.year}';
+      }
+    } catch (e) {
+      print('Error getting unit occupancy date for $location - $unitNo: $e');
+      final now = DateTime.now();
+      final monthName = _monthNumberToName[now.month] ?? '';
+      return '$monthName ${now.year}';
+    }
   }
 
   Future<String> getAverageOccupancyByLocation(String location) async {
@@ -461,5 +491,41 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
     double averageOccupancyRate = totalPropertyAverages / validProperties;
     return averageOccupancyRate.toStringAsFixed(1);
+  }
+
+  Future<String> calculateTotalOccupancyForLocation(String location) async {
+    // Get all units for the location
+    final unitsInLocation = propertyContractType
+        .where((property) => property['location'] == location)
+        .toList();
+
+    if (unitsInLocation.isEmpty) return '0.0';
+
+    double totalOccupancy = 0;
+    int validUnits = 0;
+
+    for (var unit in unitsInLocation) {
+      try {
+        // Fetch unit occupancy from repository
+        final occupancy =
+            await ownerPropertyListRepository.getPropertyOccupancy(
+          location: location,
+          unitNo: unit['unitNo'],
+        );
+
+        // Only count if valid
+        if (occupancy.containsKey('amount') && occupancy['amount'] is num) {
+          totalOccupancy += occupancy['amount'].toDouble();
+          validUnits++;
+        }
+      } catch (e) {
+        print('Error fetching occupancy for unit ${unit['unitNo']}: $e');
+      }
+    }
+
+    if (validUnits == 0) return '0.0';
+
+    // Average occupancy for the location
+    return (totalOccupancy / validUnits).toStringAsFixed(1);
   }
 }

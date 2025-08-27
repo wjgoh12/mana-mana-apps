@@ -67,6 +67,7 @@ class PropertyListV3 extends StatelessWidget {
                     // ViewAllProperty(model: model),
                     ...sequencedProperties.map((property) => PropertyImageStack(
                           locationByMonth: [property],
+                          model: model,
                         )),
                   ]),
             ),
@@ -136,14 +137,34 @@ class PropertyListV3 extends StatelessWidget {
 
 class PropertyImageStack extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
+  final NewDashboardVM_v3 model;
 
   const PropertyImageStack({
     Key? key,
     required this.locationByMonth,
+    required this.model,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final Set<String> uniqueOwners = {};
+    for (var owner in locationByMonth.first['owners'] ?? []) {
+      if (owner['ownerName'] != null &&
+          owner['ownerName'].toString().isNotEmpty) {
+        uniqueOwners.add(owner['ownerName']);
+      }
+      if (owner['coOwnerName'] != null &&
+          owner['coOwnerName'].toString().isNotEmpty) {
+        uniqueOwners.add(owner['coOwnerName']);
+      }
+    }
+    final location = locationByMonth.first['location'] ?? '';
+    final totalUnits = model.ownerUnits
+        .where((unit) => unit.location == location)
+        .map((unit) => unit.unitno)
+        .toSet()
+        .length;
+
     String locationRoad = '';
     switch (locationByMonth[0]['location'].toUpperCase()) {
       case "EXPRESSIONZ":
@@ -168,6 +189,8 @@ class PropertyImageStack extends StatelessWidget {
         locationRoad = "";
         break;
     }
+    print(
+        '${model.ownerUnits.where((unit) => unit.location == location).map((unit) => unit.unitno).toSet()}');
 
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
@@ -253,18 +276,34 @@ class PropertyImageStack extends StatelessWidget {
                                   ),
                                   SizedBox(width: 2.width),
                                   Text(
-                                    '${locationByMonth.first['totalUnits'] ?? (locationByMonth.first['owners'] as List?)?.map((owner) => owner['unitNo']).toSet().length ?? 0} Total ',
+                                    '$totalUnits Total ',
                                     style: const TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   // Show occupancy rate using async widget
-                                  OccupancyText(
-                                      location:
-                                          locationByMonth.first['location'],
-                                      unitNo: locationByMonth.first['unitNo'],
-                                      showTotal: true),
+                                  FutureBuilder<String>(
+                                    future: model
+                                        .calculateTotalOccupancyForLocation(
+                                            model.locationByMonth
+                                                .first['location']),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Text('Loading...',
+                                            style:
+                                                const TextStyle(fontSize: 8));
+                                      }
+                                      if (snapshot.hasError) {
+                                        return const Text('Error');
+                                      }
+                                      final occupancy = snapshot.data ?? '0.0';
+                                      return Text('($occupancy% Occupancy)',
+                                          style:
+                                              const TextStyle(fontSize: 8.5));
+                                    },
+                                  )
                                 ],
                               ),
                             ),
@@ -296,76 +335,39 @@ class PropertyImageStack extends StatelessWidget {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                  children: () {
-                                    final seen =
-                                        <String>{}; // track unique names
-                                    final ownerWidgets = <Widget>[];
-
-                                    for (var owner
-                                        in locationByMonth.first['owners'] ??
-                                            []) {
-                                      final ownerName =
-                                          owner['ownerName'] ?? '';
-                                      final coOwnerName =
-                                          owner['coOwnerName'] ?? '';
-
-                                      // ✅ Add main owner if not already added
-                                      if (ownerName.isNotEmpty &&
-                                          seen.add(ownerName)) {
-                                        ownerWidgets.add(
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(right: 5),
-                                            child: Tooltip(
-                                              message: ownerName,
-                                              child: CircleAvatar(
-                                                radius: 13,
-                                                backgroundColor: Colors.blue,
-                                                child: Text(
-                                                  getInitials(ownerName),
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
+                                  children: [
+                                    for (var ownerName in uniqueOwners) ...[
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 5),
+                                        child: Tooltip(
+                                          message: ownerName,
+                                          child: CircleAvatar(
+                                            radius: 13,
+                                            // Blue for main owner, green for co-owner
+                                            backgroundColor: locationByMonth
+                                                    .first['owners']
+                                                    .any((o) =>
+                                                        o['ownerName'] ==
+                                                        ownerName)
+                                                ? Colors.blue
+                                                : Colors.green,
+                                            child: Text(
+                                              getInitials(ownerName),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                           ),
-                                        );
-                                      }
-
-                                      // ✅ Add co-owner if not already added
-                                      if (coOwnerName.isNotEmpty &&
-                                          seen.add(coOwnerName)) {
-                                        ownerWidgets.add(
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(right: 5),
-                                            child: Tooltip(
-                                              message: coOwnerName,
-                                              child: CircleAvatar(
-                                                radius: 13,
-                                                backgroundColor: Colors.green,
-                                                child: Text(
-                                                  getInitials(coOwnerName),
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    }
-                                    return ownerWidgets;
-                                  }(),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),

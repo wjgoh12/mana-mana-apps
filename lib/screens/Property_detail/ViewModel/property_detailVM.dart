@@ -545,3 +545,57 @@ class PropertyDetailVM extends ChangeNotifier {
     await downloadPdfStatement(context);
   }
 }
+
+final Map<int, String> _monthNumberToName = {
+  1: 'Jan',
+  2: 'Feb',
+  3: 'Mar',
+  4: 'Apr',
+  5: 'May',
+  6: 'Jun',
+  7: 'Jul',
+  8: 'Aug',
+  9: 'Sep',
+  10: 'Oct',
+  11: 'Nov',
+  12: 'Dec',
+};
+
+Future<String> getUnitProfitPobMonthYear(List<SingleUnitByMonth> unitByMonth,
+    String location, String unitNo, String transCode) async {
+  try {
+    final filteredRecords = unitByMonth.where((unit) =>
+        unit.slocation == location &&
+        unit.sunitno == unitNo &&
+        unit.stranscode == transCode);
+
+    if (filteredRecords.isEmpty) {
+      // fallback to current month/year if no records found
+      final now = DateTime.now();
+      final monthName = _monthNumberToName[now.month] ?? '';
+      return '$monthName ${now.year}';
+    }
+
+    // Find the record with the latest year and month
+    int latestYear = 0;
+    int latestMonth = 0;
+
+    for (var record in filteredRecords) {
+      int year = record.iyear ?? 0;
+      int month = record.imonth ?? 0;
+
+      if (year > latestYear || (year == latestYear && month > latestMonth)) {
+        latestYear = year;
+        latestMonth = month;
+      }
+    }
+
+    final monthName = _monthNumberToName[latestMonth] ?? '';
+    return '$monthName $latestYear';
+  } catch (e) {
+    print('Error getting profit/POB month-year for $location - $unitNo: $e');
+    final now = DateTime.now();
+    final monthName = _monthNumberToName[now.month] ?? '';
+    return '$monthName ${now.year}';
+  }
+}

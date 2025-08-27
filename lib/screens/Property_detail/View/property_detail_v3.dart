@@ -735,6 +735,11 @@ class PropertyOverviewContainer extends StatelessWidget {
     print(
         'unit list: ${model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}');
 
+    print(
+        'total units:${model2.ownerUnits.where((unit) => unit.location == locationByMonth.first['location']).map((unit) => unit.unitno).toSet()}');
+
+    print('Account 2 raw locationByMonth: $locationByMonth');
+
     String monthNumberToName(int month) {
       const months = [
         'Jan',
@@ -764,6 +769,12 @@ class PropertyOverviewContainer extends StatelessWidget {
     double responsiveHeight(double value) => (value / 812.0) * screenHeight;
     double responsiveFont(double value) => (value / 812.0) * screenHeight;
 
+    final totalUnits = model2.ownerUnits
+        .where((unit) => unit.location == locationByMonth.first['location'])
+        .map((unit) => unit.unitno)
+        .toSet()
+        .length;
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: responsiveWidth(10)),
       decoration: const BoxDecoration(
@@ -786,9 +797,9 @@ class PropertyOverviewContainer extends StatelessWidget {
               imageWidth: responsiveWidth(67),
               imageHeight: responsiveHeight(59),
               title: 'Total Assets',
-              value:
-                  '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}',
-              subtitle: '$shortMonth $year',
+              value: '$totalUnits',
+              //     '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}',
+              // subtitle: '$shortMonth $year',
               responsiveFont: responsiveFont,
             ),
             SizedBox(width: responsiveWidth(17)),
@@ -803,12 +814,53 @@ class PropertyOverviewContainer extends StatelessWidget {
               subtitle: '$shortMonth $year',
               child: Consumer<NewDashboardVM_v3>(
                 builder: (context, dashboardVM, child) {
-                  return OccupancyText(
-                    location: locationByMonth.first['location'],
-                    unitNo: null,
-                    showTotal: true,
-                    showPercentageOnly: true,
-                    viewModel: dashboardVM,
+                  // Safe check for empty locationByMonth
+                  final location = dashboardVM.locationByMonth.isNotEmpty
+                      ? dashboardVM.locationByMonth.first['location']
+                      : null;
+
+                  if (location == null) {
+                    return const Text(
+                      'No location data',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  }
+
+                  return FutureBuilder<String>(
+                    future: dashboardVM
+                        .calculateTotalOccupancyForLocation(location),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text(
+                          'Loading...',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        return const Text(
+                          'Error',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+                      final occupancy = snapshot.data ?? '0.0';
+                      return Text(
+                        '$occupancy%',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      );
+                    },
                   );
                 },
               ),
