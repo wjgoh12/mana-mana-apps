@@ -26,21 +26,21 @@ final List<RoomType> roomTypes = [
   RoomType(
     name: 'Garnet Room',
     image: 'assets/images/garnet.png',
-    points: 14000,
+    points: 500,
   ),
   RoomType(
     name: 'Emerald Suite',
     image: 'assets/images/emerald.png',
-    points: 20000,
+    points: 300,
   ),
   RoomType(
     name: 'Sapphire Deluxe',
     image: 'assets/images/sapphire.png',
-    points: 17000,
+    points: 400,
   ),
   RoomType(
     name: 'Ruby Premium',
     image: 'assets/images/ruby.png',
-    points: 18000,
+    points: 200,
   ),
 ];

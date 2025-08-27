@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/Profile/View/room_details.dart';
+import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
+import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:mana_mana_app/screens/Profile/Data/roomtype.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class SelectDateRoom extends StatefulWidget {
   @override
@@ -11,10 +14,17 @@ class SelectDateRoom extends StatefulWidget {
 
 class _SelectDateRoomState extends State<SelectDateRoom> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
+  DateTime? _focusedDay;
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+  int _selectedQuantity = 1;
+
+  int _getUserPointsBalance() {
+    // Dummy value for now (e.g., 12,500 points)
+    // Later you can replace this with API call or user model value
+    return 12500;
+  }
 
   @override
   void initState() {
@@ -57,12 +67,48 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         // borderRadius: const BorderRadius.all(Radius.circular(8)),
       );
 
+  DateTime getInitialFocusedDay() {
+    final today = DateTime.now();
+    final sevenDaysFromNow = today.add(Duration(days: 7));
+
+    // Check if the current month has at least one selectable day
+    bool hasAvailableDayThisMonth = false;
+    DateTime firstOfMonth = DateTime(today.year, today.month, 1);
+    DateTime lastOfMonth = DateTime(today.year, today.month + 1, 0);
+
+    for (DateTime d = firstOfMonth;
+        d.isBefore(lastOfMonth.add(Duration(days: 1)));
+        d = d.add(Duration(days: 1))) {
+      if (_isDayEnabled(d)) {
+        // helper check
+        hasAvailableDayThisMonth = true;
+        break;
+      }
+    }
+
+    // If this month has available dates, keep today.
+    if (hasAvailableDayThisMonth) {
+      return today;
+    }
+
+    // Otherwise, move to 7 days later (which may fall into next month)
+    return sevenDaysFromNow;
+  }
+
+  bool _isDayEnabled(DateTime day) {
+    final today = DateTime.now();
+    final sevenDaysFromNow = today.add(Duration(days: 7));
+    return day.isAfter(sevenDaysFromNow) || isSameDay(day, sevenDaysFromNow);
+  }
+
   @override
   Widget build(BuildContext context) {
+    ResponsiveSize.init(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Select Date and Room'),
+        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -73,23 +119,16 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               child: TableCalendar(
                 firstDay: DateTime.utc(2010, 1, 1),
                 lastDay: DateTime.utc(2035, 12, 31),
-                focusedDay: _focusedDay,
-                selectedDayPredicate: (day) {
-                  return isSameDay(_selectedDay, day);
-                },
-
+                focusedDay: _focusedDay ?? getInitialFocusedDay(),
+                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                 enabledDayPredicate: (day) {
-                  // Only enable dates at least 7 days from today
-                  //if no need / changes then remove this enabledDayPredicate
                   final today = DateTime.now();
                   final sevenDaysFromNow = today.add(Duration(days: 7));
                   return day.isAfter(sevenDaysFromNow) ||
                       isSameDay(day, sevenDaysFromNow);
                 },
                 calendarFormat: _calendarFormat,
-                availableCalendarFormats: const {
-                  CalendarFormat.month: 'Month',
-                }, //lock the format to month only
+                availableCalendarFormats: const {CalendarFormat.month: 'Month'},
                 startingDayOfWeek: StartingDayOfWeek.monday,
                 onDaySelected: _onDaySelected,
                 rangeStartDay: _rangeStart,
@@ -115,12 +154,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     shape: BoxShape.circle,
                   ),
                 ),
-                onPageChanged: (focusedDay) => {
-                  _focusedDay = focusedDay,
+                onPageChanged: (focusedDay) {
+                  _focusedDay = focusedDay;
                 },
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: ResponsiveSize.scaleHeight(2)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Row(
@@ -185,6 +224,29 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               ),
             ),
             const SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsets.all(18),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Available Point Balance: ',
+                    style: TextStyle(
+                      fontSize: ResponsiveSize.text(15),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${_getUserPointsBalance()}',
+                    style: TextStyle(
+                      color: Color(0xFF3E51FF),
+                      fontSize: ResponsiveSize.text(18),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const Padding(
               padding: EdgeInsets.only(
                 left: 18.0,
@@ -216,13 +278,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                             content: Text(
                               'Please select both Check-in and Check-out dates before proceeding.',
                             ),
-                            backgroundColor: Colors.red,
+                            backgroundColor: Color.fromARGB(255, 203, 46, 46),
                           ),
                         );
                         return;
                       }
 
-                      // Proceed to RoomDetails if both dates are selected
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => RoomDetails(
@@ -230,6 +291,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                             checkIn: _rangeStart,
                             checkOut: _rangeEnd,
                             nights: duration,
+                            quantity: _selectedQuantity,
                           ),
                         ),
                       );
@@ -243,6 +305,16 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 );
               },
             ),
+            Center(
+              child: QuantityController(
+                onChanged: (val) {
+                  setState(() {
+                    _selectedQuantity = val; // save selected quantity
+                  });
+                },
+              ),
+            ),
+            SizedBox(height: ResponsiveSize.scaleHeight(5)),
           ],
         ),
       ),

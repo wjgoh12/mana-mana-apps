@@ -53,6 +53,7 @@ class ChoosePropertyLocation extends StatelessWidget {
             children: [
               _buildLocationCard(context, 'Scarletz'),
               _buildLocationCard(context, 'Ceylonz'),
+              _buildLocationCard(context, 'Expressionz'),
             ],
           )
         ],

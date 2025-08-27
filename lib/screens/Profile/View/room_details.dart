@@ -12,6 +12,7 @@ class RoomDetails extends StatefulWidget {
   final DateTime? checkIn;
   final DateTime? checkOut;
   final int nights;
+  final int quantity;
 
   const RoomDetails({
     Key? key,
@@ -19,6 +20,7 @@ class RoomDetails extends StatefulWidget {
     this.checkIn,
     this.checkOut,
     this.nights = 1,
+    this.quantity = 1,
   }) : super(key: key);
 
   /// Correct total points calculation
@@ -54,7 +56,8 @@ class _RoomDetailsState extends State<RoomDetails> {
     bool showError = !_isChecked;
     String totalPoints() {
       final formatter = NumberFormat('#,###');
-      return formatter.format(widget.room.points * widget.nights);
+      return formatter
+          .format(widget.room.points * widget.nights * widget.quantity);
     }
 
     return Scaffold(
@@ -175,7 +178,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                   ),
                                 ),
                                 Text(
-                                  '${widget.room.quantity}',
+                                  '${widget.quantity}',
                                   style: const TextStyle(
                                     fontSize: 16.0,
                                     color: Color(0xFF3E51FF),
