@@ -7,9 +7,11 @@ import 'package:mana_mana_app/widgets/occupancy_text.dart';
 
 class PropertyStack extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
+  final NewDashboardVM_v3 model;
   const PropertyStack({
     super.key,
     required this.locationByMonth,
+    required this.model,
   });
 
   String getInitials(String name) {
@@ -24,6 +26,18 @@ class PropertyStack extends StatelessWidget {
     print('locationByMonth length: ${locationByMonth.length}');
     print('First item keys: ${locationByMonth.first.keys}');
     print('First item: ${locationByMonth.first}');
+
+    final Set<String> uniqueOwners = {};
+    for (var owner in locationByMonth.first['owners'] ?? []) {
+      if (owner['ownerName'] != null &&
+          owner['ownerName'].toString().isNotEmpty) {
+        uniqueOwners.add(owner['ownerName']);
+      }
+      if (owner['coOwnerName'] != null &&
+          owner['coOwnerName'].toString().isNotEmpty) {
+        uniqueOwners.add(owner['coOwnerName']);
+      }
+    }
 
     if (locationByMonth.isEmpty) {
       return Container(
@@ -58,7 +72,7 @@ class PropertyStack extends StatelessWidget {
         locationRoad = "";
         break;
     }
-    //final NewDashboardVM_v3 model = NewDashboardVM_v3();
+    // final NewDashboardVM_v3 model = NewDashboardVM_v3();
     //model.fetchData();
 
     return ResponsiveBuilder(builder: (context, sizingInformation) {
@@ -84,7 +98,12 @@ class PropertyStack extends StatelessWidget {
       final smallContainerHeight = containerHeight * 0.08;
 
       final horizontalPadding = isMobile ? 16.0 : 40.0;
-
+      final location = locationByMonth.first['location'] ?? '';
+      final totalUnits = model.ownerUnits
+          .where((unit) => unit.location == location)
+          .map((unit) => unit.unitno)
+          .toSet()
+          .length;
       return Stack(
         clipBehavior: Clip.none,
         children: [
@@ -161,13 +180,26 @@ class PropertyStack extends StatelessWidget {
                             ),
                             SizedBox(width: 1.fSize),
                             Text(
-                              '${locationByMonth.first['totalUnits'] ?? (locationByMonth.first['owners'] as List?)?.map((owner) => owner['unitNo']).toSet().length ?? 0} Total ',
+                              '$totalUnits Total ',
                               style: TextStyle(fontSize: responsiveFont(8)),
                             ),
-                            OccupancyText(
-                                location: locationByMonth.first['location'],
-                                unitNo: locationByMonth.first['unitNo'],
-                                showTotal: true),
+                            FutureBuilder<String>(
+                              future: model.calculateTotalOccupancyForLocation(
+                                  model.locationByMonth.first['location']),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Text('Loading...',
+                                      style: const TextStyle(fontSize: 8));
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text('Error');
+                                }
+                                final occupancy = snapshot.data ?? '0.0';
+                                return Text('($occupancy% Occupancy)',
+                                    style: const TextStyle(fontSize: 8.5));
+                              },
+                            )
                           ],
                         ),
                       ),
@@ -200,49 +232,31 @@ class PropertyStack extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
-                              for (var owner
-                                  in locationByMonth.first['owners'] ?? []) ...[
-                                // Main owner avatar
+                              for (var ownerName in uniqueOwners) ...[
                                 Padding(
                                   padding: const EdgeInsets.only(right: 5),
                                   child: Tooltip(
-                                    message:
-                                        owner['ownerName'] ?? 'Unknown Owner',
+                                    message: ownerName,
                                     child: CircleAvatar(
                                       radius: 13,
-                                      backgroundColor: Colors.blue,
+                                      // Blue for main owner, green for co-owner
+                                      backgroundColor: locationByMonth
+                                              .first['owners']
+                                              .any((o) =>
+                                                  o['ownerName'] == ownerName)
+                                          ? Colors.blue
+                                          : Colors.green,
                                       child: Text(
-                                        getInitials(owner['ownerName'] ?? ''),
-                                        style: TextStyle(
+                                        getInitials(ownerName),
+                                        style: const TextStyle(
                                           color: Colors.white,
-                                          fontSize: responsiveFont(10),
+                                          fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                // Co-owner avatar if exists
-                                if (owner['coOwnerName'] != null &&
-                                    owner['coOwnerName'].toString().isNotEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 5),
-                                    child: Tooltip(
-                                      message: owner['coOwnerName'],
-                                      child: CircleAvatar(
-                                        radius: 13,
-                                        backgroundColor: Colors.green,
-                                        child: Text(
-                                          getInitials(owner['coOwnerName']),
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                               ],
                             ],
                           ),
