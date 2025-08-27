@@ -1265,54 +1265,70 @@ class UnitDetailsContainer extends StatelessWidget {
                   )
                 ],
               ),
-              //SizedBox(width: 5.fSize),
-              Container(
-                alignment: Alignment.centerLeft,
-                width: responsiveWidth(300),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        for (var owner
-                            in model.locationByMonth.first['owners'] ?? []) ...[
-                          Padding(
-                            padding: EdgeInsets.only(left: responsivePadding),
-                            child: Tooltip(
-                              message: owner['unitNo'] == model.selectedUnitNo
-                                  ? '${owner['ownerName']} - Unit ${owner['unitNo']}'
-                                  : 'Unknown Owner',
-                              child: CircleAvatar(
-                                radius: 13,
-                                backgroundColor:
-                                    owner['unitNo'] == model.selectedUnitNo
-                                        ? Colors.blue
-                                        : Colors.transparent,
-                                child: Text(
-                                  owner['unitNo'] == model.selectedUnitNo
-                                      ? getInitials(owner['ownerName'] ?? '')
-                                      : '',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: responsiveFont(12),
-                                    fontWeight: FontWeight.bold,
+              SizedBox(width: 5.fSize),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: () {
+                      final seen = <String>{};
+                      final ownerWidgets = <Widget>[];
+
+                      for (var owner
+                          in model.locationByMonth.first['owners'] ?? []) {
+                        final ownerName = owner['ownerName'] ?? '';
+                        final coOwnerName = owner['coOwnerName'] ?? '';
+
+                        if (ownerName.isNotEmpty && seen.add(ownerName)) {
+                          ownerWidgets.add(
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5),
+                              child: Tooltip(
+                                message: ownerName,
+                                child: CircleAvatar(
+                                  radius: 13,
+                                  backgroundColor: Colors.blue,
+                                  child: Text(
+                                    getInitials(ownerName),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: 1.width),
-                          owner['unitNo'] == model.selectedUnitNo
-                              ? Text(owner['ownerName'] ?? '',
-                                  style:
-                                      TextStyle(fontSize: responsiveFont(12)))
-                              : Text(''),
-                          SizedBox(width: 2.width),
-                        ]
-                      ],
-                    ),
-                  ],
+                          );
+                        }
+
+                        if (coOwnerName.isNotEmpty && seen.add(coOwnerName)) {
+                          ownerWidgets.add(
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5),
+                              child: Tooltip(
+                                message: coOwnerName,
+                                child: CircleAvatar(
+                                  radius: 13,
+                                  backgroundColor: Colors.green,
+                                  child: Text(
+                                    getInitials(coOwnerName),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      }
+
+                      return ownerWidgets;
+                    }(),
+                  ),
                 ),
               )
             ],
@@ -1395,12 +1411,34 @@ class UnitDetailsContainer extends StatelessWidget {
                                 },
                               ),
                               SizedBox(height: 5.fSize),
-                              Text(
-                                'As of Month ${model2.propertyOccupancy.isNotEmpty ? _getLatestOccupancyDate(model2.propertyOccupancy, _monthNumberToName) : '$shortMonth $year'}',
-                                style: TextStyle(
-                                  fontSize: responsiveFont(8),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 3),
+                                child: FutureBuilder<String>(
+                                  future: model2.getUnitOccupancyMonthYear(
+                                    model.locationByMonth.first['location'],
+                                    model.selectedUnitNo ?? '',
+                                  ),
+                                  builder: (context, snapshot) {
+                                    String monthYearText =
+                                        '$shortMonth $year'; // default fallback
+
+                                    if (snapshot.hasData) {
+                                      monthYearText = snapshot.data!;
+                                    } else if (snapshot.hasError) {
+                                      monthYearText = 'Error';
+                                    }
+
+                                    return Text(
+                                      'As of Month $monthYearText',
+                                      style: const TextStyle(
+                                        fontSize: 8.0,
+                                        fontFamily: 'Open Sans',
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         ),
