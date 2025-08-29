@@ -170,7 +170,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                                           MainAxisAlignment.start,
                                       children: [
                                         Text(
-                                          '3000',
+                                          '12,500',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: responsiveFont(12)),

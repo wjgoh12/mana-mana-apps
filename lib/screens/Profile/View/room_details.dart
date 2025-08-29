@@ -322,7 +322,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                               SelectDateRoom.getUserPointsBalance()) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Insufficient points'),
+                                content:
+                                    Text('Insufficient points for redemption!'),
                                 backgroundColor:
                                     Color.fromARGB(255, 203, 46, 46),
                               ),

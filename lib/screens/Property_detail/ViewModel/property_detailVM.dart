@@ -329,17 +329,23 @@ class PropertyDetailVM extends ChangeNotifier {
     Future<void> fetchRecentActivities() async {
       final apiResponse = await ownerPropertyListRepository.getUnitByMonth();
 
+      // Keep ALL records as they are, don’t group
       recentActivities = apiResponse.map((item) {
         return {
           "unitNo": item.sunitno,
           "location": item.slocation,
-          "type": item.stype,
           "month": item.imonth,
           "year": item.iyear,
-          "total": item.total,
-          "transcode": item.stranscode,
         };
       }).toList();
+
+      // Sort so most recent is first
+      recentActivities.sort((a, b) {
+        if (a["year"] == b["year"]) {
+          return (b["month"] as int).compareTo(a["month"] as int);
+        }
+        return (b["year"] as int).compareTo(a["year"] as int);
+      });
 
       notifyListeners();
     }

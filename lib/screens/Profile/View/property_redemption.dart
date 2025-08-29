@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
+import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
@@ -295,7 +296,7 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
                   ),
                   SizedBox(height: responsiveHeight(6)),
                   Text(
-                    '14000/20000',
+                    '${SelectDateRoom.getUserPointsBalance()}/5000',
                     style: TextStyle(
                       fontSize: responsiveFont(11),
                       fontWeight: FontWeight.bold,

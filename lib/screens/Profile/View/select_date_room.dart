@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/Profile/View/room_details.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
+import 'package:mana_mana_app/screens/Statement/ViewModel/statementVM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:mana_mana_app/screens/Profile/Data/roomtype.dart';
@@ -13,7 +14,17 @@ class SelectDateRoom extends StatefulWidget {
   // 👇 Put the static method here, in the widget class
   static int getUserPointsBalance() {
     // Dummy value for now (replace with real user balance later)
-    return 12500;
+    return 1200;
+  }
+
+  static String getFormatUserPointsBalance() {
+    final formatter = NumberFormat('#,###');
+    return formatter.format(getUserPointsBalance());
+  }
+
+  // ✅ Calculate total points for a given room and quantity
+  static int calculateTotalPoints(RoomType room, int quantity, int duration) {
+    return room.points * quantity * duration;
   }
 
   @override
@@ -27,6 +38,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
   int _selectedQuantity = 1;
+
+  RoomType? _selectedRoom;
 
   @override
   void initState() {
@@ -228,25 +241,39 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             const SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.all(18),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Available Point Balance: ',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.text(15),
-                      fontWeight: FontWeight.bold,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: Offset(0, 1),
                     ),
-                  ),
-                  Text(
-                    '${SelectDateRoom.getUserPointsBalance()}',
-                    style: TextStyle(
-                      color: Color(0xFF3E51FF),
-                      fontSize: ResponsiveSize.text(18),
-                      fontWeight: FontWeight.bold,
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Available Point Balance: ',
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.text(15),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                    Text(
+                      '${SelectDateRoom.getFormatUserPointsBalance()}',
+                      style: TextStyle(
+                        color: Color(0xFF3E51FF),
+                        fontSize: ResponsiveSize.text(18),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const Padding(
@@ -285,38 +312,110 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         );
                         return;
                       }
-
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => RoomDetails(
-                            room: roomTypes[index],
-                            checkIn: _rangeStart,
-                            checkOut: _rangeEnd,
-                            nights: duration,
-                            quantity: _selectedQuantity,
-                          ),
-                        ),
-                      );
+                      // ✅ Update selected room
+                      setState(() {
+                        _selectedRoom = roomTypes[index];
+                      });
                     },
                     child: _buildRoomTypeCard(
                       context,
                       roomTypes[index].name,
                       roomTypes[index].points,
+                      roomTypes[index].image,
                     ),
                   ),
                 );
               },
             ),
-            Center(
-              child: QuantityController(
-                onChanged: (val) {
-                  setState(() {
-                    _selectedQuantity = val; // save selected quantity
-                  });
-                },
+            Column(
+              children: [
+                Text(
+                  'Quantity',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Center(
+                  child: QuantityController(
+                    onChanged: (val) {
+                      setState(() {
+                        _selectedQuantity = val; // save selected quantity
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: ResponsiveSize.scaleHeight(3)),
+            Padding(
+              padding: const EdgeInsets.only(left: 18, right: 18, bottom: 20),
+              child: Center(
+                child: Text(
+                  'Total: ${_selectedRoom != null ? SelectDateRoom.calculateTotalPoints(_selectedRoom!, _selectedQuantity, duration) : 0} points',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF3E51FF),
+                  ),
+                ),
               ),
             ),
-            SizedBox(height: ResponsiveSize.scaleHeight(5)),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: TextButton(
+                  onPressed: () {
+                    if (_selectedRoom == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content:
+                              Text('Please select a room before proceeding.'),
+                          backgroundColor: Color.fromARGB(255, 203, 46, 46),
+                        ),
+                      );
+                      return;
+                    }
+
+                    if (_rangeStart == null || _rangeEnd == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Please select both Check-in and Check-out dates.'),
+                          backgroundColor: Color.fromARGB(255, 203, 46, 46),
+                        ),
+                      );
+                      return;
+                    }
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => RoomDetails(
+                          room: _selectedRoom!,
+                          checkIn: _rangeStart,
+                          checkOut: _rangeEnd,
+                          nights: duration,
+                          quantity: _selectedQuantity,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text('Next',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      )),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color(0xFF3E51FF),
+                    ),
+                    fixedSize: MaterialStateProperty.all<Size>(
+                      Size(300, 40),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -324,7 +423,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }
 }
 
-Widget _buildRoomTypeCard(BuildContext context, String roomType, int point) {
+Widget _buildRoomTypeCard(
+    BuildContext context, String roomType, int point, String imagePath) {
   final formatter = NumberFormat('#,###');
   final formattedPoints = formatter.format(point);
   return Container(
@@ -346,7 +446,7 @@ Widget _buildRoomTypeCard(BuildContext context, String roomType, int point) {
               topRight: Radius.circular(8.0),
             ),
             child: Image.asset(
-              'assets/images/${roomType.toUpperCase()}.png',
+              imagePath,
               fit: BoxFit.cover,
             ),
           ),

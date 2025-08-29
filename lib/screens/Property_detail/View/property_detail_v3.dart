@@ -1809,14 +1809,12 @@ class _EStatementContainerState extends State<EStatementContainer> {
         }
 
         if (filteredItems.length > 6) {
-          // More than one screen, allow scrolling
           return SizedBox(
             height: 500,
             child: Column(
               children: [
                 Expanded(
                   child: ListView.builder(
-                    //physics: const ClampingScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: filteredItems.length,
                     itemBuilder: (context, i) {
