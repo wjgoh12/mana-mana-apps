@@ -28,8 +28,9 @@ class PropertyDetailVM extends ChangeNotifier {
   List<String> typeItems = [];
   String? _selectedYearValue; // Don't initialize with any value
   String? get selectedYearValue => _selectedYearValue;
+  List<Map<String, dynamic>> recentActivities = [];
   PropertyDetailVM() {
-    _selectedYearValue = null; // Explicitly set to null
+    _selectedYearValue = null;
     // print(
     //     'PropertyDetailVM constructor - selectedYearValue initialized to: $_selectedYearValue');
   }
@@ -324,6 +325,25 @@ class PropertyDetailVM extends ChangeNotifier {
       monthItems = ['-'];
     }
     selectedAnnualYearValue = _selectedYearValue;
+
+    Future<void> fetchRecentActivities() async {
+      final apiResponse = await ownerPropertyListRepository.getUnitByMonth();
+
+      recentActivities = apiResponse.map((item) {
+        return {
+          "unitNo": item.sunitno,
+          "location": item.slocation,
+          "type": item.stype,
+          "month": item.imonth,
+          "year": item.iyear,
+          "total": item.total,
+          "transcode": item.stranscode,
+        };
+      }).toList();
+
+      notifyListeners();
+    }
+
     isLoading = false;
     //print('PropertyDetailVM: Data loading completed. TypeItems count: ${typeItems.length}');
     notifyListeners();

@@ -1,16 +1,30 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-class ResponsiveScale {
-  final BuildContext context;
-  late double screenWidth;
-  late double screenHeight;
+class ResponsiveSize {
+  static late double screenWidth;
+  static late double screenHeight;
+  static late double blockWidth;
+  static late double blockHeight;
 
-  ResponsiveScale(this.context) {
+  static void init(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
+
+    blockWidth = screenWidth / 100;
+    blockHeight = screenHeight / 100;
   }
 
-  double width(double value) => (value / 375.0) * screenWidth; // base width
-  double height(double value) => (value / 812.0) * screenHeight; // base height
-  double font(double value) => (value / 812.0) * screenHeight; // font scaling
+  // Scale factor for text
+  static double text(double size) {
+    return size * blockWidth / 3.8; // adjust to your needs
+  }
+
+  // Scale factor for spacing or widgets
+  static double scaleWidth(double width) {
+    return width * blockWidth;
+  }
+
+  static double scaleHeight(double height) {
+    return height * blockHeight;
+  }
 }

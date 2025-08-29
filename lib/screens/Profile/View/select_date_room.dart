@@ -8,6 +8,14 @@ import 'package:mana_mana_app/screens/Profile/Data/roomtype.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class SelectDateRoom extends StatefulWidget {
+  const SelectDateRoom({Key? key}) : super(key: key);
+
+  // 👇 Put the static method here, in the widget class
+  static int getUserPointsBalance() {
+    // Dummy value for now (replace with real user balance later)
+    return 12500;
+  }
+
   @override
   _SelectDateRoomState createState() => _SelectDateRoomState();
 }
@@ -19,12 +27,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
   int _selectedQuantity = 1;
-
-  int _getUserPointsBalance() {
-    // Dummy value for now (e.g., 12,500 points)
-    // Later you can replace this with API call or user model value
-    return 12500;
-  }
 
   @override
   void initState() {
@@ -237,7 +239,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     ),
                   ),
                   Text(
-                    '${_getUserPointsBalance()}',
+                    '${SelectDateRoom.getUserPointsBalance()}',
                     style: TextStyle(
                       color: Color(0xFF3E51FF),
                       fontSize: ResponsiveSize.text(18),

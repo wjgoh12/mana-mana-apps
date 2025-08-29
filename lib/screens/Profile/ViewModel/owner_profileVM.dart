@@ -13,6 +13,7 @@ class OwnerProfileVM extends ChangeNotifier {
   final UserRepository userRepository = UserRepository();
   final PropertyListRepository ownerPropertyListRepository =
       PropertyListRepository();
+  final UserPointBalance = [];
 
   bool get showMyInfo => _showMyInfo;
 
@@ -51,6 +52,7 @@ class OwnerProfileVM extends ChangeNotifier {
     _users = await userRepository.getUsers();
     _ownerUnits = await ownerPropertyListRepository.getOwnerUnit();
     //_ownerBookingHistory = await ownerBookingHistoryRepository.getOwnerBookingHistory();???
+
     notifyListeners();
   }
 

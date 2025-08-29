@@ -528,4 +528,69 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     // Average occupancy for the location
     return (totalOccupancy / validUnits).toStringAsFixed(1);
   }
+
+//GET AVERAGE OCCUPANCY FROM MONTH
+  double getAverageOccupancyByMonthCached(int month, int year) {
+    double total = 0;
+    int count = 0;
+
+    propertyOccupancy.forEach((location, data) {
+      if (data is Map && data.containsKey('units')) {
+        final units = data['units'] as Map<String, dynamic>;
+        units.forEach((unitNo, unitData) {
+          if (unitData is Map &&
+              unitData['year'] == year &&
+              unitData['month'] == month &&
+              unitData['amount'] != null) {
+            total += (unitData['amount'] as num).toDouble();
+            count++;
+          }
+        });
+      }
+    });
+
+    if (count == 0) return 0.0;
+    return total / count;
+  }
+
+//GET AVERAGE OCCUPANCY FROM QUARTER
+  double getAverageOccupancyByQuarterCached(int quarter, int year) {
+    int startMonth = (quarter - 1) * 3 + 1;
+    double total = 0;
+    int count = 0;
+
+    for (int month = startMonth; month <= startMonth + 2; month++) {
+      double monthAvg = getAverageOccupancyByMonthCached(month, year);
+      if (monthAvg > 0) {
+        total += monthAvg;
+        count++;
+      }
+    }
+
+    if (count == 0) return 0.0;
+    return total / count;
+  }
+
+//GET AVERAGE OCCUPANCY FROM EACH YEAR
+  double getAverageOccupancyByYearCached(int year) {
+    double total = 0;
+    int count = 0;
+
+    propertyOccupancy.forEach((location, data) {
+      if (data is Map && data.containsKey('units')) {
+        final units = data['units'] as Map<String, dynamic>;
+        units.forEach((unitNo, unitData) {
+          if (unitData is Map &&
+              unitData['year'] == year &&
+              unitData['amount'] != null) {
+            total += (unitData['amount'] as num).toDouble();
+            count++;
+          }
+        });
+      }
+    });
+
+    if (count == 0) return 0.0;
+    return total / count;
+  }
 }

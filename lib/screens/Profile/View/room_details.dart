@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/Profile/Data/roomtype.dart';
 import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
+import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RoomDetails extends StatefulWidget {
@@ -54,10 +55,13 @@ class _RoomDetailsState extends State<RoomDetails> {
   @override
   Widget build(BuildContext context) {
     bool showError = !_isChecked;
-    String totalPoints() {
+    int totalPoints() {
+      return widget.room.points * widget.nights * widget.quantity;
+    }
+
+    String formattedTotalPoints() {
       final formatter = NumberFormat('#,###');
-      return formatter
-          .format(widget.room.points * widget.nights * widget.quantity);
+      return formatter.format(totalPoints());
     }
 
     return Scaffold(
@@ -230,7 +234,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                             ),
                           ),
                           Text(
-                            '${totalPoints()}',
+                            '${formattedTotalPoints()}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF3E51FF),
@@ -283,6 +287,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Please enter guest name'),
+                                backgroundColor:
+                                    Color.fromARGB(255, 203, 46, 46),
                               ),
                             );
                           }
@@ -304,10 +310,26 @@ class _RoomDetailsState extends State<RoomDetails> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Please confirm T&C'),
+                                backgroundColor:
+                                    Color.fromARGB(255, 203, 46, 46),
                                 //highlight the checkbox
                               ),
                             );
                           }
+                          //if user point balance insufficient
+                          // Check if user has enough points
+                          if (totalPoints() >
+                              SelectDateRoom.getUserPointsBalance()) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Insufficient points'),
+                                backgroundColor:
+                                    Color.fromARGB(255, 203, 46, 46),
+                              ),
+                            );
+                            isValid = false;
+                          }
+
                           // Send email to CS team
                           if (isValid) {
                             final emailContent = '''

@@ -759,8 +759,8 @@ class PropertyOverviewContainer extends StatelessWidget {
     }
 
     DateTime now = DateTime.now();
-    String shortMonth = monthNumberToName(model.unitLatestMonth);
-    String year = model.unitLatestYear.toString();
+    String shortMonth = monthNumberToName(now.month);
+    String year = now.year.toString();
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -799,7 +799,7 @@ class PropertyOverviewContainer extends StatelessWidget {
               title: 'Total Assets',
               value: '$totalUnits',
               //     '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}',
-              // subtitle: '$shortMonth $year',
+              subtitle: Text('$shortMonth $year'),
               responsiveFont: responsiveFont,
             ),
             SizedBox(width: responsiveWidth(17)),
@@ -811,10 +811,35 @@ class PropertyOverviewContainer extends StatelessWidget {
               imageWidth: responsiveWidth(65),
               imageHeight: responsiveHeight(38),
               title: 'Occupancy Rate',
-              subtitle: '$shortMonth $year',
+              subtitle: FutureBuilder<String>(
+                future: model2.getUnitOccupancyMonthYear(
+                  model.locationByMonth.first['location'],
+                  model.selectedUnitNo ?? '',
+                ),
+                builder: (context, snapshot) {
+                  String shortMonth = monthNumberToName(now.month);
+                  String year = now.year.toString();
+                  String monthYearText =
+                      '$shortMonth $year'; // default fallback
+
+                  if (snapshot.hasData) {
+                    monthYearText = snapshot.data!;
+                  } else if (snapshot.hasError) {
+                    monthYearText = 'Error';
+                  }
+
+                  return Text(
+                    'As of Month $monthYearText',
+                    style: const TextStyle(
+                      fontSize: 9.0,
+                      fontFamily: 'Open Sans',
+                      fontWeight: FontWeight.normal,
+                    ),
+                  );
+                },
+              ),
               child: Consumer<NewDashboardVM_v3>(
                 builder: (context, dashboardVM, child) {
-                  // Safe check for empty locationByMonth
                   final location = dashboardVM.locationByMonth.isNotEmpty
                       ? dashboardVM.locationByMonth.first['location']
                       : null;
@@ -877,7 +902,7 @@ class PropertyOverviewContainer extends StatelessWidget {
               imageWidth: responsiveWidth(59),
               imageHeight: responsiveHeight(58),
               title: 'Monthly Profit',
-              subtitle: '$shortMonth $year',
+              subtitle: Text('$shortMonth $year'),
               child: RichText(
                 text: TextSpan(
                   children: [
@@ -920,7 +945,7 @@ class PropertyOverviewContainer extends StatelessWidget {
               imageWidth: responsiveWidth(57),
               imageHeight: responsiveHeight(59),
               title: 'Total Net After POB',
-              subtitle: '$shortMonth $year',
+              subtitle: Text('$shortMonth $year'),
               child: RichText(
                 text: TextSpan(
                   children: [
@@ -960,7 +985,6 @@ class PropertyOverviewContainer extends StatelessWidget {
     );
   }
 
-  /// ✅ Reusable Box Widget
   Widget _overviewBox(
     BuildContext context, {
     required double width,
@@ -970,7 +994,7 @@ class PropertyOverviewContainer extends StatelessWidget {
     required double imageHeight,
     required String title,
     String? value,
-    String? subtitle,
+    Widget? subtitle,
     Widget? child,
     required double Function(double) responsiveFont,
   }) {
@@ -1002,11 +1026,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                   color: Colors.black,
                 )),
           if (child != null) child,
-          if (subtitle != null)
-            Text(
-              subtitle,
-              style: TextStyle(fontSize: responsiveFont(10)),
-            ),
+          if (subtitle != null) subtitle,
         ],
       ),
     );
