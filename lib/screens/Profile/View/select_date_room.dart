@@ -116,6 +116,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     return day.isAfter(sevenDaysFromNow) || isSameDay(day, sevenDaysFromNow);
   }
 
+  bool isRoomAffordable(RoomType room, int duration, int quantity) {
+    final totalPoints = room.points * duration * quantity;
+    return totalPoints <= SelectDateRoom.getUserPointsBalance();
+  }
+
   @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
@@ -290,43 +295,54 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               ),
             ),
             GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.9,
-              ),
-              itemCount: roomTypes.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: InkWell(
-                    onTap: () {
-                      if (_rangeStart == null || _rangeEnd == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Please select both Check-in and Check-out dates before proceeding.',
-                            ),
-                            backgroundColor: Color.fromARGB(255, 203, 46, 46),
-                          ),
-                        );
-                        return;
-                      }
-                      // ✅ Update selected room
-                      setState(() {
-                        _selectedRoom = roomTypes[index];
-                      });
-                    },
-                    child: _buildRoomTypeCard(
-                      context,
-                      roomTypes[index].name,
-                      roomTypes[index].points,
-                      roomTypes[index].image,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.9,
+                ),
+                itemCount: roomTypes.length,
+                itemBuilder: (context, index) {
+                  final room = roomTypes[index];
+                  final affordable = isRoomAffordable(
+                    room,
+                    duration == 0
+                        ? 1
+                        : duration, // duration 0? assume 1 to grey out correctly
+                    _selectedQuantity,
+                  );
+
+                  return Opacity(
+                    opacity: affordable ? 1 : 0.5, // grey out if not affordable
+                    child: Card(
+                      child: InkWell(
+                        onTap: () {
+                          if (!affordable) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Insufficient points for this room. Please choose another.'),
+                                backgroundColor:
+                                    Color.fromARGB(255, 203, 46, 46),
+                              ),
+                            );
+                            return;
+                          }
+
+                          setState(() {
+                            _selectedRoom = room;
+                          });
+                        },
+                        child: _buildRoomTypeCard(
+                          context,
+                          room.name,
+                          room.points,
+                          room.image,
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                }),
             Column(
               children: [
                 Text(
