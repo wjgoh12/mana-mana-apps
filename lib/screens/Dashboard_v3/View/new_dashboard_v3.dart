@@ -112,11 +112,12 @@ class NewDashboardV3 extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Hey, ${model.userNameAccount}👋',
+                                    'Hey, ${model.userNameAccount} 👋',
                                     style: TextStyle(
-                                      fontSize: responsiveFont(16),
-                                      fontFamily: 'Open Sans',
-                                      fontWeight: FontWeight.w800,
+                                      fontSize: responsiveFont(15),
+                                      fontFamily: 'Outfit',
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF383838),
                                     ),
                                   ),
                                 ],
@@ -140,7 +141,7 @@ class NewDashboardV3 extends StatelessWidget {
                                       'Simple, Timeless \nAssets Management',
                                       style: TextStyle(
                                         fontSize: responsiveFont(30),
-                                        fontFamily: 'Open Sans',
+                                        fontFamily: 'Outfit',
                                         fontWeight: FontWeight.w900,
                                         color: const Color(0xFFFFFFFF),
                                       ),
@@ -168,7 +169,7 @@ class NewDashboardV3 extends StatelessWidget {
                                         'assets/images/searchIcon.png'),
                                   ),
                                   hintText: 'Search Your Properties',
-                                  hintStyle: TextStyle(fontSize: 15.fSize),
+                                  hintStyle: const TextStyle(fontSize: 15),
                                   suffixIcon: IconButton(
                                     icon: Image.asset(
                                       'assets/images/Settingsbutton.png',
@@ -198,7 +199,7 @@ class NewDashboardV3 extends StatelessWidget {
                         Container(
                           width: screenWidth,
                           padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding),
+                              horizontal: horizontalPadding, vertical: 14),
                           color: Colors.white,
                           child: Column(
                             children: [
@@ -227,7 +228,7 @@ class NewDashboardV3 extends StatelessWidget {
                         Container(
                           width: screenWidth,
                           padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding),
+                              horizontal: horizontalPadding, vertical: 14),
                           color: Colors.white,
                           child: Column(
                             children: [
@@ -253,7 +254,7 @@ class NewDashboardV3 extends StatelessWidget {
                                 model: model,
                                 controller: propertyScrollController,
                               ),
-                              SizedBox(height: kBottomNavigationBarHeight + 20),
+                              const SizedBox(height: kBottomNavigationBarHeight + 50),
                             ],
                             // prevent blocking
                           ),
@@ -327,15 +328,7 @@ class NewDashboardV3 extends StatelessWidget {
     return Container(
       width: 100.width,
       color: Colors.white,
-      child: Column(
-        children: [
-          // Status bar spacing
-          SizedBox(height: MediaQuery.of(context).padding.top),
-
-          // Only show Owner's portal top bar when not scrolled
-          if (!innerBoxIsScrolled) topBar(context, () {}),
-        ],
-      ),
+      child: !innerBoxIsScrolled ? topBar(context, () {}) : SizedBox.shrink(),
     );
   }
 
@@ -345,9 +338,9 @@ class NewDashboardV3 extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-          fontFamily: 'Open Sans',
-          fontSize: 20.fSize,
-          fontWeight: FontWeight.w800,
+          fontFamily: 'Outfit',
+          fontSize: 24.fSize,
+          fontWeight: FontWeight.w600,
           color: const Color(0XFF000000),
         ),
       ),
@@ -357,10 +350,10 @@ class NewDashboardV3 extends StatelessWidget {
   Widget _seeAllButton({VoidCallback? onPressed}) {
     return TextButton(
       onPressed: onPressed,
-      child: const Text(
+      child: Text(
         'See All',
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 16.fSize,
         ),
       ),
     );
