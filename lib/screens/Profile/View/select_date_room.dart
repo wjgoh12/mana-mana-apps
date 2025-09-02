@@ -66,6 +66,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         _selectedQuantity = 1;
       }
     });
+    _validateSelectedRoom();
   }
 
   int get duration {
@@ -118,6 +119,30 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   bool isRoomAffordable(RoomType room, int duration, int quantity) {
     final totalPoints = room.points * duration * quantity;
     return totalPoints <= SelectDateRoom.getUserPointsBalance();
+  }
+
+  void _validateSelectedRoom() {
+    if (_selectedRoom != null) {
+      final stillAffordable = isRoomAffordable(
+        _selectedRoom!,
+        duration == 0 ? 1 : duration,
+        _selectedQuantity,
+      );
+
+      if (!stillAffordable) {
+        setState(() {
+          _selectedRoom = null;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Your previously selected room is no longer affordable. Please select another room.'),
+            backgroundColor: Color.fromARGB(255, 203, 46, 46),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -361,6 +386,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       setState(() {
                         _selectedQuantity = val;
                       });
+                      _validateSelectedRoom();
                     },
                   ),
                 ),
