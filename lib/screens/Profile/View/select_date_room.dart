@@ -5,7 +5,7 @@ import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
 import 'package:mana_mana_app/screens/Statement/ViewModel/statementVM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:mana_mana_app/screens/Profile/Data/roomtype.dart';
+import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class SelectDateRoom extends StatefulWidget {
@@ -22,7 +22,6 @@ class SelectDateRoom extends StatefulWidget {
     return formatter.format(getUserPointsBalance());
   }
 
-  // ✅ Calculate total points for a given room and quantity
   static int calculateTotalPoints(RoomType room, int quantity, int duration) {
     return room.points * quantity * duration;
   }
@@ -62,10 +61,10 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       _focusedDay = focusedDay;
       _rangeStart = start;
       _rangeEnd = end;
-      if (start != null) print("Range Start: $start");
-      if (end != null) print("Range End: $end");
-      // print(_rangeEnd);
-      // print(_rangeStart);
+
+      if (_rangeStart == null || _rangeEnd == null) {
+        _selectedQuantity = 1;
+      }
     });
   }
 
@@ -212,8 +211,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       ),
                     ),
                   ),
-                  //const SizedBox(width: 15),
-                  // Text('$duration night(s)'),
                   Container(
                     width: 180,
                     child: Card(
@@ -306,15 +303,22 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   final room = roomTypes[index];
                   final affordable = isRoomAffordable(
                     room,
-                    duration == 0
-                        ? 1
-                        : duration, // duration 0? assume 1 to grey out correctly
+                    duration == 0 ? 1 : duration,
                     _selectedQuantity,
                   );
 
                   return Opacity(
-                    opacity: affordable ? 1 : 0.5, // grey out if not affordable
+                    opacity: affordable ? 1 : 0.5,
                     child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: _selectedRoom == room
+                              ? const Color(0xFF3E51FF)
+                              : Colors.transparent,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       child: InkWell(
                         onTap: () {
                           if (!affordable) {
@@ -338,6 +342,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                           room.name,
                           room.points,
                           room.image,
+                          isSelected: room == _selectedRoom,
                         ),
                       ),
                     ),
@@ -354,7 +359,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   child: QuantityController(
                     onChanged: (val) {
                       setState(() {
-                        _selectedQuantity = val; // save selected quantity
+                        _selectedQuantity = val;
                       });
                     },
                   ),
@@ -375,7 +380,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
@@ -415,11 +420,13 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       ),
                     );
                   },
-                  child: const Text('Next',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      )),
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                       const Color(0xFF3E51FF),
@@ -431,7 +438,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
           ],
         ),
       ),
@@ -440,15 +447,20 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 }
 
 Widget _buildRoomTypeCard(
-    BuildContext context, String roomType, int point, String imagePath) {
+    BuildContext context, String roomType, int point, String imagePath,
+    {required bool isSelected}) {
   final formatter = NumberFormat('#,###');
   final formattedPoints = formatter.format(point);
+
   return Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(8.0),
-      color: Color(0xFF3E51FF),
+      color: isSelected ? Colors.white : const Color(0xFF3E51FF),
+      border: Border.all(
+        color: isSelected ? const Color(0xFF3E51FF) : Colors.transparent,
+        width: 2,
+      ),
     ),
-    // padding: const EdgeInsets.all(8.0),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -471,22 +483,20 @@ Widget _buildRoomTypeCard(
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 roomType,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: isSelected ? const Color(0xFF3E51FF) : Colors.white,
                 ),
               ),
               Text(
-                '${formattedPoints.toString()} points',
-                style: const TextStyle(
-                  // fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                '$formattedPoints points',
+                style: TextStyle(
+                  color: isSelected ? Colors.black : Colors.white,
                 ),
               ),
             ],
