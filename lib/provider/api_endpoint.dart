@@ -20,4 +20,5 @@ class ApiEndpoint {
       '/mobile/enqs/getAllRedemptionRate ';
   static const String getRoomRate =
       '/mobile/enqs/calendarBooking/rooms?location=SCARLETZ&checkIn=2025-10-14&checkOut=2025-10-17&rooms=2';
+  static const String getRoomType = '/mobile/enqs/getAvailableRoomTypes';
 }
