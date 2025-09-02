@@ -107,7 +107,7 @@ class _OccupancyTextState extends State<OccupancyText> {
           return Text('($occupancy% Occupancy)',
               style: const TextStyle(fontSize: 8));
         } catch (e) {
-          print('OccupancyText: Error occurred: $e');
+          // print('OccupancyText: Error occurred: $e');
           return const Text('0.0%', style: TextStyle(fontSize: 12));
         }
       },

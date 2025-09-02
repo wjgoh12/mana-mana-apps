@@ -98,10 +98,10 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       propertyContractType = List<Map<String, dynamic>>.from(contractResponse);
 
       contractTypeLoaded = propertyContractType.isNotEmpty;
-      print(
-          "✅ Contract type fetched: $contractTypeLoaded, count=${propertyContractType.length}");
+      // print(
+      //     "✅ Contract type fetched: $contractTypeLoaded, count=${propertyContractType.length}");
     } catch (e) {
-      print('❌ Error fetching property contract type: $e');
+      // print('❌ Error fetching property contract type: $e');
       propertyContractType = [];
       contractTypeLoaded = false;
     }
@@ -235,16 +235,16 @@ class NewDashboardVM_v3 extends ChangeNotifier {
             occupancyData[location] = occupancy;
           }
         } catch (e) {
-          print('❌ Error fetching occupancy for $location: $e');
+          // print('❌ Error fetching occupancy for $location: $e');
         }
       }
 
       propertyOccupancy = occupancyData.isNotEmpty ? occupancyData : {};
       occupancyRateLoaded = propertyOccupancy.isNotEmpty; // ✅ success flag
-      print(
-          "✅ Occupancy rate fetched: $occupancyRateLoaded, count=${propertyOccupancy.length}");
+      // print(
+      //     "✅ Occupancy rate fetched: $occupancyRateLoaded, count=${propertyOccupancy.length}");
     } catch (e) {
-      print('❌ Error loading property occupancy: $e');
+      // print('❌ Error loading property occupancy: $e');
       propertyOccupancy = {};
       occupancyRateLoaded = false;
     }
@@ -308,7 +308,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         return '0%';
       }
     } catch (e) {
-      print('Error getting unit occupancy for $location - $unitNo: $e');
+      // print('Error getting unit occupancy for $location - $unitNo: $e');
     }
     return '0%';
   }
@@ -346,7 +346,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         return '$monthName ${now.year}';
       }
     } catch (e) {
-      print('Error getting unit occupancy date for $location - $unitNo: $e');
+      // print('Error getting unit occupancy date for $location - $unitNo: $e');
       final now = DateTime.now();
       final monthName = _monthNumberToName[now.month] ?? '';
       return '$monthName ${now.year}';
@@ -379,7 +379,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           validUnits++;
         }
       } catch (e) {
-        print('Error getting occupancy for unit ${unit['unitNo']}: $e');
+        // print('Error getting occupancy for unit ${unit['unitNo']}: $e');
       }
     }
 
@@ -388,7 +388,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   }
 
   Future<String> getTotalAverageOccupancyRate() async {
-    print("Calculating total average occupancy rate");
+    // print("Calculating total average occupancy rate");
 
     // Get unique locations
     Set<String> locations = propertyContractType
@@ -519,7 +519,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
           validUnits++;
         }
       } catch (e) {
-        print('Error fetching occupancy for unit ${unit['unitNo']}: $e');
+        // print('Error fetching occupancy for unit ${unit['unitNo']}: $e');
       }
     }
 

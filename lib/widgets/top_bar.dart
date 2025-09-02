@@ -4,6 +4,11 @@ import 'package:mana_mana_app/widgets/new_bar_chart.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 Widget topBar(context, function) {
+  double responsiveFont(double value) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return (value / 812.0) * screenHeight; // base height
+  }
+
   return PreferredSize(
     preferredSize: Size(MediaQuery.of(context).size.width, 60),
     child: ClipRRect(
@@ -23,7 +28,7 @@ Widget topBar(context, function) {
               CircleAvatar(
                 radius: 20.fSize, // or tweak size as needed
                 backgroundImage: const AssetImage(
-                  'assets/images/mana2logo.png',
+                  'assets/images/mana2logo1.png',
                 ),
                 backgroundColor: Colors.transparent,
               ),
@@ -33,7 +38,7 @@ Widget topBar(context, function) {
                   text: 'Owner\'s Portal',
                   style: TextStyle(
                     fontFamily: 'Open Sans',
-                    fontSize: 20.fSize,
+                    fontSize: responsiveFont(20),
                     fontWeight: FontWeight.w800,
                   ),
                   gradient: const LinearGradient(

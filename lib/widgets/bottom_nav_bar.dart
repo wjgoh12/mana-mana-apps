@@ -118,13 +118,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
               _createRoute(PropertySummaryScreen(), transitionType: 'fade'));
           break;
         case 2:
-          Navigator.pushReplacement(context,
-              _createRoute(const AllNewsletter(), transitionType: 'fade'));
-          break;
-        case 3:
           Navigator.pushReplacement(
               context, _createRoute(OwnerProfile_v3(), transitionType: 'fade'));
           break;
+        case 3:
+        // Navigator.pushReplacement(context,
+        //             _createRoute(const AllNewsletter(), transitionType: 'fade'));
+        //         break;
       }
     }
   }
@@ -163,9 +163,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   _buildNavItem('assets/images/Home.png', 'Home', 0),
                   _buildNavItem(
                       'assets/images/Properties.png', 'Properties', 1),
-                  _buildNavItem(
-                      'assets/images/Newsletter.png', 'Newsletter', 2),
-                  _buildNavItem('assets/images/Profile.png', 'Profile', 3),
+                  // _buildNavItem(
+                  //     'assets/images/Newsletter.png', 'Newsletter', 2),
+                  _buildNavItem('assets/images/Profile.png', 'Profile', 2),
                 ],
               ),
             ),

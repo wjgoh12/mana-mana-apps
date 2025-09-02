@@ -3,28 +3,28 @@ import 'package:flutter/widgets.dart';
 class ResponsiveSize {
   static late double screenWidth;
   static late double screenHeight;
-  static late double blockWidth;
-  static late double blockHeight;
+
+  // Base sizes (you can adjust to match your design prototype, e.g. Figma width = 375)
+  static const double baseWidth = 375.0;
+  static const double baseHeight = 812.0;
 
   static void init(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
-
-    blockWidth = screenWidth / 100;
-    blockHeight = screenHeight / 100;
   }
 
-  // Scale factor for text
-  static double text(double size) {
-    return size * blockWidth / 3.8; // adjust to your needs
-  }
-
-  // Scale factor for spacing or widgets
+  // Scale factor for width-based values
   static double scaleWidth(double width) {
-    return width * blockWidth;
+    return width * (screenWidth / baseWidth);
   }
 
+  // Scale factor for height-based values
   static double scaleHeight(double height) {
-    return height * blockHeight;
+    return height * (screenHeight / baseHeight);
+  }
+
+  // Scale for text (use width scaling usually)
+  static double text(double size) {
+    return size * (screenWidth / baseWidth);
   }
 }

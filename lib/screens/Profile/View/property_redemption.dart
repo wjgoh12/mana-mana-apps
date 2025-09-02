@@ -43,7 +43,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
             CircleAvatar(
               radius: 20.fSize,
               backgroundImage: const AssetImage(
-                'assets/images/mana2logo.png',
+                'assets/images/mana2logo1.png',
               ),
               backgroundColor: Colors.transparent,
             ),

@@ -16,6 +16,12 @@ class _QuantityControllerState extends State<QuantityController> {
     setState(() {
       if (_quantity < 5) {
         _quantity++;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Maximum quantity reached'),
+          ),
+        );
       }
       widget.onChanged?.call(_quantity);
     });
@@ -26,6 +32,12 @@ class _QuantityControllerState extends State<QuantityController> {
       if (_quantity > 1) {
         _quantity--;
         widget.onChanged?.call(_quantity);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Minimum quantity reached'),
+          ),
+        );
       }
     });
   }

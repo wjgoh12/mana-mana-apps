@@ -13,7 +13,7 @@ class PropertyListV3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('total assets: ${model.locationByMonth.length}');
+    // print('total assets: ${model.locationByMonth.length}');
     if (model.isLoading) {
       return Container(
         decoration: BoxDecoration(

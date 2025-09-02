@@ -23,9 +23,9 @@ class PropertyStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('locationByMonth length: ${locationByMonth.length}');
-    print('First item keys: ${locationByMonth.first.keys}');
-    print('First item: ${locationByMonth.first}');
+    // print('locationByMonth length: ${locationByMonth.length}');
+    // print('First item keys: ${locationByMonth.first.keys}');
+    // print('First item: ${locationByMonth.first}');
 
     final Set<String> uniqueOwners = {};
     for (var owner in locationByMonth.first['owners'] ?? []) {

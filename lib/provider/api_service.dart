@@ -94,7 +94,7 @@ class ApiService {
     try {
       return json.decode(response.body);
     } catch (e) {
-      debugPrint("❌ JSON decode error: $e");
+      // debugPrint("❌ JSON decode error: $e");
       return null;
     }
   }

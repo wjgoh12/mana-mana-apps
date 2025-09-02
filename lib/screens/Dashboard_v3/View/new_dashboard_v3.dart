@@ -114,7 +114,7 @@ class NewDashboardV3 extends StatelessWidget {
                                   Text(
                                     'Hey, ${model.userNameAccount}👋',
                                     style: TextStyle(
-                                      fontSize: 16.fSize,
+                                      fontSize: responsiveFont(16),
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w800,
                                     ),
@@ -139,7 +139,7 @@ class NewDashboardV3 extends StatelessWidget {
                                     child: Text(
                                       'Simple, Timeless \nAssets Management',
                                       style: TextStyle(
-                                        fontSize: 33.fSize,
+                                        fontSize: responsiveFont(30),
                                         fontFamily: 'Open Sans',
                                         fontWeight: FontWeight.w900,
                                         color: const Color(0xFFFFFFFF),
@@ -253,49 +253,51 @@ class NewDashboardV3 extends StatelessWidget {
                                 model: model,
                                 controller: propertyScrollController,
                               ),
+                              SizedBox(height: kBottomNavigationBarHeight + 20),
                             ],
+                            // prevent blocking
                           ),
                         ),
 
                         //SizedBox(height: 2.height),
 
                         // Newsletter section
-                        Container(
-                          width: screenWidth,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding),
-                          color: Colors.white,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  _buildSectionTitle('Newsletter'),
-                                  _seeAllButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                AllNewsletter()),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: responsiveHeight(15)),
-                              NewsletterListV3(
-                                model: model,
-                                controller: newsletterScrollController,
-                              ),
-                              SizedBox(
-                                  height: kBottomNavigationBarHeight +
-                                      20), // prevent blocking
-                            ],
-                          ),
-                        ),
+                        // Container(
+                        //   width: screenWidth,
+                        //   padding: EdgeInsets.symmetric(
+                        //       horizontal: horizontalPadding),
+                        //   color: Colors.white,
+                        //   child: Column(
+                        //     children: [
+                        //       Row(
+                        //         mainAxisAlignment:
+                        //             MainAxisAlignment.spaceBetween,
+                        //         crossAxisAlignment: CrossAxisAlignment.center,
+                        //         children: [
+                        //           _buildSectionTitle('Newsletter'),
+                        //           _seeAllButton(
+                        //             onPressed: () {
+                        //               Navigator.push(
+                        //                 context,
+                        //                 MaterialPageRoute(
+                        //                     builder: (context) =>
+                        //                         AllNewsletter()),
+                        //               );
+                        //             },
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       SizedBox(height: responsiveHeight(15)),
+                        //       NewsletterListV3(
+                        //         model: model,
+                        //         controller: newsletterScrollController,
+                        //       ),
+                        //       SizedBox(
+                        //           height: kBottomNavigationBarHeight +
+                        //               20), // prevent blocking
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

@@ -3,9 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:mana_mana_app/screens/Profile/Data/roomtype.dart';
+import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
 import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RoomDetails extends StatefulWidget {
@@ -141,31 +142,34 @@ class _RoomDetailsState extends State<RoomDetails> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Card(
-                            color: Colors.white,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Check-In',
-                                    style: TextStyle(
-                                      fontSize: 11,
+                          SizedBox(
+                            width: ResponsiveSize.scaleWidth(150),
+                            height: ResponsiveSize.scaleHeight(60),
+                            child: Card(
+                              color: Colors.white,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Check-In',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    widget.checkIn != null
-                                        ? DateFormat('EEE, MMM d, yyyy')
-                                            .format(widget.checkIn!)
-                                        : '-',
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFF3E51FF),
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
+                                    Text(
+                                      widget.checkIn != null
+                                          ? DateFormat('EEE, MMM d, yyyy')
+                                              .format(widget.checkIn!)
+                                          : '-',
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFF3E51FF),
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),

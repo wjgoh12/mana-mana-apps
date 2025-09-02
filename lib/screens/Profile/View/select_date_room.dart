@@ -315,7 +315,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                           color: _selectedRoom == room
                               ? const Color(0xFF3E51FF)
                               : Colors.transparent,
-                          width: 1,
+                          width: 3,
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -456,10 +456,10 @@ Widget _buildRoomTypeCard(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(8.0),
       color: isSelected ? Colors.white : const Color(0xFF3E51FF),
-      border: Border.all(
-        color: isSelected ? const Color(0xFF3E51FF) : Colors.transparent,
-        width: 2,
-      ),
+      // border: Border.all(
+      //   color: isSelected ? const Color(0xFF3E51FF) : Colors.transparent,
+      //   width: 2,
+      // ),
     ),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,

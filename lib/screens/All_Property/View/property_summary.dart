@@ -91,8 +91,7 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: spacing(8)),
                         child: RecentActivity(
-                          locationByMonth: model.locationByMonth,
-                          ownerData: [],
+                          model: PropertyDetailVM(),
                         ),
                       ),
                     ],
@@ -143,8 +142,7 @@ class _PropertySummaryContent extends StatelessWidget {
                     style: TextStyle(fontSize: 16.fSize)),
               ),
               RecentActivity(
-                locationByMonth: model.locationByMonth,
-                ownerData: model2.ownerData,
+                model: model2,
               ),
             ],
           ),

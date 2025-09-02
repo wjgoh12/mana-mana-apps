@@ -46,7 +46,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                     CircleAvatar(
                       radius: 20.fSize, // or tweak size as needed
                       backgroundImage: const AssetImage(
-                        'assets/images/mana2logo.png',
+                        'assets/images/mana2logo1.png',
                       ),
                       backgroundColor: Colors.transparent,
                     ),
@@ -580,7 +580,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                   color: Colors.white.withOpacity(0),
                 ),
                 child: const BottomNavBar(
-                  currentIndex: 3,
+                  currentIndex: 2,
                 ),
               ));
         });

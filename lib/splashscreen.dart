@@ -25,27 +25,29 @@ class _SplashScreenState extends State<Splashscreen>
 
   void _initialize() async {
     final versionChecker = VersionChecker();
-    if (await versionChecker.needsUpdate()) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            title: const Text('Update Available'),
-            content: const Text(
-                'A new version is available. Please update to continue.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  versionChecker.launchUpdate();
-                },
-                child: const Text('Update Now'),
-              ),
-            ],
-          ),
-        );
-      }
-    } else {
+    if (await versionChecker.needsUpdate())
+    //{
+    //   if (mounted) {
+    //     showDialog(
+    //       context: context,
+    //       barrierDismissible: false,
+    //       builder: (context) => AlertDialog(
+    //         title: const Text('Update Available'),
+    //         content: const Text(
+    //             'A new version is available. Please update to continue.'),
+    //         actions: [
+    //           TextButton(
+    //             onPressed: () {
+    //               versionChecker.launchUpdate();
+    //             },
+    //             child: const Text('Update Now'),
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //   }
+    // } else
+    {
       // Proceed with login only if no update is needed
       Future.delayed(const Duration(seconds: 2), () async {
         final authService = AuthService();

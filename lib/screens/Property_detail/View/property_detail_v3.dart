@@ -52,13 +52,13 @@ class _property_detail_v3State extends State<property_detail_v3> {
     model2 = NewDashboardVM_v3();
 
     if (widget.locationByMonth.isNotEmpty) {
-      print('PropertyDetailV3: Calling model.fetchData');
+      // print('PropertyDetailV3: Calling model.fetchData');
       model.fetchData(widget.locationByMonth);
     }
 
     // Load occupancy data for the dashboard view model
     if (widget.locationByMonth.isNotEmpty) {
-      print('PropertyDetailV3: Calling model2.fetchData');
+      // print('PropertyDetailV3: Calling model2.fetchData');
       model2.fetchData();
     }
 
@@ -730,15 +730,15 @@ class PropertyOverviewContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        'unit list: ${model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList()}');
-    print(
-        'unit list: ${model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}');
+    // print(
+    //     'unit list: ${model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList()}');
+    // print(
+    //     'unit list: ${model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}');
 
-    print(
-        'total units:${model2.ownerUnits.where((unit) => unit.location == locationByMonth.first['location']).map((unit) => unit.unitno).toSet()}');
+    // print(
+    //     'total units:${model2.ownerUnits.where((unit) => unit.location == locationByMonth.first['location']).map((unit) => unit.unitno).toSet()}');
 
-    print('Account 2 raw locationByMonth: $locationByMonth');
+    // print('Account 2 raw locationByMonth: $locationByMonth');
 
     String monthNumberToName(int month) {
       const months = [
@@ -1227,12 +1227,9 @@ class UnitDetailsContainer extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
+    double responsiveHeight(double value) => (value / 812.0) * screenHeight;
+    double responsiveFont(double value) => (value / 812.0) * screenHeight;
 
     double responsivePadding = isMobile ? 10 : 15;
     //double responsiveFont = isMobile ? 12 : 16;
