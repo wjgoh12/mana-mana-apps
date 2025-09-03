@@ -139,10 +139,10 @@ class _property_detail_v3State extends State<property_detail_v3> {
     double top = 0;
 
     if (isCollapsed) {
-      top += 80.fSize;
+      top += 90.fSize;
     }
     if (showStickyDropdown) {
-      top += 80.fSize;
+      top += 85.fSize;
     }
     return top;
   }
@@ -410,7 +410,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
                     ),
                   if (showStickyDropdown)
                     Positioned(
-                      top: isCollapsed ? 85.fSize : 0,
+                      top: isCollapsed ? 90.fSize : 0,
                       left: 0,
                       right: 0,
                       child: StickyDropdownBar(
