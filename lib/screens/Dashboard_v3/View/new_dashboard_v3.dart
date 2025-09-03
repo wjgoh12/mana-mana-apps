@@ -139,7 +139,7 @@ class NewDashboardV3 extends StatelessWidget {
                                     child: Text(
                                       'Simple, Timeless \nAssets Management',
                                       style: TextStyle(
-                                        fontSize: responsiveFont(30),
+                                        fontSize: responsiveFont(28),
                                         fontFamily: 'Open Sans',
                                         fontWeight: FontWeight.w900,
                                         color: const Color(0xFFFFFFFF),

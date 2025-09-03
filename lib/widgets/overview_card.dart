@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 
@@ -93,8 +94,8 @@ class OverviewCard extends StatelessWidget {
         (value / 375.0) * screenWidth; // base width
     double responsiveHeight(double value) =>
         (value / 812.0) * screenHeight; // base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
+
+    ResponsiveSize.init(context);
 
     return Center(
       child: Column(
@@ -245,10 +246,10 @@ class OverviewCard extends StatelessWidget {
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return const Text(
+                                        return Text(
                                           'Loading...',
                                           style: TextStyle(
-                                            fontSize: 12,
+                                            fontSize: ResponsiveSize.text(15),
                                             fontWeight: FontWeight.bold,
                                           ),
                                         );
@@ -378,10 +379,12 @@ class OverviewCard extends StatelessWidget {
                                                       TextBaseline.alphabetic,
                                                   child: Transform.translate(
                                                     offset: const Offset(0, -4),
-                                                    child: const Text(
+                                                    child: Text(
                                                       'RM',
                                                       style: TextStyle(
-                                                        fontSize: 11,
+                                                        fontSize:
+                                                            ResponsiveSize.text(
+                                                                11),
                                                         fontFamily: 'Open Sans',
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -392,8 +395,9 @@ class OverviewCard extends StatelessWidget {
                                                 ),
                                                 TextSpan(
                                                   text: formatted,
-                                                  style: const TextStyle(
-                                                    fontSize: 15,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        ResponsiveSize.text(15),
                                                     fontFamily: 'Open Sans',
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black,
@@ -501,13 +505,6 @@ class RevenueContainer extends StatelessWidget {
     final cardHeightLarge = isMobile ? screenWidth * 0.28 : screenWidth * 0.21;
 
     final screenHeight = MediaQuery.of(context).size.height;
-
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
 
     double responsivePadding = isMobile ? 10 : 20;
     return SizedBox(
@@ -653,8 +650,7 @@ class RevenueContainer extends StatelessWidget {
                   child: Text(
                     'RM',
                     style: TextStyle(
-                      fontSize:
-                          (11 / 812.0) * MediaQuery.of(context).size.height,
+                      fontSize: ResponsiveSize.text(11),
                       fontFamily: 'Open Sans',
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -678,7 +674,7 @@ class RevenueContainer extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Open Sans',
                   fontWeight: FontWeight.bold,
-                  fontSize: (15 / 812.0) * MediaQuery.of(context).size.height,
+                  fontSize: ResponsiveSize.text(15),
                 ),
               );
             }

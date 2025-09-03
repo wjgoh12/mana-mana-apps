@@ -15,16 +15,16 @@ class ResponsiveSize {
 
   // Scale factor for width-based values
   static double scaleWidth(double width) {
-    return width * (screenWidth / baseWidth);
+    return (width / 375.0) * screenWidth;
   }
 
   // Scale factor for height-based values
   static double scaleHeight(double height) {
-    return height * (screenHeight / baseHeight);
+    return (height / 812.0) * screenHeight;
   }
 
   // Scale for text (use width scaling usually)
   static double text(double size) {
-    return size * (screenWidth / baseWidth);
+    return (size / 812.0) * screenHeight;
   }
 }

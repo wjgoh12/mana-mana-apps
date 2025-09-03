@@ -4,6 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/occupancy_percent_text.dart';
 import 'package:mana_mana_app/widgets/occupancy_text.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
@@ -1921,10 +1922,7 @@ class StickyDropdownBar extends StatelessWidget {
         border:
             Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1)),
         boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: Offset(0, 2))
+          BoxShadow(color: Colors.transparent),
         ],
       ),
       child: SafeArea(
@@ -1937,7 +1935,9 @@ class StickyDropdownBar extends StatelessWidget {
                 flex: 1,
                 child: Text(
                   locationByMonth.first['location'] ?? '',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: ResponsiveSize.text(16),
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               Expanded(
@@ -1950,41 +1950,74 @@ class StickyDropdownBar extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.only(right: 10, bottom: 3),
                   child: Align(
-                    alignment: Alignment.topLeft,
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      underline: const SizedBox(),
-                      dropdownStyleData: DropdownStyleData(maxHeight: 200),
-                      iconStyleData: const IconStyleData(
-                          icon: Icon(Icons.keyboard_arrow_down)),
-                      items: items,
-                      value: dropdownValue, // only set when exact match found
-                      hint: const Text('Select Unit'),
-                      onChanged: (String? newValue) {
-                        if (newValue == null) return;
-                        if (newValue == 'Overview') {
-                          model.updateSelectedView('Overview');
-                          return;
-                        }
+                      alignment: Alignment.topLeft,
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return DropdownButton2<String>(
+                            isExpanded: true,
+                            underline: const SizedBox(),
+                            style: TextStyle(
+                                fontSize: ResponsiveSize.text(14),
+                                color: Colors.black),
+                            dropdownStyleData: DropdownStyleData(
+                              width: ResponsiveSize.scaleWidth(237.5),
+                              offset: const Offset(-0.5, 0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(4),
+                                    bottomRight: Radius.circular(4)),
+                                border: const Border(
+                                  left: BorderSide(
+                                      color: Colors.grey, width: 0.5),
+                                  right: BorderSide(
+                                      color: Colors.grey, width: 0.5),
+                                  bottom: BorderSide(
+                                      color: Colors.grey, width: 0.5),
+                                  // top: BorderSide.none  // so no border at top
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 0),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(Icons.keyboard_arrow_down),
+                            ),
+                            items: items,
+                            value:
+                                dropdownValue, // only set when exact match found
+                            hint: const Text('Select Unit'),
+                            onChanged: (String? newValue) {
+                              if (newValue == null) return;
+                              if (newValue == 'Overview') {
+                                model.updateSelectedView('Overview');
+                                return;
+                              }
 
-                        // Simple, robust parsing: take LAST (...) as unit
-                        final unitMatch =
-                            RegExp(r'\(([^)]*)\)\s*$').firstMatch(newValue);
-                        final unit = unitMatch?.group(1)?.trim();
-                        final type = newValue
-                            .replaceAll(RegExp(r'\s*\([^)]*\)\s*$'), '')
-                            .trim();
+                              // Simple, robust parsing: take LAST (...) as unit
+                              final unitMatch = RegExp(r'\(([^)]*)\)\s*$')
+                                  .firstMatch(newValue);
+                              final unit = unitMatch?.group(1)?.trim();
+                              final type = newValue
+                                  .replaceAll(RegExp(r'\s*\([^)]*\)\s*$'), '')
+                                  .trim();
 
-                        if (unit != null && unit.isNotEmpty) {
-                          model.updateSelectedView('UnitDetails');
-                          model.updateSelectedTypeUnit(type, unit);
-                        } else {
-                          // no parentheses found -> go to Overview (change if you want different behavior)
-                          model.updateSelectedView('Overview');
-                        }
-                      },
-                    ),
-                  ),
+                              if (unit != null && unit.isNotEmpty) {
+                                model.updateSelectedView('UnitDetails');
+                                model.updateSelectedTypeUnit(type, unit);
+                              } else {
+                                // no parentheses found -> go to Overview (change if you want different behavior)
+                                model.updateSelectedView('Overview');
+                              }
+                            },
+                          );
+                        },
+                      )),
                 ),
               ),
             ],

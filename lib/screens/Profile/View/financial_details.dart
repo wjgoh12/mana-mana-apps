@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
+import 'package:mana_mana_app/widgets/responsive.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class FinancialDetails extends StatefulWidget {
   const FinancialDetails({super.key});
@@ -20,15 +22,7 @@ class _FinancialDetailsState extends State<FinancialDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
+    ResponsiveSize.init(context);
 
     return FutureBuilder<void>(
       future: _fetchFuture,
@@ -49,7 +43,7 @@ class _FinancialDetailsState extends State<FinancialDetails> {
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: responsiveFont(20),
+                fontSize: ResponsiveSize.text(20),
               ),
             ),
             bottom: PreferredSize(
@@ -128,7 +122,8 @@ class _FinancialDetailsState extends State<FinancialDetails> {
 Widget _buildData({required String value}) {
   return Text(
     value ?? 'Not available',
-    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    style: TextStyle(
+        fontSize: ResponsiveSize.text(15), fontWeight: FontWeight.bold),
     overflow: TextOverflow.ellipsis,
   );
 }
