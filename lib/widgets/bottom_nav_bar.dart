@@ -244,9 +244,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
               SizedBox(height: 4.fSize),
 
-              // Text with constrained width
               SizedBox(
-                width: 70.fSize, // Fixed width for text
+                width: 70.fSize,
                 child: AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 200),
                   style: TextStyle(
@@ -276,6 +275,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                           child: Text(
                             label,
                             style: TextStyle(
+                              fontFamily: 'outfit',
                               color: Colors.white,
                               fontSize: 10.fSize,
                               fontWeight: FontWeight.normal,

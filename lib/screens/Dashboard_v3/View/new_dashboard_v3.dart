@@ -159,43 +159,43 @@ class NewDashboardV3 extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 4.height),
+                              // SizedBox(height: 4.height),
 
                               // Search bar
-                              TextField(
-                                decoration: InputDecoration(
-                                  prefixIcon: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: Image.asset(
-                                        'assets/images/searchIcon.png'),
-                                  ),
-                                  hintText: 'Search Your Properties',
-                                  hintStyle: TextStyle(
-                                    fontSize: ResponsiveSize.text(12),
-                                    fontFamily: 'outfit',
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    icon: Image.asset(
-                                      'assets/images/Settingsbutton.png',
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                    onPressed: () {},
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(
-                                      color: Color(0XFFD9D9D9),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // TextField(
+                              //   decoration: InputDecoration(
+                              //     prefixIcon: SizedBox(
+                              //       width: 20,
+                              //       height: 20,
+                              //       child: Image.asset(
+                              //           'assets/images/searchIcon.png'),
+                              //     ),
+                              //     hintText: 'Search Your Properties',
+                              //     hintStyle: TextStyle(
+                              //       fontSize: ResponsiveSize.text(12),
+                              //       fontFamily: 'outfit',
+                              //       fontWeight: FontWeight.w400,
+                              //     ),
+                              //     suffixIcon: IconButton(
+                              //       icon: Image.asset(
+                              //         'assets/images/Settingsbutton.png',
+                              //         width: 20,
+                              //         height: 20,
+                              //       ),
+                              //       onPressed: () {},
+                              //     ),
+                              //     border: OutlineInputBorder(
+                              //       borderRadius: BorderRadius.circular(12),
+                              //     ),
+                              //     focusedBorder: OutlineInputBorder(
+                              //       borderRadius: BorderRadius.circular(12),
+                              //       borderSide: const BorderSide(
+                              //         color: Color(0XFFD9D9D9),
+                              //         width: 1.5,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                               //   SizedBox(height: 2.height),
                             ],
                           ),
