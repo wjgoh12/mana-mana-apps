@@ -125,7 +125,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
         (value / 812.0) * screenHeight; // font scaling
 
     return SizedBox(
-      width: responsiveWidth(150),
+      width: responsiveWidth(140),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
         child: Row(
@@ -157,13 +157,13 @@ class _PersonalInformationState extends State<PersonalInformation> {
         (value / 812.0) * screenHeight; // font scaling
 
     return SizedBox(
-      width: responsiveWidth(180),
+      width: responsiveWidth(190),
       child: Text(
         data,
-        maxLines: 2,
+        maxLines: 6,
         style: TextStyle(
             fontFamily: 'outfit',
-            fontSize: responsiveFont(15),
+            fontSize: responsiveFont(14),
             fontWeight: FontWeight.bold),
       ),
     );

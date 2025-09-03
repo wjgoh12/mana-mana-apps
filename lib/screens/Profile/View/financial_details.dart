@@ -103,7 +103,7 @@ class _FinancialDetailsState extends State<FinancialDetails> {
         (value / 812.0) * screenHeight; // font scaling
 
     return SizedBox(
-      width: responsiveWidth(200),
+      width: responsiveWidth(175),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
@@ -125,6 +125,7 @@ class _FinancialDetailsState extends State<FinancialDetails> {
 Widget _buildData({required String value}) {
   return Text(
     value ?? 'Not available',
+    maxLines: 2,
     style: TextStyle(
         fontFamily: 'outfit',
         fontSize: ResponsiveSize.text(15),

@@ -52,7 +52,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               child: GradientText1(
                   text: 'Free Stay Redemptions',
                   style: TextStyle(
-                    fontFamily: 'Open Sans',
+                    fontFamily: 'outfit',
                     fontSize: 20.fSize,
                     fontWeight: FontWeight.w800,
                   ),
@@ -72,34 +72,37 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF3E51FF).withOpacity(0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 0),
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: SizedBox(
-                height: responsiveHeight(350),
-                child: ListView.builder(
-                  itemCount: 1, // Replace with actual data length
-                  itemBuilder: (context, index) {
-                    return PropertyPointRecord();
-                  },
+            // Container(
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     boxShadow: [
+            //       BoxShadow(
+            //         color: const Color(0xFF3E51FF).withOpacity(0.15),
+            //         blurRadius: 10,
+            //         offset: const Offset(0, 0),
+            //       ),
+            //     ],
+            //     borderRadius: BorderRadius.circular(10),
+            //   ),
+            //   child: SizedBox(
+            //     height: responsiveHeight(350),
+            //     child: ListView.builder(
+            //       itemCount: 1, // Replace with actual data length
+            //       itemBuilder: (context, index) {
+            //         return PropertyPointRecord();
+            //       },
+            //     ),
+            //   ),
+            // ),
+            SizedBox(height: responsiveHeight(15)),
+            Center(
+              child: Text(
+                'Booking History',
+                style: TextStyle(
+                  fontFamily: 'outfit',
+                  fontSize: responsiveFont(18),
+                  fontWeight: FontWeight.bold,
                 ),
-              ),
-            ),
-            SizedBox(height: responsiveHeight(30)),
-            Text(
-              'Booking History',
-              style: TextStyle(
-                fontSize: responsiveFont(18),
-                fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: responsiveHeight(10)),
@@ -137,6 +140,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                               child: Text(
                                 'Location',
                                 style: TextStyle(
+                                    fontFamily: 'outfit',
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF3E51FF),
                                     fontSize: responsiveFont(13)),
@@ -147,6 +151,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                               child: Text(
                                 'Check-In Date',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF3E51FF),
                                   fontSize: responsiveFont(13),
@@ -158,6 +163,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                               child: Text(
                                 'Check-Out Date',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF3E51FF),
                                   fontSize: responsiveFont(13),
@@ -169,6 +175,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                               child: Text(
                                 'Points Used',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF3E51FF),
                                   fontSize: responsiveFont(13),
@@ -184,6 +191,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                               child: Text(
                                 'Ceylonz 9-11-3',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontSize: responsiveFont(11),
                                 ),
                               ),
@@ -193,24 +201,27 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                               child: Text(
                                 '2023-10-01',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontSize: responsiveFont(11),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(7.0),
                               child: Text(
                                 '2023-10-05',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontSize: responsiveFont(11),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(7.0),
                               child: Text(
                                 '1000',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontSize: responsiveFont(11),
                                 ),
                               ),
