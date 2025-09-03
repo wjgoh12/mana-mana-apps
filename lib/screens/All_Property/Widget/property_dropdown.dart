@@ -4,6 +4,7 @@ import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/All_Property/View/property_summary.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class PropertyTitleDropdown extends StatefulWidget {
@@ -97,7 +98,7 @@ class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
             value: item,
             child: Text(item,
                 style: TextStyle(
-                  fontSize: 23.fSize,
+                  fontSize: ResponsiveSize.text(14),
                   color: Colors.black,
                 )),
           );

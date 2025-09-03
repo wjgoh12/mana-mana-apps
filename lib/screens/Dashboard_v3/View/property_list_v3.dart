@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/occupancy_text.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -211,6 +212,8 @@ class PropertyImageStack extends StatelessWidget {
         final smallContainerHeight = containerHeight * 0.08;
         final horizontalPadding = containerWidth * 0.035;
 
+        ResponsiveSize.init(context);
+
         return Stack(
           clipBehavior: Clip.none,
           children: [
@@ -231,7 +234,7 @@ class PropertyImageStack extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: IntrinsicHeight(
+                child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -254,57 +257,62 @@ class PropertyImageStack extends StatelessWidget {
                           ),
                           Positioned(
                             bottom: 3,
-                            left:
-                                (containerWidth - smallContainerWidth) / 2 - 15,
-                            child: Container(
-                              width: smallContainerWidth + containerWidth * 0.1,
-                              height: smallContainerHeight,
-                              margin: EdgeInsets.only(
-                                  bottom: containerHeight * 0.01),
-                              padding: const EdgeInsets.only(left: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(1),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/PropertiesGroup.png',
-                                    width: 17.fSize,
-                                    height: 17.fSize,
-                                  ),
-                                  SizedBox(width: 2.width),
-                                  Text(
-                                    '$totalUnits Total ',
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
+                            left: 0,
+                            right: 0,
+                            child: Center(
+                              child: Container(
+                                // width: smallContainerWidth + containerWidth * 0.1,
+                                height: smallContainerHeight,
+                                margin: EdgeInsets.only(
+                                    bottom: containerHeight * 0.01),
+                                padding:
+                                    const EdgeInsets.only(left: 8, right: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(1),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/PropertiesGroup.png',
+                                      width: 20,
+                                      height: 20,
                                     ),
-                                  ),
-                                  // Show occupancy rate using async widget
-                                  FutureBuilder<String>(
-                                    future: model
-                                        .calculateTotalOccupancyForLocation(
-                                            model.locationByMonth
-                                                .first['location']),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Text('Loading...',
+                                    SizedBox(width: 2.width),
+                                    Text(
+                                      '$totalUnits Total ',
+                                      style: TextStyle(
+                                        fontSize: 16.fSize,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    // Show occupancy rate using async widget
+                                    FutureBuilder<String>(
+                                      future: model
+                                          .calculateTotalOccupancyForLocation(
+                                              model.locationByMonth
+                                                  .first['location']),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Text('Loading...',
+                                              style: const TextStyle(
+                                                  fontSize: 13));
+                                        }
+                                        if (snapshot.hasError) {
+                                          return const Text('Error');
+                                        }
+                                        final occupancy =
+                                            snapshot.data ?? '0.0';
+                                        return Text('($occupancy% Occupancy)',
                                             style:
-                                                const TextStyle(fontSize: 8));
-                                      }
-                                      if (snapshot.hasError) {
-                                        return const Text('Error');
-                                      }
-                                      final occupancy = snapshot.data ?? '0.0';
-                                      return Text('($occupancy% Occupancy)',
-                                          style:
-                                              const TextStyle(fontSize: 8.5));
-                                    },
-                                  )
-                                ],
+                                                TextStyle(fontSize: 16.fSize));
+                                      },
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -317,17 +325,17 @@ class PropertyImageStack extends StatelessWidget {
                           children: [
                             Image.asset(
                               'assets/images/Group.png',
-                              width: 24.fSize,
-                              height: 24.fSize,
+                              width: 25,
+                              height: 25,
                             ),
                             SizedBox(width: 2.width),
                             Text(
                               'Owner(s)',
                               style: TextStyle(
-                                fontFamily: 'Open Sans',
-                                fontSize: 13.fSize,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                                fontFamily: 'Outfit',
+                                fontSize: 17.fSize,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xff383838),
                               ),
                             ),
                             SizedBox(width: 10.fSize),
@@ -336,34 +344,56 @@ class PropertyImageStack extends StatelessWidget {
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
                                   children: [
-                                    for (var ownerName in uniqueOwners) ...[
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 5),
-                                        child: Tooltip(
-                                          message: ownerName,
-                                          child: CircleAvatar(
-                                            radius: 13,
-                                            // Blue for main owner, green for co-owner
-                                            backgroundColor: locationByMonth
-                                                    .first['owners']
-                                                    .any((o) =>
-                                                        o['ownerName'] ==
-                                                        ownerName)
-                                                ? Colors.blue
-                                                : Colors.green,
-                                            child: Text(
-                                              getInitials(ownerName),
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
+                                    ...uniqueOwners
+                                        .map((ownerName) => Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 3),
+                                              child: Tooltip(
+                                                message: ownerName,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: Colors.white,
+                                                      width: 1.5,
+                                                    ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.1),
+                                                        blurRadius: 4,
+                                                        offset:
+                                                            const Offset(0, 2),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: CircleAvatar(
+                                                    radius: 15,
+                                                    backgroundColor: locationByMonth
+                                                            .first['owners']
+                                                            .any((o) =>
+                                                                o['ownerName'] ==
+                                                                ownerName)
+                                                        ? const Color(
+                                                            0xff5092FF) // Main owner color
+                                                        : const Color(
+                                                            0xFF4CAF50), // Co-owner color
+                                                    child: Text(
+                                                      getInitials(ownerName),
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        letterSpacing: 0.5,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                            ))
+                                        .toList(),
                                   ],
                                 ),
                               ),
@@ -372,40 +402,47 @@ class PropertyImageStack extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 12, top: 5),
+                        padding: const EdgeInsets.only(left: 12, top: 10),
                         child: Text(
                           locationByMonth.first['location'] ?? '',
-                          style: const TextStyle(
-                            fontSize: 21,
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.text(21),
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 10),
+                        padding: const EdgeInsets.only(left: 10, top: 5),
                         child: Row(
                           children: [
                             Image.asset('assets/images/map_pin.png',
-                                width: 14.fSize, height: 17.fSize),
-                            const SizedBox(width: 2),
+                                width: 16, height: 19),
+                            const SizedBox(width: 10),
                             Text(
-                              '$locationRoad',
-                              style: const TextStyle(
-                                fontSize: 10,
+                              locationRoad,
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(13),
                               ),
                             ),
                           ],
                         ),
                       ),
-
-                      //divider
+                      const SizedBox(height: 10),
                       Container(
                         height: 1,
-                        color: Colors.grey,
-                        margin:
-                            const EdgeInsets.only(left: 10, right: 10, top: 2),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(0xFFB82B7D),
+                              Color(0xFF3E51FF),
+                            ],
+                          ),
+                        ),
                       ),
+                      const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.only(left: 10),
                         child: Row(
@@ -414,24 +451,28 @@ class PropertyImageStack extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: 3),
                               child: Image.asset('assets/images/Wallet.png',
-                                  width: 45.fSize, height: 45.fSize),
+                                  width: ResponsiveSize.scaleWidth(44.5),
+                                  height: ResponsiveSize.scaleHeight(44.5)),
                             ),
-                            const SizedBox(width: 2),
+                            const SizedBox(width: 10),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Total Net After POB',
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontFamily: 'Outfit',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: ResponsiveSize.text(14),
                                   ),
                                 ),
                                 Text(
                                   'RM ${locationByMonth.first['total']}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
+                                  style: TextStyle(
+                                    fontSize: 16.fSize,
+                                    fontFamily: 'Outfit',
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
                               ],
@@ -468,7 +509,9 @@ class PropertyImageStack extends StatelessWidget {
                                     Text(
                                       'Details',
                                       style: TextStyle(
-                                          fontSize: 15.fSize,
+                                          fontSize: 16.fSize,
+                                          fontFamily: 'Outfit',
+                                          fontWeight: FontWeight.w600,
                                           color: Colors.black),
                                     ),
                                     const SizedBox(width: 5),
@@ -477,12 +520,15 @@ class PropertyImageStack extends StatelessWidget {
                                       children: [
                                         Image.asset(
                                           'assets/images/arrow.png',
-                                          width: 15.fSize,
-                                          height: 11.fSize,
+                                          width: 16,
+                                          height: 12,
                                         ),
                                         Text(
                                           'Jom',
-                                          style: TextStyle(fontSize: 9.fSize),
+                                          style: TextStyle(
+                                              fontFamily: 'Outfit',
+                                              fontSize: 12.fSize,
+                                              fontWeight: FontWeight.w700),
                                         ),
                                       ],
                                     ),
@@ -493,6 +539,7 @@ class PropertyImageStack extends StatelessWidget {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 15),
                     ],
                   ),
                 ),

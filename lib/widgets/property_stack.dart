@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:mana_mana_app/widgets/occupancy_text.dart';
@@ -145,62 +146,73 @@ class PropertyStack extends StatelessWidget {
                     ),
                     Positioned(
                       bottom: 0.02,
+                      left: 0,
+                      right: 0,
+
                       // left: (containerWidth - smallContainerWidth) / 2 -
                       //     smallContainerWidth * 0.25,
-                      child: Container(
-                        width: responsiveWidth(
-                            smallContainerWidth + containerWidth * 0.2),
-                        height: smallContainerHeight,
-                        margin: EdgeInsets.only(bottom: containerHeight * 0.02),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(1),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Image.asset('assets/images/map_pin.png',
-                                width: 15.fSize, height: 15.fSize),
-                            Text(
-                              '$locationRoad',
-                              style: TextStyle(fontSize: responsiveFont(8)),
-                            ),
-                            SizedBox(
-                              width: 1.width,
-                              height: 30.fSize,
-                            ),
-                            const VerticalDivider(
-                              color: Colors.grey,
-                              thickness: 1,
-                            ),
-                            Image.asset(
-                              'assets/images/PropertiesGroup.png',
-                              width: 15.fSize,
-                              height: 15.fSize,
-                            ),
-                            SizedBox(width: 1.fSize),
-                            Text(
-                              '$totalUnits Total ',
-                              style: TextStyle(fontSize: responsiveFont(8)),
-                            ),
-                            FutureBuilder<String>(
-                              future: model.calculateTotalOccupancyForLocation(
-                                  model.locationByMonth.first['location']),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Text('Loading...',
-                                      style: const TextStyle(fontSize: 8));
-                                }
-                                if (snapshot.hasError) {
-                                  return const Text('Error');
-                                }
-                                final occupancy = snapshot.data ?? '0.0';
-                                return Text('($occupancy% Occupancy)',
-                                    style: const TextStyle(fontSize: 8.5));
-                              },
-                            )
-                          ],
+                      child: Center(
+                        child: Container(
+                          // width: ResponsiveSize.scaleWidth(
+                          //     smallContainerWidth + containerWidth * 0.35),
+                          height: smallContainerHeight,
+                          margin:
+                              EdgeInsets.only(bottom: containerHeight * 0.02),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(1),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset('assets/images/map_pin.png',
+                                  width: 15.fSize, height: 15.fSize),
+                              Text(
+                                '$locationRoad',
+                                style:
+                                    TextStyle(fontSize: ResponsiveSize.text(8)),
+                              ),
+                              SizedBox(
+                                width: 1.width,
+                                height: 30.fSize,
+                              ),
+                              const VerticalDivider(
+                                color: Colors.grey,
+                                thickness: 1,
+                              ),
+                              Image.asset(
+                                'assets/images/PropertiesGroup.png',
+                                width: 15.fSize,
+                                height: 15.fSize,
+                              ),
+                              SizedBox(width: 1.fSize),
+                              Text(
+                                '$totalUnits Total ',
+                                style:
+                                    TextStyle(fontSize: ResponsiveSize.text(8)),
+                              ),
+                              FutureBuilder<String>(
+                                future: model
+                                    .calculateTotalOccupancyForLocation(model
+                                        .locationByMonth.first['location']),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Text('Loading...',
+                                        style: const TextStyle(fontSize: 8));
+                                  }
+                                  if (snapshot.hasError) {
+                                    return const Text('Error');
+                                  }
+                                  final occupancy = snapshot.data ?? '0.0';
+                                  return Text('($occupancy% Occupancy)',
+                                      style: TextStyle(
+                                          fontSize: ResponsiveSize.text(8)));
+                                },
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -12,57 +12,51 @@ Widget topBar(context, function) {
   return PreferredSize(
     preferredSize: Size(MediaQuery.of(context).size.width, 60),
     child: ClipRRect(
-      child: Container(
-        decoration: BoxDecoration(
-          border:
-              Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1)),
-        ),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          leadingWidth: 13.width,
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 20.fSize, // or tweak size as needed
-                backgroundImage: const AssetImage(
-                  'assets/images/mana2logo1.png',
-                ),
-                backgroundColor: Colors.transparent,
+      child: AppBar(
+        backgroundColor: Colors.white,
+        leadingWidth: 13.width,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: const Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 25, // or tweak size as needed
+              backgroundImage: AssetImage(
+                'assets/images/mana2logo1.png',
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, top: 10),
-                child: GradientText1(
-                  text: 'Owner\'s Portal',
-                  style: TextStyle(
-                    fontFamily: 'Open Sans',
-                    fontSize: responsiveFont(20),
-                    fontWeight: FontWeight.w800,
-                  ),
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                  ),
+              backgroundColor: Colors.transparent,
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 15, top: 10),
+              child: GradientText1(
+                text: 'Owner\'s Portal',
+                style: TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 25,
+                  fontWeight: FontWeight.w700,
                 ),
-              ),
-            ],
-          ),
-          actions: [
-            IconButton(
-              onPressed: () => print('Notification button pressed'),
-              icon: Image.asset(
-                'assets/images/Notification.png',
-                width: 8.width,
-                //opacity: const AlwaysStoppedAnimation(0),
-                height: 8.height,
-                fit: BoxFit.contain,
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                ),
               ),
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            onPressed: () => print('Notification button pressed'),
+            icon: Image.asset(
+              'assets/images/Notification.png',
+              width: 50,
+              //opacity: const AlwaysStoppedAnimation(0),
+              height: 50,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ],
       ),
     ),
   );
