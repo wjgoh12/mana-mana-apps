@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class OccupancyPeriodDropdown extends StatefulWidget {
@@ -41,7 +42,7 @@ class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
       child: Padding(
         padding: EdgeInsets.only(right: 10.fSize, top: 10.fSize),
         child: Container(
-          width: 130.fSize,
+          // width: 130.fSize,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.fSize),
             color: const Color(0xFFF0F2FD),
@@ -60,7 +61,8 @@ class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
                   child: Text(
                     entry.value,
                     style: TextStyle(
-                      fontSize: 15.fSize,
+                      fontFamily: 'outfit',
+                      fontSize: ResponsiveSize.text(14),
                       color: Colors.black,
                     ),
                   ),
@@ -68,7 +70,7 @@ class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
               );
             }).toList(),
             dropdownStyleData: DropdownStyleData(
-                width: 130.fSize,
+                //width: 130.fSize,
                 offset: const Offset(0.5, 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(

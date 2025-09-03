@@ -46,6 +46,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
             title: Text(
               'Personal Information',
               style: TextStyle(
+                fontFamily: 'outfit',
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: responsiveFont(20),
@@ -135,7 +136,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
             SizedBox(width: responsiveWidth(10)),
             Text(
               label,
-              style: TextStyle(fontSize: responsiveFont(13)),
+              style:
+                  TextStyle(fontFamily: 'outfit', fontSize: responsiveFont(13)),
             ),
           ],
         ),
@@ -160,7 +162,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
         data,
         maxLines: 2,
         style: TextStyle(
-            fontSize: responsiveFont(15), fontWeight: FontWeight.bold),
+            fontFamily: 'outfit',
+            fontSize: responsiveFont(15),
+            fontWeight: FontWeight.bold),
       ),
     );
   }

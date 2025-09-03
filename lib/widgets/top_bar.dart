@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/new_bar_chart.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 Widget topBar(context, function) {
@@ -17,10 +18,10 @@ Widget topBar(context, function) {
         leadingWidth: 13.width,
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: const Row(
+        title: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 25, // or tweak size as needed
               backgroundImage: AssetImage(
                 'assets/images/mana2logo1.png',
@@ -28,15 +29,15 @@ Widget topBar(context, function) {
               backgroundColor: Colors.transparent,
             ),
             Padding(
-              padding: EdgeInsets.only(left: 15, top: 10),
+              padding: const EdgeInsets.only(left: 15, top: 10),
               child: GradientText1(
                 text: 'Owner\'s Portal',
                 style: TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 25,
+                  fontFamily: 'outfit',
+                  fontSize: ResponsiveSize.text(25),
                   fontWeight: FontWeight.w700,
                 ),
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],

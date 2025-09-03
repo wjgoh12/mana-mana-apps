@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
@@ -170,8 +171,10 @@ class PropertyStack extends StatelessWidget {
                                   width: 15.fSize, height: 15.fSize),
                               Text(
                                 '$locationRoad',
-                                style:
-                                    TextStyle(fontSize: ResponsiveSize.text(8)),
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.text(8),
+                                  fontFamily: 'outfit',
+                                ),
                               ),
                               SizedBox(
                                 width: 1.width,
@@ -189,8 +192,10 @@ class PropertyStack extends StatelessWidget {
                               SizedBox(width: 1.fSize),
                               Text(
                                 '$totalUnits Total ',
-                                style:
-                                    TextStyle(fontSize: ResponsiveSize.text(8)),
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.text(8),
+                                  fontFamily: 'outfit',
+                                ),
                               ),
                               FutureBuilder<String>(
                                 future: model
@@ -208,6 +213,7 @@ class PropertyStack extends StatelessWidget {
                                   final occupancy = snapshot.data ?? '0.0';
                                   return Text('($occupancy% Occupancy)',
                                       style: TextStyle(
+                                          fontFamily: 'outfit',
                                           fontSize: ResponsiveSize.text(8)));
                                 },
                               )
@@ -232,7 +238,7 @@ class PropertyStack extends StatelessWidget {
                       Text(
                         'Owner(s)',
                         style: TextStyle(
-                          fontFamily: 'Open Sans',
+                          fontFamily: 'outfit',
                           fontSize: responsiveFont(13),
                           fontWeight: FontWeight.w500,
                           color: Colors.black,
@@ -261,6 +267,7 @@ class PropertyStack extends StatelessWidget {
                                       child: Text(
                                         getInitials(ownerName),
                                         style: const TextStyle(
+                                          fontFamily: 'outfit',
                                           color: Colors.white,
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
@@ -283,8 +290,9 @@ class PropertyStack extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 12),
                   child: Text(
                     locationByMonth.first['location'] ?? '',
-                    style: const TextStyle(
-                      fontSize: 21,
+                    style: TextStyle(
+                      fontFamily: 'outfit',
+                      fontSize: ResponsiveSize.text(21),
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
                     ),
@@ -313,16 +321,18 @@ class PropertyStack extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Total Net After POB',
                                     style: TextStyle(
-                                      fontSize: 11,
+                                      fontFamily: 'outfit',
+                                      fontSize: ResponsiveSize.text(11),
                                     ),
                                   ),
                                   Text(
                                     'RM ${locationByMonth.first['total'] ?? 0.0}',
-                                    style: const TextStyle(
-                                      fontSize: 15,
+                                    style: TextStyle(
+                                      fontFamily: 'outfit',
+                                      fontSize: ResponsiveSize.text(15),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -359,7 +369,9 @@ class PropertyStack extends StatelessWidget {
                             Text(
                               'Details',
                               style: TextStyle(
-                                  fontSize: 15.fSize, color: Colors.black),
+                                  fontFamily: 'outfit',
+                                  fontSize: ResponsiveSize.text(15),
+                                  color: Colors.black),
                             ),
                             const SizedBox(width: 5),
                             SizedBox(

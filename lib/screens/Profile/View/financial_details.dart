@@ -41,6 +41,7 @@ class _FinancialDetailsState extends State<FinancialDetails> {
             title: Text(
               'Financial Details',
               style: TextStyle(
+                fontFamily: 'outfit',
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: ResponsiveSize.text(20),
@@ -111,7 +112,9 @@ class _FinancialDetailsState extends State<FinancialDetails> {
             SizedBox(width: responsiveWidth(10)),
             Text('$label ',
                 style: TextStyle(
-                    fontSize: responsiveFont(16), fontWeight: FontWeight.w500)),
+                    fontFamily: 'outfit',
+                    fontSize: responsiveFont(16),
+                    fontWeight: FontWeight.w500)),
           ],
         ),
       ),
@@ -123,7 +126,9 @@ Widget _buildData({required String value}) {
   return Text(
     value ?? 'Not available',
     style: TextStyle(
-        fontSize: ResponsiveSize.text(15), fontWeight: FontWeight.bold),
+        fontFamily: 'outfit',
+        fontSize: ResponsiveSize.text(15),
+        fontWeight: FontWeight.bold),
     overflow: TextOverflow.ellipsis,
   );
 }

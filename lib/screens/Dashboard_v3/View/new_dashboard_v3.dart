@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/All_Property/View/property_summary.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
@@ -9,6 +10,7 @@ import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 import 'package:mana_mana_app/widgets/overview_card.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/widgets/top_bar.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +48,8 @@ class NewDashboardV3 extends StatelessWidget {
               (value / 812.0) * screenHeight; // base height
           double responsiveFont(double value) =>
               (value / 812.0) * screenHeight; // font scaling
+
+          ResponsiveSize.init(context);
 
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: const SystemUiOverlayStyle(
@@ -113,9 +117,8 @@ class NewDashboardV3 extends StatelessWidget {
                                 children: [
                                   Text(
                                     'Hey, ${model.userNameAccount} 👋',
-                                    style: TextStyle(
+                                    style: GoogleFonts.outfit(
                                       fontSize: responsiveFont(15),
-                                      fontFamily: 'Outfit',
                                       fontWeight: FontWeight.w500,
                                       color: const Color(0xFF383838),
                                     ),
@@ -139,10 +142,9 @@ class NewDashboardV3 extends StatelessWidget {
                                     ).createShader(bounds),
                                     child: Text(
                                       'Simple, Timeless \nAssets Management',
-                                      style: TextStyle(
+                                      style: GoogleFonts.outfit(
                                         fontSize: responsiveFont(28),
-                                        fontFamily: 'Open Sans',
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w700,
                                         color: const Color(0xFFFFFFFF),
                                       ),
                                     ).animate(
@@ -169,7 +171,11 @@ class NewDashboardV3 extends StatelessWidget {
                                         'assets/images/searchIcon.png'),
                                   ),
                                   hintText: 'Search Your Properties',
-                                  hintStyle: const TextStyle(fontSize: 15),
+                                  hintStyle: TextStyle(
+                                    fontSize: ResponsiveSize.text(12),
+                                    fontFamily: 'outfit',
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                   suffixIcon: IconButton(
                                     icon: Image.asset(
                                       'assets/images/Settingsbutton.png',
@@ -354,6 +360,7 @@ class NewDashboardV3 extends StatelessWidget {
       child: Text(
         'See All',
         style: TextStyle(
+          fontFamily: 'outfit',
           fontSize: 16.fSize,
         ),
       ),

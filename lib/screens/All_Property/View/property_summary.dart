@@ -7,6 +7,7 @@ import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailV
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/overview_card.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
 
@@ -139,7 +140,9 @@ class _PropertySummaryContent extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16.0),
                 child: Text('Recent Activity',
-                    style: TextStyle(fontSize: 16.fSize)),
+                    style: TextStyle(
+                        fontFamily: 'outfit',
+                        fontSize: ResponsiveSize.text(16))),
               ),
               RecentActivity(
                 model: model2,

@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 //import 'package:fl_chart_app/presentation/resources/app_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/resources/app_colors.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class OccupancyBarChart extends StatelessWidget {
   const OccupancyBarChart(
@@ -84,6 +85,7 @@ class OccupancyBarChart extends StatelessWidget {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
+      fontFamily: 'outfit',
       fontWeight: FontWeight.bold,
       fontSize: 12,
     );
@@ -236,6 +238,7 @@ class OccupancyBarChart extends StatelessWidget {
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
+      fontFamily: 'outfit',
       fontWeight: FontWeight.bold,
       fontSize: 12,
     );
@@ -478,11 +481,12 @@ class LineChart1State extends State<LineChart1> {
               const SizedBox(
                 height: 37,
               ),
-              const Text(
+              Text(
                 'Occupancy Rate',
                 style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 32,
+                  fontFamily: 'outfit',
+                  fontSize: ResponsiveSize.text(32),
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2,
                 ),

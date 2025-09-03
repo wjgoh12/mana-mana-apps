@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
@@ -170,8 +171,10 @@ class OverviewCard extends StatelessWidget {
                                 child: Text(
                                   'Total Properties',
                                   style: TextStyle(
+                                    fontFamily: 'outfit',
                                     color: Colors.white,
-                                    fontSize: 10.fSize,
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontWeight: FontWeight.w300,
                                   ),
                                 ),
                               ),
@@ -180,8 +183,9 @@ class OverviewCard extends StatelessWidget {
                                 child: Text(
                                   'Managed: ${locationCount} ',
                                   style: TextStyle(
+                                    fontFamily: 'outfit',
                                     color: Colors.white,
-                                    fontSize: 13.fSize,
+                                    fontSize: ResponsiveSize.text(14),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -223,12 +227,14 @@ class OverviewCard extends StatelessWidget {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8, top: 10),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8, top: 10),
                                   child: Text(
                                     'Occupancy Rate',
                                     style: TextStyle(
-                                      fontSize: 8.0,
+                                      fontFamily: 'outfit',
+                                      fontSize: ResponsiveSize.text(8),
                                       fontWeight: FontWeight.normal,
                                     ),
                                   ),
@@ -249,16 +255,18 @@ class OverviewCard extends StatelessWidget {
                                         return Text(
                                           'Loading...',
                                           style: TextStyle(
+                                            fontFamily: 'outfit',
                                             fontSize: ResponsiveSize.text(15),
                                             fontWeight: FontWeight.bold,
                                           ),
                                         );
                                       }
                                       if (snapshot.hasError) {
-                                        return const Text(
+                                        return Text(
                                           'Error',
                                           style: TextStyle(
-                                            fontSize: 12,
+                                            fontFamily: 'outfit',
+                                            fontSize: ResponsiveSize.text(12),
                                             fontWeight: FontWeight.bold,
                                           ),
                                         );
@@ -267,6 +275,7 @@ class OverviewCard extends StatelessWidget {
                                       return Text(
                                         '$occupancy%',
                                         style: const TextStyle(
+                                          fontFamily: 'outfit',
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
@@ -279,9 +288,9 @@ class OverviewCard extends StatelessWidget {
                                   padding: const EdgeInsets.only(left: 3),
                                   child: Text(
                                     'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first['units'] != null && model.propertyOccupancy.values.first['units'].values.first != null && model.propertyOccupancy.values.first['units'].values.first is Map<String, dynamic> ? '${monthNumberToName(model.propertyOccupancy.values.first['units'].values.first['month'])} ${model.propertyOccupancy.values.first['units'].values.first['year']}' : '$shortMonth $year'}',
-                                    style: const TextStyle(
-                                      fontSize: 7.0,
-                                      fontFamily: 'Open Sans',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.text(7),
+                                      fontFamily: 'outfit',
                                       fontWeight: FontWeight.normal,
                                     ),
                                   ),
@@ -326,13 +335,14 @@ class OverviewCard extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 10, top: 10),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, top: 10),
                                     child: Text(
                                       'Monthly Profit',
                                       style: TextStyle(
-                                        fontSize: 10.0,
-                                        fontFamily: 'Open Sans',
+                                        fontSize: ResponsiveSize.text(10),
+                                        fontFamily: 'outfit',
                                         fontWeight: FontWeight.normal,
                                       ),
                                     ),
@@ -385,7 +395,7 @@ class OverviewCard extends StatelessWidget {
                                                         fontSize:
                                                             ResponsiveSize.text(
                                                                 11),
-                                                        fontFamily: 'Open Sans',
+                                                        fontFamily: 'outfit',
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.black,
@@ -398,7 +408,7 @@ class OverviewCard extends StatelessWidget {
                                                   style: TextStyle(
                                                     fontSize:
                                                         ResponsiveSize.text(15),
-                                                    fontFamily: 'Open Sans',
+                                                    fontFamily: 'outfit',
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black,
                                                   ),
@@ -408,13 +418,14 @@ class OverviewCard extends StatelessWidget {
                                           ),
                                         );
                                       } else {
-                                        return const Padding(
-                                          padding: EdgeInsets.only(left: 10),
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 10),
                                           child: Text(
                                             'RM0.00',
                                             style: TextStyle(
-                                              fontSize: 15,
-                                              fontFamily: 'Open Sans',
+                                              fontSize: ResponsiveSize.text(15),
+                                              fontFamily: 'outfit',
                                               fontWeight: FontWeight.bold,
                                               color: Colors.black,
                                             ),
@@ -427,8 +438,9 @@ class OverviewCard extends StatelessWidget {
                                     padding: const EdgeInsets.only(left: 10),
                                     child: Text(
                                       '$shortMonth $year',
-                                      style: const TextStyle(
-                                        fontSize: 8.0,
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        fontSize: ResponsiveSize.text(8),
                                         fontStyle: FontStyle.normal,
                                       ),
                                     ),
@@ -584,9 +596,9 @@ class RevenueContainer extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            fontFamily: 'Open Sans',
+            fontFamily: 'outfit',
             // fontSize: 12.fSize,
-            fontSize: 10.fSize,
+            fontSize: ResponsiveSize.text(9),
           ),
         ),
         const Spacer(),
@@ -625,8 +637,8 @@ class RevenueContainer extends StatelessWidget {
         Text(
           '$shortMonth $year',
           style: TextStyle(
-            fontFamily: 'Open Sans',
-            fontSize: 10.fSize,
+            fontFamily: 'outfit',
+            fontSize: ResponsiveSize.text(10),
             fontWeight: FontWeight.w400,
             color: Colors.black,
           ),
@@ -651,7 +663,7 @@ class RevenueContainer extends StatelessWidget {
                     'RM',
                     style: TextStyle(
                       fontSize: ResponsiveSize.text(11),
-                      fontFamily: 'Open Sans',
+                      fontFamily: 'outfit',
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -672,7 +684,7 @@ class RevenueContainer extends StatelessWidget {
               return Text(
                 NumberFormat('#,##0.00').format(value),
                 style: TextStyle(
-                  fontFamily: 'Open Sans',
+                  fontFamily: 'outfit',
                   fontWeight: FontWeight.bold,
                   fontSize: ResponsiveSize.text(15),
                 ),

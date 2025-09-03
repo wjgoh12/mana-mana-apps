@@ -201,7 +201,7 @@ class PropertyImageStack extends StatelessWidget {
         final screenHeight = MediaQuery.of(context).size.height;
 
         final containerWidth =
-            isMobile ? screenWidth * 0.85 : screenWidth * 0.43;
+            isMobile ? screenWidth * 0.87 : screenWidth * 0.43;
         final containerHeight =
             isMobile ? screenHeight * 0.4 : screenHeight * 0.35;
 
@@ -221,7 +221,7 @@ class PropertyImageStack extends StatelessWidget {
               padding: EdgeInsets.only(right: horizontalPadding),
               child: Container(
                 width: containerWidth,
-                //height: containerHeight,
+                // height: containerHeight,
                 margin: const EdgeInsets.only(left: 5),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -234,314 +234,316 @@ class PropertyImageStack extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Image at top
-                      Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(6),
-                              child: SizedBox(
-                                width: imageWidth,
-                                height: imageHeight,
-                                child: Image.asset(
-                                  'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
-                                  fit: BoxFit.cover,
-                                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Image at top
+                    Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: SizedBox(
+                              width: imageWidth,
+                              height: imageHeight,
+                              child: Image.asset(
+                                'assets/images/${locationByMonth.first['location'].toString().toUpperCase()}.png',
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
-                          Positioned(
-                            bottom: 3,
-                            left: 0,
-                            right: 0,
-                            child: Center(
-                              child: Container(
-                                // width: smallContainerWidth + containerWidth * 0.1,
-                                height: smallContainerHeight,
-                                margin: EdgeInsets.only(
-                                    bottom: containerHeight * 0.01),
-                                padding:
-                                    const EdgeInsets.only(left: 8, right: 8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(1),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/PropertiesGroup.png',
-                                      width: 20,
-                                      height: 20,
+                        ),
+                        Positioned(
+                          bottom: 3,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Container(
+                              // width: smallContainerWidth + containerWidth * 0.1,
+                              height: smallContainerHeight,
+                              margin: EdgeInsets.only(
+                                  bottom: containerHeight * 0.01),
+                              padding: const EdgeInsets.only(left: 8, right: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(1),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/PropertiesGroup.png',
+                                    width: ResponsiveSize.scaleWidth(20),
+                                    height: ResponsiveSize.scaleHeight(20),
+                                  ),
+                                  SizedBox(width: 2.width),
+                                  Text(
+                                    '$totalUnits Total ',
+                                    style: TextStyle(
+                                      fontFamily: 'outfit',
+                                      fontSize: ResponsiveSize.text(13),
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    SizedBox(width: 2.width),
-                                    Text(
-                                      '$totalUnits Total ',
-                                      style: TextStyle(
-                                        fontSize: 16.fSize,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    // Show occupancy rate using async widget
-                                    FutureBuilder<String>(
-                                      future: model
-                                          .calculateTotalOccupancyForLocation(
-                                              model.locationByMonth
-                                                  .first['location']),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Text('Loading...',
-                                              style: const TextStyle(
-                                                  fontSize: 13));
-                                        }
-                                        if (snapshot.hasError) {
-                                          return const Text('Error');
-                                        }
-                                        final occupancy =
-                                            snapshot.data ?? '0.0';
-                                        return Text('($occupancy% Occupancy)',
-                                            style:
-                                                TextStyle(fontSize: 16.fSize));
-                                      },
-                                    )
-                                  ],
-                                ),
+                                  ),
+                                  // Show occupancy rate using async widget
+                                  FutureBuilder<String>(
+                                    future: model
+                                        .calculateTotalOccupancyForLocation(
+                                            model.locationByMonth
+                                                .first['location']),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Text('Loading...',
+                                            style: TextStyle(
+                                                fontFamily: 'outfit',
+                                                fontSize:
+                                                    ResponsiveSize.text(13)));
+                                      }
+                                      if (snapshot.hasError) {
+                                        return const Text('Error');
+                                      }
+                                      final occupancy = snapshot.data ?? '0.0';
+                                      return Text('($occupancy% Occupancy)',
+                                          style: TextStyle(
+                                              fontFamily: 'outfit',
+                                              fontWeight: FontWeight.w300,
+                                              fontSize:
+                                                  ResponsiveSize.text(13)));
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, top: 5),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/Group.png',
+                            width: ResponsiveSize.scaleWidth(25),
+                            height: ResponsiveSize.scaleHeight(25),
+                          ),
+                          SizedBox(width: ResponsiveSize.scaleWidth(2)),
+                          Text(
+                            'Owner(s)',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: ResponsiveSize.text(15),
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xff383838),
+                            ),
+                          ),
+                          SizedBox(width: ResponsiveSize.scaleWidth(10)),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  ...uniqueOwners
+                                      .map((ownerName) => Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 3),
+                                            child: Tooltip(
+                                              message: ownerName,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: Colors.white,
+                                                    width: 1.5,
+                                                  ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.1),
+                                                      blurRadius: 4,
+                                                      offset:
+                                                          const Offset(0, 2),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: CircleAvatar(
+                                                  radius: 15,
+                                                  backgroundColor: locationByMonth
+                                                          .first['owners']
+                                                          .any((o) =>
+                                                              o['ownerName'] ==
+                                                              ownerName)
+                                                      ? const Color(
+                                                          0xff5092FF) // Main owner color
+                                                      : const Color(
+                                                          0xFF4CAF50), // Co-owner color
+                                                  child: Text(
+                                                    getInitials(ownerName),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      letterSpacing: 0.5,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ))
+                                      .toList(),
+                                ],
                               ),
                             ),
                           ),
                         ],
                       ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 5),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              'assets/images/Group.png',
-                              width: 25,
-                              height: 25,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12, top: 5),
+                      child: Text(
+                        locationByMonth.first['location'] ?? '',
+                        style: TextStyle(
+                          fontFamily: 'outfit',
+                          fontSize: ResponsiveSize.text(21),
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, top: 5),
+                      child: Row(
+                        children: [
+                          Image.asset('assets/images/map_pin.png',
+                              width: 16, height: 19),
+                          const SizedBox(width: 10),
+                          Text(
+                            locationRoad,
+                            style: TextStyle(
+                              fontFamily: 'outfit',
+                              fontSize: ResponsiveSize.text(13),
+                              fontWeight: FontWeight.w500,
                             ),
-                            SizedBox(width: 2.width),
-                            Text(
-                              'Owner(s)',
-                              style: TextStyle(
-                                fontFamily: 'Outfit',
-                                fontSize: 17.fSize,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xff383838),
-                              ),
-                            ),
-                            SizedBox(width: 10.fSize),
-                            Expanded(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    ...uniqueOwners
-                                        .map((ownerName) => Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 3),
-                                              child: Tooltip(
-                                                message: ownerName,
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    border: Border.all(
-                                                      color: Colors.white,
-                                                      width: 1.5,
-                                                    ),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.black
-                                                            .withOpacity(0.1),
-                                                        blurRadius: 4,
-                                                        offset:
-                                                            const Offset(0, 2),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: CircleAvatar(
-                                                    radius: 15,
-                                                    backgroundColor: locationByMonth
-                                                            .first['owners']
-                                                            .any((o) =>
-                                                                o['ownerName'] ==
-                                                                ownerName)
-                                                        ? const Color(
-                                                            0xff5092FF) // Main owner color
-                                                        : const Color(
-                                                            0xFF4CAF50), // Co-owner color
-                                                    child: Text(
-                                                      getInitials(ownerName),
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        letterSpacing: 0.5,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ))
-                                        .toList(),
-                                  ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      height: 1,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Color(0xFFB82B7D),
+                            Color(0xFF3E51FF),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3),
+                            child: Image.asset('assets/images/Wallet.png',
+                                width: ResponsiveSize.scaleWidth(44.5),
+                                height: ResponsiveSize.scaleHeight(44.5)),
+                          ),
+                          const SizedBox(width: 10),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Total Net After POB',
+                                style: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: ResponsiveSize.text(13),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12, top: 10),
-                        child: Text(
-                          locationByMonth.first['location'] ?? '',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(21),
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 5),
-                        child: Row(
-                          children: [
-                            Image.asset('assets/images/map_pin.png',
-                                width: 16, height: 19),
-                            const SizedBox(width: 10),
-                            Text(
-                              locationRoad,
-                              style: TextStyle(
-                                fontSize: ResponsiveSize.text(13),
+                              Text(
+                                'RM ${locationByMonth.first['total']}',
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.text(15),
+                                  fontFamily: 'Outfit',
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        height: 1,
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Color(0xFFB82B7D),
-                              Color(0xFF3E51FF),
                             ],
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 3),
-                              child: Image.asset('assets/images/Wallet.png',
-                                  width: ResponsiveSize.scaleWidth(44.5),
-                                  height: ResponsiveSize.scaleHeight(44.5)),
-                            ),
-                            const SizedBox(width: 10),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Total Net After POB',
-                                  style: TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: ResponsiveSize.text(14),
+                          const Spacer(),
+                          Container(
+                            margin: const EdgeInsets.only(right: 10, bottom: 3),
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => property_detail_v3(
+                                        locationByMonth: [
+                                          locationByMonth.first
+                                        ],
+                                        initialTab: 'overview',
+                                        model: NewDashboardVM_v3(),
+                                      ),
+                                    ));
+                              },
+                              style: ButtonStyle(
+                                minimumSize:
+                                    WidgetStateProperty.all(const Size(20, 30)),
+                                side: WidgetStateProperty.all(
+                                    const BorderSide(color: Color(0xFF4CAF50))),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Details',
+                                    style: TextStyle(
+                                        fontSize: ResponsiveSize.text(12),
+                                        fontFamily: 'Outfit',
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black),
                                   ),
-                                ),
-                                Text(
-                                  'RM ${locationByMonth.first['total']}',
-                                  style: TextStyle(
-                                    fontSize: 16.fSize,
-                                    fontFamily: 'Outfit',
-                                    fontWeight: FontWeight.w700,
+                                  const SizedBox(width: 5),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/arrow.png',
+                                        width: 16,
+                                        height: 12,
+                                      ),
+                                      Text(
+                                        'Jom',
+                                        style: TextStyle(
+                                            fontFamily: 'Outfit',
+                                            fontSize: 12.fSize,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            Container(
-                              margin:
-                                  const EdgeInsets.only(right: 10, bottom: 3),
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            property_detail_v3(
-                                          locationByMonth: [
-                                            locationByMonth.first
-                                          ],
-                                          initialTab: 'overview',
-                                          model: NewDashboardVM_v3(),
-                                        ),
-                                      ));
-                                },
-                                style: ButtonStyle(
-                                  minimumSize: WidgetStateProperty.all(
-                                      const Size(20, 30)),
-                                  side: WidgetStateProperty.all(
-                                      const BorderSide(
-                                          color: Color(0xFF4CAF50))),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Details',
-                                      style: TextStyle(
-                                          fontSize: 16.fSize,
-                                          fontFamily: 'Outfit',
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Image.asset(
-                                          'assets/images/arrow.png',
-                                          width: 16,
-                                          height: 12,
-                                        ),
-                                        Text(
-                                          'Jom',
-                                          style: TextStyle(
-                                              fontFamily: 'Outfit',
-                                              fontSize: 12.fSize,
-                                              fontWeight: FontWeight.w700),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 15),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 5),
+                  ],
                 ),
               ),
             ),

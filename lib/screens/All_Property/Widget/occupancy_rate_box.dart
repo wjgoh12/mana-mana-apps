@@ -3,6 +3,7 @@ import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_bar_chart.da
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 final labelColor1 = const Color(0xFF8C71E7);
@@ -77,7 +78,8 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
                   child: Text(
                     'Occupancy Rate',
                     style: TextStyle(
-                      fontSize: 15 * fontScale,
+                      fontFamily: 'outfit',
+                      fontSize: ResponsiveSize.text(15),
                       fontWeight: FontWeight.bold,
                     ),
                   ),

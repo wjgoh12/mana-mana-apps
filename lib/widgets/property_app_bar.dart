@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 PreferredSizeWidget propertyAppBar(context, function) {
@@ -31,8 +32,8 @@ PreferredSizeWidget propertyAppBar(context, function) {
               child: GradientText1(
                   text: 'Property(s)',
                   style: TextStyle(
-                    fontFamily: 'Open Sans',
-                    fontSize: 20.fSize,
+                    fontFamily: 'outfit',
+                    fontSize: ResponsiveSize.text(20),
                     fontWeight: FontWeight.w800,
                   ),
                   gradient: const LinearGradient(

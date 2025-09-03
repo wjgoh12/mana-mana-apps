@@ -335,14 +335,20 @@ class _property_detail_v3State extends State<property_detail_v3> {
                                 widget.locationByMonth.first['location']
                                         ?.toString() ??
                                     'Unknown Property',
-                                style: const TextStyle(fontSize: 30),
+                                style: TextStyle(
+                                    fontSize: ResponsiveSize.text(30),
+                                    fontFamily: 'outfit'),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Image.asset('assets/images/map_pin.png',
                                       width: 14.fSize, height: 17.fSize),
-                                  Text(model.locationRoad),
+                                  Text(model.locationRoad,
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.text(14),
+                                        fontFamily: 'outfit',
+                                      )),
                                 ],
                               ),
                               SizedBox(height: 10.fSize),
@@ -393,7 +399,9 @@ class _property_detail_v3State extends State<property_detail_v3> {
                               const Text(
                                 'Property(s)',
                                 style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                    fontFamily: 'outfit',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -800,7 +808,11 @@ class PropertyOverviewContainer extends StatelessWidget {
               title: 'Total Assets',
               value: '$totalUnits',
               //     '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}',
-              subtitle: Text('$shortMonth $year'),
+              subtitle: Text('$shortMonth $year',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontFamily: 'outfit',
+                  )),
               responsiveFont: responsiveFont,
             ),
             SizedBox(width: responsiveWidth(17)),
@@ -833,7 +845,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                     'As of Month $monthYearText',
                     style: const TextStyle(
                       fontSize: 9.0,
-                      fontFamily: 'Open Sans',
+                      fontFamily: 'outfit',
                       fontWeight: FontWeight.normal,
                     ),
                   );
@@ -881,6 +893,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                       return Text(
                         '$occupancy%',
                         style: const TextStyle(
+                          fontFamily: 'outfit',
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -903,7 +916,11 @@ class PropertyOverviewContainer extends StatelessWidget {
               imageWidth: responsiveWidth(59),
               imageHeight: responsiveHeight(58),
               title: 'Monthly Profit',
-              subtitle: Text('$shortMonth $year'),
+              subtitle: Text('$shortMonth $year',
+                  style: TextStyle(
+                    fontSize: responsiveFont(12),
+                    fontFamily: 'outfit',
+                  )),
               child: RichText(
                 text: TextSpan(
                   children: [
@@ -918,6 +935,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                             fontSize: responsiveFont(12),
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
+                            fontFamily: 'outfit',
                           ),
                         ),
                       ),
@@ -946,7 +964,11 @@ class PropertyOverviewContainer extends StatelessWidget {
               imageWidth: responsiveWidth(57),
               imageHeight: responsiveHeight(59),
               title: 'Total Net After POB',
-              subtitle: Text('$shortMonth $year'),
+              subtitle: Text('$shortMonth $year',
+                  style: TextStyle(
+                    fontSize: responsiveFont(12),
+                    fontFamily: 'outfit',
+                  )),
               child: RichText(
                 text: TextSpan(
                   children: [
@@ -958,6 +980,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                         child: Text(
                           'RM',
                           style: TextStyle(
+                            fontFamily: 'outfit',
                             fontSize: responsiveFont(12),
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
@@ -970,6 +993,7 @@ class PropertyOverviewContainer extends StatelessWidget {
                           ? '${_getTotalNetAfterPOB().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}'
                           : '${model.selectedUnitBlc?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},') ?? '0.00'}',
                       style: TextStyle(
+                        fontFamily: 'outfit',
                         fontSize: responsiveFont(16),
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -1018,10 +1042,13 @@ class PropertyOverviewContainer extends StatelessWidget {
         children: [
           Image.asset(image, width: imageWidth, height: imageHeight),
           SizedBox(height: responsiveFont(5)),
-          Text(title, style: TextStyle(fontSize: responsiveFont(12))),
+          Text(title,
+              style: TextStyle(
+                  fontSize: responsiveFont(12), fontFamily: 'outfit')),
           if (value != null)
             Text(value,
                 style: TextStyle(
+                  fontFamily: 'outfit',
                   fontSize: responsiveFont(14),
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -1101,7 +1128,9 @@ class ContractDetailsContainer extends StatelessWidget {
                         // <-- prevents text overflow
                         child: Text(
                           'Contract Type  ',
-                          style: TextStyle(fontSize: responsiveFont(10)),
+                          style: TextStyle(
+                              fontSize: responsiveFont(10),
+                              fontFamily: 'outfit'),
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
                         ),
@@ -1127,6 +1156,7 @@ class ContractDetailsContainer extends StatelessWidget {
                           })(),
 
                           style: TextStyle(
+                            fontFamily: 'outfit',
                             fontSize: responsiveFont(11),
                             color: const Color(0xFF5092FF),
                             fontWeight: FontWeight.bold,
@@ -1160,7 +1190,9 @@ class ContractDetailsContainer extends StatelessWidget {
                       Flexible(
                         child: Text(
                           'Contract End Date  ',
-                          style: TextStyle(fontSize: responsiveFont(8)),
+                          style: TextStyle(
+                              fontFamily: 'outfit',
+                              fontSize: responsiveFont(8)),
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
                         ),
@@ -1197,6 +1229,7 @@ class ContractDetailsContainer extends StatelessWidget {
                             return matches.join(', ');
                           })(),
                           style: TextStyle(
+                            fontFamily: 'outfit',
                             fontSize: responsiveFont(9),
                             color: const Color(0xFF5092FF),
                             fontWeight: FontWeight.bold,
@@ -1330,6 +1363,7 @@ class UnitDetailsContainer extends StatelessWidget {
                     padding: EdgeInsets.only(left: responsivePadding, top: 1),
                     child: Text('Owner(s)',
                         style: TextStyle(
+                          fontFamily: 'outfit',
                           fontSize: responsiveFont(12),
                         )),
                   )
@@ -1446,6 +1480,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               Text(
                                 'Occupancy Rate',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontSize: responsiveFont(11),
                                 ),
                               ),
@@ -1466,6 +1501,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                     return Text(
                                       'Error',
                                       style: TextStyle(
+                                          fontFamily: 'outfit',
                                           fontSize: responsiveFont(15),
                                           fontWeight: FontWeight.bold),
                                     );
@@ -1473,6 +1509,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                     return Text(
                                       snapshot.data ?? '',
                                       style: TextStyle(
+                                        fontFamily: 'outfit',
                                         fontSize: responsiveFont(10),
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -1502,7 +1539,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                       'As of Month $monthYearText',
                                       style: const TextStyle(
                                         fontSize: 8.0,
-                                        fontFamily: 'Open Sans',
+                                        fontFamily: 'outfit',
                                         fontWeight: FontWeight.normal,
                                       ),
                                     );
@@ -1547,6 +1584,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               Text(
                                 'Monthly Profit',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontSize: responsiveFont(11),
                                 ),
                               ),
@@ -1561,6 +1599,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                         child: Text(
                                           'RM',
                                           style: TextStyle(
+                                            fontFamily: 'outfit',
                                             fontSize: responsiveFont(10),
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
@@ -1571,6 +1610,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                     TextSpan(
                                       text: '$formattedTotalPro',
                                       style: TextStyle(
+                                        fontFamily: 'outfit',
                                         fontSize: responsiveFont(15),
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
@@ -1583,6 +1623,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               Text(
                                 '$shortMonth $year',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontSize: responsiveFont(10),
                                 ),
                               ),
@@ -1624,6 +1665,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               Text(
                                 'Net After POB',
                                 style: TextStyle(
+                                  fontFamily: 'outfit',
                                   fontSize: responsiveFont(11),
                                 ),
                               ),
@@ -1638,6 +1680,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                         child: Text(
                                           'RM',
                                           style: TextStyle(
+                                            fontFamily: 'outfit',
                                             fontSize: responsiveFont(10),
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
@@ -1648,6 +1691,7 @@ class UnitDetailsContainer extends StatelessWidget {
                                     TextSpan(
                                       text: '$formattedTotalBlc',
                                       style: TextStyle(
+                                        fontFamily: 'outfit',
                                         fontSize: responsiveFont(15),
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
@@ -1658,6 +1702,7 @@ class UnitDetailsContainer extends StatelessWidget {
                               ),
                               Text('$shortMonth $year',
                                   style: TextStyle(
+                                    fontFamily: 'outfit',
                                     fontSize: responsiveFont(10),
                                   )),
                             ],
@@ -1773,6 +1818,7 @@ class _EStatementContainerState extends State<EStatementContainer> {
                     Text(
                       'No statements found !',
                       style: TextStyle(
+                        fontFamily: 'outfit',
                         fontSize: 16,
                         color: Colors.grey.shade600,
                       ),
@@ -1833,6 +1879,10 @@ class _EStatementContainerState extends State<EStatementContainer> {
                             children: [
                               Text(
                                 '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: 12,
+                                ),
                               ),
                             ],
                           ),
@@ -1865,6 +1915,10 @@ class _EStatementContainerState extends State<EStatementContainer> {
                       children: [
                         Text(
                           '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
+                          style: const TextStyle(
+                            fontFamily: 'outfit',
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -1936,6 +1990,7 @@ class StickyDropdownBar extends StatelessWidget {
                 child: Text(
                   locationByMonth.first['location'] ?? '',
                   style: TextStyle(
+                      fontFamily: 'outfit',
                       fontSize: ResponsiveSize.text(16),
                       fontWeight: FontWeight.bold),
                 ),
@@ -1957,6 +2012,7 @@ class StickyDropdownBar extends StatelessWidget {
                             isExpanded: true,
                             underline: const SizedBox(),
                             style: TextStyle(
+                                fontFamily: 'outfit',
                                 fontSize: ResponsiveSize.text(14),
                                 color: Colors.black),
                             dropdownStyleData: DropdownStyleData(
@@ -2069,10 +2125,17 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
               const SizedBox(width: 8),
               const Text(
                 'eStatements',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'outfit'),
               ),
               const Spacer(),
-              const Text('Year'),
+              const Text('Year',
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'outfit')),
               const SizedBox(width: 8),
               DropdownButton2<String>(
                 underline: const SizedBox(),
@@ -2092,17 +2155,25 @@ class _StickyEstatementBarState extends State<StickyEstatementBar> {
                     ? const Text(
                         'Select Year',
                         style: TextStyle(
-                            fontSize: 10, decoration: TextDecoration.none),
+                            fontSize: 10,
+                            decoration: TextDecoration.none,
+                            fontFamily: 'outfit'),
                       )
                     : const Text(
                         '-',
                         style: TextStyle(
-                            fontSize: 10, decoration: TextDecoration.none),
+                            fontSize: 10,
+                            decoration: TextDecoration.none,
+                            fontFamily: 'outfit'),
                       ),
                 items: widget.yearOptions
                     .map((year) => DropdownMenuItem(
                           value: year,
-                          child: Text(year),
+                          child: Text(year,
+                              style: const TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: 12,
+                                  decoration: TextDecoration.none)),
                         ))
                     .toList(),
                 onChanged: (val) {
@@ -2144,7 +2215,7 @@ Widget _buildGradientText(String text) {
   return GradientText1(
     text: text,
     style: TextStyle(
-      fontFamily: 'Open Sans',
+      fontFamily: 'outfit',
       fontSize: 17.fSize,
       fontWeight: FontWeight.w700,
     ),
@@ -2202,7 +2273,7 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
     ],
   );
 
-  static const _textStyle = TextStyle(fontSize: 12);
+  static const _textStyle = TextStyle(fontSize: 12, fontFamily: 'outfit');
   static const _hintText = Text('Select Unit');
   static const _loadingText =
       Text('Loading...', style: TextStyle(fontSize: 12, color: Colors.grey));
