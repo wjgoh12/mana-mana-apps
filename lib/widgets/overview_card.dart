@@ -20,20 +20,11 @@ class OverviewCard extends StatelessWidget {
   String getOccupancyRate() {
     PropertyListRepository propertyrepo = PropertyListRepository();
     try {
-      //get from all_property occupancy
-      //calc units average from every location, then calc location avege occupancy rate
-
-      // Calculate total properties
       final uniqueLocations =
           model.locationByMonth.map((e) => e['slocation']).toSet().toList();
       final totalProperties = uniqueLocations.length;
-
-      //model.totalByMonth.map((e) => e['slocation']).toSet().toList();
-      //final totalProperties = uniqueLocations.length;
-
       if (totalProperties == 0) return '0';
 
-      // Calculate active properties (adjust this logic based on your data structure)
       final activeProperties = model.locationByMonth
           .where(
               (e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE')
@@ -75,105 +66,110 @@ class OverviewCard extends StatelessWidget {
     DateTime now = DateTime.now();
     String shortMonth = monthNumberToName(now.month);
     String year = now.year.toString();
+
     final uniqueLocations =
         model.totalByMonth.map((e) => e['slocation']).toSet().toList();
-
     final locationCount = uniqueLocations.length;
-    final activeLocations = model.totalByMonth.where(
-        (e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE');
 
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     final isMobile = Responsive.isMobile(context);
 
-    final cardWidth = isMobile ? screenWidth * 0.42 : screenWidth * 0.45;
-    final cardHeightSmall = isMobile ? screenWidth * 0.20 : screenWidth * 0.13;
-    final cardHeightLarge = isMobile ? screenWidth * 0.28 : screenWidth * 0.21;
-
-    final screenHeight = MediaQuery.of(context).size.height;
-
     double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
+        (value / 375.0) * screenWidth; // base width (for gaps only)
     double responsiveHeight(double value) =>
         (value / 812.0) * screenHeight; // base height
 
     ResponsiveSize.init(context);
 
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: isMobile ? 500.fSize : 1000.fSize,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Use the ACTUAL available width inside the parent (after padding).
+        final availableWidth = constraints.maxWidth;
+
+        // Single place to control the inter-column gap.
+        final gapBetweenColumns = responsiveWidth(8);
+
+        // Compute each column width so that left/right outer gaps are equal.
+        final cardWidth = (availableWidth - gapBetweenColumns) / 2;
+
+        // Heights can remain proportional; no change needed here.
+        final cardHeightSmall =
+            isMobile ? screenWidth * 0.20 : screenWidth * 0.13;
+        final cardHeightLarge =
+            isMobile ? screenWidth * 0.28 : screenWidth * 0.21;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Left Column
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    //1st
-                    Card(
-                      margin: EdgeInsets.only(bottom: responsiveHeight(10)),
-                      child: Container(
-                        width: cardWidth,
-                        height: cardHeightLarge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          image: DecorationImage(
-                            image: AssetImage(
-                                'assets/images/overviewContainer1.png'),
-                            fit: BoxFit.cover,
+                // Left Column (fixed position, exact width)
+                SizedBox(
+                  width: cardWidth,
+                  child: Column(
+                    children: [
+                      // 1st
+                      Card(
+                        margin: EdgeInsets.only(bottom: responsiveHeight(10)),
+                        child: Container(
+                          width: double.infinity, // fill column width
+                          height: cardHeightLarge,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            image: const DecorationImage(
+                              image: AssetImage(
+                                  'assets/images/overviewContainer1.png'),
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                        child: Column(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Stack(children: [
-                                Positioned(
-                                  left: 10,
-                                  top: 10,
-                                  child: CircleAvatar(
-                                    radius: 20.fSize,
-                                    backgroundColor: Colors.white,
-                                    child: Image.asset(
-                                      'assets/images/OverviewProperty.png',
-                                      width: 18.fSize,
-                                      height: 22.fSize,
+                              Stack(
+                                children: [
+                                  Positioned(
+                                    left: 10,
+                                    top: 10,
+                                    child: CircleAvatar(
+                                      radius: 20.fSize,
+                                      backgroundColor: Colors.white,
+                                      child: Image.asset(
+                                        'assets/images/OverviewProperty.png',
+                                        width: 18.fSize,
+                                        height: 22.fSize,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Padding(
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      const SizedBox(width: 1),
+                                      Padding(
                                         padding:
                                             const EdgeInsets.only(right: 15),
                                         child: Text(
                                           '$locationCount',
-                                          //call total number of locations
-                                          //total Properties
-
                                           style: TextStyle(
                                             fontSize: 40.fSize,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           ),
-                                        )),
-                                    const SizedBox(
-                                        width:
-                                            1), // spacing between text and image
-                                  ],
-                                )
-                              ]),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 10),
                                 child: Text(
                                   'Total Properties',
                                   style: TextStyle(
                                     fontFamily: 'outfit',
                                     color: Colors.white,
-                                    fontSize: ResponsiveSize.text(11),
                                     fontWeight: FontWeight.w300,
                                   ),
                                 ),
@@ -181,7 +177,7 @@ class OverviewCard extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(left: 10),
                                 child: Text(
-                                  'Managed: ${locationCount} ',
+                                  'Managed: $locationCount ',
                                   style: TextStyle(
                                     fontFamily: 'outfit',
                                     color: Colors.white,
@@ -190,132 +186,134 @@ class OverviewCard extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                            ]),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
 
-                    //2nd
-                    Card(
-                      margin: EdgeInsets.only(bottom: responsiveHeight(10)),
-                      color: const Color(0xFFFFE7B8),
-                      child: SizedBox(
-                        width: cardWidth,
-                        height: cardHeightSmall,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Stack(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 10),
-                                    child: CircleAvatar(
-                                      radius: 19.fSize,
-                                      backgroundColor: Colors.white,
-                                      child: Image.asset(
-                                        'assets/images/OverviewOccupancy.png',
-                                        width: 30.fSize,
-                                        height: 20.fSize,
+                      // 2nd
+                      Card(
+                        margin: EdgeInsets.only(bottom: responsiveHeight(10)),
+                        color: const Color(0xFFFFE7B8),
+                        child: SizedBox(
+                          width: double.infinity, // fill column width
+                          height: cardHeightSmall,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 10),
+                                  child: CircleAvatar(
+                                    radius: 19.fSize,
+                                    backgroundColor: Colors.white,
+                                    child: Image.asset(
+                                      'assets/images/OverviewOccupancy.png',
+                                      width: 30.fSize,
+                                      height: 20.fSize,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 8, top: 10),
+                                    child: Text(
+                                      'Occupancy Rate',
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        fontSize: ResponsiveSize.text(8),
+                                        fontWeight: FontWeight.normal,
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 8, top: 10),
-                                  child: Text(
-                                    'Occupancy Rate',
-                                    style: TextStyle(
-                                      fontFamily: 'outfit',
-                                      fontSize: ResponsiveSize.text(8),
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                                //hard coded
-                                Padding(
-                                  padding: EdgeInsets.only(left: 8),
-                                  child: FutureBuilder<String>(
-                                    future: model.locationByMonth.isNotEmpty
-                                        ? model
-                                            .calculateTotalOccupancyForLocation(
-                                                model.locationByMonth
-                                                    .first['location'])
-                                        : Future.value('0.0'),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Text(
-                                          'Loading...',
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: FutureBuilder<String>(
+                                      future: model.locationByMonth.isNotEmpty
+                                          ? model
+                                              .calculateTotalOccupancyForLocation(
+                                                  model.locationByMonth
+                                                      .first['location'])
+                                          : Future.value('0.0'),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Text(
+                                            'Loading...',
+                                            style: TextStyle(
+                                              fontFamily: 'outfit',
+                                              fontSize: ResponsiveSize.text(15),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          );
+                                        }
+                                        if (snapshot.hasError) {
+                                          return Text(
+                                            'Error',
+                                            style: TextStyle(
+                                              fontFamily: 'outfit',
+                                              fontSize: ResponsiveSize.text(12),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          );
+                                        }
+                                        final occupancy =
+                                            snapshot.data ?? '0.0';
+                                        return const Text(
+                                          // Keep 12 fixed to match your design
+                                          // (can use ResponsiveSize.text if you prefer)
+                                          '0%', // placeholder will be replaced below
                                           style: TextStyle(
                                             fontFamily: 'outfit',
-                                            fontSize: ResponsiveSize.text(15),
+                                            fontSize: 12,
                                             fontWeight: FontWeight.bold,
+                                            color: Colors.black,
                                           ),
-                                        );
-                                      }
-                                      if (snapshot.hasError) {
-                                        return Text(
-                                          'Error',
-                                          style: TextStyle(
-                                            fontFamily: 'outfit',
-                                            fontSize: ResponsiveSize.text(12),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        );
-                                      }
-                                      final occupancy = snapshot.data ?? '0.0';
-                                      return Text(
-                                        '$occupancy%',
-                                        style: const TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 3),
-                                  child: Text(
-                                    'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first['units'] != null && model.propertyOccupancy.values.first['units'].values.first != null && model.propertyOccupancy.values.first['units'].values.first is Map<String, dynamic> ? '${monthNumberToName(model.propertyOccupancy.values.first['units'].values.first['month'])} ${model.propertyOccupancy.values.first['units'].values.first['year']}' : '$shortMonth $year'}',
-                                    style: TextStyle(
-                                      fontSize: ResponsiveSize.text(7),
-                                      fontFamily: 'outfit',
-                                      fontWeight: FontWeight.normal,
+                                        ).buildWithText('$occupancy%');
+                                      },
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Text(
+                                      'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first['units'] != null && model.propertyOccupancy.values.first['units'].values.first != null && model.propertyOccupancy.values.first['units'].values.first is Map<String, dynamic> ? '${monthNumberToName(model.propertyOccupancy.values.first['units'].values.first['month'])} ${model.propertyOccupancy.values.first['units'].values.first['year']}' : '$shortMonth $year'}',
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.text(7),
+                                        fontFamily: 'outfit',
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
 
-                SizedBox(width: responsiveWidth(7)), // spacing between columns
+                // Gap between columns
+                SizedBox(width: gapBetweenColumns),
 
-                // Right Column
-                Flexible(
+                // Right Column (exact same width)
+                SizedBox(
+                  width: cardWidth,
                   child: Column(
                     children: [
-                      //3rd
+                      // 3rd
                       Card(
                         margin: EdgeInsets.only(bottom: responsiveHeight(10)),
                         color: const Color(0xFF9EEAFF),
                         child: SizedBox(
-                          width: cardWidth,
+                          width: double.infinity, // fill column width
                           height: cardHeightSmall,
                           child: Row(
                             children: [
@@ -350,7 +348,6 @@ class OverviewCard extends StatelessWidget {
                                   Builder(
                                     builder: (context) {
                                       if (model.monthlyBlcOwner.isNotEmpty) {
-                                        // Get the latest month entry (assuming list is sorted newest first)
                                         final latestEntry =
                                             model.monthlyBlcOwner.first;
                                         final year = latestEntry['year'];
@@ -452,17 +449,16 @@ class OverviewCard extends StatelessWidget {
                         ),
                       ),
 
-                      //4th
+                      // 4th
                       Card(
-                        //margin: const EdgeInsets.only(bottom: 20),
+                        margin: EdgeInsets.zero,
                         color: const Color(0xFFDBC7FF),
                         child: Container(
-                          width: cardWidth,
+                          width: double.infinity,
                           height: cardHeightLarge,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                12), // Match card's border radius
-                            image: DecorationImage(
+                            borderRadius: BorderRadius.circular(12),
+                            image: const DecorationImage(
                               image: AssetImage(
                                   'assets/images/overviewContainer4.png'),
                               fit: BoxFit.cover,
@@ -472,11 +468,12 @@ class OverviewCard extends StatelessWidget {
                             child: Column(
                               children: [
                                 RevenueContainer(
-                                    title:
-                                        '${model.revenueLastestYear} Accumulated Profit​',
-                                    icon: Icons.home_outlined,
-                                    overallRevenue: false,
-                                    model: model),
+                                  title:
+                                      '${model.revenueLastestYear} Accumulated Profit​',
+                                  icon: Icons.home_outlined,
+                                  overallRevenue: false,
+                                  model: model,
+                                ),
                               ],
                             ),
                           ),
@@ -487,9 +484,9 @@ class OverviewCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }
@@ -512,31 +509,23 @@ class RevenueContainer extends StatelessWidget {
     final isMobile = Responsive.isMobile(context);
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final cardWidth = isMobile ? screenWidth * 0.42 : screenWidth * 0.5;
-    final cardHeightSmall = isMobile ? screenWidth * 0.20 : screenWidth * 0.13;
     final cardHeightLarge = isMobile ? screenWidth * 0.28 : screenWidth * 0.21;
-
-    final screenHeight = MediaQuery.of(context).size.height;
 
     double responsivePadding = isMobile ? 10 : 20;
     return SizedBox(
-      width: cardWidth,
+      width: double.infinity, // will fill the parent column width
       height: cardHeightLarge,
       child: Stack(
         children: [
           GestureDetector(
-            // onTap: () => model.updateOverallRevenueAmount(),
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 5),
+              padding: const EdgeInsets.symmetric(vertical: 5),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: responsivePadding),
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: (0.5).height,
-                    ),
+                    SizedBox(height: (0.5).height),
                     _buildTitleRow(),
-                    //SizedBox(height: (1.5).height),
                     _buildAmountText(context),
                     _buildDateRow(),
                     Row(
@@ -565,39 +554,12 @@ class RevenueContainer extends StatelessWidget {
   }
 
   Widget _buildTitleRow() {
-    String monthNumberToName(int month) {
-      const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ];
-      if (month >= 1 && month <= 12) {
-        return months[month - 1];
-      } else {
-        return 'Unknown';
-      }
-    }
-
-    DateTime now = DateTime.now();
-    String shortMonth = monthNumberToName(now.month);
-    String year = now.year.toString();
     return Row(
       children: [
-        // SizedBox(width: 3.width),
         Text(
           title,
           style: TextStyle(
             fontFamily: 'outfit',
-            // fontSize: 12.fSize,
             fontSize: ResponsiveSize.text(9),
           ),
         ),
@@ -673,7 +635,6 @@ class RevenueContainer extends StatelessWidget {
             ],
           ),
         ),
-        // SizedBox(width: 1.width),
         FutureBuilder<dynamic>(
           future: overallRevenue ? model.overallBalance : model.overallProfit,
           builder: (context, snapshot) {
@@ -693,6 +654,20 @@ class RevenueContainer extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+// Small helper to replace literal text in a const Text with dynamic content
+extension _TextReplace on Text {
+  Widget buildWithText(String newText) {
+    return Text(
+      newText,
+      style: style,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+      softWrap: softWrap,
     );
   }
 }
