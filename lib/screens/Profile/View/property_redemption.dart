@@ -72,28 +72,28 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Container(
-            //   decoration: BoxDecoration(
-            //     color: Colors.white,
-            //     boxShadow: [
-            //       BoxShadow(
-            //         color: const Color(0xFF3E51FF).withOpacity(0.15),
-            //         blurRadius: 10,
-            //         offset: const Offset(0, 0),
-            //       ),
-            //     ],
-            //     borderRadius: BorderRadius.circular(10),
-            //   ),
-            //   child: SizedBox(
-            //     height: responsiveHeight(350),
-            //     child: ListView.builder(
-            //       itemCount: 1, // Replace with actual data length
-            //       itemBuilder: (context, index) {
-            //         return PropertyPointRecord();
-            //       },
-            //     ),
-            //   ),
-            // ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF3E51FF).withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: SizedBox(
+                height: responsiveHeight(350),
+                child: ListView.builder(
+                  itemCount: 1, // Replace with actual data length
+                  itemBuilder: (context, index) {
+                    return PropertyPointRecord();
+                  },
+                ),
+              ),
+            ),
             SizedBox(height: responsiveHeight(15)),
             Center(
               child: Text(
