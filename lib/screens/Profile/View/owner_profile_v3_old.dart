@@ -132,55 +132,249 @@ class OwnerProfile_v3 extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20.fSize),
+                      // Padding(
+                      //   padding: EdgeInsets.only(left: 42.fSize),
+                      //   child: Container(
+                      //     alignment: Alignment.centerLeft,
+                      //     width: responsiveWidth(300),
+                      //     height: responsiveHeight(60),
+                      //     decoration: BoxDecoration(
+                      //       color: const Color(0xFFD5D5FF),
+                      //       borderRadius: const BorderRadius.all(
+                      //         Radius.circular(10),
+                      //       ),
+                      //       border: Border.all(
+                      //         color: const Color(0xFFB6B6FF),
+                      //         width: 2,
+                      //       ),
+                      //     ),
+                      //     child: Row(
+                      //       children: [
+                      //         Padding(
+                      //           padding: const EdgeInsets.symmetric(
+                      //               vertical: 8.0, horizontal: 8.0),
+                      //           child: CircleAvatar(
+                      //             radius: 20,
+                      //             backgroundColor: const Color(0xFFF9F8FF),
+                      //             child: Image.asset(
+                      //               'assets/images/property_wallet.png',
+                      //               width: 42.fSize,
+                      //               height: 42.fSize,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         SizedBox(width: 15.fSize),
+                      //         Column(
+                      //           crossAxisAlignment: CrossAxisAlignment.start,
+                      //           mainAxisAlignment: MainAxisAlignment.start,
+                      //           children: [
+                      //             Padding(
+                      //               padding: const EdgeInsets.only(top: 8.0),
+                      //               child: Row(
+                      //                 mainAxisAlignment:
+                      //                     MainAxisAlignment.start,
+                      //                 children: [
+                      //                   Text(
+                      //                     '12,500',
+                      //                     style: TextStyle(
+                      //                         fontFamily: 'outfit',
+                      //                         fontWeight: FontWeight.bold,
+                      //                         fontSize: responsiveFont(12)),
+                      //                   ),
+                      //                   Text(
+                      //                     ' Point',
+                      //                     style: TextStyle(
+                      //                         fontFamily: 'outfit',
+                      //                         fontSize: responsiveFont(12)),
+                      //                   )
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //             Text(
+                      //               'Expired on 31/12/2023',
+                      //               style: TextStyle(
+                      //                 fontFamily: 'outfit',
+                      //                 fontSize: responsiveFont(10),
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('My Profile',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: 18.fSize,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12.fSize),
 
+                      InkWell(
+                        highlightColor: Colors.transparent,
+                        //this widget responds to touch actions
+                        onTap: () {
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      PersonalInformation(),
+                              transitionDuration:
+                                  const Duration(milliseconds: 300),
+                              reverseTransitionDuration:
+                                  const Duration(milliseconds: 300),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: ScaleTransition(
+                                    scale: Tween<double>(
+                                      begin: 0.95,
+                                      end: 1.0,
+                                    ).animate(CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeInOut,
+                                    )),
+                                    child: child,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor: const Color(0xFFF9F8FF),
+                                child: Image.asset(
+                                  'assets/images/profile_person_outline.png',
+                                  width: 42.fSize,
+                                  height: 42.fSize,
+                                ),
+                              ),
+                              SizedBox(width: 20.fSize),
+                              Text(
+                                'Personal Information',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: 16.fSize,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Spacer(),
+                              const Icon(Icons.arrow_forward_ios,
+                                  size: 20, color: Colors.grey),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      InkWell(
+                        //this widget responds to touch actions
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (_) => const FinancialDetails()),
+                          );
+                        },
+                        highlightColor: Colors.transparent,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor: const Color(0xFFFFF2E0),
+                                child: Image.asset(
+                                  'assets/images/profile_financial_details.png',
+                                  width: 42.fSize,
+                                  height: 42.fSize,
+                                ),
+                              ),
+                              SizedBox(width: 20.fSize),
+                              Text(
+                                'Financial Details',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: 16.fSize,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Spacer(),
+                              const Icon(Icons.arrow_forward_ios,
+                                  size: 20, color: Colors.grey),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 25.fSize),
                       Row(
                         children: [
-                          _buildRow(context, label: 'Name'),
-                          SizedBox(width: responsiveWidth(8)),
-                          model.users.isNotEmpty
-                              ? _buildData(context,
-                                  data: model.users.first.ownerFullName ?? '')
-                              : const Text('Loading...'),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('Redemption',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: 18.fSize,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                          ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          _buildRow(context, label: 'Identification'),
-                          SizedBox(width: responsiveWidth(8)),
-                          model.users.isNotEmpty
-                              ? _buildData(context, data: '000000-00-0000')
-                              : const Text('Loading...'),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          _buildRow(context, label: 'Email'),
-                          SizedBox(width: responsiveWidth(8)),
-                          model.users.isNotEmpty
-                              ? _buildData(context,
-                                  data: model.users.first.ownerEmail ?? '')
-                              : const Text('Loading...'),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          _buildRow(context, label: 'Contact No.'),
-                          SizedBox(width: responsiveWidth(8)),
-                          model.users.isNotEmpty
-                              ? _buildData(context,
-                                  data: model.users.first.ownerContact ?? '')
-                              : const Text('Loading...'),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          _buildRow(context, label: 'Address'),
-                          SizedBox(width: responsiveWidth(8)),
-                          model.users.isNotEmpty
-                              ? _buildData(context,
-                                  data: model.users.first.ownerAddress ?? '')
-                              : const Text('Loading...'),
-                        ],
+                      SizedBox(height: 12.fSize),
+                      InkWell(
+                        focusColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        //this widget responds to touch actions
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (_) => PropertyRedemption()),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor:
+                                    Color.fromARGB(255, 255, 243, 248),
+                                child: Image.asset(
+                                  'assets/images/property.png',
+                                  width: 42.fSize,
+                                  height: 42.fSize,
+                                ),
+                              ),
+                              SizedBox(width: 20.fSize),
+                              Text(
+                                'Property Redemption',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: 16.fSize,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Spacer(),
+                              const Icon(Icons.arrow_forward_ios,
+                                  size: 20, color: Colors.grey),
+                            ],
+                          ),
+                        ),
                       ),
 
                       SizedBox(height: 25.fSize),
@@ -449,62 +643,6 @@ Widget buildInfoInRow(String info) {
           ),
         ),
       ],
-    ),
-  );
-}
-
-Widget _buildRow(BuildContext context, {required String label}) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final screenHeight = MediaQuery.of(context).size.height;
-
-  double responsiveWidth(double value) =>
-      (value / 375.0) * screenWidth; // base width
-  double responsiveHeight(double value) =>
-      (value / 812.0) * screenHeight; // base height
-  double responsiveFont(double value) =>
-      (value / 812.0) * screenHeight; // font scaling
-
-  return SizedBox(
-    width: responsiveWidth(140),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //Image.asset('assets/images/$icon'),
-          SizedBox(width: responsiveWidth(10)),
-          Text(
-            label,
-            style:
-                TextStyle(fontFamily: 'outfit', fontSize: responsiveFont(13)),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _buildData(BuildContext context, {required String data}) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final screenHeight = MediaQuery.of(context).size.height;
-
-  double responsiveWidth(double value) =>
-      (value / 375.0) * screenWidth; // base width
-  double responsiveHeight(double value) =>
-      (value / 812.0) * screenHeight; // base height
-  double responsiveFont(double value) =>
-      (value / 812.0) * screenHeight; // font scaling
-
-  return SizedBox(
-    width: responsiveWidth(190),
-    child: Text(
-      data,
-      maxLines: 6,
-      style: TextStyle(
-          fontFamily: 'outfit',
-          fontSize: responsiveFont(14),
-          fontWeight: FontWeight.bold),
     ),
   );
 }

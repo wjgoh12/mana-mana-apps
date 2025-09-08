@@ -31,6 +31,42 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   List<Map<String, dynamic>> locationByMonth = [];
   List<Map<String, dynamic>> propertyContractType = [];
   Map<String, dynamic> propertyOccupancy = {};
+  Map<String, Future<String>> _occupancyCache = {};
+
+  final Map<String, dynamic> _propertyDetailsCache = {};
+
+  Future<void> fetchPropertyDetails(String location) async {
+    if (_propertyDetailsCache.containsKey(location)) return; // already cached
+
+    // 🔹 Replace this with your actual API/service call
+    final data = await _fetchFromApi(location);
+
+    _propertyDetailsCache[location] = data;
+    notifyListeners();
+  }
+
+  dynamic getPropertyDetails(String location) {
+    return _propertyDetailsCache[location];
+  }
+
+  Future<dynamic> _fetchFromApi(String location) async {
+    await Future.delayed(const Duration(milliseconds: 600)); // fake delay
+    return {
+      'location': location,
+      'detail': 'Preloaded detail for $location',
+      'fetchedAt': DateTime.now().toString(),
+    };
+  }
+
+  Future<String> getTotalOccupancy(String location) {
+    if (_occupancyCache.containsKey(location)) {
+      return _occupancyCache[location]!;
+    }
+
+    final future = calculateTotalOccupancyForLocation(location);
+    _occupancyCache[location] = future;
+    return future;
+  }
 
   Future get overallBalance => Future.delayed(
       const Duration(milliseconds: 500),

@@ -27,14 +27,14 @@ class AllPropertyScreen extends StatelessWidget {
                 : Column(
                     children: [
                       // Add PropertyTitleDropdown shere
-                      const Padding(
-                        padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
-                        child: Row(
-                          children: [
-                            PropertyTitleDropdown(currentPage: 'Property List'),
-                          ],
-                        ),
-                      ),
+                      // const Padding(
+                      //   padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                      //   child: Row(
+                      //     children: [
+                      //       PropertyTitleDropdown(currentPage: 'Property List'),
+                      //     ],
+                      //   ),
+                      // ),
                       // Main content
                       Expanded(
                         child: ListView(

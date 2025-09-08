@@ -230,6 +230,8 @@ class NewDashboardV3 extends StatelessWidget {
                           ),
                         ),
 
+                        SizedBox(height: 2.height),
+
                         // Properties section
                         Container(
                           width: screenWidth,

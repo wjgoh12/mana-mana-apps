@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/user_model.dart';
+import 'package:mana_mana_app/repository/booking_repo.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 
@@ -14,10 +15,10 @@ class OwnerProfileVM extends ChangeNotifier {
   final PropertyListRepository ownerPropertyListRepository =
       PropertyListRepository();
   final UserPointBalance = [];
+  final RedemptionRepository OwnerBookingRepository = RedemptionRepository();
 
   bool get showMyInfo => _showMyInfo;
 
-  // Add helper methods to safely access data
   String getOwnerName() {
     if (_users.isEmpty) return 'No Information';
     return _users.first.ownerFullName?.toString() ?? 'No Information';
@@ -46,6 +47,12 @@ class OwnerProfileVM extends ChangeNotifier {
   String getAccountNumber() {
     if (_ownerUnits.isEmpty) return 'No Information';
     return _ownerUnits.first.accountnumber?.toString() ?? 'No Information';
+  }
+
+  String getUnitAvailablePoints() {
+    if (UserPointBalance.isEmpty) return 'No Information';
+    return UserPointBalance.first.unitAvailablePoints?.toString() ??
+        'No Information';
   }
 
   Future<void> fetchData() async {

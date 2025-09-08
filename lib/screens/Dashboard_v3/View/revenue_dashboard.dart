@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class RevenueDashboard extends StatelessWidget {
-  final NewDashboardVM model;
+  final NewDashboardVM_v3 model;
   const RevenueDashboard({required this.model, Key? key}) : super(key: key);
 
   @override
@@ -22,9 +23,8 @@ class RevenueDashboard extends StatelessWidget {
         // SizedBox(width: 10),
         Expanded(
           child: RevenueContainer(
-              title:
-              '${model.revenueLastestYear} Accumulated Profit​',
-                  // '${DateTime.now().month != 1 ? DateTime.now().year : DateTime.now().year - 1} Accumulated Profit​',
+              title: '${model.revenueLastestYear} Accumulated Profit​',
+              // '${DateTime.now().month != 1 ? DateTime.now().year : DateTime.now().year - 1} Accumulated Profit​',
               icon: Icons.home_outlined,
               overallRevenue: false,
               model: model),
@@ -38,7 +38,7 @@ class RevenueContainer extends StatelessWidget {
   final String title;
   final IconData icon;
   final bool overallRevenue;
-  final NewDashboardVM model;
+  final NewDashboardVM_v3 model;
   const RevenueContainer({
     Key? key,
     required this.title,

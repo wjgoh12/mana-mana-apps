@@ -21,21 +21,20 @@ class RedemptionRepository {
     return res ?? [];
   }
 
-  /// Get available rooms for a date range
-  Future<List<dynamic>> getAvailableRooms({
-    required String location,
-    required String checkIn,
-    required String checkOut,
-    required int rooms,
-  }) async {
-    final url =
-        "${ApiEndpoint.getRoomRate}?location=$location&checkIn=$checkIn&checkOut=$checkOut&rooms=$rooms";
-    final res = await _apiService.post(url);
+  Future<List<dynamic>> getAvailableRoomTypes() async {
+    final res = await _apiService.post(ApiEndpoint.getRoomType);
     return res ?? [];
   }
 
-  Future<List<dynamic>> getAvailableRoomTypes() async {
-    final res = await _apiService.post(ApiEndpoint.getRoomType);
+  Future<List<dynamic>> getUnitAvailablePoints({
+    required String unitNo,
+  }) async {
+    final data = {
+      "unitNo": unitNo,
+    };
+
+    final res =
+        await _apiService.post(ApiEndpoint.getUnitAvailablePoints, data: data);
     return res ?? [];
   }
 }

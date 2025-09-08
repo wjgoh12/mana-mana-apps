@@ -1,17 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
-import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
-import 'package:mana_mana_app/provider/global_user_state.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 
 class PropertyListRepository {
   final ApiService _apiService = ApiService();
@@ -28,7 +21,6 @@ class PropertyListRepository {
     });
   }
 
-  @override
   Future<Uint8List?> downloadPdfStatement(
       BuildContext context,
       property,
@@ -86,7 +78,6 @@ class PropertyListRepository {
     }
   }
 
-  @override
   Future<Uint8List?> downloadPdfAnnualStatement(BuildContext context, property,
       selectedYearValue, selectedType, selectedUnitNo, userData) async {
     final Map<String, dynamic> data = {

@@ -16,9 +16,19 @@ class ApiEndpoint {
       '/mobile/enqs/propertyOverviewOccupanceRate';
   static const String getCalendarBlockDate =
       '/mobile/enqs/getCalendarBlockedDates';
-  static const String getAllRedemptionDate =
-      '/mobile/enqs/getAllRedemptionRate ';
+  static const String getAllState =
+      '/mobile/enqs/getAllRedemptionRate?state=Johor';
   static const String getRoomRate =
       '/mobile/enqs/calendarBooking/rooms?location=SCARLETZ&checkIn=2025-10-14&checkOut=2025-10-17&rooms=2';
   static const String getRoomType = '/mobile/enqs/getAvailableRoomTypes';
+  static const String getRedemptionAndBalancePoints =
+      '/mobile/enqs/redemption/getRedemptionPointsAndBalancePoints';
+  static const String saveBookingDetailsAndRoomType =
+      '/mobile/enqs/redemption/saveBookingDetailRoomType';
+  static const String getUnitAvailablePoints =
+      '/mobile/enqs/redemption/getUnitAvailablePoint';
+  static const String getBookingHistory =
+      '/mobile/enqs/redemption/getBookingHistory';
+  static const String getAllRedemptionRate =
+      '/mobile/enqs/getAllRedemptionRate';
 }
