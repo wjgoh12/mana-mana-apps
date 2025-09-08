@@ -9,6 +9,7 @@ class OwnerProfileVM extends ChangeNotifier {
   bool _showMyInfo = true;
   final GlobalDataManager _globalDataManager = GlobalDataManager();
   final UserPointBalance = [];
+  final RedemptionRepository OwnerBookingRepository = RedemptionRepository();
 
   bool get showMyInfo => _showMyInfo;
 

@@ -674,3 +674,59 @@ Widget buildInfoInRow(String info) {
     ),
   );
 }
+
+Widget _buildRow(BuildContext context, {required String label}) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
+
+  double responsiveWidth(double value) =>
+      (value / 375.0) * screenWidth; // base width
+  double responsiveHeight(double value) =>
+      (value / 812.0) * screenHeight; // base height
+  double responsiveFont(double value) =>
+      (value / 812.0) * screenHeight; // font scaling
+
+  return SizedBox(
+    width: responsiveWidth(140),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          //Image.asset('assets/images/$icon'),
+          SizedBox(width: responsiveWidth(10)),
+          Text(
+            label,
+            style:
+                TextStyle(fontFamily: 'outfit', fontSize: responsiveFont(13)),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildData(BuildContext context, {required String data}) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
+
+  double responsiveWidth(double value) =>
+      (value / 375.0) * screenWidth; // base width
+  double responsiveHeight(double value) =>
+      (value / 812.0) * screenHeight; // base height
+  double responsiveFont(double value) =>
+      (value / 812.0) * screenHeight; // font scaling
+
+  return SizedBox(
+    width: responsiveWidth(190),
+    child: Text(
+      data,
+      maxLines: 6,
+      style: TextStyle(
+          fontFamily: 'outfit',
+          fontSize: responsiveFont(14),
+          fontWeight: FontWeight.bold),
+    ),
+  );
+}

@@ -240,6 +240,8 @@ class NewDashboardV3 extends StatelessWidget {
                           ),
                         ),
 
+                        SizedBox(height: 2.height),
+
                         // Properties section
                         Container(
                           width: screenWidth,
@@ -259,7 +261,7 @@ class NewDashboardV3 extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              AllPropertyScreen(),
+                                              AllPropertyNewScreen(),
                                         ),
                                       );
                                     },

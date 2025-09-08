@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
+
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class ChoosePropertyLocation extends StatelessWidget {
