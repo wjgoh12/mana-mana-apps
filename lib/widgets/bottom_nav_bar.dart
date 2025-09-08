@@ -115,7 +115,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         case 1:
           final newDashboardVM = context.read<NewDashboardVM>();
           Navigator.pushReplacement(context,
-              _createRoute(PropertySummaryScreen(), transitionType: 'fade'));
+              _createRoute(const AllPropertyScreen(), transitionType: 'fade'));
           break;
         case 2:
           Navigator.pushReplacement(

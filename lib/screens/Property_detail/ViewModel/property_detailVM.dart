@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/AnnualStatementPdfViewerScreen.dart';
@@ -16,24 +17,18 @@ class PropertyDetailVM extends ChangeNotifier {
 
   String? selectedType;
   String? selectedUnitNo;
-  String selectedView = 'Overview'; // Default to Overview
-  List<OwnerPropertyList> ownerData = [];
-  List<SingleUnitByMonth> unitByMonth = [];
+  String selectedView =
+      'UnitDetails'; // Default to UnitDetails instead of Overview
   List<String> propertyOccupancy =
       []; // List to store PropertyOccupancy objects>
-  List<User> _users = [];
-  List<User> get users => _users;
-  List<String> yearItems = [];
-  List<String> monthItems = [];
-  List<String> typeItems = [];
   String? _selectedYearValue; // Don't initialize with any value
   String? get selectedYearValue => _selectedYearValue;
   List<Map<String, dynamic>> recentActivities = [];
+
   PropertyDetailVM() {
     _selectedYearValue = null;
-    // print(
-    //     'PropertyDetailVM constructor - selectedYearValue initialized to: $_selectedYearValue');
   }
+
   String? selectedMonthValue;
   String? selectedAnnualYearValue;
   int unitLatestMonth = 0;
@@ -48,12 +43,21 @@ class PropertyDetailVM extends ChangeNotifier {
   bool get isDownloading => _isDownloading;
   bool get isAnnualDownloading => _annual_isDownloading;
   bool get isDateLoading => _isDateLoading;
-  // List<singleUnitByMonth> selectedUnitBlc = [];
+
   var selectedUnitBlc;
   var selectedUnitPro;
   final PropertyListRepository ownerPropertyListRepository =
       PropertyListRepository();
   final UserRepository userRepository = UserRepository();
+  final GlobalDataManager _globalDataManager = GlobalDataManager();
+
+  // Getters that delegate to GlobalDataManager
+  List<OwnerPropertyList> get ownerData => _globalDataManager.ownerUnits;
+  List<SingleUnitByMonth> get unitByMonth => _globalDataManager.unitByMonth;
+  List<User> get users => _globalDataManager.users;
+  List<String> get yearItems => _getYearItems();
+  List<String> get monthItems => _getMonthItems();
+  List<String> get typeItems => _getTypeItems();
 
   get contractType => null;
 
@@ -61,204 +65,98 @@ class PropertyDetailVM extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
+    // Use global data manager to get data (no API calls)
+    await _globalDataManager.initializeData();
+    
     locationByMonth = newLocationByMonth;
-    _users = await userRepository.getUsers();
 
-    // if (locationByMonth.isEmpty) {
-    //   print('Warning: locationByMonth is empty');
-    //   isLoading = false;
-    //   notifyListeners();
-    //   return;
-    // }
+    if (locationByMonth.isEmpty) {
+      isLoading = false;
+      notifyListeners();
+      return;
+    }
 
     property = locationByMonth[0]['location'];
 
-    if (selectedView.isEmpty) {
-      selectedView = 'Overview';
+    // Always default to UnitDetails
+    selectedView = 'UnitDetails';
+
+    // Set location details based on property
+    _setLocationDetails();
+
+    // Set initial selections from ownerData - Default to first unit
+    if (ownerData.isNotEmpty) {
+      final firstUnit = ownerData.firstWhere(
+        (data) => data.location == property,
+        orElse: () => ownerData.first
+      );
+      
+      selectedType = firstUnit.type?.toString() ?? '';
+      selectedUnitNo = firstUnit.unitno?.toString() ?? '';
     }
 
+    // Set initial values for dropdowns - Default to first unit if above didn't work
+    final typeItemsList = typeItems;
+    if (typeItemsList.isNotEmpty && (selectedType == null || selectedType!.isEmpty)) {
+      final firstItem = typeItemsList.first;
+      selectedType = firstItem.split(" (")[0];
+      selectedUnitNo = firstItem.split(" (")[1].replaceAll(")", "");
+    }
+
+    // Calculate latest year and month for selected unit
+    _calculateLatestYearMonth();
+
+    // Set selected unit data
+    _setSelectedUnitData();
+
+    // Auto-select latest year for eStatements
+    final yearItemsList = _getYearItems();
+    if (yearItemsList.isNotEmpty) {
+      _selectedYearValue = yearItemsList.first; // First item is latest (sorted descending)
+    }
+    
+    selectedAnnualYearValue = _selectedYearValue;
+    
+    _buildRecentActivities();
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void _setLocationDetails() {
     switch (property.toUpperCase()) {
       case "EXPRESSIONZ":
         locationRoad = "Jalan Tun Razak";
+        locationState = "Kuala Lumpur";
         break;
       case "CEYLONZ":
         locationRoad = "Persiaran Raja Chulan";
+        locationState = "Kuala Lumpur";
         break;
       case "SCARLETZ":
         locationRoad = "Jalan Yap Kwan Seng";
+        locationState = "Kuala Lumpur";
         break;
       case "MILLERZ":
         locationRoad = "Old Klang Road";
-        break;
-      case "MOSSAZ":
-        locationRoad = "Empire City";
-        break;
-      case "PAXTONZ":
-        locationRoad = "Empire City";
-        break;
-      default:
-        locationRoad = "";
-        break;
-    }
-
-    switch (property.toUpperCase()) {
-      case "EXPRESSIONZ":
-        locationState = "Kuala Lumpur";
-        break;
-      case "CEYLONZ":
-        locationState = "Kuala Lumpur";
-        break;
-      case "SCARLETZ":
-        locationState = "Kuala Lumpur";
-        break;
-      case "MILLERZ":
         locationState = "Old Klang Road";
         break;
       case "MOSSAZ":
+        locationRoad = "Empire City";
         locationState = "Empire City";
         break;
       case "PAXTONZ":
+        locationRoad = "Empire City";
         locationState = "Empire City";
         break;
       default:
+        locationRoad = "";
         locationState = "";
         break;
     }
-    ownerData = await ownerPropertyListRepository.getOwnerUnit();
-    if (ownerData.isNotEmpty) {
-      // Only set initial values if not already set
-      if (selectedType == null || selectedType!.isEmpty) {
-        selectedType = ownerData
-            .firstWhere((data) => data.location == property,
-                orElse: () => OwnerPropertyList(type: '', unitno: ''))
-            .type
-            .toString();
-      }
-      if (selectedUnitNo == null || selectedUnitNo!.isEmpty) {
-        selectedUnitNo = ownerData
-            .firstWhere((data) => data.location == property,
-                orElse: () => OwnerPropertyList(type: '', unitno: ''))
-            .unitno
-            .toString();
-      }
-    }
+  }
 
-    // Build typeItems from API ownerData and de-duplicate to avoid same display values multiple times
-    final List<String> builtTypeItems = ownerData
-        .where((types) => types.location == property)
-        .map((types) => '${types.type} (${types.unitno})')
-        .toList();
-    final Set<String> seen = <String>{};
-    typeItems = builtTypeItems.where((e) => seen.add(e)).toList();
-    // old data
-    // typeItems = ownerData
-    //     .where((types) => types.location == property)
-    //     .map((types) => '${types.type} (${types.unitno})')
-    //     .toList();
-    if (typeItems.isNotEmpty) {
-      // If initial values were provided (e.g., from navigation), respect them
-      if (selectedType == null || selectedType!.isEmpty) {
-        selectedType = typeItems.first.split(" (")[0];
-      }
-      if (selectedUnitNo == null || selectedUnitNo!.isEmpty) {
-        selectedUnitNo = typeItems.first.split(" (")[1].replaceAll(")", "");
-      }
-    }
-
-    unitByMonth = await ownerPropertyListRepository.getUnitByMonth();
-    // unitByMonth = [
-    //   SingleUnitByMonth(
-    //       total: 4200.31,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'D',
-    //       stranscode: 'NOPROF',
-    //       sunitno: '45-99.99',
-    //       imonth: 1,
-    //       iyear: 2025),
-    //   SingleUnitByMonth(
-    //       total: 1842.01,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'D',
-    //       stranscode: 'OWNBAL',
-    //       sunitno: '45-99.99',
-    //       imonth: 1,
-    //       iyear: 2025),
-    //   SingleUnitByMonth(
-    //       total: 4200.31,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'D',
-    //       stranscode: 'NOPROF',
-    //       sunitno: '45-99.99',
-    //       imonth: 5,
-    //       iyear: 2024),
-    //   SingleUnitByMonth(
-    //       total: 1842.01,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'D',
-    //       stranscode: 'OWNBAL',
-    //       sunitno: '45-99.99',
-    //       imonth: 5,
-    //       iyear: 2024),
-    //   SingleUnitByMonth(
-    //       total: 4200.31,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'D',
-    //       stranscode: 'NOPROF',
-    //       sunitno: '45-99.99',
-    //       imonth: 6,
-    //       iyear: 2024),
-    //   SingleUnitByMonth(
-    //       total: 1842.01,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'D',
-    //       stranscode: 'OWNBAL',
-    //       sunitno: '45-99.99',
-    //       imonth: 6,
-    //       iyear: 2024),
-    //   SingleUnitByMonth(
-    //       total: 1234.0,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'D',
-    //       stranscode: 'NOPROF',
-    //       sunitno: '45-99.99',
-    //       imonth: 12,
-    //       iyear: 2024),
-    //   SingleUnitByMonth(
-    //       total: 1842.01,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'Premium 2 Bedroom',
-    //       stranscode: 'OWNBAL',
-    //       sunitno: '2000-2100-55',
-    //       imonth: 1,
-    //       iyear: 2025),
-    //   SingleUnitByMonth(
-    //       total: 1234.0,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'Premium 2 Bedroom',
-    //       stranscode: 'NOPROF',
-    //       sunitno: '2000-2100-55',
-    //       imonth: 1,
-    //       iyear: 2025),
-    //   SingleUnitByMonth(
-    //       total: 1842.01,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'Premium 2 Bedroom',
-    //       stranscode: 'OWNBAL',
-    //       sunitno: '2000-2100-55',
-    //       imonth: 11,
-    //       iyear: 2024),
-    //   SingleUnitByMonth(
-    //       total: 1234.0,
-    //       slocation: 'SCARLETZ',
-    //       stype: 'Premium 2 Bedroom',
-    //       stranscode: 'NOPROF',
-    //       sunitno: '2000-2100-55',
-    //       imonth: 11,
-    //       iyear: 2024),
-    // ];
-
-    //propertyOccupancy = await ownerPropertyListRepository.getUnitByMonth();
-
+  void _calculateLatestYearMonth() {
     var filteredYears = unitByMonth
         .where((unit) =>
             unit.slocation == property &&
@@ -266,12 +164,14 @@ class PropertyDetailVM extends ChangeNotifier {
             unit.sunitno == selectedUnitNo)
         .map((unit) => unit.iyear ?? 0)
         .toList();
+
     if (filteredYears.isNotEmpty) {
       unitLatestYear = filteredYears
           .reduce((value, element) => value > element ? value : element);
     } else {
       unitLatestYear = 0;
     }
+
     var filteredMonths = unitByMonth
         .where((unit) =>
             unit.slocation == property &&
@@ -287,7 +187,9 @@ class PropertyDetailVM extends ChangeNotifier {
     } else {
       unitLatestMonth = 0;
     }
+  }
 
+  void _setSelectedUnitData() {
     selectedUnitBlc = unitByMonth.firstWhere(
         (unit) =>
             unit.slocation == property &&
@@ -307,65 +209,12 @@ class PropertyDetailVM extends ChangeNotifier {
             unit.iyear == unitLatestYear &&
             unit.stranscode == 'NOPROF',
         orElse: () => SingleUnitByMonth(total: 0.00));
-
-    if (unitByMonth.isNotEmpty) {
-      yearItems = unitByMonth
-          .where((item) =>
-              item.slocation == property &&
-              item.stype == selectedType &&
-              item.sunitno == selectedUnitNo)
-          .map((item) => item.iyear.toString())
-          .toSet()
-          .toList()
-        ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-      monthItems = []; // Start with empty months until year is selected
-      selectedMonthValue = null; // Also keep month as null
-    } else {
-      yearItems = ['-'];
-      monthItems = ['-'];
-    }
-    selectedAnnualYearValue = _selectedYearValue;
-
-    Future<void> fetchRecentActivities() async {
-      final apiResponse = await ownerPropertyListRepository.getUnitByMonth();
-
-      // Keep ALL records as they are, don’t group
-      recentActivities = apiResponse.map((item) {
-        return {
-          "unitNo": item.sunitno,
-          "location": item.slocation,
-          "month": item.imonth,
-          "year": item.iyear,
-        };
-      }).toList();
-
-      // Sort so most recent is first
-      recentActivities.sort((a, b) {
-        if (a["year"] == b["year"]) {
-          return (b["month"] as int).compareTo(a["month"] as int);
-        }
-        return (b["year"] as int).compareTo(a["year"] as int);
-      });
-
-      notifyListeners();
-    }
-
-    isLoading = false;
-    //print('PropertyDetailVM: Data loading completed. TypeItems count: ${typeItems.length}');
-    notifyListeners();
   }
 
-  Future<void> updateSelectedTypeUnit(
-      String newSelectedType, String newSelectedUnitNo) async {
-    _isDateLoading = true;
-    notifyListeners();
+  List<String> _getYearItems() {
+    if (selectedType == null || selectedUnitNo == null) return [];
 
-    selectedType = newSelectedType;
-    selectedUnitNo = newSelectedUnitNo;
-    // Don't change selectedView here - it should remain as 'UnitDetails'
-
-    // Update year and month items for the selected unit
-    yearItems = unitByMonth
+    return unitByMonth
         .where((item) =>
             item.slocation == property &&
             item.stype == selectedType &&
@@ -374,12 +223,16 @@ class PropertyDetailVM extends ChangeNotifier {
         .toSet()
         .toList()
       ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+  }
 
-    _selectedYearValue = yearItems.isNotEmpty
-        ? yearItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
-        : null;
+  List<String> _getMonthItems() {
+    if (selectedType == null ||
+        selectedUnitNo == null ||
+        _selectedYearValue == null) {
+      return [];
+    }
 
-    monthItems = unitByMonth
+    return unitByMonth
         .where((item) =>
             item.iyear.toString() == _selectedYearValue &&
             item.slocation == property &&
@@ -389,60 +242,63 @@ class PropertyDetailVM extends ChangeNotifier {
         .toSet()
         .toList()
       ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+  }
 
-    selectedMonthValue = monthItems.isNotEmpty
-        ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
+  List<String> _getTypeItems() {
+    final List<String> builtTypeItems = ownerData
+        .where((types) => types.location == property)
+        .map((types) => '${types.type} (${types.unitno})')
+        .toList();
+
+    final Set<String> seen = <String>{};
+    return builtTypeItems.where((e) => seen.add(e)).toList();
+  }
+
+  void _buildRecentActivities() {
+    recentActivities = unitByMonth.map((item) {
+      return {
+        "unitNo": item.sunitno,
+        "location": item.slocation,
+        "month": item.imonth,
+        "year": item.iyear,
+      };
+    }).toList();
+
+    // Sort so most recent is first
+    recentActivities.sort((a, b) {
+      if (a["year"] == b["year"]) {
+        return (b["month"] as int).compareTo(a["month"] as int);
+      }
+      return (b["year"] as int).compareTo(a["year"] as int);
+    });
+  }
+
+  Future<void> updateSelectedTypeUnit(
+      String newSelectedType, String newSelectedUnitNo) async {
+    _isDateLoading = true;
+    notifyListeners();
+
+    selectedType = newSelectedType;
+    selectedUnitNo = newSelectedUnitNo;
+
+    // Update year selection to latest for this unit
+    final yearItemsList = _getYearItems();
+    _selectedYearValue = yearItemsList.isNotEmpty
+        ? yearItemsList.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : null;
 
-    var filteredYears = unitByMonth
-        .where((unit) =>
-            unit.slocation == property &&
-            unit.stype == selectedType &&
-            unit.sunitno == selectedUnitNo)
-        .map((unit) => unit.iyear ?? 0)
-        .toList();
+    // Update month selection
+    final monthItemsList = _getMonthItems();
+    selectedMonthValue = monthItemsList.isNotEmpty
+        ? monthItemsList.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
+        : null;
 
-    if (filteredYears.isNotEmpty) {
-      unitLatestYear = filteredYears
-          .reduce((value, element) => value > element ? value : element);
-    }
+    // Recalculate latest year and month
+    _calculateLatestYearMonth();
 
-    var filteredMonths = unitByMonth
-        .where((unit) =>
-            unit.slocation == property &&
-            unit.stype == selectedType &&
-            unit.sunitno == selectedUnitNo &&
-            unit.iyear == unitLatestYear)
-        .map((unit) => unit.imonth ?? 0)
-        .toList();
+    // Update selected unit data
+    _setSelectedUnitData();
 
-    if (filteredMonths.isNotEmpty) {
-      unitLatestMonth = filteredMonths
-          .reduce((value, element) => value > element ? value : element);
-    }
-
-    // Update selectedUnitBlc and selectedUnitPro for the new unit
-    selectedUnitBlc = unitByMonth.firstWhere(
-        (unit) =>
-            unit.slocation == property &&
-            unit.stype == selectedType &&
-            unit.sunitno == selectedUnitNo &&
-            unit.imonth == unitLatestMonth &&
-            unit.iyear == unitLatestYear &&
-            unit.stranscode == 'OWNBAL',
-        orElse: () => SingleUnitByMonth(total: 0.00));
-
-    selectedUnitPro = unitByMonth.firstWhere(
-        (unit) =>
-            unit.slocation == property &&
-            unit.stype == selectedType &&
-            unit.sunitno == selectedUnitNo &&
-            unit.imonth == unitLatestMonth &&
-            unit.iyear == unitLatestYear &&
-            unit.stranscode == 'NOPROF',
-        orElse: () => SingleUnitByMonth(total: 0.00));
-
-    // Remove artificial delay for better performance
     _isDateLoading = false;
     notifyListeners();
   }
@@ -450,23 +306,15 @@ class PropertyDetailVM extends ChangeNotifier {
   Future<void> updateSelectedYear(String newSelectedYear) async {
     _isMonthLoadng = true;
     notifyListeners();
-    // monthItems = ['0','1','2','3','4','5','6','7','8','9','10','11','12'];
+
     _selectedYearValue = newSelectedYear;
-    monthItems = unitByMonth
-        .where((item) =>
-            item.iyear.toString() == selectedYearValue &&
-            item.slocation == property &&
-            item.stype == selectedType &&
-            item.sunitno == selectedUnitNo)
-        .map((item) => item.imonth.toString())
-        .toSet()
-        .toList()
-      ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-    selectedMonthValue = monthItems.isNotEmpty
-        ? monthItems.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
+
+    // Month items will be automatically updated through the getter
+    final monthItemsList = _getMonthItems();
+    selectedMonthValue = monthItemsList.isNotEmpty
+        ? monthItemsList.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : null;
-    // selectedYearValue = newSelectedYear;
-    // Remove artificial delay for better performance
+
     _isMonthLoadng = false;
     notifyListeners();
   }
@@ -487,55 +335,75 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   Future<void> downloadPdfStatement(BuildContext context) async {
-    _isDownloading = true;
-    notifyListeners();
-    // print(property);
-    // print(selectedYearValue);
-    // print(selectedMonthValue);
-    // print(selectedType);
-    // print(selectedUnitNo);
-    final bytes = await ownerPropertyListRepository.downloadPdfStatement(
+    try {
+      print('check');
+      _isDownloading = true;
+      notifyListeners();
+
+      final bytes = await ownerPropertyListRepository.downloadPdfStatement(
         context,
         property,
         selectedYearValue,
         selectedMonthValue,
         selectedType,
         selectedUnitNo,
-        _users);
-    if (bytes != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PdfViewerFromMemory(
-            property: property,
-            year: selectedYearValue,
-            month: selectedMonthValue,
-            unitType: selectedType,
-            unitNo: selectedUnitNo,
-            pdfData: bytes, // Replace with your PDF URL
-          ),
-        ),
+        users,
       );
+
+      if (bytes != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfViewerFromMemory(
+              property: property,
+              year: selectedYearValue,
+              month: selectedMonthValue,
+              unitType: selectedType,
+              unitNo: selectedUnitNo,
+              pdfData: bytes,
+            ),
+          ),
+        );
+      } else {
+        _showErrorDialog(
+            context, "Failed to download PDF. Please try again later.");
+      }
+    } catch (e) {
+      _showErrorDialog(context,
+          "An error occurred while downloading your statement.\n\nDetails: $e");
+    } finally {
+      _isDownloading = false;
+      notifyListeners();
     }
-    _isDownloading = false;
-    notifyListeners();
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Download Failed"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> downloadAnnualPdfStatement(BuildContext context) async {
     _annual_isDownloading = true;
     notifyListeners();
-    // print(property);
-    // print(selectedYearValue);
-    // print(selectedMonthValue);
-    // print(selectedType);
-    // print(selectedUnitNo);
+
     final bytes = await ownerPropertyListRepository.downloadPdfAnnualStatement(
         context,
         property,
         selectedAnnualYearValue,
         selectedType,
         selectedUnitNo,
-        _users);
+        users);
     if (bytes != null) {
       Navigator.push(
         context,
@@ -545,7 +413,7 @@ class PropertyDetailVM extends ChangeNotifier {
             year: selectedYearValue,
             unitType: selectedType,
             unitNo: selectedUnitNo,
-            pdfData: bytes, // Replace with your PDF URL
+            pdfData: bytes,
           ),
         ),
       );
@@ -555,12 +423,11 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   Future<void> refreshData() async {
-    await Future.delayed(const Duration(seconds: 1));
+    await _globalDataManager.refreshData();
     fetchData(locationByMonth);
     notifyListeners();
   }
 
-  // In PropertyDetailVM
   Future<void> downloadSpecificPdfStatement(
       BuildContext context, dynamic item) async {
     // Set the specific item data before downloading

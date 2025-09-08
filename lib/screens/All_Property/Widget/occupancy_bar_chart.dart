@@ -1,16 +1,20 @@
 import 'package:fl_chart/fl_chart.dart';
-
-//import 'package:fl_chart_app/presentation/resources/app_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/resources/app_colors.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class OccupancyBarChart extends StatelessWidget {
-  const OccupancyBarChart(
-      {super.key, required this.isShowingMainData, required this.period});
+  const OccupancyBarChart({
+    super.key, 
+    required this.isShowingMainData, 
+    required this.period,
+    this.model, // Add optional model parameter
+  });
 
   final bool isShowingMainData;
   final String period;
+  final NewDashboardVM_v3? model; // Optional model to use real data
 
   @override
   Widget build(BuildContext context) {

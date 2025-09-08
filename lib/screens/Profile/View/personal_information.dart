@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
+import 'package:provider/provider.dart';
 
 class PersonalInformation extends StatefulWidget {
   const PersonalInformation({Key? key}) : super(key: key);
@@ -10,12 +12,12 @@ class PersonalInformation extends StatefulWidget {
 
 class _PersonalInformationState extends State<PersonalInformation> {
   final OwnerProfileVM model = OwnerProfileVM();
-  late Future<void> _fetchFuture;
 
   @override
   void initState() {
     super.initState();
-    _fetchFuture = model.fetchData();
+    // Initialize data once - it will use cached data if already loaded
+    model.fetchData();
   }
 
   @override
@@ -30,86 +32,83 @@ class _PersonalInformationState extends State<PersonalInformation> {
     double responsiveFont(double value) =>
         (value / 812.0) * screenHeight; // font scaling
 
-    return FutureBuilder<void>(
-      future: _fetchFuture,
-      builder: (context, snapshot) {
-        final isLoading = snapshot.connectionState != ConnectionState.done;
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
+    return MultiProvider(
+      providers: [
+        // Provide the global data manager
+        ChangeNotifierProvider.value(value: GlobalDataManager()),
+        // Provide the profile view model
+        ChangeNotifierProvider.value(value: model),
+      ],
+      child: Consumer<OwnerProfileVM>(
+        builder: (context, profileModel, child) {
+          return Scaffold(
             backgroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: Image.asset('assets/images/personal_info_back.png'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: Text(
-              'Personal Information',
-              style: TextStyle(
-                fontFamily: 'outfit',
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: responsiveFont(20),
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: IconButton(
+                icon: Image.asset('assets/images/personal_info_back.png'),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: Text(
+                'Personal Information',
+                style: TextStyle(
+                  fontFamily: 'outfit',
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: responsiveFont(20),
+                ),
+              ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(1.0),
+                child: Container(
+                  color: Colors.grey.shade300,
+                  height: 1.0,
+                ),
               ),
             ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1.0),
-              child: Container(
-                color: Colors.grey.shade300,
-                height: 1.0,
+            body: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      _buildRow(icon: 'personal_info_name.png', label: 'Name'),
+                      SizedBox(width: responsiveWidth(8)),
+                      _buildData(data: profileModel.getOwnerName()),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _buildRow(
+                          icon: 'personal_info_contact.png',
+                          label: 'Contact No.'),
+                      SizedBox(width: responsiveWidth(8)),
+                      _buildData(data: profileModel.getOwnerContact()),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _buildRow(icon: 'personal_info_email.png', label: 'Email'),
+                      SizedBox(width: responsiveWidth(8)),
+                      _buildData(data: profileModel.getOwnerEmail()),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _buildRow(
+                          icon: 'personal_info_address.png', label: 'Address'),
+                      SizedBox(width: responsiveWidth(8)),
+                      _buildData(data: profileModel.getOwnerAddress()),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    _buildRow(icon: 'personal_info_name.png', label: 'Name'),
-                    SizedBox(width: responsiveWidth(8)),
-                    model.users.isNotEmpty
-                        ? _buildData(
-                            data: model.users.first.ownerFullName ?? '')
-                        : const Text('Loading...'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    _buildRow(
-                        icon: 'personal_info_contact.png',
-                        label: 'Contact No.'),
-                    SizedBox(width: responsiveWidth(8)),
-                    model.users.isNotEmpty
-                        ? _buildData(data: model.users.first.ownerContact ?? '')
-                        : const Text('Loading...'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    _buildRow(icon: 'personal_info_email.png', label: 'Email'),
-                    SizedBox(width: responsiveWidth(8)),
-                    model.users.isNotEmpty
-                        ? _buildData(data: model.users.first.email ?? '')
-                        : const Text('Loading...'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    _buildRow(
-                        icon: 'personal_info_address.png', label: 'Address'),
-                    SizedBox(width: responsiveWidth(8)),
-                    model.users.isNotEmpty
-                        ? _buildData(data: model.users.first.ownerAddress ?? '')
-                        : const Text('Loading...'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

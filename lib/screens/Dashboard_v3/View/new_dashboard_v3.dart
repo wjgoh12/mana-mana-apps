@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
 import 'package:mana_mana_app/screens/All_Property/View/property_summary.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
@@ -22,12 +23,20 @@ class NewDashboardV3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) {
-        final model = NewDashboardVM_v3();
-        model.fetchData();
-        return model;
-      },
+    return MultiProvider(
+      providers: [
+        // Global data manager at the top level
+        ChangeNotifierProvider.value(value: GlobalDataManager()),
+        // Dashboard ViewModel
+        ChangeNotifierProvider(
+          create: (_) {
+            final model = NewDashboardVM_v3();
+            // Initialize data once in dashboard
+            model.fetchData();
+            return model;
+          },
+        ),
+      ],
       child: Consumer<NewDashboardVM_v3>(
         builder: (context, model, child) {
           final ScrollController propertyScrollController = ScrollController();
@@ -211,20 +220,21 @@ class NewDashboardV3 extends StatelessWidget {
                             children: [
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.start,
                                 children: [
                                   _buildSectionTitle('Overview'),
-                                  _seeAllButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PropertySummaryScreen()));
-                                    },
-                                  ),
+                                  // _seeAllButton(
+                                  //   onPressed: () {
+                                  //     Navigator.push(
+                                  //         context,
+                                  //         MaterialPageRoute(
+                                  //             builder: (context) =>
+                                  //                 PropertySummaryScreen()));
+                                  //   },
+                                  // ),
                                 ],
                               ),
+                              const SizedBox(height: 12),
                               OverviewCard(model: model),
                             ],
                           ),

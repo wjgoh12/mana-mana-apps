@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
+import 'package:provider/provider.dart';
 
 class FinancialDetails extends StatefulWidget {
   const FinancialDetails({super.key});
@@ -12,79 +14,82 @@ class FinancialDetails extends StatefulWidget {
 
 class _FinancialDetailsState extends State<FinancialDetails> {
   final OwnerProfileVM model = OwnerProfileVM();
-  late Future<void> _fetchFuture;
 
   @override
   void initState() {
     super.initState();
-    _fetchFuture = model.fetchData();
+    // Initialize data once - it will use cached data if already loaded
+    model.fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
 
-    return FutureBuilder<void>(
-      future: _fetchFuture,
-      builder: (context, snapshot) {
-        final isLoading = snapshot.connectionState != ConnectionState.done;
-
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
+    return MultiProvider(
+      providers: [
+        // Provide the global data manager
+        ChangeNotifierProvider.value(value: GlobalDataManager()),
+        // Provide the profile view model
+        ChangeNotifierProvider.value(value: model),
+      ],
+      child: Consumer<OwnerProfileVM>(
+        builder: (context, profileModel, child) {
+          return Scaffold(
             backgroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: Image.asset('assets/images/personal_info_back.png'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: Text(
-              'Financial Details',
-              style: TextStyle(
-                fontFamily: 'outfit',
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: ResponsiveSize.text(20),
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: IconButton(
+                icon: Image.asset('assets/images/personal_info_back.png'),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: Text(
+                'Financial Details',
+                style: TextStyle(
+                  fontFamily: 'outfit',
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: ResponsiveSize.text(20),
+                ),
+              ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(1.0),
+                child: Container(
+                  color: Colors.grey.shade300,
+                  height: 1.0,
+                ),
               ),
             ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1.0),
-              child: Container(
-                color: Colors.grey.shade300,
-                height: 1.0,
-              ),
-            ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            body: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          _buildInfoRow(
-                            icon: 'financial_details_bank.png',
-                            label: 'Bank',
-                          ),
-                          _buildData(value: model.getBankInfo()),
-                        ],
+                      _buildInfoRow(
+                        icon: 'financial_details_bank.png',
+                        label: 'Bank',
                       ),
-                      Row(
-                        children: [
-                          _buildInfoRow(
-                            icon: 'financial_details_acc_no.png',
-                            label: 'Account No.',
-                          ),
-                          _buildData(value: model.getAccountNumber()),
-                        ],
-                      ),
+                      _buildData(value: profileModel.getBankInfo()),
                     ],
                   ),
-          ),
-        );
-      },
+                  Row(
+                    children: [
+                      _buildInfoRow(
+                        icon: 'financial_details_acc_no.png',
+                        label: 'Account No.',
+                      ),
+                      _buildData(value: profileModel.getAccountNumber()),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 

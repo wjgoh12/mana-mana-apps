@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_rate_box.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/recent_activity.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/property_dropdown.dart';
@@ -19,26 +20,35 @@ class PropertySummaryScreen extends StatefulWidget {
 }
 
 class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
-  final NewDashboardVM_v3 _model = NewDashboardVM_v3();
-  late Future<void> _initFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _initFuture = _initializeData();
-  }
-
-  Future<void> _initializeData() async {
-    debugPrint('refetching data...');
-    await _model.fetchData();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => _model,
-      child: Consumer<NewDashboardVM_v3>(
-        builder: (context, model, child) {
+    return MultiProvider(
+      providers: [
+        // Global data manager at the top level
+        ChangeNotifierProvider.value(value: GlobalDataManager()),
+        // Dashboard ViewModel that will use cached data
+        ChangeNotifierProvider(
+          create: (_) {
+            final model = NewDashboardVM_v3();
+            // Initialize data once - will use cached data if already loaded
+            model.fetchData();
+            return model;
+          },
+        ),
+        // Property Detail ViewModel that will use cached data
+        ChangeNotifierProvider(
+          create: (_) => PropertyDetailVM(),
+        ),
+      ],
+      child: Consumer2<NewDashboardVM_v3, PropertyDetailVM>(
+        builder: (context, dashboardModel, propertyModel, child) {
+          // Initialize property detail model with dashboard data
+          if (dashboardModel.locationByMonth.isNotEmpty && !propertyModel.isLoading) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              propertyModel.fetchData(dashboardModel.locationByMonth);
+            });
+          }
+
           return LayoutBuilder(
             builder: (context, constraints) {
               // Screen width and height
@@ -51,53 +61,57 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
               final double scaleW = screenWidth / baseWidth;
               final double scaleH = screenHeight / baseHeight;
 
-              // Shortcut for scaled spacing
-              double spacing(double value) => value * scaleH;
-              double font(double size) => size * scaleW;
-
               return Scaffold(
-                backgroundColor: Colors.white,
+                backgroundColor: const Color(0XFFFFFFFF),
                 appBar: propertyAppBar(
                   context,
                   () => Navigator.of(context).pop(),
                 ),
-                body: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: spacing(12),
-                    vertical: spacing(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Row(
+                body: dashboardModel.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Column(
                         children: [
+                          // Add PropertyTitleDropdown here
+                          const Padding(
+                            padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                            child: Row(
+                              children: [
+                                // PropertyTitleDropdown(currentPage: 'Property List'),
+                              ],
+                            ),
+                          ),
+                          // Main content
                           Expanded(
-                            flex: 0,
-                            child:
-                                PropertyTitleDropdown(currentPage: 'Summary'),
+                            child: ListView(
+                              shrinkWrap: true,
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              children: [
+                                // Overview Card
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15 * scaleW, vertical: 10 * scaleH),
+                                  child: OverviewCard(model: dashboardModel),
+                                ),
+
+                                // Occupancy Rate Box
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15 * scaleW, vertical: 10 * scaleH),
+                                  child: OccupancyRateBox(model: dashboardModel),
+                                ),
+
+                                // Recent Activity
+                                if (propertyModel.unitByMonth.isNotEmpty)
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 15 * scaleW, vertical: 10 * scaleH),
+                                    child: RecentActivity(model: propertyModel),
+                                  ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(height: spacing(16)),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: spacing(8)),
-                        child: OverviewCard(model: model),
-                      ),
-                      SizedBox(height: spacing(12)),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: spacing(8)),
-                        child: OccupancyRateBox(),
-                      ),
-                      SizedBox(height: spacing(12)),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: spacing(8)),
-                        child: RecentActivity(
-                          model: PropertyDetailVM(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 bottomNavigationBar: const BottomNavBar(currentIndex: 1),
               );
             },
@@ -126,7 +140,7 @@ class _PropertySummaryContent extends StatelessWidget {
                 children: [
                   Expanded(
                     flex: 0,
-                    child: PropertyTitleDropdown(currentPage: 'Summary'),
+                    child: PropertyTitleDropdown(currentPage: 'Property List'),
                   ),
                 ],
               ),

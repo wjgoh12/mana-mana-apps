@@ -16,10 +16,10 @@ class PropertyTitleDropdown extends StatefulWidget {
 }
 
 class _PropertyTitleDropdownState extends State<PropertyTitleDropdown> {
-  String? selectedValue = 'Summary';
+  String? selectedValue = 'Property List';
 
   final pages = {
-    'Summary': PropertySummaryScreen(),
+    // 'Summary': PropertySummaryScreen(),
     'Property List': AllPropertyScreen(),
   };
   String getDisplayText() {

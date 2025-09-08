@@ -19,57 +19,35 @@ class OccupancyPercentageText extends StatefulWidget {
 }
 
 class _OccupancyTextState extends State<OccupancyPercentageText> {
-  String _occupancyRate = '0';
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadOccupancy();
-    });
-  }
-
-  Future<void> _loadOccupancy() async {
-    if (!mounted) return;
-
-    try {
-      final viewModel = context.read<NewDashboardVM_v3>();
-      String occupancy;
-
-      if (widget.showTotal) {
-        occupancy = viewModel.getTotalOccupancyRate();
-      } else if (widget.location != null && widget.unitNo != null) {
-        occupancy =
-            await viewModel.getUnitOccupancy(widget.location!, widget.unitNo!);
-      } else if (widget.location != null) {
-        occupancy = viewModel.getOccupancyByLocation(widget.location!);
-      } else {
-        occupancy = viewModel.getTotalOccupancyRate();
-      }
-
-      if (mounted) {
-        setState(() {
-          _occupancyRate = occupancy;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _occupancyRate = '0';
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Text('Loading...', style: TextStyle(fontSize: 11));
-    }
+    final viewModel = context.read<NewDashboardVM_v3>();
+    
+    return ListenableBuilder(
+      listenable: viewModel,
+      builder: (context, child) {
+        String occupancy;
 
-    return Text('$_occupancyRate%', style: const TextStyle(fontSize: 11));
+        try {
+          if (widget.showTotal) {
+            occupancy = viewModel.getTotalOccupancyRate();
+          } else if (widget.location != null && widget.unitNo != null) {
+            occupancy = viewModel.getUnitOccupancyFromCache(widget.location!, widget.unitNo!);
+          } else if (widget.location != null) {
+            occupancy = viewModel.getOccupancyByLocation(widget.location!);
+          } else {
+            occupancy = viewModel.getTotalOccupancyRate();
+          }
+
+          if (viewModel.isLoading) {
+            return const Text('Loading...', style: TextStyle(fontSize: 11));
+          }
+
+          return Text('$occupancy%', style: const TextStyle(fontSize: 11));
+        } catch (e) {
+          return const Text('0%', style: TextStyle(fontSize: 11));
+        }
+      },
+    );
   }
 }

@@ -5,14 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
+import 'package:provider/provider.dart';
 
 final labelColor1 = const Color(0xFF8C71E7);
 final barBackgroundColor = const Color(0xFFDDD7FF);
 
 class OccupancyRateBox extends StatefulWidget {
-  final model = NewDashboardVM_v3();
+  final NewDashboardVM_v3? model; // Optional model parameter
+  
+  const OccupancyRateBox({super.key, this.model});
 
-  OccupancyRateBox({super.key});
+  @override
+  State<OccupancyRateBox> createState() => _OccupancyRateBoxState();
+}
+
+class _OccupancyRateBoxState extends State<OccupancyRateBox> {
+  String selectedPeriod = 'Monthly';
+  int touchedGroupIndex = -1;
 
   BarChartGroupData generateBarGroup(
     int x,
@@ -33,16 +42,11 @@ class OccupancyRateBox extends StatefulWidget {
     );
   }
 
-  int touchedGroupIndex = -1;
-
-  @override
-  State<OccupancyRateBox> createState() => _OccupancyRateBoxState();
-}
-
-class _OccupancyRateBoxState extends State<OccupancyRateBox> {
-  String selectedPeriod = 'Monthly';
   @override
   Widget build(BuildContext context) {
+    // Get the model from Provider or use the passed model
+    final model = widget.model ?? context.read<NewDashboardVM_v3>();
+    
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -104,6 +108,7 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
               child: OccupancyBarChart(
                 isShowingMainData: true,
                 period: selectedPeriod,
+                model: model, // Pass the model to the chart
               ),
             ),
           ),

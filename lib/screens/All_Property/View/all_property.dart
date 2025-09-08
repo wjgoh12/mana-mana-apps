@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/property_dropdown.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
@@ -11,8 +12,20 @@ class AllPropertyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => NewDashboardVM_v3()..fetchData(),
+    return MultiProvider(
+      providers: [
+        // Global data manager at the top level
+        ChangeNotifierProvider.value(value: GlobalDataManager()),
+        // Dashboard ViewModel that will use cached data
+        ChangeNotifierProvider(
+          create: (_) {
+            final model = NewDashboardVM_v3();
+            // Initialize data once - will use cached data if already loaded
+            model.fetchData();
+            return model;
+          },
+        ),
+      ],
       child: Consumer<NewDashboardVM_v3>(
         builder: (context, model, child) {
           return Scaffold(
@@ -31,7 +44,7 @@ class AllPropertyScreen extends StatelessWidget {
                         padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
                         child: Row(
                           children: [
-                            PropertyTitleDropdown(currentPage: 'Property List'),
+                            // PropertyTitleDropdown(currentPage: 'Property List'),
                           ],
                         ),
                       ),

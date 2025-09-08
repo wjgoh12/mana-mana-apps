@@ -1,58 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/user_model.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 
 class OwnerProfileVM extends ChangeNotifier {
   bool _showMyInfo = true;
-  List<User> _users = [];
-  List<User> get users => _users;
-  List<OwnerPropertyList> _ownerUnits = [];
-  List<OwnerPropertyList> get ownerUnits => _ownerUnits;
-  final UserRepository userRepository = UserRepository();
-  final PropertyListRepository ownerPropertyListRepository =
-      PropertyListRepository();
+  final GlobalDataManager _globalDataManager = GlobalDataManager();
   final UserPointBalance = [];
 
   bool get showMyInfo => _showMyInfo;
 
+  // Getters that delegate to GlobalDataManager
+  List<User> get users => _globalDataManager.users;
+  List<OwnerPropertyList> get ownerUnits => _globalDataManager.ownerUnits;
+
   // Add helper methods to safely access data
   String getOwnerName() {
-    if (_users.isEmpty) return 'No Information';
-    return _users.first.ownerFullName?.toString() ?? 'No Information';
+    if (users.isEmpty) return 'No Information';
+    return users.first.ownerFullName?.toString() ?? 'No Information';
   }
 
   String getOwnerContact() {
-    if (_users.isEmpty) return 'No Information';
-    return _users.first.ownerContact?.toString() ?? 'No Information';
+    if (users.isEmpty) return 'No Information';
+    return users.first.ownerContact?.toString() ?? 'No Information';
   }
 
   String getOwnerEmail() {
-    if (_users.isEmpty) return 'No Information';
-    return _users.first.ownerEmail?.toString() ?? 'No Information';
+    if (users.isEmpty) return 'No Information';
+    return users.first.email?.toString() ?? 'No Information';
   }
 
   String getOwnerAddress() {
-    if (_users.isEmpty) return 'No Information';
-    return _users.first.ownerAddress?.toString() ?? 'No Information';
+    if (users.isEmpty) return 'No Information';
+    return users.first.ownerAddress?.toString() ?? 'No Information';
   }
 
   String getBankInfo() {
-    if (_ownerUnits.isEmpty) return 'No Information';
-    return _ownerUnits.first.bank?.toString() ?? 'No Information';
+    if (ownerUnits.isEmpty) return 'No Information';
+    return ownerUnits.first.bank?.toString() ?? 'No Information';
   }
 
   String getAccountNumber() {
-    if (_ownerUnits.isEmpty) return 'No Information';
-    return _ownerUnits.first.accountnumber?.toString() ?? 'No Information';
+    if (ownerUnits.isEmpty) return 'No Information';
+    return ownerUnits.first.accountnumber?.toString() ?? 'No Information';
   }
 
   Future<void> fetchData() async {
-    _users = await userRepository.getUsers();
-    _ownerUnits = await ownerPropertyListRepository.getOwnerUnit();
-    //_ownerBookingHistory = await ownerBookingHistoryRepository.getOwnerBookingHistory();???
+    // Use global data manager instead of making individual API calls
+    await _globalDataManager.initializeData();
+    notifyListeners();
+  }
 
+  Future<void> refreshData() async {
+    await _globalDataManager.refreshData();
     notifyListeners();
   }
 
