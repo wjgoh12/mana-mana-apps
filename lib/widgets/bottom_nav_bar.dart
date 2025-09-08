@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
-import 'package:mana_mana_app/screens/All_Property/View/property_summary.dart';
+import 'package:mana_mana_app/screens/All_Property/View/old/all_property.dart';
+import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
+import 'package:mana_mana_app/screens/All_Property/View/old/property_summary.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
@@ -115,7 +116,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         case 1:
           final newDashboardVM = context.read<NewDashboardVM>();
           Navigator.pushReplacement(context,
-              _createRoute(AllPropertyScreen(), transitionType: 'fade'));
+              _createRoute(AllPropertyNewScreen(), transitionType: 'fade'));
           break;
         case 2:
           Navigator.pushReplacement(
