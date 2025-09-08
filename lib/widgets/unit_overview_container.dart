@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class UnitOverviewContainer extends StatelessWidget {
   final PropertyDetailVM model;
@@ -62,44 +64,40 @@ Widget _buildStatCard(String title, String subtitle, {String? value}) {
   return Card(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     elevation: 2,
+    color: Colors.white,
     child: Container(
-      height: 90, // 🔹 fixed height for consistency
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+      height: ResponsiveSize.scaleHeight(90),
+      child: Padding(
+        padding: EdgeInsets.all(ResponsiveSize.scaleWidth(8.0)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Outfit',
+              ),
             ),
-          ),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 12,
+                fontFamily: 'Outfit',
+              ),
             ),
-          ),
-          Text(
-            value ?? '0',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            Text(
+              value ?? '0',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Outfit',
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
-
-Widget _quickLink() {
-  return Container(
-    child: Column(
-      children: [],
     ),
   );
 }

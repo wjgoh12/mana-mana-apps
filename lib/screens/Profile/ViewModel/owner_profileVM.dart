@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
+import 'package:mana_mana_app/repository/booking_repo.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 

@@ -84,8 +84,8 @@ class ApiService {
       body: json.encode(data ?? {}),
     );
 
-    // debugPrint("➡️ POST JSON URL: $baseUrl$url");
-    // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
+    debugPrint("➡️ POST JSON URL: $baseUrl$url");
+    debugPrint("📤 Request body: ${json.encode(data ?? {})}");
     // debugPrint("📥 Response status: ${response.statusCode}");
     // debugPrint("📥 Response body: ${response.body}");
 
