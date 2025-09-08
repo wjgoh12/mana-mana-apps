@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property.dart';
+import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
 import 'package:mana_mana_app/screens/All_Property/View/property_summary.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';

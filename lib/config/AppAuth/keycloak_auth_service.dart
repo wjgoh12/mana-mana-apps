@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/splashscreen.dart';
 import '../env_config.dart';
 import 'package:http/http.dart' as http;
@@ -140,6 +141,10 @@ class AuthService {
 
   Future<void> _removeAllAppData() async {
     await _secureStorage.deleteAll();
+    
+    // Clear all cached data from GlobalDataManager
+    final globalDataManager = GlobalDataManager();
+    globalDataManager.clearAllData();
 
     // final cacheDir = await getTemporaryDirectory();
     // if (cacheDir.existsSync()) {
@@ -179,8 +184,8 @@ class AuthService {
         //         .tokenExpirationMinutes)); // Reset expiry to 20 minutes
         return true;
       }
-    } catch (e, s) {
-      // print('Refresh token error: $e - stack: $s');
+    } catch (e) {
+      // print('Refresh token error: $e');
     }
     return false;
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/provider/version_checker.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 
@@ -24,6 +24,10 @@ class _SplashScreenState extends State<Splashscreen>
   }
 
   void _initialize() async {
+    // Clear any cached data from previous sessions on app restart
+    final globalDataManager = GlobalDataManager();
+    globalDataManager.clearAllData();
+    
     final versionChecker = VersionChecker();
     if (await versionChecker.needsUpdate())
     //{

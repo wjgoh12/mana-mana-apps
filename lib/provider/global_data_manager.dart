@@ -290,4 +290,28 @@ class GlobalDataManager extends ChangeNotifier {
     final difference = now.difference(_lastFetchTime!);
     return difference.inMinutes > 30;
   }
+
+  // Clear all cached data (useful for logout or app restart)
+  void clearAllData() {
+    _users.clear();
+    _ownerUnits.clear();
+    _unitByMonth.clear();
+    _revenueDashboard.clear();
+    _totalByMonth.clear();
+    _locationByMonth.clear();
+    _propertyContractType.clear();
+    _propertyOccupancy.clear();
+    
+    _isInitialized = false;
+    _isLoading = false;
+    _lastFetchTime = null;
+    
+    notifyListeners();
+  }
+
+  // Reset and refresh all data (useful for switching users)
+  Future<void> resetAndRefreshData() async {
+    clearAllData();
+    await initializeData(forceRefresh: true);
+  }
 }
