@@ -336,7 +336,6 @@ class PropertyDetailVM extends ChangeNotifier {
 
   Future<void> downloadPdfStatement(BuildContext context) async {
     try {
-      print('check');
       _isDownloading = true;
       notifyListeners();
 
@@ -370,7 +369,7 @@ class PropertyDetailVM extends ChangeNotifier {
       }
     } catch (e) {
       _showErrorDialog(context,
-          "An error occurred while downloading your statement.\n\nDetails: $e");
+          "Download failed. Please contact the administrator for assistance.");
     } finally {
       _isDownloading = false;
       notifyListeners();
@@ -486,7 +485,6 @@ Future<String> getUnitProfitPobMonthYear(List<SingleUnitByMonth> unitByMonth,
     final monthName = _monthNumberToName[latestMonth] ?? '';
     return '$monthName $latestYear';
   } catch (e) {
-    print('Error getting profit/POB month-year for $location - $unitNo: $e');
     final now = DateTime.now();
     final monthName = _monthNumberToName[now.month] ?? '';
     return '$monthName ${now.year}';
