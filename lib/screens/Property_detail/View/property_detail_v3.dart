@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/Widget/occupancy_percent_text.dart';
 import 'package:mana_mana_app/widgets/occupancy_text.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
@@ -54,19 +53,33 @@ class _property_detail_v3State extends State<property_detail_v3> {
     model2 = NewDashboardVM_v3();
 
     if (widget.locationByMonth.isNotEmpty) {
+      // print('PropertyDetailV3: Calling model.fetchData');
       model.fetchData(widget.locationByMonth);
     }
 
     // Load occupancy data for the dashboard view model
     if (widget.locationByMonth.isNotEmpty) {
+      // print('PropertyDetailV3: Calling model2.fetchData');
       model2.fetchData();
     }
 
-    // Always default to UnitDetails, never Overview
-    model.updateSelectedView('UnitDetails');
+// Only update selectedView if initialTab is provided
+    switch (widget.initialTab) {
+      case 'unitDetails':
+        model.updateSelectedView('UnitDetails');
+        break;
+      case 'recentActivity':
+        model.updateSelectedView('RecentActivity');
+        break;
+      default:
+        model.updateSelectedView('Overview');
+    }
+    //model.updateSelectedView('UnitDetails');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.locationByMonth.isNotEmpty) {
+        // print(
+        //     'PropertyDetailV3: Post frame callback - calling getAverageOccupancyByLocation');
         model2.getAverageOccupancyByLocation(
             widget.locationByMonth.first['location'] ?? '');
       }
@@ -168,6 +181,9 @@ class _property_detail_v3State extends State<property_detail_v3> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SliverToBoxAdapter(
+                child: getCurrentTabWidget(),
+              ),
               const Icon(Icons.error_outline, size: 64, color: Colors.grey),
               const SizedBox(height: 16),
               const Text(
@@ -180,13 +196,8 @@ class _property_detail_v3State extends State<property_detail_v3> {
       );
     }
 
-    return MultiProvider(
-      providers: [
-        // Provide the global data manager
-        ChangeNotifierProvider.value(value: GlobalDataManager()),
-        // Use the existing dashboard model passed from parent
-        ChangeNotifierProvider<NewDashboardVM_v3>.value(value: widget.model),
-      ],
+    return ChangeNotifierProvider<NewDashboardVM_v3>(
+      create: (_) => model2,
       child: ListenableBuilder(
         listenable: model,
         builder: (context, child) {
@@ -260,7 +271,9 @@ class _property_detail_v3State extends State<property_detail_v3> {
                 if (!isFullScreenEstatement)
                   CustomScrollView(
                     controller: _scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(), // Always allow scroll since no Overview
+                    physics: model.selectedView == 'Overview'
+                        ? const NeverScrollableScrollPhysics() // Lock scroll for Overview
+                        : const AlwaysScrollableScrollPhysics(), // Allow scroll for UnitDetails
                     slivers: [
                       SliverAppBar(
                         automaticallyImplyLeading: false,
@@ -349,7 +362,12 @@ class _property_detail_v3State extends State<property_detail_v3> {
                         ),
                       ),
                       SliverToBoxAdapter(
-                        child: UnitDetailsContainer(model: model), // Always show UnitDetails
+                        child: model.selectedView == 'Overview'
+                            ? PropertyOverviewContainer(
+                                model: model,
+                                model2: model2,
+                                locationByMonth: widget.locationByMonth)
+                            : UnitDetailsContainer(model: model),
                       ),
                       SliverPadding(
                         padding: EdgeInsets.only(
@@ -806,49 +824,37 @@ class PropertyOverviewContainer extends StatelessWidget {
               imageWidth: responsiveWidth(65),
               imageHeight: responsiveHeight(38),
               title: 'Occupancy Rate',
-              subtitle: Text(
-                'As of Month ${() {
-                  // Use cached data for month/year display
-                  if (model2.propertyOccupancy.isNotEmpty) {
-                    try {
-                      final location = model.locationByMonth.first['location'];
-                      final unitNo = model.selectedUnitNo ?? '';
-                      if (model2.propertyOccupancy.containsKey(location)) {
-                        final locationData = model2.propertyOccupancy[location];
-                        if (locationData is Map<String, dynamic> &&
-                            locationData.containsKey('units') &&
-                            locationData['units'] is Map<String, dynamic>) {
-                          final units = locationData['units'] as Map<String, dynamic>;
-                          if (units.containsKey(unitNo)) {
-                            final unitData = units[unitNo];
-                            if (unitData is Map<String, dynamic> && 
-                                unitData.containsKey('month') && 
-                                unitData.containsKey('year')) {
-                              final monthNum = unitData['month'];
-                              final year = unitData['year'];
-                              final monthName = monthNumberToName(monthNum);
-                              return '$monthName $year';
-                            }
-                          }
-                        }
-                      }
-                    } catch (e) {
-                      // Fallback to current date
-                    }
-                  }
-                  return '$shortMonth $year';
-                }()}',
-                style: const TextStyle(
-                  fontSize: 9.0,
-                  fontFamily: 'outfit',
-                  fontWeight: FontWeight.normal,
+              subtitle: FutureBuilder<String>(
+                future: model2.getUnitOccupancyMonthYear(
+                  model.locationByMonth.first['location'],
+                  model.selectedUnitNo ?? '',
                 ),
+                builder: (context, snapshot) {
+                  String shortMonth = monthNumberToName(now.month);
+                  String year = now.year.toString();
+                  String monthYearText =
+                      '$shortMonth $year'; // default fallback
+
+                  if (snapshot.hasData) {
+                    monthYearText = snapshot.data!;
+                  } else if (snapshot.hasError) {
+                    monthYearText = 'Error';
+                  }
+
+                  return Text(
+                    'As of Month $monthYearText',
+                    style: const TextStyle(
+                      fontSize: 9.0,
+                      fontFamily: 'outfit',
+                      fontWeight: FontWeight.normal,
+                    ),
+                  );
+                },
               ),
-              child: ListenableBuilder(
-                listenable: model2,
-                builder: (context, child) {
-                  final location = model.locationByMonth.isNotEmpty
-                      ? model.locationByMonth.first['location']
+              child: Consumer<NewDashboardVM_v3>(
+                builder: (context, dashboardVM, child) {
+                  final location = dashboardVM.locationByMonth.isNotEmpty
+                      ? dashboardVM.locationByMonth.first['location']
                       : null;
 
                   if (location == null) {
@@ -861,16 +867,39 @@ class PropertyOverviewContainer extends StatelessWidget {
                     );
                   }
 
-                  // Use cached data instead of FutureBuilder
-                  final occupancy = model2.getOccupancyByLocation(location);
-                  return Text(
-                    '$occupancy%',
-                    style: const TextStyle(
-                      fontFamily: 'outfit',
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                  return FutureBuilder<String>(
+                    future: dashboardVM
+                        .calculateTotalOccupancyForLocation(location),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text(
+                          'Loading...',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        return const Text(
+                          'Error',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+                      final occupancy = snapshot.data ?? '0.0';
+                      return Text(
+                        '$occupancy%',
+                        style: const TextStyle(
+                          fontFamily: 'outfit',
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -1306,10 +1335,7 @@ class UnitDetailsContainer extends StatelessWidget {
     DateTime now = DateTime.now();
     String shortMonth = _monthNumberToName(now.month);
     String year = now.year.toString();
-    
-    // Use the shared dashboard model from Provider instead of creating new one
-    final model2 = context.read<NewDashboardVM_v3>();
-    
+    final NewDashboardVM_v3 model2 = NewDashboardVM_v3();
     return Container(
       color: Colors.white,
       child: Column(
@@ -1458,25 +1484,66 @@ class UnitDetailsContainer extends StatelessWidget {
                                   fontSize: responsiveFont(11),
                                 ),
                               ),
-                              // Use cached data instead of FutureBuilder
-                              Text(
-                                '${model2.getUnitOccupancyFromCache(location, unitNo)}%',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: responsiveFont(10),
-                                  fontWeight: FontWeight.bold,
+                              FutureBuilder<String>(
+                                future: model2.getUnitOccupancy(
+                                  model.locationByMonth.first['location'],
+                                  model.selectedUnitNo ?? '',
                                 ),
+                                builder: (context, snapshot) {
+                                  // if (snapshot.connectionState ==
+                                  //     ConnectionState.waiting) {
+                                  //   return const Text('Loading...',
+                                  //       style: TextStyle(
+                                  //           fontSize: 15,
+                                  //           fontWeight: FontWeight.bold));
+                                  // } else
+                                  if (snapshot.hasError) {
+                                    return Text(
+                                      'Error',
+                                      style: TextStyle(
+                                          fontFamily: 'outfit',
+                                          fontSize: responsiveFont(15),
+                                          fontWeight: FontWeight.bold),
+                                    );
+                                  } else {
+                                    return Text(
+                                      snapshot.data ?? '',
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        fontSize: responsiveFont(10),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                               SizedBox(height: 5.fSize),
                               Padding(
                                 padding: const EdgeInsets.only(left: 3),
-                                child: Text(
-                                  'As of Month $shortMonth $year',
-                                  style: const TextStyle(
-                                    fontSize: 8.0,
-                                    fontFamily: 'outfit',
-                                    fontWeight: FontWeight.normal,
+                                child: FutureBuilder<String>(
+                                  future: model2.getUnitOccupancyMonthYear(
+                                    model.locationByMonth.first['location'],
+                                    model.selectedUnitNo ?? '',
                                   ),
+                                  builder: (context, snapshot) {
+                                    String monthYearText =
+                                        '$shortMonth $year'; // default fallback
+
+                                    if (snapshot.hasData) {
+                                      monthYearText = snapshot.data!;
+                                    } else if (snapshot.hasError) {
+                                      monthYearText = 'Error';
+                                    }
+
+                                    return Text(
+                                      'As of Month $monthYearText',
+                                      style: const TextStyle(
+                                        fontSize: 8.0,
+                                        fontFamily: 'outfit',
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    );
+                                  },
                                 ),
                               )
                             ],
@@ -1803,7 +1870,7 @@ class _EStatementContainerState extends State<EStatementContainer> {
                       }
 
                       return InkWell(
-                        onTap: () => widget.model.downloadSpecificPdfStatement(context, item),
+                        onTap: () => widget.model.downloadPdfStatement(context),
                         child: Container(
                           height: 50.fSize,
                           padding: EdgeInsets.symmetric(
@@ -1839,7 +1906,7 @@ class _EStatementContainerState extends State<EStatementContainer> {
                 }
 
                 return InkWell(
-                  onTap: () => widget.model.downloadSpecificPdfStatement(context, item),
+                  onTap: () => widget.model.downloadPdfStatement(context),
                   child: Container(
                     height: 50.fSize,
                     padding:
@@ -1884,12 +1951,17 @@ class StickyDropdownBar extends StatelessWidget {
       if (!deduped.contains(v)) deduped.add(v);
     }
 
-    // 2) Build items (NO Overview option, only units)
-    final items = deduped.map((v) => DropdownMenuItem(value: v, child: Text(v))).toList();
+    // 2) Build items (Overview + deduped list)
+    final items = <DropdownMenuItem<String>>[
+      const DropdownMenuItem(value: 'Overview', child: Text('Overview')),
+      ...deduped.map((v) => DropdownMenuItem(value: v, child: Text(v))),
+    ];
 
     // 3) Compute value only if it exactly exists in the deduped list
     String? dropdownValue;
-    if (model.selectedType != null && model.selectedUnitNo != null) {
+    if (model.selectedView == 'Overview') {
+      dropdownValue = 'Overview';
+    } else if (model.selectedType != null && model.selectedUnitNo != null) {
       final candidate =
           '${model.selectedType!.trim()} (${model.selectedUnitNo!.trim()})';
       dropdownValue = deduped.contains(candidate) ? candidate : null;
@@ -1958,6 +2030,7 @@ class StickyDropdownBar extends StatelessWidget {
                                       color: Colors.grey, width: 0.5),
                                   bottom: BorderSide(
                                       color: Colors.grey, width: 0.5),
+                                  // top: BorderSide.none  // so no border at top
                                 ),
                                 boxShadow: [
                                   BoxShadow(
@@ -1972,10 +2045,15 @@ class StickyDropdownBar extends StatelessWidget {
                               icon: Icon(Icons.keyboard_arrow_down),
                             ),
                             items: items,
-                            value: dropdownValue,
+                            value:
+                                dropdownValue, // only set when exact match found
                             hint: const Text('Select Unit'),
                             onChanged: (String? newValue) {
                               if (newValue == null) return;
+                              if (newValue == 'Overview') {
+                                model.updateSelectedView('Overview');
+                                return;
+                              }
 
                               // Simple, robust parsing: take LAST (...) as unit
                               final unitMatch = RegExp(r'\(([^)]*)\)\s*$')
@@ -1988,6 +2066,9 @@ class StickyDropdownBar extends StatelessWidget {
                               if (unit != null && unit.isNotEmpty) {
                                 model.updateSelectedView('UnitDetails');
                                 model.updateSelectedTypeUnit(type, unit);
+                              } else {
+                                // no parentheses found -> go to Overview (change if you want different behavior)
+                                model.updateSelectedView('Overview');
                               }
                             },
                           );
@@ -2163,7 +2244,7 @@ class OptimizedPropertyDropdown extends StatefulWidget {
 
 class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
   List<DropdownMenuItem<String>>? _cachedItems;
-  List<String>? _lastTypeItems;
+  List<String>? _lastTypeItems; // will store deduped list
   String? _cachedValue;
 
   // Static decoration objects to avoid recreation
@@ -2218,10 +2299,19 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
                 decoration: _dropdownDecoration,
                 maxHeight: 200,
               ),
-              items: const [],
-              onChanged: null,
+              items: const [
+                DropdownMenuItem<String>(
+                  value: 'Overview',
+                  child: Text('Overview', style: _textStyle),
+                ),
+              ],
+              onChanged: (String? newValue) {
+                if (newValue == 'Overview') {
+                  widget.model.updateSelectedView('Overview');
+                }
+              },
               hint: _loadingText,
-              value: null,
+              value: 'Overview',
             ),
           );
         }
@@ -2232,20 +2322,29 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
           if (!deduped.contains(v)) deduped.add(v);
         }
 
-        // Rebuild cached items only when deduped list changed (NO Overview option)
+        // Rebuild cached items only when deduped list changed
         if (_lastTypeItems == null || !_listEquals(_lastTypeItems!, deduped)) {
-          _cachedItems = deduped.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value, style: _textStyle),
-            );
-          }).toList();
+          _cachedItems = [
+            const DropdownMenuItem<String>(
+              value: 'Overview',
+              child: Text('Overview', style: _textStyle),
+            ),
+            ...deduped.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value, style: _textStyle),
+              );
+            }).toList(),
+          ];
           _lastTypeItems = List.from(deduped);
         }
 
         // Compute selected value safely (only if exact match exists)
         String? currentValue;
-        if (widget.model.selectedType != null && widget.model.selectedUnitNo != null) {
+        if (widget.model.selectedView == 'Overview') {
+          currentValue = 'Overview';
+        } else if (widget.model.selectedType != null &&
+            widget.model.selectedUnitNo != null) {
           final candidate =
               '${widget.model.selectedType!.trim()} (${widget.model.selectedUnitNo!.trim()})';
 
@@ -2259,13 +2358,12 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
             if (matches.length == 1) {
               currentValue = matches.first;
             } else {
-              // fallback: select first item if available
-              currentValue = deduped.isNotEmpty ? deduped.first : null;
+              // fallback: null (prevents the Dropdown assert)
+              currentValue = null;
             }
           }
         } else {
-          // Default to first item if no selection
-          currentValue = deduped.isNotEmpty ? deduped.first : null;
+          currentValue = null;
         }
 
         // Update cached value if changed
@@ -2300,14 +2398,25 @@ class _OptimizedPropertyDropdownState extends State<OptimizedPropertyDropdown> {
   void _handleChange(String? newValue) {
     if (newValue == null) return;
 
-    // Parse unit from dropdown value (no Overview option)
+    if (newValue == 'Overview') {
+      widget.model.updateSelectedView('Overview');
+      return;
+    }
+
+    // Robust parsing: take LAST (...) as unit
+    // Example: "Paxton (High floor) (p-15-22)"
     final unitMatch = RegExp(r'\(([^)]*)\)\s*$').firstMatch(newValue);
     final unit = unitMatch?.group(1)?.trim();
+
+    // Type is everything before the last (...) group
     final type = newValue.replaceAll(RegExp(r'\s*\([^)]*\)\s*$'), '').trim();
 
     if (unit != null && unit.isNotEmpty) {
       widget.model.updateSelectedView('UnitDetails');
       widget.model.updateSelectedTypeUnit(type, unit);
+    } else {
+      // No parentheses found -> choose behaviour (here we go back to Overview)
+      widget.model.updateSelectedView('Overview');
     }
   }
 
