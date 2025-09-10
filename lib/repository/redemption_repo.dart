@@ -10,27 +10,13 @@ import 'package:mana_mana_app/model/propertystate.dart';
 class RedemptionRepository {
   final ApiService _apiService = ApiService();
 
-  /// Get blocked dates
-  Future<List<dynamic>> getCalendarBlockedDates({
-    required String location,
-    required String startDate,
-    required String endDate,
+  Future<List<UnitAvailablePoint>> getUnitAvailablePoints({
+    required String email,
   }) async {
-    final data = {
-      "location": location,
-      "startDate": startDate,
-      "endDate": endDate,
-    };
-
-    final res =
-        await _apiService.post(ApiEndpoint.getCalendarBlockDate, data: data);
-    return res ?? [];
-  }
-
-  Future<List<UnitAvailablePoint>> getUnitAvailablePoints(
-      {required String email}) async {
-    final res = await _apiService
-        .post(ApiEndpoint.getUnitAvailablePoint, data: {"email": email});
+    final res = await _apiService.post(
+      ApiEndpoint.getUnitAvailablePoint,
+      data: {"email": email},
+    );
 
     debugPrint("🔍 Raw API Response: $res");
 
@@ -43,13 +29,15 @@ class RedemptionRepository {
       debugPrint("📦 Response is a Map with keys: ${res.keys}");
       if (res['data'] is List) {
         debugPrint(
-            "✅ Found 'data' list with length: ${(res['data'] as List).length}");
+          "✅ Found 'data' list with length: ${(res['data'] as List).length}",
+        );
         return (res['data'] as List)
             .map((json) => UnitAvailablePoint.fromJson(json))
             .toList();
       } else {
         debugPrint(
-            "❌ 'data' field is not a List. It is: ${res['data']?.runtimeType}");
+          "❌ 'data' field is not a List. It is: ${res['data']?.runtimeType}",
+        );
       }
     }
 
@@ -61,13 +49,16 @@ class RedemptionRepository {
     throw Exception("❌ Unexpected API response format: $res");
   }
 
-  Future<List<BookingHistory>> getBookingHistory(
-      {required String email}) async {
+  Future<List<BookingHistory>> getBookingHistory({
+    required String email,
+  }) async {
     // Check if you need to send email in the request body
     final data = {'email': email};
 
-    final res =
-        await _apiService.postJson(ApiEndpoint.getBookingHistory, data: data);
+    final res = await _apiService.postJson(
+      ApiEndpoint.getBookingHistory,
+      data: data,
+    );
 
     debugPrint("🔍 Raw booking history response: $res");
 
@@ -99,10 +90,55 @@ class RedemptionRepository {
         .toList();
   }
 
+  Future<List<String>> getAvailableStates() async {
+    const allStates = [
+      "Johor",
+      "Kedah",
+      "Kelantan",
+      "Melaka",
+      "Negeri Sembilan",
+      "Pahang",
+      "Penang",
+      "Perak",
+      "Perlis",
+      "Sabah",
+      "Sarawak",
+      "Selangor",
+      "Terengganu",
+      "Kuala Lumpur",
+      "Putrajaya",
+      "Labuan",
+    ];
+
+    List<String> availableStates = [];
+
+    for (final state in allStates) {
+      try {
+        final res = await _apiService.get(
+          '${ApiEndpoint.getAllState}?state=${Uri.encodeQueryComponent(state)}',
+        );
+
+        if (res != null) {
+          // If API returns locations list and it's not empty, keep this state
+          final data = (res is Map && res['data'] is List) ? res['data'] : res;
+          if (data is List && data.isNotEmpty) {
+            availableStates.add(state);
+          }
+        }
+      } catch (e) {
+        debugPrint("⚠️ Error checking state $state: $e");
+      }
+    }
+
+    debugPrint("✅ Available states: $availableStates");
+    return availableStates;
+  }
+
   Future<List<Propertystate>> getAllLocationsByState(String state) async {
     try {
-      final res =
-          await _apiService.get("${ApiEndpoint.getAllState}?state=$state");
+      final res = await _apiService.get(
+        '${ApiEndpoint.getAllState}?state=$state',
+      );
 
       debugPrint("🔍 Raw API Response for locations: $res");
 
@@ -119,27 +155,22 @@ class RedemptionRepository {
     }
   }
 
-  Future<List<String>> getAllStates() async {
-    try {
-      debugPrint("🔍 Fetching all available states from API");
+  /// Get blocked dates
+  Future<List<dynamic>> getCalendarBlockedDates({
+    required String location,
+    required String startDate,
+    required String endDate,
+  }) async {
+    final data = {
+      "location": location,
+      "startDate": startDate,
+      "endDate": endDate,
+    };
 
-      final response = await _apiService.postJson(
-        "/mobile/enqs/redemption/getAllStates", // <-- adjust this path
-      );
-
-      if (response == null || response["data"] == null) {
-        throw Exception("Invalid response for states");
-      }
-
-      // Assume API returns something like: { "data": [ { "state": "Johor" }, ... ] }
-      final states =
-          (response["data"] as List).map((e) => e["state"].toString()).toList();
-
-      debugPrint("✅ Available states: $states");
-      return states;
-    } catch (e) {
-      debugPrint("❌ Error fetching states: $e");
-      return [];
-    }
+    final res = await _apiService.post(
+      ApiEndpoint.getCalendarBlockDate,
+      data: data,
+    );
+    return res ?? [];
   }
 }

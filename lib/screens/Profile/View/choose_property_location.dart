@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:provider/provider.dart';
@@ -32,10 +35,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
       appBar: AppBar(
         title: Text(
           'Choose Property Location',
-          style: TextStyle(
-            fontSize: 20.fSize,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20.fSize, fontWeight: FontWeight.bold),
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -47,6 +47,10 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
       ),
       body: Consumer<OwnerProfileVM>(
         builder: (context, vm, child) {
+          if (selectedState == null && vm.states.isNotEmpty) {
+            selectedState = vm.states.first;
+            vm.fetchLocationsByState(selectedState!);
+          }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -58,16 +62,18 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                     isExpanded: true,
                     hint: const Text("Select State"),
                     items: vm.states
-                        .map((state) => DropdownMenuItem<String>(
-                              value: state,
-                              child: Text(
-                                state,
-                                style: TextStyle(
-                                  fontSize: 20.fSize,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        .map(
+                          (state) => DropdownMenuItem<String>(
+                            value: state,
+                            child: Text(
+                              state,
+                              style: TextStyle(
+                                fontSize: 20.fSize,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ))
+                            ),
+                          ),
+                        )
                         .toList(),
                     value: selectedState,
                     onChanged: (String? value) {
@@ -96,8 +102,13 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                     padding: const EdgeInsets.all(16),
                     childAspectRatio: 0.7,
                     children: vm.locations
-                        .map((loc) => _buildLocationCard(
-                            context, loc.locationName, loc.pic))
+                        .map(
+                          (loc) => _buildLocationCard(
+                            context,
+                            loc.locationName,
+                            loc.pic,
+                          ),
+                        )
                         .toList(),
                   ),
                 ),
@@ -110,7 +121,29 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
 }
 
 Widget _buildLocationCard(
-    BuildContext context, String location, String picBase64) {
+  BuildContext context,
+  String? location,
+  String? picBase64,
+) {
+  Uint8List? _decodeBase64(String? base64String) {
+    try {
+      if (base64String == null || base64String.isEmpty) return null;
+
+      // Case 1: If API already provides "data:image/png;base64,..."
+      if (base64String.startsWith("data:image")) {
+        return Uri.parse(base64String).data?.contentAsBytes();
+      }
+
+      // Case 2: Raw base64 string
+      return base64Decode(base64String);
+    } catch (e) {
+      debugPrint("❌ Failed to decode Base64: $e");
+      return null;
+    }
+  }
+
+  final decodedImage = _decodeBase64(picBase64);
+
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     child: Column(
@@ -131,12 +164,9 @@ Widget _buildLocationCard(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.fSize),
-                  image: picBase64.isNotEmpty
+                  image: decodedImage != null
                       ? DecorationImage(
-                          image: MemoryImage(
-                            // decode base64 pic string into bytes
-                            Uri.parse(picBase64).data!.contentAsBytes(),
-                          ),
+                          image: MemoryImage(decodedImage),
                           fit: BoxFit.cover,
                         )
                       : const DecorationImage(
@@ -150,7 +180,7 @@ Widget _buildLocationCard(
         ),
         const SizedBox(height: 3),
         Text(
-          location,
+          location ?? "Unknown Location",
           style: TextStyle(
             fontSize: 20.fSize,
             fontWeight: FontWeight.bold,

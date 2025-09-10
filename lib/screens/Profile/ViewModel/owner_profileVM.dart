@@ -17,7 +17,7 @@ class OwnerProfileVM extends ChangeNotifier {
   final RedemptionRepository _ownerBookingRepository = RedemptionRepository();
   final UserRepository _userRepository = UserRepository();
 
-//state
+  //state
   bool _isLoadingStates = false;
   bool _isLoadingLocations = false;
   String? _error;
@@ -30,8 +30,8 @@ class OwnerProfileVM extends ChangeNotifier {
   List<User> _users = [];
   final UserPointBalance = [];
   List<String> _states = [];
-  List<Propertystate> _locations = [];
-  String _selectedState = 'Kuala Lumpur';
+  List<Propertystate> _locationsInState = [];
+  String _selectedState = '';
   List<BookingHistory> _bookingHistory = [];
   List<UnitAvailablePoint> _unitAvailablePoints = [];
 
@@ -40,7 +40,7 @@ class OwnerProfileVM extends ChangeNotifier {
   List<UnitAvailablePoint> get unitAvailablePoints => _unitAvailablePoints;
   bool get showMyInfo => _showMyInfo;
   List<String> get states => _states;
-  List<Propertystate> get locations => _locations;
+  List<Propertystate> get locations => _locationsInState;
   String get selectedState => _selectedState;
   bool get isLoadingStates => _isLoadingStates;
   bool get isLoadingLocations => _isLoadingLocations;
@@ -112,8 +112,9 @@ class OwnerProfileVM extends ChangeNotifier {
     try {
       _isLoadingBookingHistory = true;
       notifyListeners();
-      final response =
-          await _ownerBookingRepository.getBookingHistory(email: email);
+      final response = await _ownerBookingRepository.getBookingHistory(
+        email: email,
+      );
 
       _bookingHistory = response;
       debugPrint("✅ Booking history length: ${_bookingHistory.length}");
@@ -136,8 +137,9 @@ class OwnerProfileVM extends ChangeNotifier {
     try {
       _isLoadingAvailablePoints = true;
       notifyListeners();
-      final response =
-          await _ownerBookingRepository.getUnitAvailablePoints(email: email);
+      final response = await _ownerBookingRepository.getUnitAvailablePoints(
+        email: email,
+      );
 
       _unitAvailablePoints = response;
       debugPrint("✅ Available points length: ${_unitAvailablePoints.length}");
@@ -154,41 +156,15 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
-  // Future<List<UnitAvailablePoint>> fetchUserAvailablePoints() async {
-  //   try {
-  //     final points = await _ownerBookingRepository.getUnitAvailablePoints();
-  //     UserPointBalance.clear();
-  //     UserPointBalance.addAll(points);
-  //     notifyListeners();
-  //     return points;
-  //   } catch (e) {
-  //     debugPrint("Error fetching user available points: $e");
-  //     return [];
-  //   }
-  // }
-
-  // Future<void> loadStates() async {
-  //   _isLoadingStates = true;
-  //   _error = null;
-  //   notifyListeners();
-
-  //   try {
-  //     _states = await _ownerBookingRepository.getAllStates();
-  //   } catch (e) {
-  //     _error = e.toString();
-  //   } finally {
-  //     _isLoadingStates = false;
-  //     notifyListeners();
-  //   }
-  // }
   Future<void> fetchLocationsByState(String state) async {
     _isLoadingLocations = true;
     _error = null;
     notifyListeners();
 
     try {
-      _locations = await _ownerBookingRepository.getAllLocationsByState(state);
-      debugPrint("✅ Locations loaded: ${_locations.length}");
+      _locationsInState =
+          await _ownerBookingRepository.getAllLocationsByState(state);
+      debugPrint("✅ Locations loaded: ${_locationsInState.length}");
     } catch (e) {
       _error = e.toString();
       debugPrint("❌ Error fetching locations: $e");
@@ -204,11 +180,9 @@ class OwnerProfileVM extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _states = await _ownerBookingRepository.getAllStates();
-      if (_states.isNotEmpty) {
-        _selectedState = _states.first;
-        await fetchLocationsByState(_selectedState);
-      }
+      _states = await _ownerBookingRepository.getAvailableStates();
+      // Don’t auto-select state here. Let user pick from dropdown.
+      _selectedState = '';
     } catch (e) {
       _error = e.toString();
     } finally {

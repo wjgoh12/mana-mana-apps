@@ -106,93 +106,117 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                         : SingleChildScrollView(
                             child: Column(
                               children: sortedUnits.map((unit) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 16),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(16),
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (_) =>
-                                                    ChangeNotifierProvider(
-                                                  create: (_) =>
-                                                      OwnerProfileVM(),
-                                                  child:
-                                                      const ChoosePropertyLocation(),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                width:
-                                                    ResponsiveSize.scaleWidth(
-                                                        150),
-                                                child: Text(
-                                                  '${unit.location} - ${unit.unitNo}',
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        ResponsiveSize.text(15),
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'outfit',
-                                                    color:
-                                                        const Color(0xFF3E51FF),
+                                return Container(
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: ResponsiveSize.scaleHeight(8),
+                                      horizontal: ResponsiveSize.scaleWidth(6)),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(
+                                        12), // ✅ rounded corners
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(
+                                            0.1), // ✅ subtle shadow
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 0),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 8,
+                                        horizontal:
+                                            ResponsiveSize.scaleWidth(16)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(16),
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(
+                                                ResponsiveSize.scaleWidth(8)),
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      ChangeNotifierProvider(
+                                                    create: (_) =>
+                                                        OwnerProfileVM(),
+                                                    child:
+                                                        const ChoosePropertyLocation(),
                                                   ),
                                                 ),
-                                              ),
-                                              SizedBox(
+                                              );
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
                                                   width:
                                                       ResponsiveSize.scaleWidth(
-                                                          17)),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Available Points',
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                            ResponsiveSize.text(
-                                                                11)),
-                                                  ),
-                                                  SizedBox(
-                                                      height: ResponsiveSize
-                                                          .scaleHeight(6)),
-                                                  Text(
-                                                    '${unit.redemptionBalancePoints}',
+                                                          150),
+                                                  child: Text(
+                                                    '${unit.location} - ${unit.unitNo}',
                                                     style: TextStyle(
                                                       fontSize:
                                                           ResponsiveSize.text(
-                                                              11),
+                                                              15),
                                                       fontWeight:
                                                           FontWeight.bold,
+                                                      fontFamily: 'outfit',
                                                       color: const Color(
                                                           0xFF3E51FF),
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                              SizedBox(width: 1),
-                                              const Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  color: Colors.grey,
-                                                  size: 13),
-                                            ],
+                                                ),
+                                                SizedBox(
+                                                    width: ResponsiveSize
+                                                        .scaleWidth(17)),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Available Points',
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                              ResponsiveSize
+                                                                  .text(11)),
+                                                    ),
+                                                    SizedBox(
+                                                        height: ResponsiveSize
+                                                            .scaleHeight(6)),
+                                                    Text(
+                                                      '${unit.redemptionBalancePoints}/${unit.redemptionPoints}',
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            ResponsiveSize.text(
+                                                                11),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: const Color(
+                                                            0xFF3E51FF),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(width: 1),
+                                                const Icon(
+                                                    Icons.arrow_forward_ios,
+                                                    color: Colors.grey,
+                                                    size: 13),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 );
                               }).toList(),
