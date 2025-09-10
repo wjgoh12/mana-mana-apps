@@ -33,6 +33,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
   @override
   Widget build(BuildContext context) {
     final ownerVM = Provider.of<OwnerProfileVM>(context);
+    final sortedUnits = [...ownerVM.unitAvailablePoints]..sort((a, b) =>
+        b.redemptionBalancePoints.compareTo(a.redemptionBalancePoints));
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -103,7 +105,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                           ))
                         : SingleChildScrollView(
                             child: Column(
-                              children: ownerVM.unitAvailablePoints.map((unit) {
+                              children: sortedUnits.map((unit) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 8, horizontal: 16),
