@@ -430,8 +430,7 @@ class PropertyDetailVM extends ChangeNotifier {
             context, "Failed to download PDF. Please try again later.");
       }
     } catch (e) {
-      _showErrorDialog(context,
-          "Download failed. Please contact the administrator for assistance.");
+      _showErrorDialog(context, "Download Failed");
     } finally {
       _isDownloading = false;
       notifyListeners();

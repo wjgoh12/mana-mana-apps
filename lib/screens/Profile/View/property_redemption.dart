@@ -110,74 +110,141 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               ),
             ),
             SizedBox(height: ResponsiveSize.scaleHeight(10)),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF3E51FF).withOpacity(0.15),
-                    blurRadius: 10,
-                    offset: const Offset(0, 0),
-                  ),
-                ],
-              ),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(16),
-                scrollDirection: Axis.vertical,
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF3E51FF).withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Table(
-                      border: TableBorder.all(color: Colors.transparent),
-                      columnWidths: {
-                        0: FlexColumnWidth(ResponsiveSize.scaleWidth(1.5)),
-                        1: FlexColumnWidth(ResponsiveSize.scaleWidth(2)),
-                        2: FlexColumnWidth(ResponsiveSize.scaleWidth(2)),
-                        3: FlexColumnWidth(ResponsiveSize.scaleWidth(1)),
-                      },
-                      children: [
-                        // Header row
-                        TableRow(
-                          children: [
-                            'Location',
-                            'Check-In Date',
-                            'Check-Out Date',
-                            'Points Used'
-                          ]
-                              .map(
-                                (text) => Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  child: Text(
-                                    text,
-                                    style: TextStyle(
-                                      fontFamily: 'outfit',
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color(0xFF3E51FF),
-                                      fontSize: ResponsiveSize.text(13),
+                    // ✅ Sticky Header Row
+                    Container(
+                      color: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Location',
+                              style: TextStyle(
+                                fontFamily: 'outfit',
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF3E51FF),
+                                fontSize: ResponsiveSize.text(13),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Check-In Date',
+                              style: TextStyle(
+                                fontFamily: 'outfit',
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF3E51FF),
+                                fontSize: ResponsiveSize.text(13),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Check-Out Date',
+                              style: TextStyle(
+                                fontFamily: 'outfit',
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF3E51FF),
+                                fontSize: ResponsiveSize.text(13),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                              'Points Used',
+                              style: TextStyle(
+                                fontFamily: 'outfit',
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF3E51FF),
+                                fontSize: ResponsiveSize.text(13),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Divider(height: 1, color: Colors.grey.shade300),
+
+                    // ✅ Scrollable Data Rows
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: ownerVM.bookingHistory.map((booking) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                        booking.typeRoom +
+                                            "\n" +
+                                            booking.bookingLocation,
+                                        maxLines: 5,
+                                        style: TextStyle(
+                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: 'outfit')),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      DateFormat('yyyy-MM-dd')
+                                          .format(booking.arrivalDate),
+                                      style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'outfit'),
                                     ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                        // Data rows from API
-                        ...ownerVM.bookingHistory.map((booking) {
-                          return TableRow(
-                            children: [
-                              BookingHistoryRecord(
-                                location: booking.location,
-                                checkInDate: DateFormat('yyyy-MM-dd')
-                                    .format(booking.arrivalDate),
-                                checkOutDate: DateFormat('yyyy-MM-dd')
-                                    .format(booking.departureDate),
-                                pointsUsed: booking.pointUsed.toString(),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      DateFormat('yyyy-MM-dd')
+                                          .format(booking.departureDate),
+                                      style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'outfit'),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      booking.pointUsed.toString(),
+                                      style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'outfit'),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          );
-                        }).toList(),
-                      ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
                   ],
                 ),

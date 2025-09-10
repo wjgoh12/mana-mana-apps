@@ -23,6 +23,7 @@ class OwnerProfileVM extends ChangeNotifier {
   String? _error;
   bool _showMyInfo = true;
   final GlobalDataManager _globalDataManager = GlobalDataManager();
+  bool _isLoadingBookingHistory = false;
 
   //data
   List<User> _users = [];
@@ -41,6 +42,7 @@ class OwnerProfileVM extends ChangeNotifier {
   bool get isLoadingStates => _isLoadingStates;
   bool get isLoadingLocations => _isLoadingLocations;
   String? get error => _error;
+  bool get isLoadingBookingHistory => _isLoadingBookingHistory;
 
   // Getters that delegate to GlobalDataManager
   List<User> get users => _globalDataManager.users;
@@ -96,15 +98,19 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   Future<void> fetchBookingHistory() async {
-    final email = _users.isNotEmpty ? _users.first.email ?? '' : '';
+    // Get email from globalDataManager users
+    final email = users.isNotEmpty ? users.first.email ?? '' : '';
+
+    if (email.isEmpty) {
+      debugPrint("⚠️ No email found, cannot fetch booking history.");
+      return;
+    }
 
     try {
-      // Repository ALREADY returns List<BookingHistory>
       final response =
           await _ownerBookingRepository.getBookingHistory(email: email);
 
-      _bookingHistory = response; // no need to parse again
-
+      _bookingHistory = response;
       debugPrint("✅ Booking history length: ${_bookingHistory.length}");
 
       notifyListeners();
