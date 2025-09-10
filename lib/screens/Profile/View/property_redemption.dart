@@ -26,6 +26,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     Future.microtask(() {
       final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
       ownerVM.fetchBookingHistory();
+      ownerVM.fetchUserAvailablePoints();
     });
   }
 
@@ -90,12 +91,111 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               ),
               child: SizedBox(
                 height: ResponsiveSize.scaleHeight(350),
-                child: ListView.builder(
-                  itemCount: 1, // Replace with actual data length
-                  itemBuilder: (context, index) {
-                    return PropertyPointRecord();
-                  },
-                ),
+                child: ownerVM.isLoadingAvailablePoints
+                    ? const Center(child: CircularProgressIndicator())
+                    : ownerVM.unitAvailablePoints.isEmpty
+                        ? const Center(
+                            child: Text(
+                            "No available points found.",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'outfit'),
+                          ))
+                        : SingleChildScrollView(
+                            child: Column(
+                              children: ownerVM.unitAvailablePoints.map((unit) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 16),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    ChangeNotifierProvider(
+                                                  create: (_) =>
+                                                      OwnerProfileVM(),
+                                                  child:
+                                                      const ChoosePropertyLocation(),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              SizedBox(
+                                                width:
+                                                    ResponsiveSize.scaleWidth(
+                                                        150),
+                                                child: Text(
+                                                  '${unit.location} - ${unit.unitNo}',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        ResponsiveSize.text(15),
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'outfit',
+                                                    color:
+                                                        const Color(0xFF3E51FF),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                      ResponsiveSize.scaleWidth(
+                                                          17)),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Available Points',
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            ResponsiveSize.text(
+                                                                11)),
+                                                  ),
+                                                  SizedBox(
+                                                      height: ResponsiveSize
+                                                          .scaleHeight(6)),
+                                                  Text(
+                                                    '${unit.redemptionBalancePoints}',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          ResponsiveSize.text(
+                                                              11),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: const Color(
+                                                          0xFF3E51FF),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(width: 1),
+                                              const Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  color: Colors.grey,
+                                                  size: 13),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
               ),
             ),
             SizedBox(height: ResponsiveSize.scaleHeight(15)),
@@ -255,132 +355,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class PropertyPointRecord extends StatefulWidget {
-  const PropertyPointRecord({super.key});
-
-  @override
-  State<PropertyPointRecord> createState() => _PropertyPointRecordState();
-}
-
-class _PropertyPointRecordState extends State<PropertyPointRecord> {
-  final NewDashboardVM_v3 model = NewDashboardVM_v3();
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF3E51FF).withOpacity(0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 0),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => ChangeNotifierProvider(
-                  create: (_) => OwnerProfileVM(),
-                  child: const ChoosePropertyLocation(),
-                ),
-              ),
-            );
-          },
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Ceylonz 9-11-3',
-                style: TextStyle(
-                  fontSize: ResponsiveSize.text(16),
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF3E51FF),
-                ),
-              ),
-              SizedBox(width: ResponsiveSize.scaleWidth(17)),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Available Points',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.text(11),
-                    ),
-                  ),
-                  SizedBox(height: ResponsiveSize.scaleHeight(6)),
-                  Text(
-                    '${SelectDateRoom.getUserPointsBalance()}/5000',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.text(11),
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF3E51FF),
-                    ),
-                  ),
-                ],
-              ),
-              Spacer(),
-              Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 13),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class BookingHistoryRecord extends StatelessWidget {
-  final String location;
-  final String checkInDate;
-  final String checkOutDate;
-  final String pointsUsed;
-
-  const BookingHistoryRecord({
-    super.key,
-    required this.location,
-    required this.checkInDate,
-    required this.checkOutDate,
-    required this.pointsUsed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            location,
-            style: TextStyle(
-              fontSize: 11,
-            ),
-          ),
-          Text(
-            checkInDate,
-            style: TextStyle(
-              fontSize: 11,
-            ),
-          ),
-          Text(
-            checkOutDate,
-            style: TextStyle(
-              fontSize: 11,
-            ),
-          ),
-          Text(pointsUsed),
-        ],
       ),
     );
   }

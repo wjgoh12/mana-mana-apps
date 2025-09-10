@@ -27,8 +27,10 @@ class RedemptionRepository {
     return res ?? [];
   }
 
-  Future<List<UnitAvailablePoint>> getUnitAvailablePoints() async {
-    final res = await _apiService.post(ApiEndpoint.getUnitAvailablePoint);
+  Future<List<UnitAvailablePoint>> getUnitAvailablePoints(
+      {required String email}) async {
+    final res = await _apiService
+        .post(ApiEndpoint.getUnitAvailablePoint, data: {"email": email});
 
     debugPrint("🔍 Raw API Response: $res");
 

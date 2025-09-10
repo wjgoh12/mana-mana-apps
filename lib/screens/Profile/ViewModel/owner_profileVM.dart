@@ -24,6 +24,7 @@ class OwnerProfileVM extends ChangeNotifier {
   bool _showMyInfo = true;
   final GlobalDataManager _globalDataManager = GlobalDataManager();
   bool _isLoadingBookingHistory = false;
+  bool _isLoadingAvailablePoints = false;
 
   //data
   List<User> _users = [];
@@ -32,9 +33,11 @@ class OwnerProfileVM extends ChangeNotifier {
   List<Propertystate> _locations = [];
   String _selectedState = 'Kuala Lumpur';
   List<BookingHistory> _bookingHistory = [];
+  List<UnitAvailablePoint> _unitAvailablePoints = [];
 
   //getters
   List<BookingHistory> get bookingHistory => _bookingHistory;
+  List<UnitAvailablePoint> get unitAvailablePoints => _unitAvailablePoints;
   bool get showMyInfo => _showMyInfo;
   List<String> get states => _states;
   List<Propertystate> get locations => _locations;
@@ -43,6 +46,7 @@ class OwnerProfileVM extends ChangeNotifier {
   bool get isLoadingLocations => _isLoadingLocations;
   String? get error => _error;
   bool get isLoadingBookingHistory => _isLoadingBookingHistory;
+  bool get isLoadingAvailablePoints => _isLoadingAvailablePoints;
 
   // Getters that delegate to GlobalDataManager
   List<User> get users => _globalDataManager.users;
@@ -121,30 +125,47 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>> fetchPoints() async {
-    final url = Uri.parse(
-        'https://admin.manamanasuites.com/mobile/enqs/redemption/getUnitAvailablePoint');
-    final response = await http.post(url, body: {});
+  Future<void> fetchUserAvailablePoints() async {
+    final email = users.isNotEmpty ? users.first.email ?? '' : '';
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load data');
+    if (email.isEmpty) {
+      debugPrint("⚠️ No email found, cannot fetch available points.");
+      return;
     }
-  }
 
-  Future<List<UnitAvailablePoint>> fetchUserAvailablePoints() async {
     try {
-      final points = await _ownerBookingRepository.getUnitAvailablePoints();
-      UserPointBalance.clear();
-      UserPointBalance.addAll(points);
+      _isLoadingAvailablePoints = true;
       notifyListeners();
-      return points;
+      final response =
+          await _ownerBookingRepository.getUnitAvailablePoints(email: email);
+
+      _unitAvailablePoints = response;
+      debugPrint("✅ Available points length: ${_unitAvailablePoints.length}");
     } catch (e) {
-      debugPrint("Error fetching user available points: $e");
-      return [];
+      debugPrint('❌ Error fetching available points: $e');
+    } finally {
+      // ❌ BUG: wrong flag here
+      _isLoadingBookingHistory = false;
+
+      // ✅ Correct it:
+      _isLoadingAvailablePoints = false;
+
+      notifyListeners();
     }
   }
+
+  // Future<List<UnitAvailablePoint>> fetchUserAvailablePoints() async {
+  //   try {
+  //     final points = await _ownerBookingRepository.getUnitAvailablePoints();
+  //     UserPointBalance.clear();
+  //     UserPointBalance.addAll(points);
+  //     notifyListeners();
+  //     return points;
+  //   } catch (e) {
+  //     debugPrint("Error fetching user available points: $e");
+  //     return [];
+  //   }
+  // }
 
   // Future<void> loadStates() async {
   //   _isLoadingStates = true;
