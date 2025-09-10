@@ -363,8 +363,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const PropertyRedemption(),
+                                builder: (context) => PropertyRedemption(),
                               ),
                               (route) => route.isFirst,
                             );

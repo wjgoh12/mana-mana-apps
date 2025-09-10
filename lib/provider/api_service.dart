@@ -15,6 +15,7 @@ class ApiService {
     }
 
     String? token = await authService.getAccessToken();
+
     final response = await http.post(
       Uri.parse('$baseUrl$url'),
       headers: {
@@ -25,7 +26,8 @@ class ApiService {
     );
 
     if (response.body.isEmpty) return null;
-
+    debugPrint("➡️ FULL URL: $baseUrl$url");
+    debugPrint("➡️ POST BYTES URL: $baseUrl$url");
     try {
       return json.decode(response.body);
     } catch (e) {
@@ -53,7 +55,7 @@ class ApiService {
       },
       body: json.encode(data ?? {}),
     );
-
+    // debugPrint("➡️ FULL URL: $baseUrl$url");
     // debugPrint("➡️ POST BYTES URL: $baseUrl$url");
     // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
     // debugPrint("📥 Response status: ${response.statusCode}");
@@ -75,6 +77,11 @@ class ApiService {
     }
 
     String? token = await authService.getAccessToken();
+    final fullUrl = '$baseUrl$url';
+    debugPrint("➡️ FULL URL: $fullUrl");
+    debugPrint("📤 Request body: ${json.encode(data ?? {})}");
+    debugPrint("Posting to full URL: $baseUrl$url");
+
     final response = await http.post(
       Uri.parse('$baseUrl$url'),
       headers: {
@@ -84,10 +91,11 @@ class ApiService {
       body: json.encode(data ?? {}),
     );
 
+    debugPrint("➡️ FULL URL: $baseUrl$url");
     debugPrint("➡️ POST JSON URL: $baseUrl$url");
     debugPrint("📤 Request body: ${json.encode(data ?? {})}");
-    // debugPrint("📥 Response status: ${response.statusCode}");
-    // debugPrint("📥 Response body: ${response.body}");
+    debugPrint("📥 Response status: ${response.statusCode}");
+    debugPrint("📥 Response body: ${response.body}");
 
     if (response.body.isEmpty) return null;
 
@@ -96,6 +104,45 @@ class ApiService {
     } catch (e) {
       // debugPrint("❌ JSON decode error: $e");
       return null;
+    }
+  }
+
+  Future<dynamic> get(String endpoint, {Map<String, String>? headers}) async {
+    try {
+      // Add authentication like your other methods
+      final AuthService authService = AuthService();
+      bool isTokenValid = await authService.checkToken();
+      if (!isTokenValid) {
+        throw Exception('Authentication required');
+      }
+
+      String? token = await authService.getAccessToken();
+
+      final url = Uri.parse('$baseUrl$endpoint');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token', // Add this
+          'Content-Type': 'application/json',
+          ...?headers,
+        },
+      );
+
+      debugPrint("🔍 GET Request URL: $url");
+      debugPrint("🔍 GET Response Status: ${response.statusCode}");
+      debugPrint("🔍 GET Response Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        if (response.body.isEmpty) return null;
+        return json.decode(response.body);
+      } else {
+        throw Exception(
+            'GET request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('❌ GET request error: $e');
+      throw e;
     }
   }
 }

@@ -61,13 +61,22 @@ class PropertyDetailVM extends ChangeNotifier {
 
   get contractType => null;
 
+  String? selectedProperty;
+  String? selectedUnit;
+
+  void updateSelection(String property, String unit) {
+    selectedProperty = property;
+    selectedUnit = unit;
+    notifyListeners();
+  }
+
   Future<void> fetchData(List<Map<String, dynamic>> newLocationByMonth) async {
     isLoading = true;
     notifyListeners();
 
     // Use global data manager to get data (no API calls)
     await _globalDataManager.initializeData();
-    
+
     locationByMonth = newLocationByMonth;
 
     if (locationByMonth.isEmpty) {
@@ -87,17 +96,17 @@ class PropertyDetailVM extends ChangeNotifier {
     // Set initial selections from ownerData - Default to first unit
     if (ownerData.isNotEmpty) {
       final firstUnit = ownerData.firstWhere(
-        (data) => data.location == property,
-        orElse: () => ownerData.first
-      );
-      
+          (data) => data.location == property,
+          orElse: () => ownerData.first);
+
       selectedType = firstUnit.type?.toString() ?? '';
       selectedUnitNo = firstUnit.unitno?.toString() ?? '';
     }
 
     // Set initial values for dropdowns - Default to first unit if above didn't work
     final typeItemsList = typeItems;
-    if (typeItemsList.isNotEmpty && (selectedType == null || selectedType!.isEmpty)) {
+    if (typeItemsList.isNotEmpty &&
+        (selectedType == null || selectedType!.isEmpty)) {
       final firstItem = typeItemsList.first;
       selectedType = firstItem.split(" (")[0];
       selectedUnitNo = firstItem.split(" (")[1].replaceAll(")", "");
@@ -112,11 +121,12 @@ class PropertyDetailVM extends ChangeNotifier {
     // Auto-select latest year for eStatements
     final yearItemsList = _getYearItems();
     if (yearItemsList.isNotEmpty) {
-      _selectedYearValue = yearItemsList.first; // First item is latest (sorted descending)
+      _selectedYearValue =
+          yearItemsList.first; // First item is latest (sorted descending)
     }
-    
+
     selectedAnnualYearValue = _selectedYearValue;
-    
+
     _buildRecentActivities();
 
     isLoading = false;

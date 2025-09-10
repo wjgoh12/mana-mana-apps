@@ -25,8 +25,9 @@ class ApiEndpoint {
       '/mobile/enqs/redemption/getRedemptionPointsAndBalancePoints';
   static const String saveBookingDetailsAndRoomType =
       '/mobile/enqs/redemption/saveBookingDetailRoomType';
-  static const String getUnitAvailablePoints =
+  static const String getUnitAvailablePoint =
       '/mobile/enqs/redemption/getUnitAvailablePoint';
+
   static const String getBookingHistory =
       '/mobile/enqs/redemption/getBookingHistory';
   static const String getAllRedemptionRate =

@@ -287,7 +287,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     Text(
                       'Available Point Balance: ',
                       style: TextStyle(
-                        fontSize: ResponsiveSize.text(15),
+                        fontSize: ResponsiveSize.text(13),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -295,10 +295,13 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       '${SelectDateRoom.getFormatUserPointsBalance()}',
                       style: TextStyle(
                         color: Color(0xFF3E51FF),
-                        fontSize: ResponsiveSize.text(18),
+                        fontSize: ResponsiveSize.text(15),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    SizedBox(width: ResponsiveSize.scaleWidth(5)),
+                    Text('Quantity'),
+                    SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -373,25 +376,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     ),
                   );
                 }),
-            Column(
-              children: [
-                Text(
-                  'Quantity',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                Center(
-                  child: QuantityController(
-                    onChanged: (val) {
-                      setState(() {
-                        _selectedQuantity = val;
-                      });
-                      _validateSelectedRoom();
-                    },
-                  ),
-                ),
-              ],
-            ),
             SizedBox(height: ResponsiveSize.scaleHeight(3)),
             Padding(
               padding: const EdgeInsets.only(left: 18, right: 18, bottom: 20),

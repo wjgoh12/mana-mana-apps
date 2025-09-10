@@ -1,11 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
+import 'package:provider/provider.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
-import 'package:mana_mana_app/widgets/gradient_text.dart';
 
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class ChoosePropertyLocation extends StatelessWidget {
+class ChoosePropertyLocation extends StatefulWidget {
   const ChoosePropertyLocation({Key? key}) : super(key: key);
+
+  @override
+  State<ChoosePropertyLocation> createState() => _ChoosePropertyLocationState();
+}
+
+class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
+  String? selectedState;
+
+  @override
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final vm = context.read<OwnerProfileVM>();
+      vm.loadStates();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,48 +45,75 @@ class ChoosePropertyLocation extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.only(left: 16, top: 16),
-            child: GradientText1(
-                text: 'Kuala Lumpur',
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontSize: 30.fSize,
-                  fontWeight: FontWeight.w800,
-                ),
-                gradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                )),
-          ),
-          GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 2,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            padding: EdgeInsets.all(16),
-            childAspectRatio: 0.7,
+      body: Consumer<OwnerProfileVM>(
+        builder: (context, vm, child) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildLocationCard(context, 'Scarletz'),
-              _buildLocationCard(context, 'Ceylonz'),
-              _buildLocationCard(context, 'Expressionz'),
+              // 🔽 Dropdown for states
+              Container(
+                padding: const EdgeInsets.only(left: 16, top: 16),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    hint: const Text("Select State"),
+                    items: vm.states
+                        .map((state) => DropdownMenuItem<String>(
+                              value: state,
+                              child: Text(
+                                state,
+                                style: TextStyle(
+                                  fontSize: 20.fSize,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                    value: selectedState,
+                    onChanged: (String? value) {
+                      if (value != null) {
+                        setState(() => selectedState = value);
+                        vm.fetchLocationsByState(value);
+                      }
+                    },
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // 🔽 Locations grid
+              if (vm.isLoadingLocations)
+                const Center(child: CircularProgressIndicator())
+              else if (vm.locations.isEmpty)
+                const Center(child: Text("No locations found"))
+              else
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    padding: const EdgeInsets.all(16),
+                    childAspectRatio: 0.7,
+                    children: vm.locations
+                        .map((loc) => _buildLocationCard(
+                            context, loc.locationName, loc.pic))
+                        .toList(),
+                  ),
+                ),
             ],
-          )
-        ],
+          );
+        },
       ),
     );
   }
 }
 
-Widget _buildLocationCard(BuildContext context, String location) {
+Widget _buildLocationCard(
+    BuildContext context, String location, String picBase64) {
   return Container(
-    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     child: Column(
-      //mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Expanded(
           child: Card(
@@ -78,20 +124,25 @@ Widget _buildLocationCard(BuildContext context, String location) {
             child: InkWell(
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => SelectDateRoom()),
+                  MaterialPageRoute(builder: (_) => const SelectDateRoom()),
                 );
-                // Navigate to the select booking screen
               },
               child: Container(
                 width: double.infinity,
-                height: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.fSize),
-                  image: DecorationImage(
-                    image: AssetImage(
-                        'assets/images/${location.toUpperCase()}_BUILDING.png'),
-                    fit: BoxFit.cover,
-                  ),
+                  image: picBase64.isNotEmpty
+                      ? DecorationImage(
+                          image: MemoryImage(
+                            // decode base64 pic string into bytes
+                            Uri.parse(picBase64).data!.contentAsBytes(),
+                          ),
+                          fit: BoxFit.cover,
+                        )
+                      : const DecorationImage(
+                          image: AssetImage("assets/images/placeholder.png"),
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
             ),

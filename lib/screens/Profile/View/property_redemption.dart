@@ -4,8 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
 import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
+import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
+import 'package:intl/intl.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
+import 'package:provider/provider.dart';
 
 class PropertyRedemption extends StatefulWidget {
   const PropertyRedemption({super.key});
@@ -15,20 +19,19 @@ class PropertyRedemption extends StatefulWidget {
 }
 
 class _PropertyRedemptionState extends State<PropertyRedemption> {
-  final NewDashboardVM_v3 model = NewDashboardVM_v3();
+  @override
+  void initState() {
+    super.initState();
+    // Fetch booking history once
+    Future.microtask(() {
+      final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
+      ownerVM.fetchBookingHistory();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
-
+    final ownerVM = Provider.of<OwnerProfileVM>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -50,23 +53,24 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
             Padding(
               padding: const EdgeInsets.only(left: 10, top: 10),
               child: GradientText1(
-                  text: 'Free Stay Redemptions',
-                  style: TextStyle(
-                    fontFamily: 'outfit',
-                    fontSize: 20.fSize,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                  )),
+                text: 'Free Stay Redemptions',
+                style: TextStyle(
+                  fontFamily: 'outfit',
+                  fontSize: 20.fSize,
+                  fontWeight: FontWeight.w800,
+                ),
+                gradient: const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                ),
+              ),
             ),
           ],
         ),
       ),
       body: Container(
-        height: responsiveHeight(900),
+        height: ResponsiveSize.scaleHeight(900),
         color: Colors.white,
         padding: EdgeInsets.all(16),
         child: Column(
@@ -85,7 +89,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: SizedBox(
-                height: responsiveHeight(350),
+                height: ResponsiveSize.scaleHeight(350),
                 child: ListView.builder(
                   itemCount: 1, // Replace with actual data length
                   itemBuilder: (context, index) {
@@ -94,18 +98,18 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 ),
               ),
             ),
-            SizedBox(height: responsiveHeight(15)),
+            SizedBox(height: ResponsiveSize.scaleHeight(15)),
             Center(
               child: Text(
                 'Booking History',
                 style: TextStyle(
                   fontFamily: 'outfit',
-                  fontSize: responsiveFont(18),
+                  fontSize: ResponsiveSize.text(18),
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            SizedBox(height: responsiveHeight(10)),
+            SizedBox(height: ResponsiveSize.scaleHeight(10)),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
@@ -127,107 +131,52 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     Table(
                       border: TableBorder.all(color: Colors.transparent),
                       columnWidths: {
-                        0: FlexColumnWidth(responsiveWidth(1.5)),
-                        1: FlexColumnWidth(responsiveWidth(2)),
-                        2: FlexColumnWidth(responsiveWidth(2)),
-                        3: FlexColumnWidth(responsiveWidth(1)),
+                        0: FlexColumnWidth(ResponsiveSize.scaleWidth(1.5)),
+                        1: FlexColumnWidth(ResponsiveSize.scaleWidth(2)),
+                        2: FlexColumnWidth(ResponsiveSize.scaleWidth(2)),
+                        3: FlexColumnWidth(ResponsiveSize.scaleWidth(1)),
                       },
                       children: [
+                        // Header row
                         TableRow(
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10, top: 10),
-                              child: Text(
-                                'Location',
-                                style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF3E51FF),
-                                    fontSize: responsiveFont(13)),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10, top: 10),
-                              child: Text(
-                                'Check-In Date',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF3E51FF),
-                                  fontSize: responsiveFont(13),
+                            'Location',
+                            'Check-In Date',
+                            'Check-Out Date',
+                            'Points Used'
+                          ]
+                              .map(
+                                (text) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: Text(
+                                    text,
+                                    style: TextStyle(
+                                      fontFamily: 'outfit',
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFF3E51FF),
+                                      fontSize: ResponsiveSize.text(13),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10, top: 10),
-                              child: Text(
-                                'Check-Out Date',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF3E51FF),
-                                  fontSize: responsiveFont(13),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10, top: 10),
-                              child: Text(
-                                'Points Used',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF3E51FF),
-                                  fontSize: responsiveFont(13),
-                                ),
-                              ),
-                            ),
-                          ],
+                              )
+                              .toList(),
                         ),
-                        TableRow(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Ceylonz 9-11-3',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: responsiveFont(11),
-                                ),
+                        // Data rows from API
+                        ...ownerVM.bookingHistory.map((booking) {
+                          return TableRow(
+                            children: [
+                              BookingHistoryRecord(
+                                location: booking.location,
+                                checkInDate: DateFormat('yyyy-MM-dd')
+                                    .format(booking.arrivalDate),
+                                checkOutDate: DateFormat('yyyy-MM-dd')
+                                    .format(booking.departureDate),
+                                pointsUsed: booking.pointUsed.toString(),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                '2023-10-01',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: responsiveFont(11),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(7.0),
-                              child: Text(
-                                '2023-10-05',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: responsiveFont(11),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(7.0),
-                              child: Text(
-                                '1000',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: responsiveFont(11),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          );
+                        }).toList(),
                       ],
                     ),
                   ],
@@ -252,24 +201,14 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
   final NewDashboardVM_v3 model = NewDashboardVM_v3();
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
-
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF3E51FF).withOpacity(0.15),
+            color: const Color(0xFF3E51FF).withOpacity(0.15),
             blurRadius: 10,
             offset: const Offset(0, 0),
           ),
@@ -280,7 +219,12 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
         child: InkWell(
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => ChoosePropertyLocation()),
+              MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider(
+                  create: (_) => OwnerProfileVM(),
+                  child: const ChoosePropertyLocation(),
+                ),
+              ),
             );
           },
           child: Row(
@@ -290,26 +234,26 @@ class _PropertyPointRecordState extends State<PropertyPointRecord> {
               Text(
                 'Ceylonz 9-11-3',
                 style: TextStyle(
-                  fontSize: responsiveFont(16),
+                  fontSize: ResponsiveSize.text(16),
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF3E51FF),
                 ),
               ),
-              SizedBox(width: responsiveWidth(17)),
+              SizedBox(width: ResponsiveSize.scaleWidth(17)),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Available Points',
                     style: TextStyle(
-                      fontSize: responsiveFont(11),
+                      fontSize: ResponsiveSize.text(11),
                     ),
                   ),
-                  SizedBox(height: responsiveHeight(6)),
+                  SizedBox(height: ResponsiveSize.scaleHeight(6)),
                   Text(
                     '${SelectDateRoom.getUserPointsBalance()}/5000',
                     style: TextStyle(
-                      fontSize: responsiveFont(11),
+                      fontSize: ResponsiveSize.text(11),
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF3E51FF),
                     ),
