@@ -98,7 +98,6 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   Future<void> fetchBookingHistory() async {
-    // Get email from globalDataManager users
     final email = users.isNotEmpty ? users.first.email ?? '' : '';
 
     if (email.isEmpty) {
@@ -107,15 +106,18 @@ class OwnerProfileVM extends ChangeNotifier {
     }
 
     try {
+      _isLoadingBookingHistory = true;
+      notifyListeners();
       final response =
           await _ownerBookingRepository.getBookingHistory(email: email);
 
       _bookingHistory = response;
       debugPrint("✅ Booking history length: ${_bookingHistory.length}");
-
-      notifyListeners();
     } catch (e) {
       debugPrint('❌ Error fetching booking history: $e');
+    } finally {
+      _isLoadingBookingHistory = false;
+      notifyListeners();
     }
   }
 

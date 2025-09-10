@@ -134,122 +134,125 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Location',
-                              style: TextStyle(
-                                fontFamily: 'outfit',
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF3E51FF),
-                                fontSize: ResponsiveSize.text(13),
-                              ),
-                            ),
-                          ),
+                              flex: 2,
+                              child: Text(
+                                'Location',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF3E51FF),
+                                  fontSize: ResponsiveSize.text(13),
+                                ),
+                              )),
                           Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Check-In Date',
-                              style: TextStyle(
-                                fontFamily: 'outfit',
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF3E51FF),
-                                fontSize: ResponsiveSize.text(13),
-                              ),
-                            ),
-                          ),
+                              flex: 2,
+                              child: Text(
+                                'Check-In Date',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF3E51FF),
+                                  fontSize: ResponsiveSize.text(13),
+                                ),
+                              )),
                           Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Check-Out Date',
-                              style: TextStyle(
-                                fontFamily: 'outfit',
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF3E51FF),
-                                fontSize: ResponsiveSize.text(13),
-                              ),
-                            ),
-                          ),
+                              flex: 2,
+                              child: Text('Check-Out Date',
+                                  style: TextStyle(
+                                    fontFamily: 'outfit',
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF3E51FF),
+                                    fontSize: ResponsiveSize.text(13),
+                                  ))),
                           Expanded(
-                            flex: 1,
-                            child: Text(
-                              'Points Used',
-                              style: TextStyle(
-                                fontFamily: 'outfit',
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF3E51FF),
-                                fontSize: ResponsiveSize.text(13),
-                              ),
-                            ),
-                          ),
+                              flex: 1,
+                              child: Text('Points Used',
+                                  style: TextStyle(
+                                    fontFamily: 'outfit',
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF3E51FF),
+                                    fontSize: ResponsiveSize.text(13),
+                                  ))),
                         ],
                       ),
                     ),
 
                     Divider(height: 1, color: Colors.grey.shade300),
 
-                    // ✅ Scrollable Data Rows
+                    // ✅ Content Area
                     Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: ownerVM.bookingHistory.map((booking) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 16),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                        booking.typeRoom +
-                                            "\n" +
-                                            booking.bookingLocation,
-                                        maxLines: 5,
-                                        style: TextStyle(
-                                            fontSize: ResponsiveSize.text(11),
-                                            fontFamily: 'outfit')),
+                      child: ownerVM.isLoadingBookingHistory
+                          ? const Center(child: CircularProgressIndicator())
+                          : ownerVM.bookingHistory.isEmpty
+                              ? const Center(
+                                  child: Text("No booking history found."))
+                              : SingleChildScrollView(
+                                  child: Column(
+                                    children:
+                                        ownerVM.bookingHistory.map((booking) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8, horizontal: 16),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                booking.typeRoom +
+                                                    "\n" +
+                                                    booking.bookingLocation,
+                                                maxLines: 5,
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        ResponsiveSize.text(11),
+                                                    fontFamily: 'outfit'),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    booking.arrivalDate),
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        ResponsiveSize.text(11),
+                                                    fontFamily: 'outfit'),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                DateFormat('yyyy-MM-dd').format(
+                                                    booking.departureDate),
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        ResponsiveSize.text(11),
+                                                    fontFamily: 'outfit'),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: Text(
+                                                booking.pointUsed.toString(),
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        ResponsiveSize.text(11),
+                                                    fontFamily: 'outfit'),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(booking.arrivalDate),
-                                      style: TextStyle(
-                                          fontSize: ResponsiveSize.text(11),
-                                          fontFamily: 'outfit'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(booking.departureDate),
-                                      style: TextStyle(
-                                          fontSize: ResponsiveSize.text(11),
-                                          fontFamily: 'outfit'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      booking.pointUsed.toString(),
-                                      style: TextStyle(
-                                          fontSize: ResponsiveSize.text(11),
-                                          fontFamily: 'outfit'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
+                                ),
                     ),
                   ],
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
