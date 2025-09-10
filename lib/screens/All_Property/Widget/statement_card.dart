@@ -1,0 +1,129 @@
+import 'package:flutter/material.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
+
+class StatementCard extends StatelessWidget {
+  final String month;
+  final String statementDate;
+  final String statementAmount;
+  final VoidCallback onTap;
+
+  const StatementCard({
+    Key? key,
+    required this.month,
+    required this.statementDate,
+    required this.statementAmount,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: ResponsiveSize.scaleWidth(16),
+        vertical: ResponsiveSize.scaleHeight(4),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.all(ResponsiveSize.scaleWidth(12)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Month header
+                Text(
+                  '$month Statement',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: ResponsiveSize.text(14),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: ResponsiveSize.scaleHeight(8)),
+                
+                // Statement details
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Statement Date:',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: ResponsiveSize.text(11),
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveSize.scaleHeight(2)),
+                        Text(
+                          statementDate,
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: ResponsiveSize.text(12),
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Statement Amount:',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: ResponsiveSize.text(11),
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveSize.scaleHeight(2)),
+                        Text(
+                          statementAmount,
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: ResponsiveSize.text(12),
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF3E51FF),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                
+                SizedBox(height: ResponsiveSize.scaleHeight(8)),
+                
+                // Details link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Details >',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: ResponsiveSize.text(12),
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF3E51FF),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

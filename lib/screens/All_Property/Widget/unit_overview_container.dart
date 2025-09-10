@@ -31,25 +31,65 @@ class UnitOverviewContainer extends StatelessWidget {
     final propertyModel = Provider.of<PropertyDetailVM>(context);
     final dashboardModel = Provider.of<NewDashboardVM_v3>(context);
 
-    final properties = dashboardModel.ownerUnits
-        .map((unit) => unit.location)
-        .where((location) => location != null)
-        .toSet()
-        .toList();
-
     // Get the currently selected property and unit
     final selectedProperty = propertyModel.selectedProperty;
     final selectedUnit = propertyModel.selectedUnitNo;
+    final selectedType = propertyModel.selectedType;
 
-    // Get units for selected property
-    final units = selectedProperty != null
-        ? dashboardModel.ownerUnits
-            .where((unit) => unit.location == selectedProperty)
-            .map((unit) => unit.unitno)
-            .where((unitno) => unitno != null)
-            .toSet()
-            .toList()
-        : <String>[];
+    // Check if we have valid selections
+    if (selectedProperty == null || selectedUnit == null || selectedType == null) {
+      return const SizedBox.shrink();
+    }
+
+    // Check if there's any data for this specific unit
+    final hasData = propertyModel.unitByMonth.any((unit) =>
+        unit.slocation == selectedProperty &&
+        unit.stype == selectedType &&
+        unit.sunitno == selectedUnit);
+    
+    // Also check if the selected unit data has meaningful values (not just 0.00)
+    final hasMeaningfulData = hasData && 
+        (propertyModel.selectedUnitPro?.total != 0.0 || 
+         propertyModel.selectedUnitBlc?.total != 0.0);
+
+    if (!hasData || !hasMeaningfulData) {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(16)),
+        padding: EdgeInsets.all(ResponsiveSize.scaleWidth(16)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 48,
+                color: Colors.grey.shade400,
+              ),
+              SizedBox(height: ResponsiveSize.scaleHeight(16)),
+              Text(
+                'No data available for this unit',
+                style: TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: ResponsiveSize.text(16),
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     // Get the monthly profit (NOPROF)
     final monthlyProfit = propertyModel.selectedUnitPro?.total ?? 0.0;

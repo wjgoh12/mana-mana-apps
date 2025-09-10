@@ -71,6 +71,8 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   Future<void> fetchData(List<Map<String, dynamic>> newLocationByMonth) async {
+    // print(
+    //     '📡 fetchData called - current selection: $selectedType, $selectedUnitNo');
     isLoading = true;
     notifyListeners();
 
@@ -93,14 +95,20 @@ class PropertyDetailVM extends ChangeNotifier {
     // Set location details based on property
     _setLocationDetails();
 
-    // Set initial selections from ownerData - Default to first unit
-    if (ownerData.isNotEmpty) {
+    // Set initial selections from ownerData - Default to first unit only if not already set
+    if (ownerData.isNotEmpty &&
+        (selectedType == null || selectedUnitNo == null)) {
+      print('🔄 Setting initial selection from first unit');
       final firstUnit = ownerData.firstWhere(
           (data) => data.location == property,
           orElse: () => ownerData.first);
 
       selectedType = firstUnit.type?.toString() ?? '';
       selectedUnitNo = firstUnit.unitno?.toString() ?? '';
+      // print('✅ Initial selection set: $selectedType, $selectedUnitNo');
+    } else {
+      // print(
+      //     '⏭️ Skipping initial selection - already set: $selectedType, $selectedUnitNo');
     }
 
     // Set initial values for dropdowns - Default to first unit if above didn't work
@@ -167,9 +175,22 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   void _calculateLatestYearMonth() {
+    final currentProperty = selectedProperty ?? property;
+
+    // Reset to default values
+    unitLatestYear = 0;
+    unitLatestMonth = 0;
+
+    // Only calculate if we have valid selections
+    if (selectedType == null ||
+        selectedUnitNo == null ||
+        currentProperty == null) {
+      return;
+    }
+
     var filteredYears = unitByMonth
         .where((unit) =>
-            unit.slocation == property &&
+            unit.slocation == currentProperty &&
             unit.stype == selectedType &&
             unit.sunitno == selectedUnitNo)
         .map((unit) => unit.iyear ?? 0)
@@ -178,13 +199,11 @@ class PropertyDetailVM extends ChangeNotifier {
     if (filteredYears.isNotEmpty) {
       unitLatestYear = filteredYears
           .reduce((value, element) => value > element ? value : element);
-    } else {
-      unitLatestYear = 0;
     }
 
     var filteredMonths = unitByMonth
         .where((unit) =>
-            unit.slocation == property &&
+            unit.slocation == currentProperty &&
             unit.stype == selectedType &&
             unit.sunitno == selectedUnitNo &&
             unit.iyear == unitLatestYear)
@@ -194,39 +213,52 @@ class PropertyDetailVM extends ChangeNotifier {
     if (filteredMonths.isNotEmpty) {
       unitLatestMonth = filteredMonths
           .reduce((value, element) => value > element ? value : element);
-    } else {
-      unitLatestMonth = 0;
     }
   }
 
   void _setSelectedUnitData() {
-    selectedUnitBlc = unitByMonth.firstWhere(
-        (unit) =>
-            unit.slocation == property &&
-            unit.stype == selectedType &&
-            unit.sunitno == selectedUnitNo &&
-            unit.imonth == unitLatestMonth &&
-            unit.iyear == unitLatestYear &&
-            unit.stranscode == 'OWNBAL',
-        orElse: () => SingleUnitByMonth(total: 0.00));
+    final currentProperty = selectedProperty ?? property;
 
-    selectedUnitPro = unitByMonth.firstWhere(
-        (unit) =>
-            unit.slocation == property &&
-            unit.stype == selectedType &&
-            unit.sunitno == selectedUnitNo &&
-            unit.imonth == unitLatestMonth &&
-            unit.iyear == unitLatestYear &&
-            unit.stranscode == 'NOPROF',
-        orElse: () => SingleUnitByMonth(total: 0.00));
+    // Reset to default values first
+    selectedUnitBlc = SingleUnitByMonth(total: 0.00);
+    selectedUnitPro = SingleUnitByMonth(total: 0.00);
+
+    // Only set data if we have valid selections AND valid latest year/month
+    if (selectedType != null &&
+        selectedUnitNo != null &&
+        currentProperty != null &&
+        unitLatestYear > 0 &&
+        unitLatestMonth > 0) {
+      selectedUnitBlc = unitByMonth.firstWhere(
+          (unit) =>
+              unit.slocation == currentProperty &&
+              unit.stype == selectedType &&
+              unit.sunitno == selectedUnitNo &&
+              unit.imonth == unitLatestMonth &&
+              unit.iyear == unitLatestYear &&
+              unit.stranscode == 'OWNBAL',
+          orElse: () => SingleUnitByMonth(total: 0.00));
+
+      selectedUnitPro = unitByMonth.firstWhere(
+          (unit) =>
+              unit.slocation == currentProperty &&
+              unit.stype == selectedType &&
+              unit.sunitno == selectedUnitNo &&
+              unit.imonth == unitLatestMonth &&
+              unit.iyear == unitLatestYear &&
+              unit.stranscode == 'NOPROF',
+          orElse: () => SingleUnitByMonth(total: 0.00));
+    }
   }
 
   List<String> _getYearItems() {
     if (selectedType == null || selectedUnitNo == null) return [];
 
+    final currentProperty = selectedProperty ?? property;
+
     return unitByMonth
         .where((item) =>
-            item.slocation == property &&
+            item.slocation == currentProperty &&
             item.stype == selectedType &&
             item.sunitno == selectedUnitNo)
         .map((item) => item.iyear.toString())
@@ -242,10 +274,12 @@ class PropertyDetailVM extends ChangeNotifier {
       return [];
     }
 
+    final currentProperty = selectedProperty ?? property;
+
     return unitByMonth
         .where((item) =>
             item.iyear.toString() == _selectedYearValue &&
-            item.slocation == property &&
+            item.slocation == currentProperty &&
             item.stype == selectedType &&
             item.sunitno == selectedUnitNo)
         .map((item) => item.imonth.toString())
@@ -255,8 +289,10 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   List<String> _getTypeItems() {
+    final currentProperty = selectedProperty ?? property;
+
     final List<String> builtTypeItems = ownerData
-        .where((types) => types.location == property)
+        .where((types) => types.location == currentProperty)
         .map((types) => '${types.type} (${types.unitno})')
         .toList();
 
@@ -285,11 +321,24 @@ class PropertyDetailVM extends ChangeNotifier {
 
   Future<void> updateSelectedTypeUnit(
       String newSelectedType, String newSelectedUnitNo) async {
+    print(
+        '🔄 updateSelectedTypeUnit called: $newSelectedType, $newSelectedUnitNo');
     _isDateLoading = true;
+
+    // Clear all data first
+    selectedUnitBlc = SingleUnitByMonth(total: 0.00);
+    selectedUnitPro = SingleUnitByMonth(total: 0.00);
+    unitLatestYear = 0;
+    unitLatestMonth = 0;
+    _selectedYearValue = null;
+    selectedMonthValue = null;
+
+    print('🧹 Data cleared, notifying listeners...');
     notifyListeners();
 
     selectedType = newSelectedType;
     selectedUnitNo = newSelectedUnitNo;
+    print('📝 New selection set: $selectedType, $selectedUnitNo');
 
     // Update year selection to latest for this unit
     final yearItemsList = _getYearItems();
@@ -308,8 +357,11 @@ class PropertyDetailVM extends ChangeNotifier {
 
     // Update selected unit data
     _setSelectedUnitData();
+    print(
+        '📊 Final data - selectedUnitBlc: ${selectedUnitBlc?.total}, selectedUnitPro: ${selectedUnitPro?.total}');
 
     _isDateLoading = false;
+    print('✅ updateSelectedTypeUnit completed, notifying listeners...');
     notifyListeners();
   }
 

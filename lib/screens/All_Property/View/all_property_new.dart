@@ -1,7 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
-import 'package:mana_mana_app/screens/All_Property/Widget/statement_dropdown.dart';
+import 'package:mana_mana_app/screens/All_Property/Widget/enhanced_statement_dropdown.dart';
+import 'package:mana_mana_app/screens/All_Property/Widget/enhanced_statement_container.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
 import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
@@ -148,64 +149,19 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
                     height: ResponsiveSize.scaleHeight(8),
                   ),
                   _unitDropDown(),
-                  Consumer2<NewDashboardVM_v3, PropertyDetailVM>(
-                    builder: (context, dashboardModel, propertyModel, child) {
-                      // Get data from PropertyDetailVM
-                      final totalPro =
-                          propertyModel.selectedUnitPro?.total ?? 0.0;
-                      final formattedTotalPro =
-                          totalPro.toStringAsFixed(2).replaceAllMapped(
-                                RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                (Match m) => '${m[1]},',
-                              );
-
-                      final totalBlc =
-                          propertyModel.selectedUnitBlc?.total ?? 0.0;
-                      final formattedTotalBlc =
-                          totalBlc.toStringAsFixed(2).replaceAllMapped(
-                                RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                (Match m) => '${m[1]},',
-                              );
-
-                      final location =
-                          propertyModel.selectedProperty ?? 'Unknown';
-                      final unitNo = propertyModel.selectedUnitNo ?? 'Unknown';
-
-                      DateTime now = DateTime.now();
-                      String shortMonth = monthNumberToName(now.month);
-                      String year = now.year.toString();
-
-                      return Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                buildCard('Monthly Profit', formattedTotalPro,
-                                    '$shortMonth $year'),
-                                const SizedBox(width: 8),
-                                buildCard('Net Profit After POB',
-                                    formattedTotalBlc, '$shortMonth $year'),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                buildCard('$year Accumulated Profit',
-                                    formattedTotalBlc, '$shortMonth $year'),
-                                const SizedBox(width: 8),
-                                buildCard(
-                                    'Group Occupancy',
-                                    '${dashboardModel.getUnitOccupancyFromCache(location, unitNo)}',
-                                    '$shortMonth $year',
-                                    isCurrency: false),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
+                  // Display UnitOverviewContainer when a unit is selected
+                  Builder(
+                    builder: (context) {
+                      // print(
+                      //     '🔄 UnitOverviewContainer Builder triggered - selectedProperty: ${propertyModel.selectedProperty}, selectedUnitNo: ${propertyModel.selectedUnitNo}, selectedType: ${propertyModel.selectedType}');
+                      if (propertyModel.selectedProperty != null &&
+                          propertyModel.selectedUnitNo != null &&
+                          propertyModel.selectedType != null) {
+                        // print('✅ Showing UnitOverviewContainer');
+                        return const UnitOverviewContainer();
+                      }
+                      print('❌ Hiding UnitOverviewContainer');
+                      return const SizedBox.shrink();
                     },
                   ),
                   SizedBox(
@@ -215,10 +171,40 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
                   SizedBox(
                     height: ResponsiveSize.scaleHeight(15),
                   ),
-                  StatementDropdown(
-                    onBack: () => Navigator.pop(context),
-                    yearOptions: propertyModel.yearItems,
-                    model: propertyModel,
+                  // Enhanced Statement Dropdown
+                  Builder(
+                    builder: (context) {
+                      // print(
+                      //     '🔄 Statement Dropdown Builder triggered - selectedProperty: ${propertyModel.selectedProperty}, selectedUnitNo: ${propertyModel.selectedUnitNo}, selectedType: ${propertyModel.selectedType}');
+                      if (propertyModel.selectedProperty != null &&
+                          propertyModel.selectedUnitNo != null &&
+                          propertyModel.selectedType != null) {
+                        // print('✅ Showing Statement Dropdown');
+                        return EnhancedStatementDropdown(
+                          onBack: () => Navigator.pop(context),
+                          yearOptions: propertyModel.yearItems,
+                          monthOptions: propertyModel.monthItems,
+                          model: propertyModel,
+                        );
+                      }
+                      print('❌ Hiding Statement Dropdown');
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                  // Enhanced Statement Container
+                  Builder(
+                    builder: (context) {
+                      // print(
+                      //     '🔄 Statement Container Builder triggered - selectedProperty: ${propertyModel.selectedProperty}, selectedUnitNo: ${propertyModel.selectedUnitNo}, selectedType: ${propertyModel.selectedType}');
+                      if (propertyModel.selectedProperty != null &&
+                          propertyModel.selectedUnitNo != null &&
+                          propertyModel.selectedType != null) {
+                        // print('✅ Showing Statement Container');
+                        return EnhancedStatementContainer(model: propertyModel);
+                      }
+                      print('❌ Hiding Statement Container');
+                      return const SizedBox.shrink();
+                    },
                   ),
                 ],
               ),
@@ -575,6 +561,12 @@ class PropertyOverviewSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer2<NewDashboardVM_v3, PropertyDetailVM>(
       builder: (context, dashboardModel, propertyModel, child) {
+        if (propertyModel.selectedProperty == null ||
+            propertyModel.selectedUnitNo == null) {
+          return const SizedBox
+              .shrink(); // Don't show anything if no unit is selected
+        }
+
         // Get data from PropertyDetailVM
         final totalPro = propertyModel.selectedUnitPro?.total ?? 0.0;
         final formattedTotalPro = totalPro.toStringAsFixed(2).replaceAllMapped(
@@ -642,6 +634,77 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
   String? selectedProperty;
   String? selectedUnit;
 
+  void _handlePropertySelection(String? value, BuildContext context) {
+    if (value == null) return;
+
+    final model = Provider.of<NewDashboardVM_v3>(context, listen: false);
+    final firstUnitData =
+        model.ownerUnits.where((unit) => unit.location == value).firstOrNull;
+
+    final firstUnit = firstUnitData?.unitno;
+
+    setState(() {
+      selectedProperty = value;
+      selectedUnit = firstUnit;
+    });
+
+    final propertyModel = Provider.of<PropertyDetailVM>(context, listen: false);
+
+    if (firstUnitData != null && firstUnit != null) {
+      // Update the PropertyDetailVM with the correct unit type and unit number
+      propertyModel.updateSelectedTypeUnit(
+          firstUnitData.type?.toString() ?? '', firstUnit);
+
+      // Also update the selection
+      propertyModel.updateSelection(value, firstUnit);
+    }
+
+    if (model.locationByMonth.isNotEmpty) {
+      propertyModel.fetchData(model.locationByMonth);
+    }
+  }
+
+  void _handleUnitSelection(String? value, BuildContext context) {
+    print('🎯 _handleUnitSelection called with: $value');
+    if (value == null || selectedProperty == null) {
+      print(
+          '❌ Invalid selection: value=$value, selectedProperty=$selectedProperty');
+      return;
+    }
+
+    setState(() {
+      selectedUnit = value;
+    });
+    print('✅ Local state updated: selectedUnit=$selectedUnit');
+
+    final propertyModel = Provider.of<PropertyDetailVM>(context, listen: false);
+    final dashboardModel =
+        Provider.of<NewDashboardVM_v3>(context, listen: false);
+
+    // Find the unit type for the selected unit
+    final selectedUnitData = dashboardModel.ownerUnits
+        .where(
+            (unit) => unit.location == selectedProperty && unit.unitno == value)
+        .firstOrNull;
+
+    print('🔍 Found unit data: ${selectedUnitData?.type} for unit $value');
+
+    if (selectedUnitData != null) {
+      // Update the PropertyDetailVM with the correct unit type and unit number
+      print('🔄 Calling updateSelectedTypeUnit...');
+      propertyModel.updateSelectedTypeUnit(
+          selectedUnitData.type?.toString() ?? '', value);
+
+      // Also update the selection
+      propertyModel.updateSelection(selectedProperty!, value);
+    }
+
+    if (dashboardModel.locationByMonth.isNotEmpty) {
+      print('📡 Calling fetchData...');
+      propertyModel.fetchData(dashboardModel.locationByMonth);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -661,18 +724,28 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
           selectedProperty = firstProperty;
         });
 
-        final firstUnit = dashboardModel.ownerUnits
+        final firstUnitData = dashboardModel.ownerUnits
             .where((unit) => unit.location == firstProperty)
-            .map((unit) => unit.unitno)
-            .where((unitno) => unitno != null)
             .firstOrNull;
 
-        if (firstUnit != null) {
+        final firstUnit = firstUnitData?.unitno;
+
+        if (firstUnit != null && firstUnitData != null) {
           setState(() {
             selectedUnit = firstUnit;
           });
+
+          // Update the PropertyDetailVM with the correct unit type and unit number
+          propertyModel.updateSelectedTypeUnit(
+              firstUnitData.type?.toString() ?? '', firstUnit);
+
           // Update the PropertyDetailVM with initial selection
           propertyModel.updateSelection(firstProperty, firstUnit);
+
+          // Fetch data for the initial unit
+          if (dashboardModel.locationByMonth.isNotEmpty) {
+            propertyModel.fetchData(dashboardModel.locationByMonth);
+          }
         }
       }
     });
@@ -748,16 +821,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
             ),
             onChanged: (value) {
               if (value != null) {
-                final firstUnit = model.ownerUnits
-                    .where((unit) => unit.location == value)
-                    .map((unit) => unit.unitno)
-                    .where((unitno) => unitno != null)
-                    .firstOrNull;
-
-                // 🔥 Update the VM instead of local setState
-                final propertyModel =
-                    Provider.of<PropertyDetailVM>(context, listen: false);
-                propertyModel.updateSelection(value, firstUnit ?? "");
+                _handlePropertySelection(value, context);
               }
             },
           ),
@@ -806,10 +870,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
             ),
             onChanged: (value) {
               if (value != null) {
-                final propertyModel =
-                    Provider.of<PropertyDetailVM>(context, listen: false);
-                propertyModel.updateSelection(
-                    propertyModel.selectedProperty!, value);
+                _handleUnitSelection(value, context);
               }
             },
           ),
