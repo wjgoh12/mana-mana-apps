@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
+import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/model/propertystate.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/model/user_model.dart';
@@ -25,6 +26,7 @@ class OwnerProfileVM extends ChangeNotifier {
   final GlobalDataManager _globalDataManager = GlobalDataManager();
   bool _isLoadingBookingHistory = false;
   bool _isLoadingAvailablePoints = false;
+  bool _isLoadingBlockedDates = false;
 
   //data
   List<User> _users = [];
@@ -34,6 +36,7 @@ class OwnerProfileVM extends ChangeNotifier {
   String _selectedState = '';
   List<BookingHistory> _bookingHistory = [];
   List<UnitAvailablePoint> _unitAvailablePoints = [];
+  List<CalendarBlockedDate> _blockedDates = [];
 
   //getters
   List<BookingHistory> get bookingHistory => _bookingHistory;
@@ -47,6 +50,8 @@ class OwnerProfileVM extends ChangeNotifier {
   String? get error => _error;
   bool get isLoadingBookingHistory => _isLoadingBookingHistory;
   bool get isLoadingAvailablePoints => _isLoadingAvailablePoints;
+  List<CalendarBlockedDate> get blockedDates => _blockedDates;
+  bool get isLoadingBlockedDates => _isLoadingBlockedDates;
 
   // Getters that delegate to GlobalDataManager
   List<User> get users => _globalDataManager.users;
@@ -187,6 +192,74 @@ class OwnerProfileVM extends ChangeNotifier {
       _error = e.toString();
     } finally {
       _isLoadingStates = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchRedemptionBalancePoints({
+    required String location,
+    required String unitNo,
+  }) async {
+    if (location.isEmpty || unitNo.isEmpty) {
+      debugPrint(
+          "⚠️ Location or Unit No is empty, cannot fetch redemption balance points.");
+      return;
+    }
+
+    try {
+      _isLoadingAvailablePoints = true;
+      notifyListeners();
+
+      final response = await _ownerBookingRepository.getRedemptionBalancePoints(
+        location: location,
+        unitNo: unitNo,
+      );
+
+      UserPointBalance.clear();
+      UserPointBalance.addAll(response);
+
+      debugPrint(
+          "✅ Redemption balance points length: ${UserPointBalance.length}");
+    } catch (e) {
+      debugPrint('❌ Error fetching redemption balance points: $e');
+    } finally {
+      _isLoadingAvailablePoints = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchBlockedDates({
+    required String location,
+    required String state,
+  }) async {
+    _isLoadingBlockedDates = true;
+    notifyListeners();
+
+    try {
+      final res = await _ownerBookingRepository.getCalendarBlockedDates(
+        location: location,
+        startDate: DateTime.now().toIso8601String(),
+        endDate:
+            DateTime.now().add(const Duration(days: 365)).toIso8601String(),
+      );
+
+      if (res is! List) {
+        throw Exception('Unexpected API response for blocked dates');
+      }
+
+      final dates = res.map((e) => CalendarBlockedDate.fromJson(e)).toList();
+
+      _blockedDates = _ownerBookingRepository.filterBlockedDatesForState(
+        dates,
+        state,
+      );
+
+      debugPrint("✅ Blocked dates loaded: ${_blockedDates.length}");
+    } catch (e) {
+      debugPrint("❌ Failed to fetch blocked dates: $e");
+      _blockedDates = [];
+    } finally {
+      _isLoadingBlockedDates = false;
       notifyListeners();
     }
   }

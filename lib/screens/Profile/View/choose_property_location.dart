@@ -11,7 +11,11 @@ import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class ChoosePropertyLocation extends StatefulWidget {
-  const ChoosePropertyLocation({Key? key}) : super(key: key);
+  final String selectedLocation;
+  final String selectedUnitNo;
+  const ChoosePropertyLocation(
+      {Key? key, required this.selectedLocation, required this.selectedUnitNo})
+      : super(key: key);
 
   @override
   State<ChoosePropertyLocation> createState() => _ChoosePropertyLocationState();
@@ -55,68 +59,84 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 🔽 Dropdown for states
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: ResponsiveSize.scaleWidth(200),
-                    padding: const EdgeInsets.only(left: 16, top: 16),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Text("Select State"),
-                        items: vm.states
-                            .map(
-                              (state) => DropdownMenuItem<String>(
-                                value: state,
-                                child: Text(
-                                  state,
-                                  style: TextStyle(
-                                    fontSize: 20.fSize,
-                                    fontWeight: FontWeight.bold,
+              if (vm.isLoadingStates) // <-- add this flag in your ViewModel
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              else if (vm.states.isEmpty)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text("No states found"),
+                  ),
+                )
+              else
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: ResponsiveSize.scaleWidth(200),
+                      padding: const EdgeInsets.only(left: 16, top: 16),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: const Text("Select State"),
+                          items: vm.states
+                              .map(
+                                (state) => DropdownMenuItem<String>(
+                                  value: state,
+                                  child: Text(
+                                    state,
+                                    style: TextStyle(
+                                      fontSize: 20.fSize,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                        value: selectedState,
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            setState(() => selectedState = value);
-                            vm.fetchLocationsByState(value);
-                          }
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                12), // Border radius for the button
-                            border: Border.all(
-                              color: Colors.grey.shade400,
-                            ),
-                            color: Colors.white,
-                          ),
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          decoration: BoxDecoration(
+                              )
+                              .toList(),
+                          value: selectedState,
+                          onChanged: (String? value) {
+                            if (value != null) {
+                              setState(() => selectedState = value);
+                              vm.fetchLocationsByState(value);
+                            }
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
-                                  12), // Border radius for the dropdown menu
+                                  12), // Border radius for the button
+                              border: Border.all(
+                                color: Colors.grey.shade400,
+                              ),
                               color: Colors.white,
-                              border: Border.all(color: Colors.grey.shade300),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0),
-                                )
-                              ]),
+                            ),
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    12), // Border radius for the dropdown menu
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey.shade300),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0),
+                                  )
+                                ]),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
               const SizedBox(height: 16),
 
               // 🔽 Locations grid
+
               if (vm.isLoadingLocations)
                 const Center(child: CircularProgressIndicator())
               else if (vm.locations.isEmpty)
@@ -131,8 +151,14 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                     childAspectRatio: 0.7,
                     children: vm.locations
                         .map(
-                          (loc) => _buildLocationCard(context, loc.locationName,
-                              loc.pic, loc.stateName),
+                          (loc) => _buildLocationCard(
+                            context,
+                            loc.locationName,
+                            loc.pic,
+                            loc.stateName,
+                            widget.selectedLocation,
+                            widget.selectedUnitNo,
+                          ),
                         )
                         .toList(),
                   ),
@@ -150,6 +176,8 @@ Widget _buildLocationCard(
   String? location,
   String? picBase64,
   String? propertyState,
+  String selectedLocation, // from PropertyRedemption
+  String selectedUnitNo, // from PropertyRedemption
 ) {
   Uint8List? _decodeBase64(String? base64String) {
     try {
@@ -190,6 +218,8 @@ Widget _buildLocationCard(
                       child: SelectDateRoom(
                         location: location ?? "Unknown Location",
                         state: propertyState ?? "Unknown State",
+                        ownedLocation: selectedLocation,
+                        ownedUnitNo: selectedUnitNo,
                       ),
                     ),
                   ),

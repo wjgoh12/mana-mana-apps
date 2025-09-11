@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as _apiService;
 import 'package:mana_mana_app/model/bookingHistory.dart';
+import 'package:mana_mana_app/model/calendarBlockedDate.dart';
+import 'package:mana_mana_app/model/redemptionBalancePoints.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
@@ -167,10 +169,72 @@ class RedemptionRepository {
       "endDate": endDate,
     };
 
+    final res =
+        await _apiService.post(ApiEndpoint.getCalendarBlockDate, data: data);
+
+    if (res == null) return [];
+
+    // Assuming API returns { "success": true, "data": [...] }
+    final List<dynamic> dataList = res['data'] ?? [];
+
+    return dataList;
+  }
+
+  List<CalendarBlockedDate> filterBlockedDatesForState(
+      List<CalendarBlockedDate> allDates, String propertyState) {
+    return allDates
+        .where((date) =>
+            date.state == "All" ||
+            date.state.toLowerCase() == propertyState.toLowerCase())
+        .toList();
+  }
+
+  Future<List<RedemptionBalancePoints>> getRedemptionBalancePoints({
+    required String location,
+    required String unitNo,
+  }) async {
     final res = await _apiService.post(
-      ApiEndpoint.getCalendarBlockDate,
-      data: data,
+      ApiEndpoint.getRedemptionAndBalancePoints,
+      data: {"locationName": location, "unitNo": unitNo},
     );
-    return res ?? [];
+
+    debugPrint("🔍 Raw API Response: $res");
+
+    if (res == null) {
+      debugPrint("⚠️ API returned null");
+      return [];
+    }
+
+    if (res is Map) {
+      debugPrint("📦 Response is a Map with keys: ${res.keys}");
+
+      // ✅ Case 1: API wrapped in 'data' list
+      if (res['data'] is List) {
+        return (res['data'] as List)
+            .map((json) => RedemptionBalancePoints.fromJson(
+                Map<String, dynamic>.from(json)))
+            .toList();
+      }
+
+      // ✅ Case 2: API returns a single object (your example)
+      if (res.containsKey('redemptionPoints') &&
+          res.containsKey('redemptionBalancePoints')) {
+        return [
+          RedemptionBalancePoints.fromJson(Map<String, dynamic>.from(res))
+        ];
+      }
+
+      debugPrint("❌ Unhandled Map structure: $res");
+    }
+
+    if (res is List) {
+      debugPrint("✅ Response is a List with length: ${res.length}");
+      return res
+          .map((json) =>
+              RedemptionBalancePoints.fromJson(Map<String, dynamic>.from(json)))
+          .toList();
+    }
+
+    throw Exception("❌ Unexpected API response format: $res");
   }
 }

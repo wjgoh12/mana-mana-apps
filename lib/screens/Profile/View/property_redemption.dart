@@ -145,7 +145,12 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                     create: (_) =>
                                                         OwnerProfileVM(),
                                                     child:
-                                                        const ChoosePropertyLocation(),
+                                                        ChoosePropertyLocation(
+                                                      selectedLocation:
+                                                          unit.location,
+                                                      selectedUnitNo:
+                                                          unit.unitNo,
+                                                    ),
                                                   ),
                                                 ),
                                               );
