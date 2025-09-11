@@ -7,8 +7,10 @@ import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:mana_mana_app/model/roomtype.dart';
+import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 class SelectDateRoom extends StatefulWidget {
   final String ownedLocation;
@@ -35,7 +37,7 @@ class SelectDateRoom extends StatefulWidget {
   }
 
   static int calculateTotalPoints(RoomType room, int quantity, int duration) {
-    return room.points * quantity * duration;
+    return room.roomTypePoints * quantity * duration;
   }
 
   @override
@@ -58,14 +60,17 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
   @override
   @override
-  @override
   void initState() {
     super.initState();
+
     _selectedDay = _focusedDay;
     _fetchBlockedDates();
 
+    // Assign the VM immediately
+    _vm = context.read<OwnerProfileVM>();
+
+    // Run async fetches after first frame to avoid build conflicts
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _vm = context.read<OwnerProfileVM>();
       _vm.fetchRedemptionBalancePoints(
         location: widget.ownedLocation,
         unitNo: widget.ownedUnitNo,
@@ -74,22 +79,20 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }
 
   Future<void> _fetchBlockedDates() async {
+    debugPrint(
+        "Blocked dates: ${_blockedDates.map((e) => e.dateFrom).toList()}");
+
     setState(() => _isLoadingBlockedDates = true);
 
     try {
       final repo = RedemptionRepository();
 
-      final res = await repo.getCalendarBlockedDates(
-        location: widget.location,
-        startDate: DateTime.now().toIso8601String(),
-        endDate: DateTime.now().add(Duration(days: 365)).toIso8601String(),
-      );
+      final res = await repo.getCalendarBlockedDates();
 
-      final dates = res.map((e) => CalendarBlockedDate.fromJson(e)).toList();
+      // final dates = res.map((e) => CalendarBlockedDate.fromJson(e)).toList();
 
-      // Filter for current state
       final filteredDates = repo.filterBlockedDatesForState(
-        dates,
+        res,
         widget.state,
       );
 
@@ -107,12 +110,37 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
         _selectedDay = selectedDay;
-        _focusedDay = focusedDay;
+        _focusedDay = getInitialFocusedDay();
+        _selectedDay = _focusedDay;
       });
     }
   }
 
   void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
+    if (start != null && end != null) {
+      // Check if any day in the range is blocked
+      bool hasBlocked = false;
+      for (DateTime d = start;
+          !d.isAfter(end);
+          d = d.add(const Duration(days: 1))) {
+        if (_isBlackoutDay(d) || _isGreyDay(d)) {
+          hasBlocked = true;
+          break;
+        }
+      }
+
+      if (hasBlocked) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Selected range includes blocked dates. Please choose another range.'),
+            backgroundColor: Color.fromARGB(255, 203, 46, 46),
+          ),
+        );
+        return; // Exit early, don't update selection
+      }
+    }
+
     setState(() {
       _selectedDay = null;
       _focusedDay = focusedDay;
@@ -123,6 +151,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         _selectedQuantity = 1;
       }
     });
+
     _validateSelectedRoom();
   }
 
@@ -133,30 +162,33 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     return 0;
   }
 
-  //datetime type
+  DateTime _toDateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+
   bool _isBlackoutDay(DateTime day) {
+    final d = _toDateOnly(day);
     return _blockedDates.any(
-      (d) =>
-          d.contentType.toLowerCase() == "black" &&
-          day.isAfter(d.dateFrom.subtract(Duration(days: 1))) &&
-          day.isBefore(d.dateTo.add(Duration(days: 1))),
+      (bd) =>
+          bd.contentType.toLowerCase() == "black" &&
+          !d.isBefore(_toDateOnly(bd.dateFrom)) &&
+          !d.isAfter(_toDateOnly(bd.dateTo)),
     );
   }
 
   bool _isGreyDay(DateTime day) {
+    final d = _toDateOnly(day);
     return _blockedDates.any(
-      (d) =>
-          d.contentType.toLowerCase() == "grey" &&
-          day.isAfter(d.dateFrom.subtract(Duration(days: 1))) &&
-          day.isBefore(d.dateTo.add(Duration(days: 1))),
+      (bd) =>
+          bd.contentType.toLowerCase() == "grey" &&
+          !d.isBefore(_toDateOnly(bd.dateFrom)) &&
+          !d.isAfter(_toDateOnly(bd.dateTo)),
     );
   }
 
   BoxDecoration _rectDeco({Color? color}) => BoxDecoration(
-    color: color,
-    shape: BoxShape.circle,
-    // borderRadius: const BorderRadius.all(Radius.circular(8)),
-  );
+        color: color,
+        shape: BoxShape.circle,
+        // borderRadius: const BorderRadius.all(Radius.circular(8)),
+      );
 
   DateTime getInitialFocusedDay() {
     final today = DateTime.now();
@@ -167,11 +199,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     DateTime firstOfMonth = DateTime(today.year, today.month, 1);
     DateTime lastOfMonth = DateTime(today.year, today.month + 1, 0);
 
-    for (
-      DateTime d = firstOfMonth;
-      d.isBefore(lastOfMonth.add(Duration(days: 1)));
-      d = d.add(Duration(days: 1))
-    ) {
+    for (DateTime d = firstOfMonth;
+        d.isBefore(lastOfMonth.add(Duration(days: 1)));
+        d = d.add(Duration(days: 1))) {
       if (_isDayEnabled(d)) {
         // helper check
         hasAvailableDayThisMonth = true;
@@ -204,8 +234,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }
 
   bool isRoomAffordable(RoomType room, int duration, int quantity) {
-    final totalPoints = room.points * duration * quantity;
-    return totalPoints <= SelectDateRoom.getUserPointsBalance();
+    final userPoints = vm.UserPointBalance.isNotEmpty
+        ? vm.UserPointBalance.first.redemptionBalancePoints
+        : 0;
+    final totalPoints = room.roomTypePoints * duration * quantity;
+    return totalPoints <= userPoints;
   }
 
   void _validateSelectedRoom() {
@@ -285,15 +318,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   // For disabled days (black/grey)
                   disabledBuilder: (context, day, focusedDay) {
                     if (_isBlackoutDay(day)) {
-                      return _buildBlockedDay(
-                        day,
-                        Colors.black,
-                      ); // Solid black circle
+                      return _buildBlockedDay(day, Colors.black);
                     } else if (_isGreyDay(day)) {
-                      return _buildBlockedDay(
-                        day,
-                        Colors.grey,
-                      ); // Solid grey circle
+                      return _buildBlockedDay(day, Colors.grey);
                     }
                     return null;
                   },
@@ -365,9 +392,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 crossAxisCount: 2,
                 childAspectRatio: 0.9,
               ),
-              itemCount: roomTypes.length,
+              itemCount: vm.roomTypes.length,
               itemBuilder: (context, index) {
-                final room = roomTypes[index];
+                final room = vm.roomTypes[index];
                 final affordable = isRoomAffordable(
                   room,
                   duration == 0 ? 1 : duration,
@@ -403,9 +430,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       },
                       child: _buildRoomTypeCard(
                         context,
-                        room.name,
-                        room.points,
-                        room.image,
+                        room.roomTypeName,
+                        room.roomTypePoints,
+                        room.pic,
                         isSelected: room == _selectedRoom,
                       ),
                     ),
@@ -479,6 +506,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   Widget _buildBlockedDay(DateTime day, Color color) {
     return Center(
       child: Container(
+        width: 35,
+        height: 35,
         decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         child: Center(
           child: Text(
@@ -525,9 +554,13 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ? vm.UserPointBalance.first.redemptionBalancePoints
         // or .totalPoints, depends on model
         : 0;
+    final redemptionPoints = vm.UserPointBalance.isNotEmpty
+        ? vm.UserPointBalance.first.redemptionPoints
+        : 0;
 
     final formatter = NumberFormat('#,###');
     final formattedPoints = formatter.format(points);
+    final formattedRedemptionPoints = formatter.format(redemptionPoints);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -546,14 +579,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Available Point Balance: ',
+            'Available Point Balance:  ',
             style: TextStyle(
               fontSize: ResponsiveSize.text(13),
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
-            formattedPoints,
+            '${formattedPoints}/${formattedRedemptionPoints}',
             style: TextStyle(
               color: const Color(0xFF3E51FF),
               fontSize: ResponsiveSize.text(15),
@@ -609,6 +642,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }) {
     final formatter = NumberFormat('#,###');
     final formattedPoints = formatter.format(point);
+    Uint8List _decodeBase64Image(String base64String) {
+      return base64Decode(base64String);
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -631,7 +667,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 topLeft: Radius.circular(8.0),
                 topRight: Radius.circular(8.0),
               ),
-              child: Image.asset(imagePath, fit: BoxFit.cover),
+              child: Image.memory(
+                _decodeBase64Image(
+                    imagePath), // <-- use Image.memory for base64
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           const SizedBox(height: 10),

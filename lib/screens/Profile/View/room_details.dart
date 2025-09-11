@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:mana_mana_app/model/roomtype.dart';
+import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
 import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
@@ -57,7 +57,7 @@ class _RoomDetailsState extends State<RoomDetails> {
   Widget build(BuildContext context) {
     bool showError = !_isChecked;
     int totalPoints() {
-      return widget.room.points * widget.nights * widget.quantity;
+      return widget.room.roomTypePoints * widget.nights * widget.quantity;
     }
 
     String formattedTotalPoints() {
@@ -84,7 +84,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                       topRight: Radius.circular(10.0),
                     ),
                     child: Image.asset(
-                      widget.room.image,
+                      widget.room.pic,
                       fit: BoxFit.cover,
                       width: double.infinity,
                     ),
@@ -128,7 +128,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                 children: [
                   const Text('Room Type Selected'),
                   Text(
-                    widget.room.name,
+                    widget.room.roomTypeName,
                     style: const TextStyle(
                       fontSize: 20.0,
                       color: Color(0xFF3E51FF),

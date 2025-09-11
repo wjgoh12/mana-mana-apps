@@ -108,119 +108,100 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                               children: sortedUnits.map((unit) {
                                 return Container(
                                   margin: EdgeInsets.symmetric(
-                                      vertical: ResponsiveSize.scaleHeight(8),
-                                      horizontal: ResponsiveSize.scaleWidth(6)),
+                                    vertical: ResponsiveSize.scaleHeight(8),
+                                    horizontal: ResponsiveSize.scaleWidth(6),
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(
-                                        12), // ✅ rounded corners
+                                    borderRadius: BorderRadius.circular(12),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(
-                                            0.1), // ✅ subtle shadow
+                                        color: Colors.black.withOpacity(0.1),
                                         blurRadius: 8,
                                         offset: const Offset(0, 0),
                                       ),
                                     ],
                                   ),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 8,
-                                        horizontal:
-                                            ResponsiveSize.scaleWidth(16)),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: InkWell(
-                                            borderRadius: BorderRadius.circular(
-                                                ResponsiveSize.scaleWidth(8)),
-                                            onTap: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      ChangeNotifierProvider(
-                                                    create: (_) =>
-                                                        OwnerProfileVM(),
-                                                    child:
-                                                        ChoosePropertyLocation(
-                                                      selectedLocation:
-                                                          unit.location,
-                                                      selectedUnitNo:
-                                                          unit.unitNo,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  width:
-                                                      ResponsiveSize.scaleWidth(
-                                                          150),
-                                                  child: Text(
-                                                    '${unit.location} - ${unit.unitNo}',
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          ResponsiveSize.text(
-                                                              15),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontFamily: 'outfit',
-                                                      color: const Color(
-                                                          0xFF3E51FF),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width: ResponsiveSize
-                                                        .scaleWidth(17)),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      'Available Points',
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                              ResponsiveSize
-                                                                  .text(11)),
-                                                    ),
-                                                    SizedBox(
-                                                        height: ResponsiveSize
-                                                            .scaleHeight(6)),
-                                                    Text(
-                                                      '${unit.redemptionBalancePoints}/${unit.redemptionPoints}',
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                            ResponsiveSize.text(
-                                                                11),
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: const Color(
-                                                            0xFF3E51FF),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(width: 1),
-                                                const Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: Colors.grey,
-                                                    size: 13),
-                                              ],
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(
+                                        ResponsiveSize.scaleWidth(8)),
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              ChangeNotifierProvider(
+                                            create: (_) => OwnerProfileVM(),
+                                            child: ChoosePropertyLocation(
+                                              selectedLocation: unit.location,
+                                              selectedUnitNo: unit.unitNo,
                                             ),
                                           ),
                                         ),
-                                      ],
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 16,
+                                        horizontal:
+                                            ResponsiveSize.scaleWidth(16),
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          // Left column
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${unit.location} - ${unit.unitNo}',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      ResponsiveSize.text(15),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'outfit',
+                                                  color:
+                                                      const Color(0xFF3E51FF),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  height: ResponsiveSize
+                                                      .scaleHeight(6)),
+                                              Text(
+                                                'Available Points',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      ResponsiveSize.text(12),
+                                                  fontFamily: 'outfit',
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  height: ResponsiveSize
+                                                      .scaleHeight(6)),
+                                              Text(
+                                                '${unit.redemptionBalancePoints}/${unit.redemptionPoints}',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      ResponsiveSize.text(13),
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      const Color(0xFF3E51FF),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+
+                                          const Spacer(), // <-- pushes icon to the right
+
+                                          // Arrow icon
+                                          const Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: Colors.grey,
+                                            size: 13,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
@@ -248,7 +229,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF3E51FF).withOpacity(0.15),
+                      color: const Color(0xFF3E51FF).withOpacity(0.1),
                       blurRadius: 10,
                       offset: const Offset(0, 0),
                     ),
@@ -256,58 +237,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 ),
                 child: Column(
                   children: [
-                    // ✅ Sticky Header Row
-                    Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Location',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF3E51FF),
-                                  fontSize: ResponsiveSize.text(13),
-                                ),
-                              )),
-                          Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Check-In Date',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF3E51FF),
-                                  fontSize: ResponsiveSize.text(13),
-                                ),
-                              )),
-                          Expanded(
-                              flex: 2,
-                              child: Text('Check-Out Date',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF3E51FF),
-                                    fontSize: ResponsiveSize.text(13),
-                                  ))),
-                          Expanded(
-                              flex: 1,
-                              child: Text('Points Used',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF3E51FF),
-                                    fontSize: ResponsiveSize.text(13),
-                                  ))),
-                        ],
-                      ),
-                    ),
-
                     Divider(height: 1, color: Colors.grey.shade300),
 
                     // ✅ Content Area
@@ -325,52 +254,117 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 8, horizontal: 16),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Expanded(
-                                              flex: 2,
-                                              child: Text(
-                                                booking.typeRoom +
-                                                    "\n" +
-                                                    booking.bookingLocation,
-                                                maxLines: 5,
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        ResponsiveSize.text(11),
-                                                    fontFamily: 'outfit'),
+                                            Container(
+                                              height:
+                                                  ResponsiveSize.scaleHeight(
+                                                      60),
+                                              width:
+                                                  ResponsiveSize.scaleWidth(60),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    Colors.lightBlue.shade100,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
+                                              child: Icon(Icons.hotel,
+                                                  color: Colors.blueAccent),
                                             ),
+                                            SizedBox(
+                                                width:
+                                                    ResponsiveSize.scaleWidth(
+                                                        16)),
+                                            // Wrap Column in Expanded so it has bounded width
                                             Expanded(
-                                              flex: 2,
-                                              child: Text(
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    booking.arrivalDate),
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        ResponsiveSize.text(11),
-                                                    fontFamily: 'outfit'),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 2,
-                                              child: Text(
-                                                DateFormat('yyyy-MM-dd').format(
-                                                    booking.departureDate),
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        ResponsiveSize.text(11),
-                                                    fontFamily: 'outfit'),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(
-                                                booking.pointUsed.toString(),
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        ResponsiveSize.text(11),
-                                                    fontFamily: 'outfit'),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    booking.typeRoom,
+                                                    maxLines: 5,
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          ResponsiveSize.text(
+                                                              15),
+                                                      fontFamily: 'outfit',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                      '${booking.bookingLocation}'),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        'Dates:',
+                                                        style: TextStyle(
+                                                          fontFamily: 'outfit',
+                                                          fontSize:
+                                                              ResponsiveSize
+                                                                  .text(11),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(booking
+                                                                .arrivalDate),
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              ResponsiveSize
+                                                                  .text(12),
+                                                          fontFamily: 'outfit',
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        ' to ',
+                                                        style: TextStyle(
+                                                          fontFamily: 'outfit',
+                                                          fontSize:
+                                                              ResponsiveSize
+                                                                  .text(11),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(booking
+                                                                .departureDate),
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              ResponsiveSize
+                                                                  .text(12),
+                                                          fontFamily: 'outfit',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 8.0),
+                                                    child: Row(
+                                                      children: [
+                                                        const Spacer(), // Pushes the next widget to the end
+                                                        Icon(Icons.star,
+                                                            size: 14,
+                                                            color:
+                                                                Colors.purple),
+                                                        Text(
+                                                          '${booking.pointUsed.toString()}',
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                ResponsiveSize
+                                                                    .text(13),
+                                                            fontFamily:
+                                                                'outfit',
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
