@@ -451,7 +451,128 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
             widget.onChecked(isChecked);
           },
         ),
-        const Text('Tick box to confirm T&C'),
+        Row(
+          children: [
+            const Text('Tick box to confirm '),
+            InkWell(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text(
+                      "Terms & Conditions",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    content: const SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Guarantee
+                          Text(
+                            "Guarantee:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "All bookings must be guaranteed with valid payment or points redemption at the time of reservation. Pending submissions are not a guaranteed reservation until they are confirmed by the reservations team.\n",
+                          ),
+
+                          // Booking Status
+                          Text(
+                            "Booking Status:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "Pending (your request has been received), Confirmed (your booking has been confirmed), Unavailable (your request has been denied due to hotel unavailability).\n",
+                          ),
+
+                          // Check-in / Check-out
+                          Text(
+                            "Check-in / Check-out:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "Check-in from 3PM, check-out by 11AM. Early check-in or late check-out is subject to availability and may have extra charges.\n",
+                          ),
+
+                          // Cancellations
+                          Text(
+                            "Cancellations:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "Cancel at least 3 days before arrival for a full refund of points or payment. Cancellations within 3 days or no-shows are non-refundable.\n",
+                          ),
+
+                          // Changes
+                          Text(
+                            "Changes:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "Date changes must be made at least 3 days before arrival and are subject to room availability.\n",
+                          ),
+
+                          // ID
+                          Text(
+                            "ID:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "Please present a valid ID at check-in.\n",
+                          ),
+
+                          // Hotel Rights
+                          Text(
+                            "Hotel Rights:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "The hotel may cancel or adjust bookings in case of misuse or fraud.\n",
+                          ),
+
+                          // Valuables
+                          Text(
+                            "Valuables:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "The hotel is not responsible for items left inside the room.\n",
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Close"),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Text(
+                'T&C',
+                style: TextStyle(
+                    color: Color(0xFF3E51FF),
+                    decoration: TextDecoration.underline,
+                    fontFamily: 'outfit',
+                    fontWeight: FontWeight.bold,
+                    fontSize: ResponsiveSize.text(13)),
+              ),
+            )
+          ],
+        ),
       ],
     );
   }
