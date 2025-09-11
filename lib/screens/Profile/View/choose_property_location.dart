@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
@@ -19,7 +20,6 @@ class ChoosePropertyLocation extends StatefulWidget {
 class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
   String? selectedState;
 
-  @override
   @override
   void initState() {
     super.initState();
@@ -55,35 +55,63 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 🔽 Dropdown for states
-              Container(
-                padding: const EdgeInsets.only(left: 16, top: 16),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    isExpanded: true,
-                    hint: const Text("Select State"),
-                    items: vm.states
-                        .map(
-                          (state) => DropdownMenuItem<String>(
-                            value: state,
-                            child: Text(
-                              state,
-                              style: TextStyle(
-                                fontSize: 20.fSize,
-                                fontWeight: FontWeight.bold,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: ResponsiveSize.scaleWidth(200),
+                    padding: const EdgeInsets.only(left: 16, top: 16),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: const Text("Select State"),
+                        items: vm.states
+                            .map(
+                              (state) => DropdownMenuItem<String>(
+                                value: state,
+                                child: Text(
+                                  state,
+                                  style: TextStyle(
+                                    fontSize: 20.fSize,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
+                            )
+                            .toList(),
+                        value: selectedState,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() => selectedState = value);
+                            vm.fetchLocationsByState(value);
+                          }
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                                12), // Border radius for the button
+                            border: Border.all(
+                              color: Colors.grey.shade400,
                             ),
+                            color: Colors.white,
                           ),
-                        )
-                        .toList(),
-                    value: selectedState,
-                    onChanged: (String? value) {
-                      if (value != null) {
-                        setState(() => selectedState = value);
-                        vm.fetchLocationsByState(value);
-                      }
-                    },
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                  12), // Border radius for the dropdown menu
+                              color: Colors.white,
+                              border: Border.all(color: Colors.grey.shade300),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0),
+                                )
+                              ]),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
 
               const SizedBox(height: 16),
@@ -103,11 +131,8 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                     childAspectRatio: 0.7,
                     children: vm.locations
                         .map(
-                          (loc) => _buildLocationCard(
-                            context,
-                            loc.locationName,
-                            loc.pic,
-                          ),
+                          (loc) => _buildLocationCard(context, loc.locationName,
+                              loc.pic, loc.stateName),
                         )
                         .toList(),
                   ),
@@ -124,6 +149,7 @@ Widget _buildLocationCard(
   BuildContext context,
   String? location,
   String? picBase64,
+  String? propertyState,
 ) {
   Uint8List? _decodeBase64(String? base64String) {
     try {
@@ -156,8 +182,17 @@ Widget _buildLocationCard(
             ),
             child: InkWell(
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SelectDateRoom()),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider.value(
+                      value: context.read<OwnerProfileVM>(),
+                      child: SelectDateRoom(
+                        location: location ?? "Unknown Location",
+                        state: propertyState ?? "Unknown State",
+                      ),
+                    ),
+                  ),
                 );
               },
               child: Container(
