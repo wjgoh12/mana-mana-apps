@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -57,7 +58,7 @@ class _RoomDetailsState extends State<RoomDetails> {
   Widget build(BuildContext context) {
     bool showError = !_isChecked;
     int totalPoints() {
-      return widget.room.roomTypePoints * widget.nights * widget.quantity;
+      return widget.room.roomTypePoints;
     }
 
     String formattedTotalPoints() {
@@ -79,16 +80,15 @@ class _RoomDetailsState extends State<RoomDetails> {
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(10.0),
-                      topRight: Radius.circular(10.0),
-                    ),
-                    child: Image.asset(
-                      widget.room.pic,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
-                  ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(10.0),
+                        topRight: Radius.circular(10.0),
+                      ),
+                      child: Image.memory(
+                        base64Decode(widget.room.pic),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      )),
                   Positioned(
                     top: 16,
                     left: 16,
@@ -126,69 +126,127 @@ class _RoomDetailsState extends State<RoomDetails> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Room Type Selected'),
+                  Text(
+                    'Room Type',
+                    style: TextStyle(
+                      fontSize: ResponsiveSize.text(15),
+                      fontFamily: 'Outfit',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   Text(
                     widget.room.roomTypeName,
-                    style: const TextStyle(
-                      fontSize: 20.0,
+                    style: TextStyle(
+                      fontSize: ResponsiveSize.text(20),
+                      fontFamily: 'Outfit',
                       color: Color(0xFF3E51FF),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      /// First row: Check-In and Check-Out
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            width: ResponsiveSize.scaleWidth(150),
-                            height: ResponsiveSize.scaleHeight(60),
-                            child: Card(
-                              color: Colors.white,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Check-In',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                      ),
+                          /// Check-In Card
+                          Card(
+                            color: Colors.white,
+                            child: Container(
+                              width: ResponsiveSize.scaleWidth(160),
+                              height: ResponsiveSize.scaleHeight(60),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Check-In',
+                                    style: TextStyle(
+                                        fontSize: ResponsiveSize.text(11),
+                                        fontFamily: 'Outfit',
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    widget.checkIn != null
+                                        ? DateFormat('EEE, MMM d, yyyy')
+                                            .format(widget.checkIn!)
+                                        : '-',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.text(12),
+                                      fontFamily: 'Outfit',
+                                      color: Color(0xFF3E51FF),
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    Text(
-                                      widget.checkIn != null
-                                          ? DateFormat('EEE, MMM d, yyyy')
-                                              .format(widget.checkIn!)
-                                          : '-',
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Color(0xFF3E51FF),
-                                          fontWeight: FontWeight.bold),
-                                    )
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
+
+                          SizedBox(width: ResponsiveSize.scaleWidth(2)),
+
+                          /// Check-Out Card
+                          Card(
+                            color: Colors.white,
+                            child: Container(
+                              width: ResponsiveSize.scaleWidth(160),
+                              height: ResponsiveSize.scaleHeight(60),
+                              padding: const EdgeInsets.all(8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Check-Out',
+                                    style: TextStyle(
+                                        fontSize: ResponsiveSize.text(11),
+                                        fontFamily: 'Outfit',
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    widget.checkOut != null
+                                        ? DateFormat('EEE, MMM d, yyyy')
+                                            .format(widget.checkOut!)
+                                        : '-',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.text(12),
+                                      fontFamily: 'Outfit',
+                                      color: Color(0xFF3E51FF),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      /// Second row: No. of Rooms & Total Points Redeemed
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          /// No. of Rooms
                           Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'No. of Rooms',
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
                                   ),
                                 ),
                                 Text(
                                   '${widget.quantity}',
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(16),
+                                    fontFamily: 'Outfit',
                                     color: Color(0xFF3E51FF),
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -196,53 +254,30 @@ class _RoomDetailsState extends State<RoomDetails> {
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(width: 35),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Card(
-                            color: Colors.white,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Check-Out',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                    ),
+
+                          /// Total Points Redeemed
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  'Total Points Redeemed',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
                                   ),
-                                  Text(
-                                    widget.checkOut != null
-                                        ? DateFormat('EEE, MMM d, yyyy')
-                                            .format(widget.checkOut!)
-                                        : '-',
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFF3E51FF),
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          const Text(
-                            'Total Points Redeemed',
-                            style: TextStyle(
-                              fontSize: 11,
-                            ),
-                          ),
-                          Text(
-                            '${formattedTotalPoints()}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF3E51FF),
-                              fontSize: 16,
+                                ),
+                                Text(
+                                  formattedTotalPoints(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF3E51FF),
+                                    fontSize: ResponsiveSize.text(16),
+                                    fontFamily: 'Outfit',
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -263,6 +298,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                       hintText: 'Guest Name',
                       hintStyle: const TextStyle(
                         color: Colors.grey,
+                        fontFamily: 'Outfit',
                       ),
                     ),
                   ),
@@ -276,7 +312,11 @@ class _RoomDetailsState extends State<RoomDetails> {
                     },
                   ),
                   const SizedBox(height: 10),
-                  const Text('Booking request will be submitted for review.'),
+                  Text('Booking request will be submitted for review.',
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.text(12),
+                        fontFamily: 'Outfit',
+                      )),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -380,11 +420,12 @@ class _RoomDetailsState extends State<RoomDetails> {
                             Size(300, 40),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Submit',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: ResponsiveSize.text(16),
+                            fontFamily: 'Outfit',
                           ),
                         ),
                       ),
@@ -453,109 +494,142 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
         ),
         Row(
           children: [
-            const Text('Tick box to confirm '),
+            Text('Tick box to confirm ',
+                style: TextStyle(
+                  fontSize: ResponsiveSize.text(13),
+                  fontFamily: 'outfit',
+                )),
             InkWell(
               onTap: () {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text(
+                    backgroundColor: Colors.white,
+                    title: Text(
                       "Terms & Conditions",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: ResponsiveSize.text(21),
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'outfit',
+                        color: Color(0xFF3E51FF),
                       ),
                     ),
-                    content: const SingleChildScrollView(
+                    content: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Guarantee
-                          Text(
+                          SizedBox(height: ResponsiveSize.scaleHeight(10)),
+                          const Text(
                             "Guarantee:",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          Text(
+                          const Text(
                             "All bookings must be guaranteed with valid payment or points redemption at the time of reservation. Pending submissions are not a guaranteed reservation until they are confirmed by the reservations team.\n",
+                            textAlign: TextAlign.justify,
                           ),
 
                           // Booking Status
-                          Text(
+                          const Text(
                             "Booking Status:",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          Text(
+                          const Text(
                             "Pending (your request has been received), Confirmed (your booking has been confirmed), Unavailable (your request has been denied due to hotel unavailability).\n",
+                            textAlign: TextAlign.justify,
                           ),
 
                           // Check-in / Check-out
-                          Text(
+                          const Text(
                             "Check-in / Check-out:",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          Text(
+                          const Text(
                             "Check-in from 3PM, check-out by 11AM. Early check-in or late check-out is subject to availability and may have extra charges.\n",
+                            textAlign: TextAlign.justify,
                           ),
 
                           // Cancellations
-                          Text(
+                          const Text(
                             "Cancellations:",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          Text(
+                          const Text(
                             "Cancel at least 3 days before arrival for a full refund of points or payment. Cancellations within 3 days or no-shows are non-refundable.\n",
+                            textAlign: TextAlign.justify,
                           ),
 
                           // Changes
-                          Text(
+                          const Text(
                             "Changes:",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          Text(
+                          const Text(
                             "Date changes must be made at least 3 days before arrival and are subject to room availability.\n",
+                            textAlign: TextAlign.justify,
                           ),
 
                           // ID
-                          Text(
+                          const Text(
                             "ID:",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          Text(
+                          const Text(
                             "Please present a valid ID at check-in.\n",
                           ),
 
                           // Hotel Rights
-                          Text(
+                          const Text(
                             "Hotel Rights:",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          Text(
+                          const Text(
                             "The hotel may cancel or adjust bookings in case of misuse or fraud.\n",
+                            textAlign: TextAlign.justify,
                           ),
 
                           // Valuables
-                          Text(
+                          const Text(
                             "Valuables:",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          Text(
+                          const Text(
                             "The hotel is not responsible for items left inside the room.\n",
+                            textAlign: TextAlign.justify,
                           ),
                         ],
                       ),
                     ),
                     actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Close"),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Row(
+                              children: [
+                                Icon(Icons.close, color: Colors.red, size: 20),
+                                Text(
+                                  "Close",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: ResponsiveSize.text(16),
+                                      fontFamily: 'outfit'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -564,7 +638,7 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
               child: Text(
                 'T&C',
                 style: TextStyle(
-                    color: Color(0xFF3E51FF),
+                    color: const Color(0xFF3E51FF),
                     decoration: TextDecoration.underline,
                     fontFamily: 'outfit',
                     fontWeight: FontWeight.bold,
