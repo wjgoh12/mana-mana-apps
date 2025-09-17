@@ -266,23 +266,39 @@ class OwnerProfileVM extends ChangeNotifier {
     }
 
     try {
-      _isLoadingAvailablePoints = true;
-      notifyListeners();
+      final fetchedStates = await _ownerBookingRepository.getAvailableStates();
 
-      final response = await _ownerBookingRepository.getRedemptionBalancePoints(
-        location: location,
-        unitNo: unitNo,
-      );
+      List<String> validStates = [];
 
-      UserPointBalance.clear();
-      UserPointBalance.addAll(response);
+      // Run per state in parallel
+      await Future.wait(fetchedStates.map((state) async {
+        final fetchedLocations =
+            await _ownerBookingRepository.getAllLocationsByState(state);
 
-      debugPrint(
-          "✅ Redemption balance points length: ${UserPointBalance.length}");
+        // Run location checks in parallel
+        final results = await Future.wait(fetchedLocations.map((loc) async {
+          final roomTypes = await _ownerBookingRepository.getRoomTypes(
+            state: state,
+            bookingLocationName: loc.locationName ?? "",
+            rooms: 1,
+            arrivalDate: DateTime.now().add(const Duration(days: 7)),
+            departureDate: DateTime.now().add(const Duration(days: 8)),
+          );
+          return roomTypes.isNotEmpty;
+        }));
+
+        // If any location has rooms → state is valid
+        if (results.contains(true)) {
+          validStates.add(state);
+        }
+      }));
+
+      _states = validStates;
+      _selectedState = '';
     } catch (e) {
-      debugPrint('❌ Error fetching redemption balance points: $e');
+      _error = e.toString();
     } finally {
-      _isLoadingAvailablePoints = false;
+      _isLoadingStates = false;
       notifyListeners();
     }
   }

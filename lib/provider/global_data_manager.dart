@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
+import 'package:mana_mana_app/model/propertyState.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
+import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 
 class GlobalDataManager extends ChangeNotifier {
@@ -13,6 +15,7 @@ class GlobalDataManager extends ChangeNotifier {
   // Repositories
   final UserRepository _userRepository = UserRepository();
   final PropertyListRepository _propertyRepository = PropertyListRepository();
+  final RedemptionRepository _redemptionRepository = RedemptionRepository();
 
   // Data state
   bool _isInitialized = false;
@@ -28,6 +31,8 @@ class GlobalDataManager extends ChangeNotifier {
   List<Map<String, dynamic>> _locationByMonth = [];
   List<Map<String, dynamic>> _propertyContractType = [];
   Map<String, dynamic> _propertyOccupancy = {};
+  List<String> _availableStates = [];
+  Map<String, List<Propertystate>> _locationsByState = {};
 
   // Getters
   bool get isInitialized => _isInitialized;
@@ -55,6 +60,14 @@ class GlobalDataManager extends ChangeNotifier {
           .reduce((max, current) => max > current ? max : current)
           .toString()
       : DateTime.now().year.toString();
+  List<String> get availableStates => List.unmodifiable(_availableStates);
+
+  Map<String, List<Propertystate>> get locationsByState =>
+      Map.unmodifiable(_locationsByState);
+
+  List<Propertystate> getLocationsForState(String state) {
+    return _locationsByState[state] ?? [];
+  }
 
   // Initialize all data
   Future<void> initializeData({bool forceRefresh = false}) async {
@@ -292,6 +305,33 @@ class GlobalDataManager extends ChangeNotifier {
       // ✅ Check if this location has any room/unit (you decide what condition = room type available)
       return owners.isNotEmpty;
     }).toList();
+  }
+
+  Future<void> fetchRedemptionStatesAndLocations() async {
+    try {
+      // Fetch all available states
+      _availableStates = await _redemptionRepository.getAvailableStates();
+
+      // For each state, fetch its locations
+      Map<String, List<Propertystate>> stateLocationMap = {};
+      for (final state in _availableStates) {
+        try {
+          final locations =
+              await _redemptionRepository.getAllLocationsByState(state);
+          stateLocationMap[state] = locations.cast<Propertystate>();
+        } catch (e) {
+          debugPrint("⚠️ Failed to fetch locations for state $state: $e");
+        }
+      }
+
+      _locationsByState = stateLocationMap;
+      notifyListeners();
+    } catch (e) {
+      debugPrint("❌ Error fetching redemption states and locations: $e");
+      _availableStates = [];
+      _locationsByState = {};
+      notifyListeners();
+    }
   }
 
   // Check if data needs refresh (optional: implement cache expiry)
