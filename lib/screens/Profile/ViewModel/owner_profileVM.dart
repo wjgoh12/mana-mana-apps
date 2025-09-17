@@ -263,8 +263,9 @@ class OwnerProfileVM extends ChangeNotifier {
 
   // Cache for room types
   Map<String, List<RoomType>> _roomTypeCache = {};
-  
-  String _getRoomTypeCacheKey(String state, String location, int rooms, DateTime? arrival, DateTime? departure) {
+
+  String _getRoomTypeCacheKey(String state, String location, int rooms,
+      DateTime? arrival, DateTime? departure) {
     return '$state|$location|$rooms|${arrival?.toIso8601String()}|${departure?.toIso8601String()}';
   }
 
@@ -276,16 +277,13 @@ class OwnerProfileVM extends ChangeNotifier {
     DateTime? departureDate,
   }) async {
     final defaultRooms = rooms ?? 1;
-    final defaultArrival = arrivalDate ?? DateTime.now().add(const Duration(days: 7));
-    final defaultDeparture = departureDate ?? DateTime.now().add(const Duration(days: 8));
-    
+    final defaultArrival =
+        arrivalDate ?? DateTime.now().add(const Duration(days: 7));
+    final defaultDeparture =
+        departureDate ?? DateTime.now().add(const Duration(days: 8));
+
     final cacheKey = _getRoomTypeCacheKey(
-      state, 
-      bookingLocationName, 
-      defaultRooms, 
-      arrivalDate, 
-      departureDate
-    );
+        state, bookingLocationName, defaultRooms, arrivalDate, departureDate);
 
     // Return cached data immediately if available
     if (_roomTypeCache.containsKey(cacheKey)) {

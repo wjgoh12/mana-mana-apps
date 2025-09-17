@@ -488,7 +488,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       setState(() {
                         _selectedQuantity = val;
                       });
-                      
+
                       // Debounce the room type fetch
                       Future.delayed(const Duration(milliseconds: 500), () {
                         if (mounted && _selectedQuantity == val) {
@@ -499,12 +499,13 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                             arrivalDate: _rangeStart != null
                                 ? _toDateOnly(_rangeStart!)
                                 : null,
-                            departureDate:
-                                _rangeEnd != null ? _toDateOnly(_rangeEnd!) : null,
+                            departureDate: _rangeEnd != null
+                                ? _toDateOnly(_rangeEnd!)
+                                : null,
                           );
                         }
                       });
-                      
+
                       _validateSelectedRoom();
                     },
                   ),
