@@ -26,8 +26,8 @@ class ApiService {
     );
 
     if (response.body.isEmpty) return null;
-    debugPrint("➡️ FULL URL: $baseUrl$url");
-    debugPrint("➡️ POST BYTES URL: $baseUrl$url");
+    // debugPrint("➡️ FULL URL: $baseUrl$url");
+    // debugPrint("➡️ POST BYTES URL: $baseUrl$url");
     try {
       return json.decode(response.body);
     } catch (e) {
@@ -78,9 +78,9 @@ class ApiService {
 
     String? token = await authService.getAccessToken();
     final fullUrl = '$baseUrl$url';
-    debugPrint("➡️ FULL URL: $fullUrl");
-    debugPrint("📤 Request body: ${json.encode(data ?? {})}");
-    debugPrint("Posting to full URL: $baseUrl$url");
+    // debugPrint("➡️ FULL URL: $fullUrl");
+    // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
+    // debugPrint("Posting to full URL: $baseUrl$url");
 
     final response = await http.post(
       Uri.parse('$baseUrl$url'),
@@ -91,11 +91,11 @@ class ApiService {
       body: json.encode(data ?? {}),
     );
 
-    debugPrint("➡️ FULL URL: $baseUrl$url");
-    debugPrint("➡️ POST JSON URL: $baseUrl$url");
-    debugPrint("📤 Request body: ${json.encode(data ?? {})}");
-    debugPrint("📥 Response status: ${response.statusCode}");
-    debugPrint("📥 Response body: ${response.body}");
+    // debugPrint("➡️ FULL URL: $baseUrl$url");
+    // debugPrint("➡️ POST JSON URL: $baseUrl$url");
+    // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
+    // debugPrint("📥 Response status: ${response.statusCode}");
+    // debugPrint("📥 Response body: ${response.body}");
 
     if (response.body.isEmpty) return null;
 
@@ -129,9 +129,9 @@ class ApiService {
         },
       );
 
-      debugPrint("🔍 GET Request URL: $url");
-      debugPrint("🔍 GET Response Status: ${response.statusCode}");
-      debugPrint("🔍 GET Response Body: ${response.body}");
+      // debugPrint("🔍 GET Request URL: $url");
+      // debugPrint("🔍 GET Response Status: ${response.statusCode}");
+      // debugPrint("🔍 GET Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         if (response.body.isEmpty) return null;

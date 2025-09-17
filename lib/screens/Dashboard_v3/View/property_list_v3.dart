@@ -190,8 +190,8 @@ class PropertyImageStack extends StatelessWidget {
         locationRoad = "";
         break;
     }
-    print(
-        '${model.ownerUnits.where((unit) => unit.location == location).map((unit) => unit.unitno).toSet()}');
+    // print(
+    //     '${model.ownerUnits.where((unit) => unit.location == location).map((unit) => unit.unitno).toSet()}');
 
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {

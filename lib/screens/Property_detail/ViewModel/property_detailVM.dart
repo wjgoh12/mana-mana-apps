@@ -321,8 +321,8 @@ class PropertyDetailVM extends ChangeNotifier {
 
   Future<void> updateSelectedTypeUnit(
       String newSelectedType, String newSelectedUnitNo) async {
-    print(
-        '🔄 updateSelectedTypeUnit called: $newSelectedType, $newSelectedUnitNo');
+    // print(
+    //     '🔄 updateSelectedTypeUnit called: $newSelectedType, $newSelectedUnitNo');
     _isDateLoading = true;
 
     // Clear all data first
@@ -333,12 +333,12 @@ class PropertyDetailVM extends ChangeNotifier {
     _selectedYearValue = null;
     selectedMonthValue = null;
 
-    print('🧹 Data cleared, notifying listeners...');
+    // print('🧹 Data cleared, notifying listeners...');
     notifyListeners();
 
     selectedType = newSelectedType;
     selectedUnitNo = newSelectedUnitNo;
-    print('📝 New selection set: $selectedType, $selectedUnitNo');
+    // print('📝 New selection set: $selectedType, $selectedUnitNo');
 
     // Update year selection to latest for this unit
     final yearItemsList = _getYearItems();
@@ -357,11 +357,11 @@ class PropertyDetailVM extends ChangeNotifier {
 
     // Update selected unit data
     _setSelectedUnitData();
-    print(
-        '📊 Final data - selectedUnitBlc: ${selectedUnitBlc?.total}, selectedUnitPro: ${selectedUnitPro?.total}');
+    // print(
+    //     '📊 Final data - selectedUnitBlc: ${selectedUnitBlc?.total}, selectedUnitPro: ${selectedUnitPro?.total}');
 
     _isDateLoading = false;
-    print('✅ updateSelectedTypeUnit completed, notifying listeners...');
+    // print('✅ updateSelectedTypeUnit completed, notifying listeners...');
     notifyListeners();
   }
 

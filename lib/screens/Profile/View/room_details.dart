@@ -238,10 +238,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                             : () async {
                                 bool isValid = true;
 
-                                setState(() {
-                                  _isSubmitting = true;
-                                });
-
+                                // Check validations before setting loading state
                                 if (_guestNameController.text.trim().isEmpty) {
                                   isValid = false;
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -264,6 +261,13 @@ class _RoomDetailsState extends State<RoomDetails> {
                                         backgroundColor:
                                             Color.fromARGB(255, 203, 46, 46)),
                                   );
+                                }
+
+                                // Only set loading state if form is valid
+                                if (isValid) {
+                                  setState(() {
+                                    _isSubmitting = true;
+                                  });
                                 }
 
                                 if (totalPoints() > widget.userPointsBalance) {
@@ -349,11 +353,11 @@ Total Points: ${totalPoints()}
                                               SizedBox(
                                                   height: ResponsiveSize
                                                       .scaleHeight(
-                                                          1)), // reduce spacing
+                                                          3)), // reduce spacing
                                               const Text(
                                                 'You will be notified once your booking is confirmed​',
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(fontSize: 13),
                                               ),
                                             ],
                                           ),
@@ -368,7 +372,8 @@ Total Points: ${totalPoints()}
                                                 Navigator.pop(context);
                                                 Navigator.pop(context);
                                               },
-                                              child: const Text('OK'),
+                                              child: const Center(
+                                                  child: Text('OK')),
                                             )
                                           ],
                                         ),
@@ -536,15 +541,124 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
             ),
             InkWell(
               onTap: () {
-                // Show T&C dialog
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: Colors.white,
+                    title: Text(
+                      "Terms & Conditions",
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.text(18),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Outfit',
+                        color: const Color(0xFF3E51FF),
+                      ),
+                    ),
+                    content: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          // Guarantee
+                          Text("Guarantee:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(
+                            "All bookings must be guaranteed with valid payment or points redemption at the time of reservation. Pending submissions are not a guaranteed reservation until they are confirmed by the reservations team.\n",
+                            textAlign: TextAlign.justify,
+                          ),
+
+                          // Booking Status
+                          Text("Booking Status:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(
+                            "Pending (your request has been received), Confirmed (your booking has been confirmed), Unavailable (your request has been denied due to hotel unavailability).\n",
+                            textAlign: TextAlign.justify,
+                          ),
+
+                          // Check-in / Check-out
+                          Text("Check-in / Check-out:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(
+                            "Check-in from 3PM, check-out by 11AM. Early check-in or late check-out is subject to availability and may have extra charges.\n",
+                            textAlign: TextAlign.justify,
+                          ),
+
+                          // Cancellations
+                          Text("Cancellations:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(
+                            "Cancel at least 3 days before arrival for a full refund of points or payment. Cancellations within 3 days or no-shows are non-refundable.\n",
+                            textAlign: TextAlign.justify,
+                          ),
+
+                          // Changes
+                          Text("Changes:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(
+                            "Date changes must be made at least 3 days before arrival and are subject to room availability.\n",
+                            textAlign: TextAlign.justify,
+                          ),
+
+                          // ID
+                          Text("ID:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text("Please present a valid ID at check-in.\n"),
+
+                          // Hotel Rights
+                          Text("Hotel Rights:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(
+                            "The hotel may cancel or adjust bookings in case of misuse or fraud.\n",
+                            textAlign: TextAlign.justify,
+                          ),
+
+                          // Valuables
+                          Text("Valuables:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(
+                            "The hotel is not responsible for items left inside the room.\n",
+                            textAlign: TextAlign.justify,
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      Center(
+                        child: TextButton.icon(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close,
+                              color: Colors.red, size: 20),
+                          label: Text(
+                            "Close",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: ResponsiveSize.text(15),
+                              fontFamily: 'Outfit',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
               child: Text(
                 'T&C',
                 style: TextStyle(
-                    color: const Color(0xFF3E51FF),
-                    decoration: TextDecoration.underline,
-                    fontWeight: FontWeight.bold,
-                    fontSize: ResponsiveSize.text(13)),
+                  color: const Color(0xFF3E51FF),
+                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.bold,
+                  fontSize: ResponsiveSize.text(13),
+                ),
               ),
             ),
           ],

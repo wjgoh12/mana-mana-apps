@@ -160,7 +160,7 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
                         // print('✅ Showing UnitOverviewContainer');
                         return const UnitOverviewContainer();
                       }
-                      print('❌ Hiding UnitOverviewContainer');
+                      // print('❌ Hiding UnitOverviewContainer');
                       return const SizedBox.shrink();
                     },
                   ),
@@ -187,7 +187,7 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
                           model: propertyModel,
                         );
                       }
-                      print('❌ Hiding Statement Dropdown');
+                      // print('❌ Hiding Statement Dropdown');
                       return const SizedBox.shrink();
                     },
                   ),
@@ -202,7 +202,7 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
                         // print('✅ Showing Statement Container');
                         return EnhancedStatementContainer(model: propertyModel);
                       }
-                      print('❌ Hiding Statement Container');
+                      // print('❌ Hiding Statement Container');
                       return const SizedBox.shrink();
                     },
                   ),
@@ -672,7 +672,9 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
   }
 
   void _handleUnitSelection(String? value, BuildContext context) {
-    print('🎯 _handleUnitSelection called with: $value');
+    print(
+        '🎯 _handleUnitSelection called with: value=$value, property=$selectedProperty');
+
     if (value == null || selectedProperty == null) {
       print(
           '❌ Invalid selection: value=$value, selectedProperty=$selectedProperty');
@@ -688,17 +690,26 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
     final dashboardModel =
         Provider.of<NewDashboardVM_v3>(context, listen: false);
 
-    // Find the unit type for the selected unit
-    final selectedUnitData = dashboardModel.ownerUnits
+    // Find all matching units to check for duplicates
+    final matchingUnits = dashboardModel.ownerUnits
         .where(
             (unit) => unit.location == selectedProperty && unit.unitno == value)
-        .firstOrNull;
+        .toList();
 
-    print('🔍 Found unit data: ${selectedUnitData?.type} for unit $value');
+    print('🔍 Found ${matchingUnits.length} matching units for $value:');
+    for (var unit in matchingUnits) {
+      print(
+          '   - Location: ${unit.location}, Unit: ${unit.unitno}, Type: ${unit.type}');
+    }
+
+    // Find the unit type for the selected unit - use firstWhere to ensure we get the exact match
+    final selectedUnitData = matchingUnits.firstOrNull;
+
+    // print('🔍 Found unit data: ${selectedUnitData?.type} for unit $value');
 
     if (selectedUnitData != null) {
       // Update the PropertyDetailVM with the correct unit type and unit number
-      print('🔄 Calling updateSelectedTypeUnit...');
+      // print('🔄 Calling updateSelectedTypeUnit...');
       propertyModel.updateSelectedTypeUnit(
           selectedUnitData.type?.toString() ?? '', value);
 
@@ -707,7 +718,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
     }
 
     if (dashboardModel.locationByMonth.isNotEmpty) {
-      print('📡 Calling fetchData...');
+      // print('📡 Calling fetchData...');
       propertyModel.fetchData(dashboardModel.locationByMonth);
     }
   }
@@ -769,15 +780,27 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
         .toSet()
         .toList();
 
-    // Get units for selected property
-    final units = selectedProperty != null
-        ? model.ownerUnits
-            .where((unit) => unit.location == selectedProperty)
-            .map((unit) => unit.unitno)
-            .where((unitno) => unitno != null)
-            .toSet()
-            .toList()
-        : <String>[];
+    // Get units for selected property with debugging
+    final allUnitsForProperty = model.ownerUnits
+        .where((unit) => unit.location == selectedProperty)
+        .toList();
+
+    print('📊 All units for $selectedProperty:');
+    for (var unit in allUnitsForProperty) {
+      print('   - Unit: ${unit.unitno}, Type: ${unit.type}');
+    }
+
+    // Create a map to store unique unit numbers with their types
+    final Map<String, String> uniqueUnits = {};
+    for (var unit in allUnitsForProperty) {
+      if (unit.unitno != null) {
+        if (!uniqueUnits.containsKey(unit.unitno) ||
+            uniqueUnits[unit.unitno] != unit.type?.toString()) {
+          uniqueUnits[unit.unitno!] = unit.type?.toString() ?? '';
+        }
+      }
+    }
+    final units = uniqueUnits.keys.toList();
 
     return Row(
       children: [
@@ -857,7 +880,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
               return DropdownMenuItem(
                 value: unit,
                 child: Text(
-                  unit ?? '',
+                  unit,
                   style: TextStyle(
                       fontFamily: 'Outfit', fontSize: ResponsiveSize.text(14)),
                 ),

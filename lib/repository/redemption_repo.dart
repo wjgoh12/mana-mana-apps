@@ -42,7 +42,7 @@ class RedemptionRepository {
       data: {"email": email},
     );
 
-    debugPrint("🔍 Raw API Response: $res");
+    // debugPrint("🔍 Raw API Response: $res");
 
     if (res == null) {
       debugPrint("⚠️ API returned null");
@@ -66,7 +66,7 @@ class RedemptionRepository {
     }
 
     if (res is List) {
-      debugPrint("✅ Response is a List with length: ${res.length}");
+      // debugPrint("✅ Response is a List with length: ${res.length}");
       return res.map((json) => UnitAvailablePoint.fromJson(json)).toList();
     }
 
@@ -84,7 +84,7 @@ class RedemptionRepository {
       data: data,
     );
 
-    debugPrint("🔍 Raw booking history response: $res");
+    // debugPrint("🔍 Raw booking history response: $res");
 
     if (res == null) return [];
 
@@ -154,7 +154,7 @@ class RedemptionRepository {
       }
     }
 
-    debugPrint("✅ Available states: $availableStates");
+    // debugPrint("✅ Available states: $availableStates");
     return availableStates;
   }
 
@@ -164,7 +164,7 @@ class RedemptionRepository {
         '${ApiEndpoint.getAllState}?state=$state',
       );
 
-      debugPrint("🔍 Raw API Response for locations: $res");
+      // debugPrint("🔍 Raw API Response for locations: $res");
 
       if (res == null) return [];
 
@@ -181,7 +181,7 @@ class RedemptionRepository {
 
   Future<List<CalendarBlockedDate>> getCalendarBlockedDates() async {
     final res = await _apiService.get(ApiEndpoint.getCalendarBlockDate);
-    debugPrint("Blocked dates raw API response: $res");
+    // debugPrint("Blocked dates raw API response: $res");
 
     if (res == null) return [];
 
@@ -219,7 +219,7 @@ class RedemptionRepository {
       data: {"locationName": location, "unitNo": unitNo},
     );
 
-    debugPrint("🔍 Raw API Response: $res");
+    // debugPrint("🔍 Raw API Response: $res");
 
     if (res == null) {
       debugPrint("⚠️ API returned null");
@@ -227,7 +227,7 @@ class RedemptionRepository {
     }
 
     if (res is Map) {
-      debugPrint("📦 Response is a Map with keys: ${res.keys}");
+      // debugPrint("📦 Response is a Map with keys: ${res.keys}");
 
       // ✅ Case 1: API wrapped in 'data' list
       if (res['data'] is List) {
@@ -283,7 +283,7 @@ class RedemptionRepository {
       data: body,
     );
 
-    debugPrint("🔍 Raw API Response for Room Types: $res");
+    // debugPrint("🔍 Raw API Response for Room Types: $res");
 
     if (res == null) return [];
 
@@ -312,13 +312,13 @@ class RedemptionRepository {
     required int points,
     required String guestName,
   }) async {
-    debugPrint("🔎 point.location raw: '${point.location}'");
-    debugPrint(
-        "🔎 resolved full location: '${_getLocationName(point.location)}'");
-    debugPrint("🔎 propertyStates length: ${propertyStates.length}");
+    // debugPrint("🔎 point.location raw: '${point.location}'");
+    // debugPrint(
+    //     "🔎 resolved full location: '${_getLocationName(point.location)}'");
+    // debugPrint("🔎 propertyStates length: ${propertyStates.length}");
     for (var ps in propertyStates) {
-      debugPrint(
-          "🔎 propertyState: location='${ps.locationName}', state='${ps.stateName}', pic='${ps.pic}'");
+      // debugPrint(
+      //     "🔎 propertyState: location='${ps.locationName}', state='${ps.stateName}', pic='${ps.pic}'");
     }
 
     // Match location → state (owner property’s state)
@@ -352,7 +352,7 @@ class RedemptionRepository {
       data: body,
     );
 
-    debugPrint("🔍 Raw API Response for Booking: $res");
+    // debugPrint("🔍 Raw API Response for Booking: $res");
 
     if (res == null) return null;
     if (res is Map<String, dynamic>) return res;

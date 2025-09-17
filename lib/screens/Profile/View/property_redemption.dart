@@ -34,7 +34,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
   @override
   Widget build(BuildContext context) {
     final ownerVM = Provider.of<OwnerProfileVM>(context);
-    final sortedUnits = [...ownerVM.unitAvailablePoints]..sort(
+    final sortedUnits = [...ownerVM.unitAvailablePoints]
+        .where((unit) => unit.redemptionBalancePoints > 0)
+        .toList()
+      ..sort(
         (a, b) =>
             b.redemptionBalancePoints.compareTo(a.redemptionBalancePoints),
       );

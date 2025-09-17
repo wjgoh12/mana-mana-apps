@@ -100,7 +100,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   void _onItemTapped(int index) {
-    print('Tap Item $index');
+    // print('Tap Item $index');
 
     if (_selectedIndex != index) {
       setState(() {
