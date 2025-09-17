@@ -266,39 +266,23 @@ class OwnerProfileVM extends ChangeNotifier {
     }
 
     try {
-      final fetchedStates = await _ownerBookingRepository.getAvailableStates();
+      _isLoadingAvailablePoints = true;
+      notifyListeners();
 
-      List<String> validStates = [];
+      final response = await _ownerBookingRepository.getRedemptionBalancePoints(
+        location: location,
+        unitNo: unitNo,
+      );
 
-      // Run per state in parallel
-      await Future.wait(fetchedStates.map((state) async {
-        final fetchedLocations =
-            await _ownerBookingRepository.getAllLocationsByState(state);
+      UserPointBalance.clear();
+      UserPointBalance.addAll(response);
 
-        // Run location checks in parallel
-        final results = await Future.wait(fetchedLocations.map((loc) async {
-          final roomTypes = await _ownerBookingRepository.getRoomTypes(
-            state: state,
-            bookingLocationName: loc.locationName ?? "",
-            rooms: 1,
-            arrivalDate: DateTime.now().add(const Duration(days: 7)),
-            departureDate: DateTime.now().add(const Duration(days: 8)),
-          );
-          return roomTypes.isNotEmpty;
-        }));
-
-        // If any location has rooms → state is valid
-        if (results.contains(true)) {
-          validStates.add(state);
-        }
-      }));
-
-      _states = validStates;
-      _selectedState = '';
+      debugPrint(
+          "✅ Redemption balance points length: ${UserPointBalance.length}");
     } catch (e) {
-      _error = e.toString();
+      debugPrint('❌ Error fetching redemption balance points: $e');
     } finally {
-      _isLoadingStates = false;
+      _isLoadingAvailablePoints = false;
       notifyListeners();
     }
   }
@@ -316,7 +300,7 @@ class OwnerProfileVM extends ChangeNotifier {
         allDates,
         state,
       );
-      // debugPrint("✅ Blocked dates loaded: ${_blockedDates.length}");
+      debugPrint("✅ Blocked dates loaded: ${_blockedDates.length}");
     } catch (e) {
       debugPrint("❌ Failed to fetch blocked dates: $e");
       _blockedDates = [];
@@ -353,7 +337,7 @@ class OwnerProfileVM extends ChangeNotifier {
       );
 
       _roomTypes = response;
-      // debugPrint("✅ Room types loaded: ${_roomTypes.length}");
+      debugPrint("✅ Room types loaded: ${_roomTypes.length}");
     } catch (e) {
       _roomTypes = [];
       debugPrint("❌ Error fetching room types: $e");
