@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
 import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
@@ -33,6 +34,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
 
   @override
   Widget build(BuildContext context) {
+    final globalData = GlobalDataManager();
+    globalData.initializeData(); // ensures all data is preloaded
     final ownerVM = Provider.of<OwnerProfileVM>(context);
     final sortedUnits = [...ownerVM.unitAvailablePoints]
         .where((unit) => unit.redemptionBalancePoints > 0)
@@ -133,11 +136,18 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                       ResponsiveSize.scaleWidth(8),
                                     ),
                                     onTap: () {
-                                      Navigator.of(context).push(
+                                      Navigator.push(
+                                        context,
                                         MaterialPageRoute(
-                                          builder: (_) =>
-                                              ChangeNotifierProvider(
-                                            create: (_) => OwnerProfileVM(),
+                                          builder: (_) => MultiProvider(
+                                            providers: [
+                                              ChangeNotifierProvider.value(
+                                                value: globalData,
+                                              ),
+                                              ChangeNotifierProvider.value(
+                                                value: ownerVM,
+                                              ),
+                                            ],
                                             child: ChoosePropertyLocation(
                                               selectedLocation: unit.location,
                                               selectedUnitNo: unit.unitNo,

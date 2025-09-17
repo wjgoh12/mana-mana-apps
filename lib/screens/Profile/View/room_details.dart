@@ -439,7 +439,7 @@ Total Points: ${totalPoints()}
   Widget _buildDateCard(String title, DateTime? date) {
     return Card(
       child: Container(
-        width: ResponsiveSize.scaleWidth(160),
+        width: ResponsiveSize.scaleWidth(150),
         height: ResponsiveSize.scaleHeight(60),
         alignment: Alignment.center,
         child: Column(
