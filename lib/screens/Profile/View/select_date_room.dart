@@ -692,6 +692,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             userPointsBalance: userPointsBalance,
             ownerLocation: widget.ownedLocation,
             ownerUnitNo: widget.ownedUnitNo,
+            bookingLocationName: widget.location,
           ),
         ),
       ),

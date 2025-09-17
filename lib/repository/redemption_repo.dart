@@ -3,6 +3,7 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as _apiService;
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
+import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/model/redemptionBalancePoints.dart';
 import 'package:mana_mana_app/model/roomType.dart';
@@ -302,16 +303,25 @@ class RedemptionRepository {
   }
 
   Future<Map<String, dynamic>?> submitBooking({
-    required RoomType room,
+    required BookingRoom bookingRoom,
     required UnitAvailablePoint point,
-    required List<Propertystate> propertyStates, // pass all states here
+    required List<Propertystate> propertyStates,
     required DateTime? checkIn,
     required DateTime? checkOut,
     required int quantity,
     required int points,
     required String guestName,
   }) async {
-    // Match location → state
+    debugPrint("🔎 point.location raw: '${point.location}'");
+    debugPrint(
+        "🔎 resolved full location: '${_getLocationName(point.location)}'");
+    debugPrint("🔎 propertyStates length: ${propertyStates.length}");
+    for (var ps in propertyStates) {
+      debugPrint(
+          "🔎 propertyState: location='${ps.locationName}', state='${ps.stateName}', pic='${ps.pic}'");
+    }
+
+    // Match location → state (owner property’s state)
     final matchingState = propertyStates.firstWhere(
       (state) =>
           state.locationName.toUpperCase() ==
@@ -320,18 +330,18 @@ class RedemptionRepository {
     );
 
     final body = {
-      "stateName": matchingState.stateName, //owner property located state
-      "locationName": _getLocationName(point.location), //owner property name
-      "unitNo": point.unitNo, //owner property unit
-      "bookingLocationName":
-          _getLocationName(point.location), //redeem property name
-      "typeName": _getLocationName(point.location), //redeem property room type
+      "stateName": matchingState.stateName,
+      "locationName": _getLocationName(
+          point.location), // ✅ use full location name like "SCARLETZ"
+      "unitNo": point.unitNo,
+      "bookingLocationName": bookingRoom.bookingLocationName,
+      "typeName": bookingRoom.roomType.roomTypeName,
       "arrivalDate":
           checkIn != null ? DateFormat('yyyy-MM-dd').format(checkIn) : "",
       "departureDate":
           checkOut != null ? DateFormat('yyyy-MM-dd').format(checkOut) : "",
-      "rooms": quantity,
-      "totalRate": points,
+      "rooms": quantity.toString(), // ✅ cast to string
+      "totalRate": points.toString(), // ✅ cast to string
       "guestName": guestName.trim(),
     };
 

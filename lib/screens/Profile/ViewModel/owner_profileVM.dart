@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
+import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/model/propertystate.dart';
 import 'package:mana_mana_app/model/roomType.dart';
@@ -347,7 +348,7 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   Future<Map<String, dynamic>?> submitBooking({
-    required RoomType room,
+    required BookingRoom bookingRoom,
     required UnitAvailablePoint point,
     required List<Propertystate> propertyStates,
     required DateTime? checkIn,
@@ -358,17 +359,36 @@ class OwnerProfileVM extends ChangeNotifier {
   }) async {
     try {
       return await _ownerBookingRepository.submitBooking(
-        room: room,
-        point: point,
+        bookingRoom: bookingRoom, // ✅ match repo
+        point: point, //available points
         propertyStates: propertyStates,
         checkIn: checkIn,
         checkOut: checkOut,
         quantity: quantity,
-        points: points,
+        points: points, //required points
         guestName: guestName,
       );
     } catch (e, st) {
       debugPrint("❌ Booking submission failed: $e\n$st");
+      return null;
+    }
+  }
+
+  // inside OwnerProfileVM
+  Propertystate? findPropertyStateForOwner(String ownerLocation) {
+    try {
+      return _locationsInState.firstWhere(
+        (loc) =>
+            (loc.locationName ?? "").toLowerCase() ==
+            ownerLocation.toLowerCase(),
+        orElse: () => Propertystate(
+          stateName: "",
+          locationName: "",
+          pic: "",
+        ),
+      );
+    } catch (e) {
+      debugPrint("❌ No matching property state for $ownerLocation");
       return null;
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/propertystate.dart';
 import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
@@ -17,6 +18,7 @@ class RoomDetails extends StatefulWidget {
   final int userPointsBalance;
   final String ownerLocation;
   final String ownerUnitNo;
+  final String bookingLocationName;
 
   const RoomDetails({
     Key? key,
@@ -27,6 +29,7 @@ class RoomDetails extends StatefulWidget {
     required this.userPointsBalance,
     required this.ownerLocation,
     required this.ownerUnitNo,
+    required this.bookingLocationName,
   }) : super(key: key);
 
   @override
@@ -79,6 +82,25 @@ class _RoomDetailsState extends State<RoomDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
+
+// get matching state
+    final propertyState =
+        ownerVM.findPropertyStateForOwner(widget.ownerLocation);
+    if (propertyState == null || propertyState.locationName == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content:
+                Text("No property state found for ${widget.ownerLocation}")),
+      );
+      return SizedBox();
+    }
+
+    final bookingRoom = BookingRoom(
+      roomType: widget.room,
+      bookingLocationName: widget.bookingLocationName,
+    );
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -273,9 +295,11 @@ class _RoomDetailsState extends State<RoomDetails> {
                               );
 
                               final result = await ownerVM.submitBooking(
-                                room: widget.room,
+                                bookingRoom: bookingRoom,
                                 point: point,
-                                propertyStates: ownerVM.locations,
+                                propertyStates: [
+                                  propertyState
+                                ], // wrap in a list if submitBooking expects list
                                 checkIn: widget.checkIn,
                                 checkOut: widget.checkOut,
                                 quantity: widget.quantity,
@@ -296,8 +320,16 @@ Total Points: ${totalPoints()}
                                 showDialog(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                    content: const Text(
-                                        'Booking Request Successfully Submitted!'),
+                                    content: Column(
+                                      children: [
+                                        const Text('Request Received!'),
+                                        SizedBox(
+                                            height:
+                                                ResponsiveSize.scaleHeight(2)),
+                                        const Text(
+                                            'You will be notified once your booking is confirmed​'),
+                                      ],
+                                    ),
                                     backgroundColor: Color(0xFF3E51FF),
                                     actions: [
                                       TextButton(
