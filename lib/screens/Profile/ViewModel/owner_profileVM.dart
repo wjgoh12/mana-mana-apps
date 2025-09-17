@@ -176,29 +176,9 @@ class OwnerProfileVM extends ChangeNotifier {
       final fetchedLocations =
           await _ownerBookingRepository.getAllLocationsByState(state);
 
-      // debugPrint("✅ Raw locations loaded: ${fetchedLocations.length}");
-
-      List<Propertystate> validLocations = [];
-
-      for (final loc in fetchedLocations) {
-        // Try to fetch room types for this location
-        final roomTypes = await _ownerBookingRepository.getRoomTypes(
-          state: state,
-          bookingLocationName: loc.locationName ?? "",
-          rooms: 1,
-          arrivalDate: DateTime.now().add(const Duration(days: 7)),
-          departureDate: DateTime.now().add(const Duration(days: 8)),
-        );
-
-        if (roomTypes.isNotEmpty) {
-          validLocations.add(loc);
-        } else {
-          debugPrint("⚠️ Skipped location ${loc.locationName}, no room types");
-        }
-      }
-
-      _locationsInState = validLocations;
-      // debugPrint("✅ Filtered valid locations: ${_locationsInState.length}");
+      // Simple filtering - just check if location has basic data
+      _locationsInState =
+          fetchedLocations.where((loc) => loc.locationName.isNotEmpty).toList();
     } catch (e) {
       _error = e.toString();
       debugPrint("❌ Error fetching locations by state: $e");
@@ -215,40 +195,11 @@ class OwnerProfileVM extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final fetchedStates = await _ownerBookingRepository.getAvailableStates();
-      List<String> validStates = [];
-
-      for (final state in fetchedStates) {
-        // Fetch valid locations for this state
-        final fetchedLocations =
-            await _ownerBookingRepository.getAllLocationsByState(state);
-
-        List<Propertystate> validLocations = [];
-
-        for (final loc in fetchedLocations) {
-          final roomTypes = await _ownerBookingRepository.getRoomTypes(
-            state: state,
-            bookingLocationName: loc.locationName ?? "",
-            rooms: 1,
-            arrivalDate: DateTime.now().add(const Duration(days: 7)),
-            departureDate: DateTime.now().add(const Duration(days: 8)),
-          );
-
-          if (roomTypes.isNotEmpty) {
-            validLocations.add(loc);
-          }
-        }
-
-        if (validLocations.isNotEmpty) {
-          validStates.add(state);
-        }
-      }
-
-      _states = validStates;
+      _states = await _ownerBookingRepository.getAvailableStates();
       _selectedState = ''; // let UI decide
-      // debugPrint("✅ States with valid locations: $_states");
     } catch (e) {
       _error = e.toString();
+      _states = [];
     } finally {
       _isLoadingStates = false;
       notifyListeners();
@@ -378,9 +329,7 @@ class OwnerProfileVM extends ChangeNotifier {
   Propertystate? findPropertyStateForOwner(String ownerLocation) {
     try {
       return _locationsInState.firstWhere(
-        (loc) =>
-            (loc.locationName ?? "").toLowerCase() ==
-            ownerLocation.toLowerCase(),
+        (loc) => loc.locationName.toLowerCase() == ownerLocation.toLowerCase(),
         orElse: () => Propertystate(
           stateName: "",
           locationName: "",
