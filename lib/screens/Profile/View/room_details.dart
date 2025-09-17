@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/propertystate.dart';
@@ -40,6 +41,7 @@ class _RoomDetailsState extends State<RoomDetails> {
   final TextEditingController _guestNameController = TextEditingController();
   bool _isChecked = false;
   bool _highlightCheckBox = false;
+  bool _isSubmitting = false;
 
   String? _getLocationCode(String locationName) {
     switch (locationName.toUpperCase()) {
@@ -87,7 +89,7 @@ class _RoomDetailsState extends State<RoomDetails> {
 // get matching state
     final propertyState =
         ownerVM.findPropertyStateForOwner(widget.ownerLocation);
-    if (propertyState == null || propertyState.locationName == null) {
+    if (propertyState == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content:
@@ -231,143 +233,192 @@ class _RoomDetailsState extends State<RoomDetails> {
                     /// Submit button
                     Center(
                       child: TextButton(
-                        onPressed: () async {
-                          bool isValid = true;
+                        onPressed: _isSubmitting
+                            ? null // Disable button while submitting
+                            : () async {
+                                bool isValid = true;
 
-                          if (_guestNameController.text.trim().isEmpty) {
-                            isValid = false;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Please enter guest name'),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 203, 46, 46)),
-                            );
-                          }
+                                setState(() {
+                                  _isSubmitting = true;
+                                });
 
-                          if (!_isChecked) {
-                            isValid = false;
-                            setState(() {
-                              _highlightCheckBox = true;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Please confirm T&C'),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 203, 46, 46)),
-                            );
-                          }
+                                if (_guestNameController.text.trim().isEmpty) {
+                                  isValid = false;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text('Please enter guest name'),
+                                        backgroundColor:
+                                            Color.fromARGB(255, 203, 46, 46)),
+                                  );
+                                }
 
-                          if (totalPoints() > widget.userPointsBalance) {
-                            isValid = false;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'Insufficient points for redemption!'),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 203, 46, 46)),
-                            );
-                          }
+                                if (!_isChecked) {
+                                  isValid = false;
+                                  setState(() {
+                                    _highlightCheckBox = true;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Please confirm T&C'),
+                                        backgroundColor:
+                                            Color.fromARGB(255, 203, 46, 46)),
+                                  );
+                                }
 
-                          if (isValid) {
-                            final ownerVM = Provider.of<OwnerProfileVM>(context,
-                                listen: false);
+                                if (totalPoints() > widget.userPointsBalance) {
+                                  isValid = false;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Insufficient points for redemption!'),
+                                        backgroundColor:
+                                            Color.fromARGB(255, 203, 46, 46)),
+                                  );
+                                }
 
-                            try {
-                              final userEmail = ownerVM.users.isNotEmpty
-                                  ? ownerVM.users.first.email ?? ''
-                                  : '';
-                              if (userEmail.isEmpty)
-                                throw Exception("No user email");
+                                if (isValid) {
+                                  final ownerVM = Provider.of<OwnerProfileVM>(
+                                      context,
+                                      listen: false);
 
-                              final locationCode =
-                                  _getLocationCode(widget.ownerLocation);
-                              if (locationCode == null)
-                                throw Exception(
-                                    "Invalid location: ${widget.ownerLocation}");
+                                  try {
+                                    final userEmail = ownerVM.users.isNotEmpty
+                                        ? ownerVM.users.first.email ?? ''
+                                        : '';
+                                    if (userEmail.isEmpty)
+                                      throw Exception("No user email");
 
-                              final point = UnitAvailablePoint(
-                                location: locationCode,
-                                unitNo: widget.ownerUnitNo,
-                                redemptionBalancePoints:
-                                    widget.userPointsBalance,
-                                email: userEmail,
-                                redemptionPoints: totalPoints(),
-                              );
+                                    final locationCode =
+                                        _getLocationCode(widget.ownerLocation);
+                                    if (locationCode == null)
+                                      throw Exception(
+                                          "Invalid location: ${widget.ownerLocation}");
 
-                              final result = await ownerVM.submitBooking(
-                                bookingRoom: bookingRoom,
-                                point: point,
-                                propertyStates: [
-                                  propertyState
-                                ], // wrap in a list if submitBooking expects list
-                                checkIn: widget.checkIn,
-                                checkOut: widget.checkOut,
-                                quantity: widget.quantity,
-                                points: totalPoints(),
-                                guestName: _guestNameController.text.trim(),
-                              );
+                                    final point = UnitAvailablePoint(
+                                      location: locationCode,
+                                      unitNo: widget.ownerUnitNo,
+                                      redemptionBalancePoints:
+                                          widget.userPointsBalance,
+                                      email: userEmail,
+                                      redemptionPoints: totalPoints(),
+                                    );
 
-                              if (result != null) {
-                                final emailContent = '''
+                                    final result = await ownerVM.submitBooking(
+                                      bookingRoom: bookingRoom,
+                                      point: point,
+                                      propertyStates: [
+                                        propertyState
+                                      ], // wrap in a list if submitBooking expects list
+                                      checkIn: widget.checkIn,
+                                      checkOut: widget.checkOut,
+                                      quantity: widget.quantity,
+                                      points: totalPoints(),
+                                      guestName:
+                                          _guestNameController.text.trim(),
+                                    );
+
+                                    if (result != null) {
+                                      final emailContent = '''
 Booking request submitted!
 Guest Name: ${_guestNameController.text}
 Check-In: ${widget.checkIn}
 Check-Out: ${widget.checkOut}
 Total Points: ${totalPoints()}
 ''';
-                                sendEmailToCS(emailContent);
+                                      sendEmailToCS(emailContent);
 
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    content: Column(
-                                      children: [
-                                        const Text('Request Received!'),
-                                        SizedBox(
-                                            height:
-                                                ResponsiveSize.scaleHeight(2)),
-                                        const Text(
-                                            'You will be notified once your booking is confirmed​'),
-                                      ],
-                                    ),
-                                    backgroundColor: Color(0xFF3E51FF),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text('OK'))
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Failed to submit booking. Please try again.'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Error: $e'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          }
-                        },
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                          contentPadding: const EdgeInsets.all(
+                                              16), // reduce padding if needed
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize
+                                                .min, // shrink dialog height
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const Text(
+                                                'Request Received!',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              SizedBox(
+                                                  height: ResponsiveSize
+                                                      .scaleHeight(
+                                                          1)), // reduce spacing
+                                              const Text(
+                                                'You will be notified once your booking is confirmed​',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 14),
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(
+                                                    context); // Close dialog
+                                                Navigator.pop(
+                                                    context); // Back to room selection
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('OK'),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Failed to submit booking. Please try again.'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Error: $e'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  } finally {
+                                    // Reset submitting state whether successful or not
+                                    if (mounted) {
+                                      setState(() {
+                                        _isSubmitting = false;
+                                      });
+                                    }
+                                  }
+                                }
+                              },
                         style: TextButton.styleFrom(
                           backgroundColor: const Color(0xFF3E51FF),
                           fixedSize: const Size(300, 40),
                         ),
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: ResponsiveSize.text(16)),
-                        ),
+                        child: _isSubmitting
+                            ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                'Submit',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: ResponsiveSize.text(16)),
+                              ),
                       ),
                     ),
                   ],
