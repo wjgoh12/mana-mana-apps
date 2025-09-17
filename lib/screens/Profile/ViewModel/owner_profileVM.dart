@@ -6,6 +6,7 @@ import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/model/propertystate.dart';
+import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
@@ -37,6 +38,8 @@ class OwnerProfileVM extends ChangeNotifier {
   List<BookingHistory> _bookingHistory = [];
   List<UnitAvailablePoint> _unitAvailablePoints = [];
   List<CalendarBlockedDate> _blockedDates = [];
+  List<RoomType> _roomTypes = [];
+  bool _isLoadingRoomTypes = false;
 
   //getters
   List<BookingHistory> get bookingHistory => _bookingHistory;
@@ -52,6 +55,8 @@ class OwnerProfileVM extends ChangeNotifier {
   bool get isLoadingAvailablePoints => _isLoadingAvailablePoints;
   List<CalendarBlockedDate> get blockedDates => _blockedDates;
   bool get isLoadingBlockedDates => _isLoadingBlockedDates;
+  List<RoomType> get roomTypes => _roomTypes;
+  bool get isLoadingRoomTypes => _isLoadingRoomTypes;
 
   // Getters that delegate to GlobalDataManager
   List<User> get users => _globalDataManager.users;
@@ -167,12 +172,36 @@ class OwnerProfileVM extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _locationsInState =
+      final fetchedLocations =
           await _ownerBookingRepository.getAllLocationsByState(state);
-      debugPrint("✅ Locations loaded: ${_locationsInState.length}");
+
+      debugPrint("✅ Raw locations loaded: ${fetchedLocations.length}");
+
+      List<Propertystate> validLocations = [];
+
+      for (final loc in fetchedLocations) {
+        // Try to fetch room types for this location
+        final roomTypes = await _ownerBookingRepository.getRoomTypes(
+          state: state,
+          bookingLocationName: loc.locationName ?? "",
+          rooms: 1,
+          arrivalDate: DateTime.now().add(const Duration(days: 7)),
+          departureDate: DateTime.now().add(const Duration(days: 8)),
+        );
+
+        if (roomTypes.isNotEmpty) {
+          validLocations.add(loc);
+        } else {
+          debugPrint("⚠️ Skipped location ${loc.locationName}, no room types");
+        }
+      }
+
+      _locationsInState = validLocations;
+      debugPrint("✅ Filtered valid locations: ${_locationsInState.length}");
     } catch (e) {
       _error = e.toString();
-      debugPrint("❌ Error fetching locations: $e");
+      debugPrint("❌ Error fetching locations by state: $e");
+      _locationsInState = [];
     } finally {
       _isLoadingLocations = false;
       notifyListeners();
@@ -185,9 +214,38 @@ class OwnerProfileVM extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _states = await _ownerBookingRepository.getAvailableStates();
-      // Don’t auto-select state here. Let user pick from dropdown.
-      _selectedState = '';
+      final fetchedStates = await _ownerBookingRepository.getAvailableStates();
+      List<String> validStates = [];
+
+      for (final state in fetchedStates) {
+        // Fetch valid locations for this state
+        final fetchedLocations =
+            await _ownerBookingRepository.getAllLocationsByState(state);
+
+        List<Propertystate> validLocations = [];
+
+        for (final loc in fetchedLocations) {
+          final roomTypes = await _ownerBookingRepository.getRoomTypes(
+            state: state,
+            bookingLocationName: loc.locationName ?? "",
+            rooms: 1,
+            arrivalDate: DateTime.now().add(const Duration(days: 7)),
+            departureDate: DateTime.now().add(const Duration(days: 8)),
+          );
+
+          if (roomTypes.isNotEmpty) {
+            validLocations.add(loc);
+          }
+        }
+
+        if (validLocations.isNotEmpty) {
+          validStates.add(state);
+        }
+      }
+
+      _states = validStates;
+      _selectedState = ''; // let UI decide
+      debugPrint("✅ States with valid locations: $_states");
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -236,24 +294,11 @@ class OwnerProfileVM extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final res = await _ownerBookingRepository.getCalendarBlockedDates(
-        location: location,
-        startDate: DateTime.now().toIso8601String(),
-        endDate:
-            DateTime.now().add(const Duration(days: 365)).toIso8601String(),
-      );
-
-      if (res is! List) {
-        throw Exception('Unexpected API response for blocked dates');
-      }
-
-      final dates = res.map((e) => CalendarBlockedDate.fromJson(e)).toList();
-
+      final allDates = await _ownerBookingRepository.getCalendarBlockedDates();
       _blockedDates = _ownerBookingRepository.filterBlockedDatesForState(
-        dates,
+        allDates,
         state,
       );
-
       debugPrint("✅ Blocked dates loaded: ${_blockedDates.length}");
     } catch (e) {
       debugPrint("❌ Failed to fetch blocked dates: $e");
@@ -261,6 +306,70 @@ class OwnerProfileVM extends ChangeNotifier {
     } finally {
       _isLoadingBlockedDates = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> fetchRoomTypes({
+    required String state,
+    required String bookingLocationName,
+    int? rooms,
+    DateTime? arrivalDate,
+    DateTime? departureDate,
+  }) async {
+    _isLoadingRoomTypes = true;
+    notifyListeners();
+
+    try {
+      // Provide default values if not given
+      final defaultRooms = rooms ?? 1;
+      final defaultArrival =
+          arrivalDate ?? DateTime.now().add(Duration(days: 7));
+      final defaultDeparture =
+          departureDate ?? DateTime.now().add(Duration(days: 8));
+
+      final response = await _ownerBookingRepository.getRoomTypes(
+        state: state,
+        bookingLocationName: bookingLocationName,
+        rooms: defaultRooms,
+        arrivalDate: defaultArrival,
+        departureDate: defaultDeparture,
+      );
+
+      _roomTypes = response;
+      debugPrint("✅ Room types loaded: ${_roomTypes.length}");
+    } catch (e) {
+      _roomTypes = [];
+      debugPrint("❌ Error fetching room types: $e");
+    } finally {
+      _isLoadingRoomTypes = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Map<String, dynamic>?> submitBooking({
+    required RoomType room,
+    required UnitAvailablePoint point,
+    required List<Propertystate> propertyStates,
+    required DateTime? checkIn,
+    required DateTime? checkOut,
+    required int quantity,
+    required int points,
+    required String guestName,
+  }) async {
+    try {
+      return await _ownerBookingRepository.submitBooking(
+        room: room,
+        point: point,
+        propertyStates: propertyStates,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        quantity: quantity,
+        points: points,
+        guestName: guestName,
+      );
+    } catch (e, st) {
+      debugPrint("❌ Booking submission failed: $e\n$st");
+      return null;
     }
   }
 }

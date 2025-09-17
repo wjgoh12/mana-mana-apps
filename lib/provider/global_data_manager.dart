@@ -35,14 +35,20 @@ class GlobalDataManager extends ChangeNotifier {
   List<User> get users => List.unmodifiable(_users);
   List<OwnerPropertyList> get ownerUnits => List.unmodifiable(_ownerUnits);
   List<SingleUnitByMonth> get unitByMonth => List.unmodifiable(_unitByMonth);
-  List<Map<String, dynamic>> get revenueDashboard => List.unmodifiable(_revenueDashboard);
-  List<Map<String, dynamic>> get totalByMonth => List.unmodifiable(_totalByMonth);
-  List<Map<String, dynamic>> get locationByMonth => List.unmodifiable(_locationByMonth);
-  List<Map<String, dynamic>> get propertyContractType => List.unmodifiable(_propertyContractType);
-  Map<String, dynamic> get propertyOccupancy => Map.unmodifiable(_propertyOccupancy);
+  List<Map<String, dynamic>> get revenueDashboard =>
+      List.unmodifiable(_revenueDashboard);
+  List<Map<String, dynamic>> get totalByMonth =>
+      List.unmodifiable(_totalByMonth);
+  List<Map<String, dynamic>> get locationByMonth =>
+      List.unmodifiable(_locationByMonth);
+  List<Map<String, dynamic>> get propertyContractType =>
+      List.unmodifiable(_propertyContractType);
+  Map<String, dynamic> get propertyOccupancy =>
+      Map.unmodifiable(_propertyOccupancy);
 
-  String get userNameAccount => _users.isNotEmpty ? _users.first.ownerFullName ?? '-' : '-';
-  
+  String get userNameAccount =>
+      _users.isNotEmpty ? _users.first.ownerFullName ?? '-' : '-';
+
   String get revenueLatestYear => _revenueDashboard.isNotEmpty
       ? _revenueDashboard
           .map((item) => item['year'] as int)
@@ -68,7 +74,7 @@ class GlobalDataManager extends ChangeNotifier {
     try {
       // Fetch all core data
       await _fetchAllData();
-      
+
       _isInitialized = true;
       _lastFetchTime = DateTime.now();
     } catch (e) {
@@ -102,7 +108,8 @@ class GlobalDataManager extends ChangeNotifier {
     // Fetch property contract type
     try {
       final email = _users.isNotEmpty ? _users.first.email ?? '' : '';
-      final contractResponse = await _propertyRepository.getPropertyContractType(email: email);
+      final contractResponse =
+          await _propertyRepository.getPropertyContractType(email: email);
       _propertyContractType = List<Map<String, dynamic>>.from(contractResponse);
     } catch (e) {
       print('Error fetching property contract type: $e');
@@ -177,9 +184,7 @@ class GlobalDataManager extends ChangeNotifier {
   }
 
   List<Map<String, dynamic>> getMonthlyBlcOwner() {
-    return _totalByMonth
-        .where((unit) => unit['transcode'] == "OWNBAL")
-        .toList()
+    return _totalByMonth.where((unit) => unit['transcode'] == "OWNBAL").toList()
       ..sort((a, b) {
         int yearComparison = a['year'].compareTo(b['year']);
         return yearComparison != 0
@@ -241,7 +246,7 @@ class GlobalDataManager extends ChangeNotifier {
         .where((types) => types.location == property)
         .map((types) => '${types.type} (${types.unitno})')
         .toList();
-    
+
     final Set<String> seen = <String>{};
     return builtTypeItems.where((e) => seen.add(e)).toList();
   }
@@ -258,9 +263,8 @@ class GlobalDataManager extends ChangeNotifier {
 
   List<String> getMonthItemsForUnitAndYear(String unitNo, String year) {
     return _unitByMonth
-        .where((unit) => 
-            unit.sunitno == unitNo && 
-            unit.iyear?.toString() == year)
+        .where(
+            (unit) => unit.sunitno == unitNo && unit.iyear?.toString() == year)
         .map((unit) => unit.imonth?.toString() ?? '')
         .where((month) => month.isNotEmpty)
         .toSet()
@@ -268,7 +272,8 @@ class GlobalDataManager extends ChangeNotifier {
       ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
   }
 
-  SingleUnitByMonth? getSelectedUnitData(String unitNo, String transCode, int? year, int? month) {
+  SingleUnitByMonth? getSelectedUnitData(
+      String unitNo, String transCode, int? year, int? month) {
     try {
       return _unitByMonth.firstWhere((unit) =>
           unit.sunitno == unitNo &&
@@ -280,11 +285,20 @@ class GlobalDataManager extends ChangeNotifier {
     }
   }
 
+  // In GlobalDataManager
+  List<Map<String, dynamic>> getAvailableLocationsWithRooms() {
+    return _locationByMonth.where((location) {
+      final owners = location['owners'] as List<dynamic>? ?? [];
+      // ✅ Check if this location has any room/unit (you decide what condition = room type available)
+      return owners.isNotEmpty;
+    }).toList();
+  }
+
   // Check if data needs refresh (optional: implement cache expiry)
   bool shouldRefreshData() {
     if (!_isInitialized) return true;
     if (_lastFetchTime == null) return true;
-    
+
     // Refresh if data is older than 30 minutes
     final now = DateTime.now();
     final difference = now.difference(_lastFetchTime!);
@@ -301,11 +315,11 @@ class GlobalDataManager extends ChangeNotifier {
     _locationByMonth.clear();
     _propertyContractType.clear();
     _propertyOccupancy.clear();
-    
+
     _isInitialized = false;
     _isLoading = false;
     _lastFetchTime = null;
-    
+
     notifyListeners();
   }
 

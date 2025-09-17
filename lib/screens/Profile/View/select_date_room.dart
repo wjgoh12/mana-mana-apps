@@ -26,14 +26,25 @@ class SelectDateRoom extends StatefulWidget {
   }) : super(key: key);
 
   // 👇 Put the static method here, in the widget class
-  static int getUserPointsBalance() {
-    // Dummy value for now (replace with real user balance later)
-    return 1200;
+  static int getUserPointsBalance(OwnerProfileVM vm) {
+    final points = vm.UserPointBalance.isNotEmpty
+        ? vm.UserPointBalance.first.redemptionBalancePoints
+        : 0;
+    final redemptionPoints = vm.UserPointBalance.isNotEmpty
+        ? vm.UserPointBalance.first.redemptionPoints
+        : 0;
+
+    final formatter = NumberFormat('#,###');
+    final formattedPoints = formatter.format(points);
+    final formattedRedemptionPoints = formatter.format(redemptionPoints);
+    return formattedPoints.isNotEmpty
+        ? int.parse(formattedPoints.replaceAll(',', ''))
+        : 0;
   }
 
-  static String getFormatUserPointsBalance() {
+  static String getFormatUserPointsBalance(OwnerProfileVM vm) {
     final formatter = NumberFormat('#,###');
-    return formatter.format(getUserPointsBalance());
+    return formatter.format(getUserPointsBalance(vm));
   }
 
   static int calculateTotalPoints(RoomType room, int quantity, int duration) {
@@ -63,7 +74,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   void initState() {
     super.initState();
 
-    _selectedDay = _focusedDay;
+    _focusedDay = DateTime.now().add(const Duration(days: 7)); // once only
+    _selectedDay = null;
     _fetchBlockedDates();
 
     // Assign the VM immediately
@@ -71,30 +83,30 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     // Run async fetches after first frame to avoid build conflicts
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _vm.fetchRedemptionBalancePoints(
-        location: widget.ownedLocation,
-        unitNo: widget.ownedUnitNo,
-      );
+      if (_vm.UserPointBalance.isEmpty) {
+        _vm.fetchRedemptionBalancePoints(
+          location: widget.ownedLocation,
+          unitNo: widget.ownedUnitNo,
+        );
+      }
+
+      if (_vm.roomTypes.isEmpty) {
+        _vm.fetchRoomTypes(
+          state: widget.state,
+          bookingLocationName: widget.location,
+        );
+      }
     });
   }
 
   Future<void> _fetchBlockedDates() async {
-    debugPrint(
-        "Blocked dates: ${_blockedDates.map((e) => e.dateFrom).toList()}");
+    if (_blockedDates.isNotEmpty) return; // Already loaded
 
     setState(() => _isLoadingBlockedDates = true);
-
     try {
       final repo = RedemptionRepository();
-
       final res = await repo.getCalendarBlockedDates();
-
-      // final dates = res.map((e) => CalendarBlockedDate.fromJson(e)).toList();
-
-      final filteredDates = repo.filterBlockedDatesForState(
-        res,
-        widget.state,
-      );
+      final filteredDates = repo.filterBlockedDatesForState(res, widget.state);
 
       setState(() {
         _blockedDates = filteredDates;
@@ -110,8 +122,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
         _selectedDay = selectedDay;
-        _focusedDay = getInitialFocusedDay();
-        _selectedDay = _focusedDay;
+        _focusedDay = focusedDay;
       });
     }
   }
@@ -133,7 +144,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-                'Selected range includes blocked dates. Please choose another range.'),
+              'Selected range includes blocked dates. Please choose another range.',
+            ),
             backgroundColor: Color.fromARGB(255, 203, 46, 46),
           ),
         );
@@ -144,15 +156,28 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     setState(() {
       _selectedDay = null;
       _focusedDay = focusedDay;
-      _rangeStart = start;
-      _rangeEnd = end;
 
-      if (_rangeStart == null || _rangeEnd == null) {
-        _selectedQuantity = 1;
+      if (start != null && end == null) {
+        // 🟢 user tapped a new start → clear previous end
+        _rangeStart = start;
+        _rangeEnd = null;
+        _selectedQuantity = 1; // reset if you want
+      } else {
+        // normal case
+        _rangeStart = start;
+        _rangeEnd = end;
       }
     });
 
     _validateSelectedRoom();
+
+    _vm.fetchRoomTypes(
+      state: widget.state,
+      bookingLocationName: widget.location,
+      rooms: _selectedQuantity,
+      arrivalDate: _rangeStart != null ? _toDateOnly(_rangeStart!) : null,
+      departureDate: _rangeEnd != null ? _toDateOnly(_rangeEnd!) : null,
+    );
   }
 
   int get duration {
@@ -268,6 +293,16 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
   @override
   Widget build(BuildContext context) {
+    // at top of build()
+    int effectiveDuration = (_rangeStart != null && _rangeEnd != null)
+        ? _rangeEnd!.difference(_rangeStart!).inDays
+        : 1; // default to 1 night while checkout not selected
+
+    final int totalPoints = (_selectedRoom != null)
+        ? _selectedRoom!.roomTypePoints * _selectedQuantity
+        : 0;
+
+    final String formattedPoints = NumberFormat('#,###').format(totalPoints);
     ResponsiveSize.init(context);
 
     if (_isLoadingBlockedDates) {
@@ -389,55 +424,50 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.9,
+                crossAxisCount: 1,
+                mainAxisExtent: 200,
               ),
               itemCount: vm.roomTypes.length,
               itemBuilder: (context, index) {
                 final room = vm.roomTypes[index];
-                final affordable = isRoomAffordable(
-                  room,
-                  duration == 0 ? 1 : duration,
-                  _selectedQuantity,
-                );
+                final userPoints = vm.UserPointBalance.isNotEmpty
+                    ? vm.UserPointBalance.first.redemptionBalancePoints
+                    : 0;
+                final totalRoomPoints = room.roomTypePoints *
+                    (duration == 0 ? 1 : duration) *
+                    _selectedQuantity;
+                final affordable = totalRoomPoints <= userPoints;
 
-                return Opacity(
-                  opacity: affordable ? 1 : 0.5,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        color: _selectedRoom == room
-                            ? const Color(0xFF3E51FF)
-                            : Colors.transparent,
-                        width: 3,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        if (!affordable) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Insufficient points for this room. Please choose another.',
-                              ),
-                              backgroundColor: Color.fromARGB(255, 203, 46, 46),
+                return affordable
+                    ? _buildRoomCard(room, isSelected: room == _selectedRoom)
+                    : Opacity(
+                        opacity: affordable
+                            ? 1
+                            : 0.5, // Grey out if not enough points
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: _selectedRoom == room
+                                  ? const Color(0xFF3E51FF)
+                                  : Colors.transparent,
+                              width: 3,
                             ),
-                          );
-                          return;
-                        }
-                        setState(() => _selectedRoom = room);
-                      },
-                      child: _buildRoomTypeCard(
-                        context,
-                        room.roomTypeName,
-                        room.roomTypePoints,
-                        room.pic,
-                        isSelected: room == _selectedRoom,
-                      ),
-                    ),
-                  ),
-                );
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() => _selectedRoom = room);
+                            },
+                            child: _buildRoomTypeCard(
+                              context,
+                              room.roomTypeName,
+                              room.roomTypePoints,
+                              room.pic,
+                              isSelected: room == _selectedRoom,
+                            ),
+                          ),
+                        ),
+                      );
               },
             ),
             Column(
@@ -454,6 +484,35 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         _selectedQuantity = val;
                       });
                       _validateSelectedRoom();
+                      _vm
+                          .fetchRoomTypes(
+                        state: widget.state,
+                        bookingLocationName: widget.location,
+                        rooms: _selectedQuantity,
+                        arrivalDate: _rangeStart != null
+                            ? _toDateOnly(_rangeStart!)
+                            : null,
+                        departureDate:
+                            _rangeEnd != null ? _toDateOnly(_rangeEnd!) : null,
+                      )
+                          .then((_) {
+                        if (_selectedRoom != null) {
+                          final updated = vm.roomTypes.firstWhere(
+                            (r) =>
+                                r.roomTypeName == _selectedRoom!.roomTypeName,
+                            orElse: () => RoomType(
+                              roomTypeName: 'Default Room',
+                              roomTypePoints: 0,
+                              pic: '',
+                            ),
+                          );
+                          if (updated != null) {
+                            setState(
+                              () => _selectedRoom = updated,
+                            ); // refresh with new points
+                          }
+                        }
+                      });
                     },
                   ),
                 ),
@@ -466,11 +525,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               padding: const EdgeInsets.symmetric(horizontal: 18),
               child: Center(
                 child: Text(
-                  'Total: ${_selectedRoom != null ? SelectDateRoom.calculateTotalPoints(_selectedRoom!, _selectedQuantity, duration) : 0} points',
-                  style: const TextStyle(
-                    fontSize: 16,
+                  'Total: $formattedPoints points',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.text(16),
+                    fontFamily: 'outfit',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF3E51FF),
+                    color: const Color(0xFF3E51FF),
                   ),
                 ),
               ),
@@ -565,7 +625,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color.fromARGB(255, 236, 247, 255),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -576,7 +636,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'Available Point Balance:  ',
@@ -586,14 +646,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             ),
           ),
           Text(
-            '${formattedPoints}/${formattedRedemptionPoints}',
+            '${formattedPoints}',
             style: TextStyle(
               color: const Color(0xFF3E51FF),
               fontSize: ResponsiveSize.text(15),
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: 5),
+          // const SizedBox(width: 5),
         ],
       ),
     );
@@ -601,33 +661,38 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
   // Next button handler
   void _onNextPressed() {
-    if (_selectedRoom == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a room before proceeding.'),
-          backgroundColor: Color.fromARGB(255, 203, 46, 46),
-        ),
-      );
-      return;
-    }
-    if (_rangeStart == null || _rangeEnd == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select both Check-in and Check-out dates.'),
-          backgroundColor: Color.fromARGB(255, 203, 46, 46),
-        ),
-      );
+    if (_selectedRoom == null || _rangeStart == null || _rangeEnd == null) {
+      // show snackbars as before
       return;
     }
 
-    Navigator.of(context).push(
+    final int effectiveDuration = (_rangeStart != null && _rangeEnd != null)
+        ? _rangeEnd!.difference(_rangeStart!).inDays
+        : 1;
+
+    final int totalPoints = _selectedRoom!.roomTypePoints * _selectedQuantity;
+
+    // Use listen: false to safely read provider inside callback
+    final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
+
+    final int userPointsBalance = ownerVM.UserPointBalance.isNotEmpty
+        ? ownerVM.UserPointBalance.first.redemptionBalancePoints
+        : 0;
+
+    Navigator.push(
+      context,
       MaterialPageRoute(
-        builder: (_) => RoomDetails(
-          room: _selectedRoom!,
-          checkIn: _rangeStart,
-          checkOut: _rangeEnd,
-          nights: duration,
-          quantity: _selectedQuantity,
+        builder: (context) => ChangeNotifierProvider.value(
+          value: _vm,
+          child: RoomDetails(
+            room: _selectedRoom!,
+            checkIn: _rangeStart,
+            checkOut: _rangeEnd,
+            quantity: _selectedQuantity,
+            userPointsBalance: userPointsBalance,
+            ownerLocation: widget.ownedLocation,
+            ownerUnitNo: widget.ownedUnitNo,
+          ),
         ),
       ),
     );
@@ -646,58 +711,80 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       return base64Decode(base64String);
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        color: isSelected ? Colors.white : const Color(0xFF3E51FF),
-        // border: Border.all(
-        //   color: isSelected ? const Color(0xFF3E51FF) : Colors.transparent,
-        //   width: 2,
-        // ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          children: [
+            // Background Image
+            Image.memory(
+              _decodeBase64Image(imagePath),
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ), // Gradient overlay at bottom
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.transparent, Colors.black54],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      roomType,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      '$formattedPoints points',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 200,
-            height: 130,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8.0),
-                topRight: Radius.circular(8.0),
-              ),
-              child: Image.memory(
-                _decodeBase64Image(
-                    imagePath), // <-- use Image.memory for base64
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  roomType,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? const Color(0xFF3E51FF) : Colors.white,
-                  ),
-                ),
-                Text(
-                  '$formattedPoints points',
-                  style: TextStyle(
-                    color: isSelected ? Colors.black : Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+    );
+  }
+
+  Widget _buildRoomCard(RoomType room, {required bool isSelected}) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: isSelected ? const Color(0xFF3E51FF) : Colors.transparent,
+          width: 3,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: InkWell(
+        onTap: () {
+          setState(() => _selectedRoom = room);
+        },
+        child: _buildRoomTypeCard(
+          context,
+          room.roomTypeName,
+          room.roomTypePoints,
+          room.pic,
+          isSelected: isSelected,
+        ),
       ),
     );
   }

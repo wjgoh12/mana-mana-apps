@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as _apiService;
+import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/model/redemptionBalancePoints.dart';
+import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
@@ -11,6 +13,25 @@ import 'package:mana_mana_app/model/propertystate.dart';
 
 class RedemptionRepository {
   final ApiService _apiService = ApiService();
+
+  String _getLocationName(String code) {
+    switch (code.toUpperCase()) {
+      case "EXPR":
+        return "EXPRESSIONZ";
+      case "CEYL":
+        return "CEYLONZ";
+      case "SCAR":
+        return "SCARLETZ";
+      case "MILL":
+        return "MILLERZ";
+      case "MOSS":
+        return "MOSSAZ";
+      case "PAXT":
+        return "PAXTONZ";
+      default:
+        return code; // Return original code if no match found
+    }
+  }
 
   Future<List<UnitAvailablePoint>> getUnitAvailablePoints({
     required String email,
@@ -157,27 +178,26 @@ class RedemptionRepository {
     }
   }
 
-  /// Get blocked dates
-  Future<List<dynamic>> getCalendarBlockedDates({
-    required String location,
-    required String startDate,
-    required String endDate,
-  }) async {
-    final data = {
-      "location": location,
-      "startDate": startDate,
-      "endDate": endDate,
-    };
-
-    final res =
-        await _apiService.post(ApiEndpoint.getCalendarBlockDate, data: data);
+  Future<List<CalendarBlockedDate>> getCalendarBlockedDates() async {
+    final res = await _apiService.get(ApiEndpoint.getCalendarBlockDate);
+    debugPrint("Blocked dates raw API response: $res");
 
     if (res == null) return [];
 
-    // Assuming API returns { "success": true, "data": [...] }
-    final List<dynamic> dataList = res['data'] ?? [];
+    List<CalendarBlockedDate> allDates = [];
 
-    return dataList;
+    // If API returns a List directly
+    if (res is List) {
+      allDates = res.map((e) => CalendarBlockedDate.fromJson(e)).toList();
+    }
+    // If API returns a Map with 'data' field
+    else if (res is Map && res['data'] is List) {
+      allDates = (res['data'] as List)
+          .map((e) => CalendarBlockedDate.fromJson(e))
+          .toList();
+    }
+
+    return allDates;
   }
 
   List<CalendarBlockedDate> filterBlockedDatesForState(
@@ -236,5 +256,97 @@ class RedemptionRepository {
     }
 
     throw Exception("❌ Unexpected API response format: $res");
+  }
+
+  Future<List<RoomType>> getRoomTypes({
+    required String state,
+    required String bookingLocationName,
+    int? rooms,
+    DateTime? arrivalDate,
+    DateTime? departureDate,
+  }) async {
+    final body = {
+      "state": state,
+      "bookingLocationName": bookingLocationName,
+      if (rooms != null) "rooms": rooms,
+      if (arrivalDate != null)
+        "arrivalDate": DateFormat('yyyy-MM-dd').format(arrivalDate),
+      if (departureDate != null)
+        "departureDate": DateFormat('yyyy-MM-dd').format(departureDate),
+    };
+
+    debugPrint("📤 Request body for getRoomTypes: $body");
+
+    final res = await _apiService.post(
+      ApiEndpoint.getRoomType,
+      data: body,
+    );
+
+    debugPrint("🔍 Raw API Response for Room Types: $res");
+
+    if (res == null) return [];
+
+    if (res is List) {
+      return res
+          .map((json) => RoomType.fromJson(Map<String, dynamic>.from(json)))
+          .toList();
+    }
+
+    if (res is Map && res['data'] is List) {
+      return (res['data'] as List)
+          .map((json) => RoomType.fromJson(Map<String, dynamic>.from(json)))
+          .toList();
+    }
+
+    throw Exception("❌ Unexpected API response format for Room Types: $res");
+  }
+
+  Future<Map<String, dynamic>?> submitBooking({
+    required RoomType room,
+    required UnitAvailablePoint point,
+    required List<Propertystate> propertyStates, // pass all states here
+    required DateTime? checkIn,
+    required DateTime? checkOut,
+    required int quantity,
+    required int points,
+    required String guestName,
+  }) async {
+    // Match location → state
+    final matchingState = propertyStates.firstWhere(
+      (state) =>
+          state.locationName.toUpperCase() ==
+          _getLocationName(point.location).toUpperCase(),
+      orElse: () => Propertystate(pic: '', stateName: '', locationName: ''),
+    );
+
+    final body = {
+      "stateName": matchingState.stateName, //owner property located state
+      "locationName": _getLocationName(point.location), //owner property name
+      "unitNo": point.unitNo, //owner property unit
+      "bookingLocationName":
+          _getLocationName(point.location), //redeem property name
+      "typeName": _getLocationName(point.location), //redeem property room type
+      "arrivalDate":
+          checkIn != null ? DateFormat('yyyy-MM-dd').format(checkIn) : "",
+      "departureDate":
+          checkOut != null ? DateFormat('yyyy-MM-dd').format(checkOut) : "",
+      "rooms": quantity,
+      "totalRate": points,
+      "guestName": guestName.trim(),
+    };
+
+    debugPrint("📤 Request body for booking: $body");
+
+    final res = await _apiService.post(
+      ApiEndpoint.saveBookingDetailsAndRoomType,
+      data: body,
+    );
+
+    debugPrint("🔍 Raw API Response for Booking: $res");
+
+    if (res == null) return null;
+    if (res is Map<String, dynamic>) return res;
+
+    throw Exception("❌ Unexpected API response format for Booking: $res");
   }
 }

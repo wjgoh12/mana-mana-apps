@@ -1,32 +1,33 @@
 import 'dart:convert';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:mana_mana_app/model/propertystate.dart';
 import 'package:mana_mana_app/model/roomType.dart';
-import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
-import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
+import 'package:mana_mana_app/model/unitAvailablePoints.dart';
+import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RoomDetails extends StatefulWidget {
   final RoomType room;
   final DateTime? checkIn;
   final DateTime? checkOut;
-  final int nights;
   final int quantity;
+  final int userPointsBalance;
+  final String ownerLocation;
+  final String ownerUnitNo;
 
   const RoomDetails({
     Key? key,
     required this.room,
     this.checkIn,
     this.checkOut,
-    this.nights = 1,
     this.quantity = 1,
+    required this.userPointsBalance,
+    required this.ownerLocation,
+    required this.ownerUnitNo,
   }) : super(key: key);
-
-  /// Correct total points calculation
 
   @override
   _RoomDetailsState createState() => _RoomDetailsState();
@@ -34,19 +35,34 @@ class RoomDetails extends StatefulWidget {
 
 class _RoomDetailsState extends State<RoomDetails> {
   final TextEditingController _guestNameController = TextEditingController();
-  bool _isChecked = false; // Checkbox state
+  bool _isChecked = false;
   bool _highlightCheckBox = false;
+
+  String? _getLocationCode(String locationName) {
+    switch (locationName.toUpperCase()) {
+      case "EXPRESSIONZ":
+        return "EXPR";
+      case "CEYLONZ":
+        return "CEYL";
+      case "SCARLETZ":
+        return "SCAR";
+      case "MILLERZ":
+        return "MILL";
+      case "MOSSAZ":
+        return "MOSS";
+      case "PAXTONZ":
+        return "PAXT";
+      default:
+        return null;
+    }
+  }
 
   void sendEmailToCS(String content) async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
-      path: 'wjingggoh15@gmail.com',
-      queryParameters: {
-        'subject': 'Booking Request',
-        'body': content,
-      },
+      path: '',
+      queryParameters: {'subject': 'Booking Request', 'body': content},
     );
-
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri);
     } else {
@@ -54,32 +70,30 @@ class _RoomDetailsState extends State<RoomDetails> {
     }
   }
 
+  int totalPoints() => widget.room.roomTypePoints * widget.quantity;
+
+  String formattedTotalPoints() {
+    final formatter = NumberFormat('#,###');
+    return formatter.format(totalPoints());
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool showError = !_isChecked;
-    int totalPoints() {
-      return widget.room.roomTypePoints;
-    }
-
-    String formattedTotalPoints() {
-      final formatter = NumberFormat('#,###');
-      return formatter.format(totalPoints());
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.only(top: 25.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// Image banner with arrow
-            SizedBox(
-              width: double.infinity,
-              height: 200,
-              child: Stack(
-                children: [
-                  ClipRRect(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Image banner with back arrow
+              SizedBox(
+                width: double.infinity,
+                height: 200,
+                child: Stack(
+                  children: [
+                    ClipRRect(
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10.0),
                         topRight: Radius.circular(10.0),
@@ -88,354 +102,294 @@ class _RoomDetailsState extends State<RoomDetails> {
                         base64Decode(widget.room.pic),
                         fit: BoxFit.cover,
                         width: double.infinity,
-                      )),
-                  Positioned(
-                    top: 16,
-                    left: 16,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 30,
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            // spreadRadius: 2,
-                            blurRadius: 10,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16.0),
-
-            /// Room details card
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.white,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Room Type',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.text(15),
-                      fontFamily: 'Outfit',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    widget.room.roomTypeName,
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.text(20),
-                      fontFamily: 'Outfit',
-                      color: Color(0xFF3E51FF),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Column(
-                    children: [
-                      /// First row: Check-In and Check-Out
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          /// Check-In Card
-                          Card(
-                            color: Colors.white,
-                            child: Container(
-                              width: ResponsiveSize.scaleWidth(160),
-                              height: ResponsiveSize.scaleHeight(60),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Check-In',
-                                    style: TextStyle(
-                                        fontSize: ResponsiveSize.text(11),
-                                        fontFamily: 'Outfit',
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    widget.checkIn != null
-                                        ? DateFormat('EEE, MMM d, yyyy')
-                                            .format(widget.checkIn!)
-                                        : '-',
-                                    style: TextStyle(
-                                      fontSize: ResponsiveSize.text(12),
-                                      fontFamily: 'Outfit',
-                                      color: Color(0xFF3E51FF),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                    Positioned(
+                      top: 16,
+                      left: 16,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 30,
+                          shadows: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              blurRadius: 10,
+                              offset: Offset(0, 1),
                             ),
-                          ),
-
-                          SizedBox(width: ResponsiveSize.scaleWidth(2)),
-
-                          /// Check-Out Card
-                          Card(
-                            color: Colors.white,
-                            child: Container(
-                              width: ResponsiveSize.scaleWidth(160),
-                              height: ResponsiveSize.scaleHeight(60),
-                              padding: const EdgeInsets.all(8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Check-Out',
-                                    style: TextStyle(
-                                        fontSize: ResponsiveSize.text(11),
-                                        fontFamily: 'Outfit',
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    widget.checkOut != null
-                                        ? DateFormat('EEE, MMM d, yyyy')
-                                            .format(widget.checkOut!)
-                                        : '-',
-                                    style: TextStyle(
-                                      fontSize: ResponsiveSize.text(12),
-                                      fontFamily: 'Outfit',
-                                      color: Color(0xFF3E51FF),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      /// Second row: No. of Rooms & Total Points Redeemed
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          /// No. of Rooms
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'No. of Rooms',
-                                  style: TextStyle(
-                                    fontSize: ResponsiveSize.text(11),
-                                    fontFamily: 'Outfit',
-                                  ),
-                                ),
-                                Text(
-                                  '${widget.quantity}',
-                                  style: TextStyle(
-                                    fontSize: ResponsiveSize.text(16),
-                                    fontFamily: 'Outfit',
-                                    color: Color(0xFF3E51FF),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          /// Total Points Redeemed
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Total Points Redeemed',
-                                  style: TextStyle(
-                                    fontSize: ResponsiveSize.text(11),
-                                    fontFamily: 'Outfit',
-                                  ),
-                                ),
-                                Text(
-                                  formattedTotalPoints(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF3E51FF),
-                                    fontSize: ResponsiveSize.text(16),
-                                    fontFamily: 'Outfit',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _guestNameController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                        borderSide: const BorderSide(
-                          color: Colors.black,
-                          width: 0.1,
+                          ],
                         ),
                       ),
-                      hintText: 'Guest Name',
-                      hintStyle: const TextStyle(
-                        color: Colors.grey,
-                        fontFamily: 'Outfit',
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16.0),
+
+              /// Room details card
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Room Type',
+                        style: TextStyle(
+                            fontSize: ResponsiveSize.text(15),
+                            fontFamily: 'Outfit',
+                            fontWeight: FontWeight.bold)),
+                    Text(widget.room.roomTypeName,
+                        style: TextStyle(
+                            fontSize: ResponsiveSize.text(20),
+                            fontFamily: 'Outfit',
+                            color: Color(0xFF3E51FF),
+                            fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 20),
+
+                    /// Check-in / Check-out row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildDateCard('Check-In', widget.checkIn),
+                        SizedBox(width: ResponsiveSize.scaleWidth(2)),
+                        _buildDateCard('Check-Out', widget.checkOut),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    /// No. of Rooms & Total Points
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildInfoColumn('No. of Rooms', '${widget.quantity}'),
+                        _buildInfoColumn(
+                            'Total Points Redeemed', formattedTotalPoints(),
+                            crossEnd: true),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    /// Guest name input
+                    TextField(
+                      controller: _guestNameController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        hintText: 'Guest Name',
                       ),
                     ),
-                  ),
-                  MyCheckboxWidget(
-                    initialValue: _isChecked,
-                    highlight: _highlightCheckBox,
-                    onChecked: (value) {
-                      setState(() {
-                        _isChecked = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  Text('Booking request will be submitted for review.',
+                    MyCheckboxWidget(
+                      initialValue: _isChecked,
+                      highlight: _highlightCheckBox,
+                      onChecked: (value) {
+                        setState(() {
+                          _isChecked = value;
+                          if (value) _highlightCheckBox = false;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Booking request will be submitted for review.',
                       style: TextStyle(
                         fontSize: ResponsiveSize.text(12),
                         fontFamily: 'Outfit',
-                      )),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        onPressed: () {
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    /// Submit button
+                    Center(
+                      child: TextButton(
+                        onPressed: () async {
                           bool isValid = true;
-                          // Handle submit action
+
                           if (_guestNameController.text.trim().isEmpty) {
                             isValid = false;
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please enter guest name'),
-                                backgroundColor:
-                                    Color.fromARGB(255, 203, 46, 46),
-                              ),
+                                  content: Text('Please enter guest name'),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 203, 46, 46)),
                             );
                           }
+
                           if (!_isChecked) {
                             isValid = false;
                             setState(() {
                               _highlightCheckBox = true;
                             });
-                            // Future.delayed(
-                            //   const Duration(seconds: 1),
-                            //   () {
-                            //     setState(
-                            //       () {
-                            //         _highlightCheckBox = false;
-                            //       },
-                            //     );
-                            //   },
-                            // );
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please confirm T&C'),
-                                backgroundColor:
-                                    Color.fromARGB(255, 203, 46, 46),
-                                //highlight the checkbox
-                              ),
+                                  content: Text('Please confirm T&C'),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 203, 46, 46)),
                             );
                           }
-                          //if user point balance insufficient
-                          // Check if user has enough points
-                          if (totalPoints() >
-                              SelectDateRoom.getUserPointsBalance()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content:
-                                    Text('Insufficient points for redemption!'),
-                                backgroundColor:
-                                    Color.fromARGB(255, 203, 46, 46),
-                              ),
-                            );
+
+                          if (totalPoints() > widget.userPointsBalance) {
                             isValid = false;
-                          }
-
-                          // Send email to CS team
-                          if (isValid) {
-                            final emailContent = '''
-                              Booking request submitted!
-                              Guest Name: ${_guestNameController.text}
-                              Check-In: ${widget.checkIn}
-                              Check-Out: ${widget.checkOut}
-                              Total Points: ${totalPoints()}
-                              ''';
-                            sendEmailToCS(emailContent);
-
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Booking Request Submit!'),
-                              ),
+                                  content: Text(
+                                      'Insufficient points for redemption!'),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 203, 46, 46)),
                             );
-                            // Navigate back to propertyRedemption page
-                            // Navigator.pushAndRemoveUntil(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             const PropertyRedemption()),
-                            //     ModalRoute.withName(
-                            //         '/Profile/View/owner_profile_v3.dart'));
+                          }
 
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PropertyRedemption(),
-                              ),
-                              (route) => route.isFirst,
-                            );
+                          if (isValid) {
+                            final ownerVM = Provider.of<OwnerProfileVM>(context,
+                                listen: false);
 
-                            // The return type 'PropertyRedemption' isn't a 'void', as required by the closure's context.
-                            // The `return` statement here was causing the error because the `onPressed` callback expects a `void` return.
+                            try {
+                              final userEmail = ownerVM.users.isNotEmpty
+                                  ? ownerVM.users.first.email ?? ''
+                                  : '';
+                              if (userEmail.isEmpty)
+                                throw Exception("No user email");
+
+                              final locationCode =
+                                  _getLocationCode(widget.ownerLocation);
+                              if (locationCode == null)
+                                throw Exception(
+                                    "Invalid location: ${widget.ownerLocation}");
+
+                              final point = UnitAvailablePoint(
+                                location: locationCode,
+                                unitNo: widget.ownerUnitNo,
+                                redemptionBalancePoints:
+                                    widget.userPointsBalance,
+                                email: userEmail,
+                                redemptionPoints: totalPoints(),
+                              );
+
+                              final result = await ownerVM.submitBooking(
+                                room: widget.room,
+                                point: point,
+                                propertyStates: ownerVM.locations,
+                                checkIn: widget.checkIn,
+                                checkOut: widget.checkOut,
+                                quantity: widget.quantity,
+                                points: totalPoints(),
+                                guestName: _guestNameController.text.trim(),
+                              );
+
+                              if (result != null) {
+                                final emailContent = '''
+Booking request submitted!
+Guest Name: ${_guestNameController.text}
+Check-In: ${widget.checkIn}
+Check-Out: ${widget.checkOut}
+Total Points: ${totalPoints()}
+''';
+                                sendEmailToCS(emailContent);
+
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    content: const Text(
+                                        'Booking Request Successfully Submitted!'),
+                                    backgroundColor: Color(0xFF3E51FF),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text('OK'))
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Failed to submit booking. Please try again.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Error: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
                           }
                         },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xFF3E51FF),
-                          ),
-                          fixedSize: MaterialStateProperty.all<Size>(
-                            Size(300, 40),
-                          ),
+                        style: TextButton.styleFrom(
+                          backgroundColor: const Color(0xFF3E51FF),
+                          fixedSize: const Size(300, 40),
                         ),
                         child: Text(
                           'Submit',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ResponsiveSize.text(16),
-                            fontFamily: 'Outfit',
-                          ),
+                              color: Colors.white,
+                              fontSize: ResponsiveSize.text(16)),
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateCard(String title, DateTime? date) {
+    return Card(
+      child: Container(
+        width: ResponsiveSize.scaleWidth(160),
+        height: ResponsiveSize.scaleHeight(60),
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(title,
+                style: TextStyle(
+                    fontSize: ResponsiveSize.text(11),
+                    fontWeight: FontWeight.bold)),
+            Text(
+              date != null ? DateFormat('EEE, MMM d, yyyy').format(date) : '-',
+              style: TextStyle(
+                  fontSize: ResponsiveSize.text(12),
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF3E51FF)),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoColumn(String title, String value, {bool crossEnd = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment:
+            crossEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style: TextStyle(
+                  fontSize: ResponsiveSize.text(11), fontFamily: 'Outfit')),
+          Text(value,
+              style: TextStyle(
+                  fontSize: ResponsiveSize.text(16),
+                  color: Color(0xFF3E51FF),
+                  fontWeight: FontWeight.bold)),
+        ],
       ),
     );
   }
@@ -444,14 +398,14 @@ class _RoomDetailsState extends State<RoomDetails> {
 class MyCheckboxWidget extends StatefulWidget {
   final bool initialValue;
   final ValueChanged<bool> onChecked;
-  final bool highlight; // NEW
+  final bool highlight;
 
-  const MyCheckboxWidget({
-    Key? key,
-    this.initialValue = false,
-    required this.onChecked,
-    this.highlight = false,
-  }) : super(key: key);
+  const MyCheckboxWidget(
+      {Key? key,
+      this.initialValue = false,
+      required this.onChecked,
+      this.highlight = false})
+      : super(key: key);
 
   @override
   State<MyCheckboxWidget> createState() => _MyCheckboxWidgetState();
@@ -469,7 +423,6 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
   @override
   void didUpdateWidget(covariant MyCheckboxWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Update local state if parent changes initialValue
     if (oldWidget.initialValue != widget.initialValue) {
       isChecked = widget.initialValue;
     }
@@ -482,9 +435,7 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
         Checkbox(
           value: isChecked,
           side: BorderSide(
-            color: widget.highlight ? Colors.red : Colors.grey,
-            width: 2,
-          ),
+              color: widget.highlight ? Colors.red : Colors.grey, width: 2),
           onChanged: (value) {
             setState(() {
               isChecked = value ?? false;
@@ -494,157 +445,25 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
         ),
         Row(
           children: [
-            Text('Tick box to confirm ',
-                style: TextStyle(
-                  fontSize: ResponsiveSize.text(13),
-                  fontFamily: 'outfit',
-                )),
+            Text(
+              'Tick box to confirm ',
+              style: TextStyle(
+                fontSize: ResponsiveSize.text(13),
+              ),
+            ),
             InkWell(
               onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Colors.white,
-                    title: Text(
-                      "Terms & Conditions",
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(21),
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'outfit',
-                        color: Color(0xFF3E51FF),
-                      ),
-                    ),
-                    content: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Guarantee
-                          SizedBox(height: ResponsiveSize.scaleHeight(10)),
-                          const Text(
-                            "Guarantee:",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const Text(
-                            "All bookings must be guaranteed with valid payment or points redemption at the time of reservation. Pending submissions are not a guaranteed reservation until they are confirmed by the reservations team.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Booking Status
-                          const Text(
-                            "Booking Status:",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const Text(
-                            "Pending (your request has been received), Confirmed (your booking has been confirmed), Unavailable (your request has been denied due to hotel unavailability).\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Check-in / Check-out
-                          const Text(
-                            "Check-in / Check-out:",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const Text(
-                            "Check-in from 3PM, check-out by 11AM. Early check-in or late check-out is subject to availability and may have extra charges.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Cancellations
-                          const Text(
-                            "Cancellations:",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const Text(
-                            "Cancel at least 3 days before arrival for a full refund of points or payment. Cancellations within 3 days or no-shows are non-refundable.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Changes
-                          const Text(
-                            "Changes:",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const Text(
-                            "Date changes must be made at least 3 days before arrival and are subject to room availability.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // ID
-                          const Text(
-                            "ID:",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const Text(
-                            "Please present a valid ID at check-in.\n",
-                          ),
-
-                          // Hotel Rights
-                          const Text(
-                            "Hotel Rights:",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const Text(
-                            "The hotel may cancel or adjust bookings in case of misuse or fraud.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Valuables
-                          const Text(
-                            "Valuables:",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const Text(
-                            "The hotel is not responsible for items left inside the room.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Row(
-                              children: [
-                                Icon(Icons.close, color: Colors.red, size: 20),
-                                Text(
-                                  "Close",
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: ResponsiveSize.text(16),
-                                      fontFamily: 'outfit'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
+                // Show T&C dialog
               },
               child: Text(
                 'T&C',
                 style: TextStyle(
                     color: const Color(0xFF3E51FF),
                     decoration: TextDecoration.underline,
-                    fontFamily: 'outfit',
                     fontWeight: FontWeight.bold,
                     fontSize: ResponsiveSize.text(13)),
               ),
-            )
+            ),
           ],
         ),
       ],

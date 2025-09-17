@@ -416,13 +416,20 @@ Widget _quickLinks(BuildContext context) {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
                     onTap: () {
+                      // Create and initialize the VM
+                      final vm = OwnerProfileVM();
+                      vm.fetchBookingHistory();
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ChangeNotifierProvider(
-                            create: (_) =>
-                                OwnerProfileVM()..fetchBookingHistory(),
-                            child: const PropertyRedemption(),
+                          builder: (context) => MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider.value(value: vm),
+                            ],
+                            builder: (context, child) {
+                              return const PropertyRedemption();
+                            },
                           ),
                         ),
                       );

@@ -1,46 +1,29 @@
 class RoomType {
-  final String name;
-  final String image;
-  final int points;
-  int quantity;
+  final String pic;
+  final String roomTypeName;
+  final int roomTypePoints;
 
   RoomType({
-    required this.name,
-    required this.image,
-    required this.points,
-    this.quantity = 1,
+    required this.pic,
+    required this.roomTypeName,
+    required this.roomTypePoints,
   });
 
-  // Create RoomType from API JSON
   factory RoomType.fromJson(Map<String, dynamic> json) {
     return RoomType(
-      name: json['name'] ?? '',
-      image: json['image'] ?? '',
-      points: json['points'] ?? 0,
-      quantity: json['quantity'] ?? 1,
+      pic: json['pic'] ?? '', // fallback to empty string if null
+      roomTypeName: json['roomTypeName'] ?? '',
+      roomTypePoints: (json['roomTypePoints'] is int)
+          ? json['roomTypePoints']
+          : int.tryParse(json['roomTypePoints'].toString()) ?? 0,
     );
   }
-}
 
-final List<RoomType> roomTypes = [
-  RoomType(
-    name: 'Garnet Room',
-    image: 'assets/images/garnet.png',
-    points: 500,
-  ),
-  RoomType(
-    name: 'Emerald Suite',
-    image: 'assets/images/emerald.png',
-    points: 300,
-  ),
-  RoomType(
-    name: 'Sapphire Deluxe',
-    image: 'assets/images/sapphire.png',
-    points: 400,
-  ),
-  RoomType(
-    name: 'Ruby Premium',
-    image: 'assets/images/ruby.png',
-    points: 200,
-  ),
-];
+  Map<String, dynamic> toJson() {
+    return {
+      "pic": pic,
+      "roomTypeName": roomTypeName,
+      "roomTypePoints": roomTypePoints,
+    };
+  }
+}
