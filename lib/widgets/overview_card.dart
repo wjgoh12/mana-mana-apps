@@ -116,7 +116,9 @@ class OverviewCard extends StatelessWidget {
                         margin: EdgeInsets.only(bottom: responsiveHeight(10)),
                         child: Container(
                           width: double.infinity, // fill column width
-                          height: cardHeightLarge,
+                          height: cardHeightLarge +
+                              cardHeightSmall +
+                              responsiveHeight(10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             image: const DecorationImage(
@@ -127,6 +129,7 @@ class OverviewCard extends StatelessWidget {
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Stack(
                                 children: [
@@ -153,7 +156,7 @@ class OverviewCard extends StatelessWidget {
                                         child: Text(
                                           '$locationCount',
                                           style: TextStyle(
-                                            fontSize: 40.fSize,
+                                            fontSize: ResponsiveSize.text(50),
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           ),
@@ -163,26 +166,39 @@ class OverviewCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Text(
-                                  'Total Properties',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Text(
-                                  'Managed: $locationCount ',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    color: Colors.white,
-                                    fontSize: ResponsiveSize.text(14),
-                                    fontWeight: FontWeight.bold,
+                              Container(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: ResponsiveSize.scaleHeight(20)),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          'Total Properties',
+                                          style: TextStyle(
+                                            fontFamily: 'outfit',
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          'Managed: $locationCount ',
+                                          style: TextStyle(
+                                            fontFamily: 'outfit',
+                                            color: Colors.white,
+                                            fontSize: ResponsiveSize.text(14),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -192,110 +208,110 @@ class OverviewCard extends StatelessWidget {
                       ),
 
                       // 2nd
-                      Card(
-                        margin: EdgeInsets.only(bottom: responsiveHeight(10)),
-                        color: const Color(0xFFFFE7B8),
-                        child: SizedBox(
-                          width: double.infinity, // fill column width
-                          height: cardHeightSmall,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 10),
-                                  child: CircleAvatar(
-                                    radius: 19.fSize,
-                                    backgroundColor: Colors.white,
-                                    child: Image.asset(
-                                      'assets/images/OverviewOccupancy.png',
-                                      width: 30.fSize,
-                                      height: 20.fSize,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 8, top: 10),
-                                    child: Text(
-                                      'Occupancy Rate',
-                                      style: TextStyle(
-                                        fontFamily: 'outfit',
-                                        fontSize: ResponsiveSize.text(8),
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8),
-                                    child: FutureBuilder<String>(
-                                      future: model.locationByMonth.isNotEmpty
-                                          ? model
-                                              .calculateTotalOccupancyForLocation(
-                                                  model.locationByMonth
-                                                      .first['location'])
-                                          : Future.value('0.0'),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return Text(
-                                            'Loading...',
-                                            style: TextStyle(
-                                              fontFamily: 'outfit',
-                                              fontSize: ResponsiveSize.text(15),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          );
-                                        }
-                                        if (snapshot.hasError) {
-                                          return Text(
-                                            'Error',
-                                            style: TextStyle(
-                                              fontFamily: 'outfit',
-                                              fontSize: ResponsiveSize.text(12),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          );
-                                        }
-                                        final occupancy =
-                                            snapshot.data ?? '0.0';
-                                        return const Text(
-                                          // Keep 12 fixed to match your design
-                                          // (can use ResponsiveSize.text if you prefer)
-                                          '0%', // placeholder will be replaced below
-                                          style: TextStyle(
-                                            fontFamily: 'outfit',
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ).buildWithText('$occupancy%');
-                                      },
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8),
-                                    child: Text(
-                                      'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first['units'] != null && model.propertyOccupancy.values.first['units'].values.first != null && model.propertyOccupancy.values.first['units'].values.first is Map<String, dynamic> ? '${monthNumberToName(model.propertyOccupancy.values.first['units'].values.first['month'])} ${model.propertyOccupancy.values.first['units'].values.first['year']}' : '$shortMonth $year'}',
-                                      style: TextStyle(
-                                        fontSize: ResponsiveSize.text(7),
-                                        fontFamily: 'outfit',
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      //   Card(
+                      //     margin: EdgeInsets.only(bottom: responsiveHeight(10)),
+                      //     color: const Color(0xFFFFE7B8),
+                      //     child: SizedBox(
+                      //       width: double.infinity, // fill column width
+                      //       height: cardHeightSmall,
+                      //       child: Row(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Align(
+                      //             alignment: Alignment.centerLeft,
+                      //             child: Padding(
+                      //               padding: const EdgeInsets.symmetric(
+                      //                   vertical: 15, horizontal: 10),
+                      //               child: CircleAvatar(
+                      //                 radius: 19.fSize,
+                      //                 backgroundColor: Colors.white,
+                      //                 child: Image.asset(
+                      //                   'assets/images/OverviewOccupancy.png',
+                      //                   width: 30.fSize,
+                      //                   height: 20.fSize,
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             children: [
+                      //               Padding(
+                      //                 padding:
+                      //                     const EdgeInsets.only(left: 8, top: 10),
+                      //                 child: Text(
+                      //                   'Occupancy Rate',
+                      //                   style: TextStyle(
+                      //                     fontFamily: 'outfit',
+                      //                     fontSize: ResponsiveSize.text(8),
+                      //                     fontWeight: FontWeight.normal,
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //               Padding(
+                      //                 padding: const EdgeInsets.only(left: 8),
+                      //                 child: FutureBuilder<String>(
+                      //                   future: model.locationByMonth.isNotEmpty
+                      //                       ? model
+                      //                           .calculateTotalOccupancyForLocation(
+                      //                               model.locationByMonth
+                      //                                   .first['location'])
+                      //                       : Future.value('0.0'),
+                      //                   builder: (context, snapshot) {
+                      //                     if (snapshot.connectionState ==
+                      //                         ConnectionState.waiting) {
+                      //                       return Text(
+                      //                         'Loading...',
+                      //                         style: TextStyle(
+                      //                           fontFamily: 'outfit',
+                      //                           fontSize: ResponsiveSize.text(15),
+                      //                           fontWeight: FontWeight.bold,
+                      //                         ),
+                      //                       );
+                      //                     }
+                      //                     if (snapshot.hasError) {
+                      //                       return Text(
+                      //                         'Error',
+                      //                         style: TextStyle(
+                      //                           fontFamily: 'outfit',
+                      //                           fontSize: ResponsiveSize.text(12),
+                      //                           fontWeight: FontWeight.bold,
+                      //                         ),
+                      //                       );
+                      //                     }
+                      //                     final occupancy =
+                      //                         snapshot.data ?? '0.0';
+                      //                     return const Text(
+                      //                       // Keep 12 fixed to match your design
+                      //                       // (can use ResponsiveSize.text if you prefer)
+                      //                       '0%', // placeholder will be replaced below
+                      //                       style: TextStyle(
+                      //                         fontFamily: 'outfit',
+                      //                         fontSize: 12,
+                      //                         fontWeight: FontWeight.bold,
+                      //                         color: Colors.black,
+                      //                       ),
+                      //                     ).buildWithText('$occupancy%');
+                      //                   },
+                      //                 ),
+                      //               ),
+                      //               Padding(
+                      //                 padding: const EdgeInsets.only(left: 8),
+                      //                 child: Text(
+                      //                   'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first['units'] != null && model.propertyOccupancy.values.first['units'].values.first != null && model.propertyOccupancy.values.first['units'].values.first is Map<String, dynamic> ? '${monthNumberToName(model.propertyOccupancy.values.first['units'].values.first['month'])} ${model.propertyOccupancy.values.first['units'].values.first['year']}' : '$shortMonth $year'}',
+                      //                   style: TextStyle(
+                      //                     fontSize: ResponsiveSize.text(7),
+                      //                     fontFamily: 'outfit',
+                      //                     fontWeight: FontWeight.normal,
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
                     ],
                   ),
                 ),
