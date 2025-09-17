@@ -165,42 +165,41 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                 ),
 
               const Spacer(),
-              Container(
-                margin: const EdgeInsets.all(16),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Available Point Balance:  ',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(13),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '${SelectDateRoom.getFormatUserPointsBalance(vm)}',
-                      style: TextStyle(
-                        color: const Color(0xFF3E51FF),
-                        fontSize: ResponsiveSize.text(15),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   margin: const EdgeInsets.all(16),
+              //   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              //   decoration: BoxDecoration(
+              //     color: const Color.fromARGB(255, 236, 247, 255),
+              //     borderRadius: BorderRadius.circular(12),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.black.withOpacity(0.1),
+              //         blurRadius: 8,
+              //         offset: const Offset(0, 1),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Text(
+              //         'Available Point Balance:  ',
+              //         style: TextStyle(
+              //           fontSize: ResponsiveSize.text(13),
+              //           fontWeight: FontWeight.bold,
+              //         ),
+              //       ),
+              //       Text(
+              //         '${SelectDateRoom.getFormatUserPointsBalance(vm)}',
+              //         style: TextStyle(
+              //           color: const Color(0xFF3E51FF),
+              //           fontSize: ResponsiveSize.text(15),
+              //           fontWeight: FontWeight.bold,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           );
         },

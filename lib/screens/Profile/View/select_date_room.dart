@@ -82,20 +82,25 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     _vm = context.read<OwnerProfileVM>();
 
     // Run async fetches after first frame to avoid build conflicts
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_vm.UserPointBalance.isEmpty) {
-        _vm.fetchRedemptionBalancePoints(
-          location: widget.ownedLocation,
-          unitNo: widget.ownedUnitNo,
-        );
-      }
-
-      if (_vm.roomTypes.isEmpty) {
-        _vm.fetchRoomTypes(
-          state: widget.state,
-          bookingLocationName: widget.location,
-        );
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Load points and room types in parallel
+      await Future.wait([
+        _vm.UserPointBalance.isEmpty
+            ? _vm.fetchRedemptionBalancePoints(
+                location: widget.ownedLocation,
+                unitNo: widget.ownedUnitNo,
+              )
+            : Future.value(),
+        _vm.roomTypes.isEmpty
+            ? _vm.fetchRoomTypes(
+                state: widget.state,
+                bookingLocationName: widget.location,
+                rooms: _selectedQuantity,
+                arrivalDate: _focusedDay,
+                departureDate: _focusedDay?.add(const Duration(days: 1)),
+              )
+            : Future.value(),
+      ]);
     });
   }
 
@@ -483,36 +488,24 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       setState(() {
                         _selectedQuantity = val;
                       });
-                      _validateSelectedRoom();
-                      _vm
-                          .fetchRoomTypes(
-                        state: widget.state,
-                        bookingLocationName: widget.location,
-                        rooms: _selectedQuantity,
-                        arrivalDate: _rangeStart != null
-                            ? _toDateOnly(_rangeStart!)
-                            : null,
-                        departureDate:
-                            _rangeEnd != null ? _toDateOnly(_rangeEnd!) : null,
-                      )
-                          .then((_) {
-                        if (_selectedRoom != null) {
-                          final updated = vm.roomTypes.firstWhere(
-                            (r) =>
-                                r.roomTypeName == _selectedRoom!.roomTypeName,
-                            orElse: () => RoomType(
-                              roomTypeName: 'Default Room',
-                              roomTypePoints: 0,
-                              pic: '',
-                            ),
+                      
+                      // Debounce the room type fetch
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        if (mounted && _selectedQuantity == val) {
+                          _vm.fetchRoomTypes(
+                            state: widget.state,
+                            bookingLocationName: widget.location,
+                            rooms: _selectedQuantity,
+                            arrivalDate: _rangeStart != null
+                                ? _toDateOnly(_rangeStart!)
+                                : null,
+                            departureDate:
+                                _rangeEnd != null ? _toDateOnly(_rangeEnd!) : null,
                           );
-                          if (updated != null) {
-                            setState(
-                              () => _selectedRoom = updated,
-                            ); // refresh with new points
-                          }
                         }
                       });
+                      
+                      _validateSelectedRoom();
                     },
                   ),
                 ),

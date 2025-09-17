@@ -261,6 +261,13 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
+  // Cache for room types
+  Map<String, List<RoomType>> _roomTypeCache = {};
+  
+  String _getRoomTypeCacheKey(String state, String location, int rooms, DateTime? arrival, DateTime? departure) {
+    return '$state|$location|$rooms|${arrival?.toIso8601String()}|${departure?.toIso8601String()}';
+  }
+
   Future<void> fetchRoomTypes({
     required String state,
     required String bookingLocationName,
@@ -268,17 +275,32 @@ class OwnerProfileVM extends ChangeNotifier {
     DateTime? arrivalDate,
     DateTime? departureDate,
   }) async {
-    _isLoadingRoomTypes = true;
-    notifyListeners();
+    final defaultRooms = rooms ?? 1;
+    final defaultArrival = arrivalDate ?? DateTime.now().add(const Duration(days: 7));
+    final defaultDeparture = departureDate ?? DateTime.now().add(const Duration(days: 8));
+    
+    final cacheKey = _getRoomTypeCacheKey(
+      state, 
+      bookingLocationName, 
+      defaultRooms, 
+      arrivalDate, 
+      departureDate
+    );
+
+    // Return cached data immediately if available
+    if (_roomTypeCache.containsKey(cacheKey)) {
+      _roomTypes = _roomTypeCache[cacheKey]!;
+      notifyListeners();
+      return;
+    }
+
+    // Only show loading if we don't have cached data
+    if (_roomTypes.isEmpty) {
+      _isLoadingRoomTypes = true;
+      notifyListeners();
+    }
 
     try {
-      // Provide default values if not given
-      final defaultRooms = rooms ?? 1;
-      final defaultArrival =
-          arrivalDate ?? DateTime.now().add(Duration(days: 7));
-      final defaultDeparture =
-          departureDate ?? DateTime.now().add(Duration(days: 8));
-
       final response = await _ownerBookingRepository.getRoomTypes(
         state: state,
         bookingLocationName: bookingLocationName,
@@ -288,9 +310,13 @@ class OwnerProfileVM extends ChangeNotifier {
       );
 
       _roomTypes = response;
+      _roomTypeCache[cacheKey] = response;
       debugPrint("✅ Room types loaded: ${_roomTypes.length}");
     } catch (e) {
-      _roomTypes = [];
+      // Only clear room types if we don't have cached data
+      if (!_roomTypeCache.containsKey(cacheKey)) {
+        _roomTypes = [];
+      }
       debugPrint("❌ Error fetching room types: $e");
     } finally {
       _isLoadingRoomTypes = false;
