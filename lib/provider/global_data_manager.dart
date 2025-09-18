@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
+import 'package:mana_mana_app/model/occupancy_rate.dart';
 import 'package:mana_mana_app/model/propertyState.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
@@ -33,6 +34,7 @@ class GlobalDataManager extends ChangeNotifier {
   Map<String, dynamic> _propertyOccupancy = {};
   List<String> _availableStates = [];
   Map<String, List<Propertystate>> _locationsByState = {};
+  List<OccupancyRate> _occupancyRateHistory = [];
 
   // Getters
   bool get isInitialized => _isInitialized;
@@ -50,6 +52,8 @@ class GlobalDataManager extends ChangeNotifier {
       List.unmodifiable(_propertyContractType);
   Map<String, dynamic> get propertyOccupancy =>
       Map.unmodifiable(_propertyOccupancy);
+  List<OccupancyRate> get occupancyRateHistory =>
+      List.unmodifiable(_occupancyRateHistory);
 
   String get userNameAccount =>
       _users.isNotEmpty ? _users.first.ownerFullName ?? '-' : '-';
@@ -128,6 +132,8 @@ class GlobalDataManager extends ChangeNotifier {
       print('Error fetching property contract type: $e');
       _propertyContractType = [];
     }
+    await _fetchPropertyOccupancy();
+    await _fetchInitialOccupancyHistory();
 
     // Enrich locationByMonth with owner data
     for (var location in _locationByMonth) {
@@ -355,6 +361,7 @@ class GlobalDataManager extends ChangeNotifier {
     _locationByMonth.clear();
     _propertyContractType.clear();
     _propertyOccupancy.clear();
+    _occupancyRateHistory.clear();
 
     _isInitialized = false;
     _isLoading = false;
@@ -367,5 +374,155 @@ class GlobalDataManager extends ChangeNotifier {
   Future<void> resetAndRefreshData() async {
     clearAllData();
     await initializeData(forceRefresh: true);
+  }
+
+  Future<void> _fetchInitialOccupancyHistory() async {
+    try {
+      if (_ownerUnits.isNotEmpty) {
+        final firstUnit = _ownerUnits.first;
+        await fetchOccupancyRateHistory(
+          location: firstUnit.location,
+          unitNo: firstUnit.unitno,
+          period: 'Monthly',
+        );
+      }
+    } catch (e) {
+      print('Error fetching initial occupancy history: $e');
+    }
+  }
+
+  // Add this method to fetch occupancy rate history
+  Future<void> fetchOccupancyRateHistory({
+    String? location,
+    String? unitNo,
+    String period = 'Monthly',
+  }) async {
+    try {
+      _occupancyRateHistory = await _propertyRepository.getOccupancyRateHistory(
+        location: location,
+        unitNo: unitNo,
+        period: period,
+      );
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching occupancy rate history: $e');
+      _occupancyRateHistory = [];
+      notifyListeners();
+    }
+  }
+
+  // Method to get occupancy data for chart with fallback
+  List<OccupancyRate> getOccupancyDataForPeriod(String period) {
+    if (_occupancyRateHistory.isNotEmpty) {
+      return _occupancyRateHistory;
+    }
+
+    // Generate fallback data using existing cached occupancy methods
+    return _generateFallbackOccupancyData(period);
+  }
+
+  List<OccupancyRate> _generateFallbackOccupancyData(String period) {
+    List<OccupancyRate> fallbackData = [];
+    final currentYear = DateTime.now().year;
+
+    switch (period) {
+      case 'Monthly':
+        for (int month = 1; month <= 12; month++) {
+          double occupancy =
+              _getAverageOccupancyByMonthFromCache(month, currentYear);
+          fallbackData.add(OccupancyRate(
+            year: currentYear,
+            month: month,
+            amount: occupancy,
+          ));
+        }
+        break;
+
+      case 'Quarterly':
+        for (int quarter = 1; quarter <= 4; quarter++) {
+          double occupancy =
+              _getAverageOccupancyByQuarterFromCache(quarter, currentYear);
+          fallbackData.add(OccupancyRate(
+            year: currentYear,
+            month: quarter * 3,
+            amount: occupancy,
+          ));
+        }
+        break;
+
+      case 'Yearly':
+        for (int i = 0; i < 4; i++) {
+          final year = currentYear - 3 + i;
+          double occupancy = _getAverageOccupancyByYearFromCache(year);
+          fallbackData.add(OccupancyRate(
+            year: year,
+            month: 12,
+            amount: occupancy,
+          ));
+        }
+        break;
+    }
+
+    return fallbackData;
+  }
+
+  // Helper methods for cached occupancy calculations
+  double _getAverageOccupancyByMonthFromCache(int month, int year) {
+    double total = 0;
+    int count = 0;
+
+    _propertyOccupancy.forEach((location, data) {
+      if (data is Map && data.containsKey('units')) {
+        final units = data['units'] as Map<String, dynamic>;
+        units.forEach((unitNo, unitData) {
+          if (unitData is Map &&
+              unitData['year'] == year &&
+              unitData['month'] == month &&
+              unitData['amount'] != null) {
+            total += (unitData['amount'] as num).toDouble();
+            count++;
+          }
+        });
+      }
+    });
+
+    return count == 0 ? 0.0 : total / count;
+  }
+
+  double _getAverageOccupancyByQuarterFromCache(int quarter, int year) {
+    int startMonth = (quarter - 1) * 3 + 1;
+    double total = 0;
+    int count = 0;
+
+    for (int month = startMonth; month <= startMonth + 2; month++) {
+      double monthAvg = _getAverageOccupancyByMonthFromCache(month, year);
+      if (monthAvg > 0) {
+        total += monthAvg;
+        count++;
+      }
+    }
+
+    return count == 0 ? 0.0 : total / count;
+  }
+
+  double _getAverageOccupancyByYearFromCache(int year) {
+    double total = 0;
+    int count = 0;
+
+    _propertyOccupancy.forEach((location, data) {
+      if (data is Map && data.containsKey('units')) {
+        final units = data['units'] as Map<String, dynamic>;
+        units.forEach((unitNo, unitData) {
+          if (unitData is Map &&
+              unitData['year'] == year &&
+              unitData['amount'] != null) {
+            total += (unitData['amount'] as num).toDouble();
+            count++;
+          }
+        });
+      }
+    });
+
+    return count == 0 ? 0.0 : total / count;
   }
 }

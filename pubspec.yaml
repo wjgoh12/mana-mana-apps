@@ -73,6 +73,7 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_smart_dialog:
   # dropdown_search: ^6.0.2
+  loading_animation_widget: ^1.2.0+3
 
 dev_dependencies:
   flutter_test:

@@ -113,7 +113,7 @@ class OverviewCard extends StatelessWidget {
                     children: [
                       // 1st
                       Card(
-                        margin: EdgeInsets.only(bottom: responsiveHeight(10)),
+                        margin: EdgeInsets.only(bottom: responsiveHeight(5)),
                         child: Container(
                           width: double.infinity, // fill column width
                           height: cardHeightLarge +
@@ -326,7 +326,7 @@ class OverviewCard extends StatelessWidget {
                     children: [
                       // 3rd
                       Card(
-                        margin: EdgeInsets.only(bottom: responsiveHeight(10)),
+                        margin: EdgeInsets.only(bottom: responsiveHeight(5)),
                         color: const Color(0xFF9EEAFF),
                         child: SizedBox(
                           width: double.infinity, // fill column width

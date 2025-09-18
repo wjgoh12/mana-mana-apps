@@ -1,42 +1,67 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/model/occupancy_rate.dart';
+import 'package:intl/intl.dart';
+import 'dart:math' as math;
 import 'package:mana_mana_app/screens/All_Property/resources/app_colors.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
-class OccupancyLineChart extends StatelessWidget {
-  const OccupancyLineChart({
+class ProfitChart extends StatelessWidget {
+  const ProfitChart({
     super.key,
     required this.period,
     this.model,
-    this.global,
   });
 
   final String period;
   final NewDashboardVM_v3? model;
-  final GlobalDataManager? global;
 
   @override
   Widget build(BuildContext context) {
-    _currentPeriod = period;
-    final data = _getZeroFilledData(
-        global?.getOccupancyDataForPeriod(period) ?? const <OccupancyRate>[]);
-    final spots = _convertApiDataToSpots(data);
+    final series = _getSeries();
+    final spots = _toSpots(series.values.toList());
 
-    final extendedMaxX = getExtendedMaxX();
+    final maxX = _getMaxX();
+    // Fixed 2K step with rounded maxY to next 2K multiple; ensure at least 10K range
+    const double kStep = 2000.0;
+    final maxY = _computeMaxYFixedStep(series.values, kStep);
+    final leftInterval = kStep;
+
+    final titles = FlTitlesData(
+      bottomTitles: AxisTitles(sideTitles: bottomTitles),
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          interval: leftInterval,
+          reservedSize: 48,
+          getTitlesWidget: (value, meta) {
+            final label = _formatCompact(value);
+            return Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'outfit',
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: Colors.black,
+              ),
+            );
+          },
+        ),
+      ),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    );
 
     final chart = LineChart(
       LineChartData(
         lineTouchData: lineTouchData,
         gridData: gridData,
-        titlesData: titlesData,
+        titlesData: titles,
         borderData: borderData,
         lineBarsData: [
           LineChartBarData(
             isCurved: true,
-            color: const Color(0XFF8C71E7),
+            color: const Color(0XFF2900B7),
             barWidth: 5,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: true),
@@ -45,8 +70,8 @@ class OccupancyLineChart extends StatelessWidget {
           ),
         ],
         minX: 0,
-        maxX: extendedMaxX,
-        maxY: 5,
+        maxX: maxX,
+        maxY: maxY,
         minY: 0,
       ),
       duration: const Duration(milliseconds: 250),
@@ -57,10 +82,7 @@ class OccupancyLineChart extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Padding(
           padding: const EdgeInsets.only(right: 24),
-          child: SizedBox(
-            width: 900,
-            child: chart,
-          ),
+          child: SizedBox(width: 900, child: chart),
         ),
       );
     }
@@ -68,7 +90,7 @@ class OccupancyLineChart extends StatelessWidget {
     return chart;
   }
 
-  double getMaxX() {
+  double _getMaxX() {
     switch (period) {
       case 'Quarterly':
         return 3;
@@ -80,125 +102,89 @@ class OccupancyLineChart extends StatelessWidget {
     }
   }
 
-  double getExtendedMaxX() {
-    switch (period) {
-      case 'Monthly':
-        return getMaxX() + 0.5; // add padding to show DEC fully
-      case 'Quarterly':
-      case 'Yearly':
-        return getMaxX() + 0.2; // slight padding for last label
-      default:
-        return getMaxX();
-    }
-  }
+  // Build series values indexed by x (0..11 for months, 0..3 for quarters/years)
+  Map<int, double> _getSeries() {
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final Map<int, double> values = {};
 
-  List<OccupancyRate> _getZeroFilledData(List<OccupancyRate> apiData) {
-    final currentYear = DateTime.now().year;
+    if (model == null) return _zeroFill(values);
 
     switch (period) {
       case 'Monthly':
-        final map = <int, double>{};
-        for (final r in apiData.where((r) => r.year == currentYear)) {
-          map[r.month] = r.amount;
-        }
-        final filled = <OccupancyRate>[];
+        // Sum NOPROF by month for current year, zero-fill 1..12
         for (int m = 1; m <= 12; m++) {
-          filled.add(
-              OccupancyRate(year: currentYear, month: m, amount: map[m] ?? 0));
+          final total = model!.totalByMonth
+              .where((e) =>
+                  e['transcode'] == 'NOPROF' &&
+                  e['year'] == currentYear &&
+                  e['month'] == m)
+              .fold<double>(
+                  0.0, (sum, e) => sum + (e['total'] as num).toDouble());
+          values[m - 1] = total;
         }
-        return filled;
+        break;
 
       case 'Quarterly':
-        final quarters = <int, double>{};
-        final counts = <int, int>{};
-        for (final r in apiData.where((r) => r.year == currentYear)) {
-          final q = ((r.month - 1) ~/ 3) + 1;
-          quarters[q] = (quarters[q] ?? 0.0) + r.amount;
-          counts[q] = (counts[q] ?? 0) + 1;
-        }
-        final filledQ = <OccupancyRate>[];
+        // Sum NOPROF by quarter for current year, zero-fill Q1..Q4
         for (int q = 1; q <= 4; q++) {
-          final has = (counts[q] ?? 0) > 0;
-          final avg =
-              has ? ((quarters[q] ?? 0.0) / (counts[q] ?? 1)).toDouble() : 0.0;
-          filledQ
-              .add(OccupancyRate(year: currentYear, month: q * 3, amount: avg));
+          final months = _getQuarterMonths(q);
+          final total = model!.totalByMonth
+              .where((e) =>
+                  e['transcode'] == 'NOPROF' &&
+                  e['year'] == currentYear &&
+                  months.contains(e['month']))
+              .fold<double>(
+                  0.0, (sum, e) => sum + (e['total'] as num).toDouble());
+          values[q - 1] = total;
         }
-        return filledQ;
+        break;
 
       case 'Yearly':
-        final startYear = currentYear - 3;
-        final yearToAmount = <int, double>{};
-        final yearToCount = <int, int>{};
-        for (final r in apiData) {
-          if (r.year >= startYear && r.year <= currentYear) {
-            yearToAmount[r.year] = (yearToAmount[r.year] ?? 0) + r.amount;
-            yearToCount[r.year] = (yearToCount[r.year] ?? 0) + 1;
-          }
-        }
-        final filledY = <OccupancyRate>[];
+        // Sum NOPROF by year for last 4 years, zero-fill
         for (int i = 0; i < 4; i++) {
-          final y = startYear + i;
-          double value = 0;
-          if ((yearToCount[y] ?? 0) > 0) {
-            value = (yearToAmount[y] ?? 0) / (yearToCount[y] ?? 1);
-          }
-          filledY.add(OccupancyRate(year: y, month: 12, amount: value));
+          final y = currentYear - 3 + i;
+          final total = model!.revenueDashboard
+              .where((e) => e['transcode'] == 'NOPROF' && e['year'] == y)
+              .fold<double>(
+                  0.0, (sum, e) => sum + (e['total'] as num).toDouble());
+          values[i] = total;
         }
-        return filledY;
+        break;
     }
 
-    return apiData;
+    return _zeroFill(values);
   }
 
-  List<FlSpot> _convertApiDataToSpots(List<OccupancyRate> apiData) {
-    final spots = <FlSpot>[];
-
+  Map<int, double> _zeroFill(Map<int, double> m) {
     switch (period) {
       case 'Monthly':
-        final currentYear = DateTime.now().year;
-        final monthlyData = apiData
-            .where((rate) => rate.year == currentYear)
-            .toList()
-          ..sort((a, b) => a.month.compareTo(b.month));
-
-        for (var rate in monthlyData) {
-          spots.add(FlSpot((rate.month - 1).toDouble(), rate.amount / 20));
+        for (int i = 0; i < 12; i++) {
+          m[i] = (m[i] ?? 0.0).toDouble();
         }
         break;
-
       case 'Quarterly':
-        final currentYear = DateTime.now().year;
-        final yearData =
-            apiData.where((rate) => rate.year == currentYear).toList();
-
-        for (int q = 1; q <= 4; q++) {
-          final quarterMonths = _getQuarterMonths(q);
-          final qData =
-              yearData.where((r) => quarterMonths.contains(r.month)).toList();
-
-          if (qData.isNotEmpty) {
-            final avg = qData.map((r) => r.amount).reduce((a, b) => a + b) /
-                qData.length;
-            spots.add(FlSpot((q - 1).toDouble(), avg / 20));
-          }
-        }
-        break;
-
       case 'Yearly':
-        final currentYear = DateTime.now().year;
         for (int i = 0; i < 4; i++) {
-          final year = currentYear - 3 + i;
-          final yData = apiData.where((r) => r.year == year).toList();
-          if (yData.isNotEmpty) {
-            final avg = yData.map((r) => r.amount).reduce((a, b) => a + b) /
-                yData.length;
-            spots.add(FlSpot(i.toDouble(), avg / 20));
-          } else {
-            spots.add(FlSpot(i.toDouble(), 0));
-          }
+          m[i] = (m[i] ?? 0.0).toDouble();
         }
         break;
+    }
+    return m;
+  }
+
+  double _computeMaxYFixedStep(Iterable<double> values, double step) {
+    final maxValue = values.isEmpty ? 0.0 : values.reduce((a, b) => a > b ? a : b);
+    if (maxValue <= 0) return step * 5; // default 0..10K when no data
+    final multiples = (maxValue / step).ceil();
+    final rounded = multiples * step;
+    return math.max(rounded, step * 5);
+  }
+
+  List<FlSpot> _toSpots(List<double> values) {
+    final spots = <FlSpot>[];
+    for (int i = 0; i < values.length; i++) {
+      spots.add(FlSpot(i.toDouble(), values[i]));
     }
     return spots;
   }
@@ -243,12 +229,6 @@ class OccupancyLineChart extends StatelessWidget {
       fontWeight: FontWeight.bold,
       fontSize: 10,
     );
-
-    // Only render labels on whole-number ticks to avoid duplicates near the end padding
-    final isWholeNumber = (value % 1).abs() < 1e-6;
-    if (!isWholeNumber) {
-      return const SizedBox.shrink();
-    }
 
     switch (period) {
       case 'Quarterly':
@@ -329,10 +309,10 @@ class OccupancyLineChart extends StatelessWidget {
           tooltipPadding: const EdgeInsets.all(8),
           getTooltipItems: (spots) {
             return spots.map((barSpot) {
-              final percentage = barSpot.y * 20;
-              final label = _labelForX(barSpot.x);
+              final label = _labelForXInstance(barSpot.x, period);
+              final rm = NumberFormat('#,##0.00').format(barSpot.y);
               return LineTooltipItem(
-                '$label  ${percentage.toStringAsFixed(1)}%',
+                '$label  RM$rm',
                 const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -356,22 +336,32 @@ class OccupancyLineChart extends StatelessWidget {
       );
 }
 
-String _labelForX(double x) {
-  switch (_currentPeriod) {
+String _labelForXInstance(double x, String period) {
+  final currentYear = DateTime.now().year;
+  switch (period) {
     case 'Quarterly':
       const labels = ['Q1', 'Q2', 'Q3', 'Q4'];
       final i = x.round();
       if (i >= 0 && i < labels.length) return labels[i];
       return '';
     case 'Yearly':
-      final currentYear = DateTime.now().year;
       final year = currentYear - 3 + x.round();
       return '$year';
     case 'Monthly':
     default:
       const months = [
-        'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-        'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+        'JAN',
+        'FEB',
+        'MAR',
+        'APR',
+        'MAY',
+        'JUN',
+        'JUL',
+        'AUG',
+        'SEP',
+        'OCT',
+        'NOV',
+        'DEC'
       ];
       final i = x.round();
       if (i >= 0 && i < months.length) return months[i];
@@ -379,7 +369,15 @@ String _labelForX(double x) {
   }
 }
 
-// Since _labelForX is outside the widget, expose the current period via a
-// top-level getter/setter linked to the chart instance lifecycle.
-// Simpler approach: store last-used period before building chart.
-String _currentPeriod = 'Monthly';
+String _formatCompact(double value) {
+  if (value >= 1000000) {
+    return '${(value / 1000000).toStringAsFixed(1)}M';
+  }
+  if (value >= 1000) {
+    return '${(value / 1000).toStringAsFixed(0)}K';
+  }
+  return value.toStringAsFixed(0);
+}
+
+// Small helpers since dart:math's log only supports natural log
+// (Removed unused helpers)

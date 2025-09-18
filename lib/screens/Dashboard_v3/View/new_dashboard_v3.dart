@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/View/acc_profit_chart.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/View/profit_box.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
@@ -240,7 +240,7 @@ class NewDashboardV3 extends StatelessWidget {
                         ),
 
                         // SizedBox(height: 2.height),
-                        AccProfitChart(),
+                        ProfitBox(),
 
                         // Properties section
                         Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
+import 'package:mana_mana_app/model/occupancy_rate.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
@@ -12,22 +13,33 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
   bool isLoading = true;
   final GlobalDataManager _globalDataManager = GlobalDataManager();
-  final PropertyListRepository ownerPropertyListRepository = PropertyListRepository();
+  final PropertyListRepository ownerPropertyListRepository =
+      PropertyListRepository();
 
   // Getters that delegate to GlobalDataManager
   String get userNameAccount => _globalDataManager.userNameAccount;
   List<User> get users => _globalDataManager.users;
   List<OwnerPropertyList> get ownerUnits => _globalDataManager.ownerUnits;
   String get revenueLastestYear => _globalDataManager.revenueLatestYear;
-  
-  List<Map<String, dynamic>> get revenueDashboard => _globalDataManager.revenueDashboard;
-  List<Map<String, dynamic>> get monthlyProfitOwner => _globalDataManager.getMonthlyProfitOwner();
-  List<Map<String, dynamic>> get totalByMonth => _globalDataManager.totalByMonth;
-  List<Map<String, dynamic>> get newsletters => []; // TODO: Add to GlobalDataManager if needed
-  List<Map<String, dynamic>> get monthlyBlcOwner => _globalDataManager.getMonthlyBlcOwner();
-  List<Map<String, dynamic>> get locationByMonth => _globalDataManager.locationByMonth;
-  List<Map<String, dynamic>> get propertyContractType => _globalDataManager.propertyContractType;
-  Map<String, dynamic> get propertyOccupancy => _globalDataManager.propertyOccupancy;
+
+  List<Map<String, dynamic>> get revenueDashboard =>
+      _globalDataManager.revenueDashboard;
+  List<Map<String, dynamic>> get monthlyProfitOwner =>
+      _globalDataManager.getMonthlyProfitOwner();
+  List<Map<String, dynamic>> get totalByMonth =>
+      _globalDataManager.totalByMonth;
+  List<Map<String, dynamic>> get newsletters =>
+      []; // TODO: Add to GlobalDataManager if needed
+  List<Map<String, dynamic>> get monthlyBlcOwner =>
+      _globalDataManager.getMonthlyBlcOwner();
+  List<Map<String, dynamic>> get locationByMonth =>
+      _globalDataManager.locationByMonth;
+  List<Map<String, dynamic>> get propertyContractType =>
+      _globalDataManager.propertyContractType;
+  Map<String, dynamic> get propertyOccupancy =>
+      _globalDataManager.propertyOccupancy;
+  List<OccupancyRate> get occupancyRateHistory =>
+      _globalDataManager.occupancyRateHistory;
 
   int get unitLatestMonth => _globalDataManager.getUnitLatestMonth();
 
@@ -41,11 +53,10 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     try {
       // Initialize global data if not already done
       await _globalDataManager.initializeData();
-      
+
       // Set loading flags based on data availability
       contractTypeLoaded = _globalDataManager.propertyContractType.isNotEmpty;
       occupancyRateLoaded = _globalDataManager.propertyOccupancy.isNotEmpty;
-      
     } catch (e) {
       print('Error fetching dashboard data: $e');
       contractTypeLoaded = false;
@@ -58,11 +69,11 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
   Future<void> refreshData() async {
     await _globalDataManager.refreshData();
-    
+
     // Update loading flags
     contractTypeLoaded = _globalDataManager.propertyContractType.isNotEmpty;
     occupancyRateLoaded = _globalDataManager.propertyOccupancy.isNotEmpty;
-    
+
     notifyListeners();
   }
 
@@ -76,7 +87,8 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     return getUnitOccupancyFromCache(location, unitNo);
   }
 
-  Future<String> getUnitOccupancyMonthYear(String location, String unitNo) async {
+  Future<String> getUnitOccupancyMonthYear(
+      String location, String unitNo) async {
     // Use cached data for month/year info
     if (propertyOccupancy.containsKey(location)) {
       final locationData = propertyOccupancy[location];
@@ -86,8 +98,8 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         final units = locationData['units'] as Map<String, dynamic>;
         if (units.containsKey(unitNo)) {
           final unitData = units[unitNo];
-          if (unitData is Map<String, dynamic> && 
-              unitData.containsKey('month') && 
+          if (unitData is Map<String, dynamic> &&
+              unitData.containsKey('month') &&
               unitData.containsKey('year')) {
             final monthNum = unitData['month'];
             final year = unitData['year'];
@@ -97,7 +109,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         }
       }
     }
-    
+
     // fallback to current month/year if cached data missing
     final now = DateTime.now();
     final monthName = _monthNumberToName[now.month] ?? '';
@@ -306,5 +318,22 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
     if (count == 0) return 0.0;
     return total / count;
+  }
+
+  Future<void> fetchOccupancyRateHistory({
+    String? location,
+    String? unitNo,
+    String period = 'Monthly',
+  }) async {
+    await _globalDataManager.fetchOccupancyRateHistory(
+      location: location,
+      unitNo: unitNo,
+      period: period,
+    );
+    notifyListeners(); // Notify listeners in case they're listening to this VM
+  }
+
+  List<OccupancyRate> getOccupancyDataForPeriod(String period) {
+    return _globalDataManager.getOccupancyDataForPeriod(period);
   }
 }

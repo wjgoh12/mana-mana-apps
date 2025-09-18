@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
+import 'package:mana_mana_app/model/occupancy_rate.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
@@ -338,4 +339,32 @@ class PropertyListRepository {
           "contentType": contentType,
         },
       );
+
+  Future<List<OccupancyRate>> getOccupancyRateHistory({
+    String? location,
+    String? unitNo,
+    String period = 'Monthly',
+  }) async {
+    try {
+      final data = <String, dynamic>{
+        'period': period,
+      };
+      if (location != null) data['location'] = location;
+      if (unitNo != null) data['unitNo'] = unitNo;
+
+      final res = await _apiService.postJson(ApiEndpoint.propertyOccupancyRate,
+          data: data);
+
+      if (res is List) {
+        return res.map((item) => OccupancyRate.fromJson(item)).toList();
+      } else if (res is Map<String, dynamic>) {
+        return [OccupancyRate.fromJson(res)];
+      }
+
+      return [];
+    } catch (e) {
+      print('Error fetching occupancy rate history: $e');
+      return [];
+    }
+  }
 }

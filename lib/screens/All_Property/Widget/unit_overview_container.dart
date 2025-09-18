@@ -274,11 +274,17 @@ class UnitOverviewContainer extends StatelessWidget {
                 isCurrency: false,
                 onTap: () => showDialog(
                   context: context,
-                  builder: (BuildContext context) =>
-                      ChangeNotifierProvider.value(
-                    value: dashboardModel,
-                    child: Material(
-                      type: MaterialType.transparency,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) => AlertDialog(
+                    backgroundColor:
+                        Colors.transparent, // Set transparent background
+                    elevation: 0, // Remove dialog shadow
+                    insetPadding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveSize.scaleWidth(20),
+                      vertical: ResponsiveSize.scaleHeight(40),
+                    ),
+                    content: ChangeNotifierProvider.value(
+                      value: dashboardModel,
                       child: OccupancyRateBox(
                         model: dashboardModel,
                       ),
