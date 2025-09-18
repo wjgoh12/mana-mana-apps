@@ -6,8 +6,8 @@ import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class OccupancyBarChart extends StatelessWidget {
   const OccupancyBarChart({
-    super.key, 
-    required this.isShowingMainData, 
+    super.key,
+    required this.isShowingMainData,
     required this.period,
     this.model, // Add optional model parameter
   });

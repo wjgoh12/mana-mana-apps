@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
+import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_rate_box.dart';
 
 class UnitOverviewContainer extends StatelessWidget {
   const UnitOverviewContainer({Key? key}) : super(key: key);
@@ -52,8 +53,7 @@ class UnitOverviewContainer extends StatelessWidget {
     );
 
     // Also check if the selected unit data has meaningful values (not just 0.00)
-    final hasMeaningfulData =
-        hasData &&
+    final hasMeaningfulData = hasData &&
         (propertyModel.selectedUnitPro?.total != 0.0 ||
             propertyModel.selectedUnitBlc?.total != 0.0);
 
@@ -94,18 +94,15 @@ class UnitOverviewContainer extends StatelessWidget {
 
     // Get the monthly profit (NOPROF)
     final monthlyProfit = propertyModel.selectedUnitPro?.total ?? 0.0;
-    final formattedMonthlyProfit = monthlyProfit
-        .toStringAsFixed(2)
-        .replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]},',
-        );
+    final formattedMonthlyProfit =
+        monthlyProfit.toStringAsFixed(2).replaceAllMapped(
+              RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+              (Match m) => '${m[1]},',
+            );
 
     // Get the net profit after POB (OWNBAL)
     final netProfit = propertyModel.selectedUnitBlc?.total ?? 0.0;
-    final formattedNetProfit = netProfit
-        .toStringAsFixed(2)
-        .replaceAllMapped(
+    final formattedNetProfit = netProfit.toStringAsFixed(2).replaceAllMapped(
           RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
           (Match m) => '${m[1]},',
         );
@@ -148,73 +145,87 @@ class UnitOverviewContainer extends StatelessWidget {
       String color,
       String fontColor, {
       bool isCurrency = true,
+      VoidCallback? onTap, // Add onTap parameter
     }) {
       return Expanded(
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 2,
-          color: Color(int.parse(color)),
-          child: Container(
-            height: ResponsiveSize.scaleHeight(90),
-            padding: EdgeInsets.all(ResponsiveSize.scaleWidth(8.0)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: 'outfit',
-                    fontSize: ResponsiveSize.text(11),
-                    color: Color(int.parse(fontColor)),
+        child: InkWell(
+          // Wrap Card with InkWell
+          onTap: onTap,
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 2,
+            color: Color(int.parse(color)),
+            child: Container(
+              height: ResponsiveSize.scaleHeight(90),
+              padding: EdgeInsets.all(ResponsiveSize.scaleWidth(8.0)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'outfit',
+                      fontSize: ResponsiveSize.text(11),
+                      color: Color(int.parse(fontColor)),
+                    ),
                   ),
-                ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      if (isCurrency)
-                        WidgetSpan(
-                          alignment: PlaceholderAlignment.baseline,
-                          baseline: TextBaseline.alphabetic,
-                          child: Transform.translate(
-                            offset: const Offset(0, -4),
-                            child: Text(
-                              'RM',
-                              style: TextStyle(
-                                fontFamily: 'outfit',
-                                fontSize: ResponsiveSize.text(10),
-                                fontWeight: FontWeight.bold,
-                                color: Color(int.parse(fontColor)),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        if (isCurrency)
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.baseline,
+                            baseline: TextBaseline.alphabetic,
+                            child: Transform.translate(
+                              offset: const Offset(0, -4),
+                              child: Text(
+                                'RM',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: ResponsiveSize.text(10),
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(int.parse(fontColor)),
+                                ),
                               ),
                             ),
                           ),
+                        TextSpan(
+                          text: value,
+                          style: TextStyle(
+                            fontFamily: 'outfit',
+                            fontSize: ResponsiveSize.text(15),
+                            fontWeight: FontWeight.bold,
+                            color: Color(int.parse(fontColor)),
+                          ),
                         ),
-                      TextSpan(
-                        text: value,
-                        style: TextStyle(
-                          fontFamily: 'outfit',
-                          fontSize: ResponsiveSize.text(15),
-                          fontWeight: FontWeight.bold,
-                          color: Color(int.parse(fontColor)),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: ResponsiveSize.scaleHeight(4)),
-                Text(
-                  footer,
-                  style: TextStyle(
-                    fontFamily: 'outfit',
-                    fontSize: ResponsiveSize.text(10),
-                    color: Color(int.parse(fontColor)),
+                  SizedBox(height: ResponsiveSize.scaleHeight(4)),
+                  Text(
+                    footer,
+                    style: TextStyle(
+                      fontFamily: 'outfit',
+                      fontSize: ResponsiveSize.text(10),
+                      color: Color(int.parse(fontColor)),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
+      );
+    }
+
+    void _showOccupancyDialog(BuildContext context, String occupancyRate) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog();
+        },
       );
     }
 
@@ -261,6 +272,19 @@ class UnitOverviewContainer extends StatelessWidget {
                 '0xFFDBC7FF',
                 '0xFF000000',
                 isCurrency: false,
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      ChangeNotifierProvider.value(
+                    value: dashboardModel,
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: OccupancyRateBox(
+                        model: dashboardModel,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
