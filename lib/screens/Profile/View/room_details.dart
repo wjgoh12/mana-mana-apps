@@ -208,6 +208,9 @@ class _RoomDetailsState extends State<RoomDetails> {
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         hintText: 'Guest Name',
+                        hintStyle: TextStyle(
+                            fontSize: ResponsiveSize.text(14),
+                            fontFamily: 'Outfit'),
                       ),
                     ),
                     MyCheckboxWidget(
@@ -421,8 +424,10 @@ Total Points: ${totalPoints()}
                             : Text(
                                 'Submit',
                                 style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontWeight: FontWeight.bold,
                                     color: Colors.white,
-                                    fontSize: ResponsiveSize.text(16)),
+                                    fontSize: ResponsiveSize.text(17)),
                               ),
                       ),
                     ),
@@ -448,12 +453,14 @@ Total Points: ${totalPoints()}
             Text(title,
                 style: TextStyle(
                     fontSize: ResponsiveSize.text(11),
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Outfit')),
             Text(
               date != null ? DateFormat('EEE, MMM d, yyyy').format(date) : '-',
               style: TextStyle(
                   fontSize: ResponsiveSize.text(12),
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'Outfit',
                   color: Color(0xFF3E51FF)),
             ),
           ],
@@ -475,6 +482,7 @@ Total Points: ${totalPoints()}
           Text(value,
               style: TextStyle(
                   fontSize: ResponsiveSize.text(16),
+                  fontFamily: 'Outfit',
                   color: Color(0xFF3E51FF),
                   fontWeight: FontWeight.bold)),
         ],
@@ -537,6 +545,7 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
               'Tick box to confirm ',
               style: TextStyle(
                 fontSize: ResponsiveSize.text(13),
+                fontFamily: 'Outfit',
               ),
             ),
             InkWell(
@@ -654,6 +663,7 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
               child: Text(
                 'T&C',
                 style: TextStyle(
+                  fontFamily: 'Outfit',
                   color: const Color(0xFF3E51FF),
                   decoration: TextDecoration.underline,
                   fontWeight: FontWeight.bold,

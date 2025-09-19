@@ -136,9 +136,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     if (start != null && end != null) {
       // Check if any day in the range is blocked
       bool hasBlocked = false;
-      for (DateTime d = start;
-          !d.isAfter(end);
-          d = d.add(const Duration(days: 1))) {
+      for (
+        DateTime d = start;
+        !d.isAfter(end);
+        d = d.add(const Duration(days: 1))
+      ) {
         if (_isBlackoutDay(d) || _isGreyDay(d)) {
           hasBlocked = true;
           break;
@@ -215,10 +217,10 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }
 
   BoxDecoration _rectDeco({Color? color}) => BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        // borderRadius: const BorderRadius.all(Radius.circular(8)),
-      );
+    color: color,
+    shape: BoxShape.circle,
+    // borderRadius: const BorderRadius.all(Radius.circular(8)),
+  );
 
   DateTime getInitialFocusedDay() {
     final today = DateTime.now();
@@ -229,9 +231,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     DateTime firstOfMonth = DateTime(today.year, today.month, 1);
     DateTime lastOfMonth = DateTime(today.year, today.month + 1, 0);
 
-    for (DateTime d = firstOfMonth;
-        d.isBefore(lastOfMonth.add(Duration(days: 1)));
-        d = d.add(Duration(days: 1))) {
+    for (
+      DateTime d = firstOfMonth;
+      d.isBefore(lastOfMonth.add(Duration(days: 1)));
+      d = d.add(Duration(days: 1))
+    ) {
       if (_isDayEnabled(d)) {
         // helper check
         hasAvailableDayThisMonth = true;
@@ -304,7 +308,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         : 1; // default to 1 night while checkout not selected
 
     final int totalPoints = (_selectedRoom != null)
-        ? _selectedRoom!.roomTypePoints * _selectedQuantity
+        ? _selectedRoom!.roomTypePoints
         : 0;
 
     final String formattedPoints = NumberFormat('#,###').format(totalPoints);
@@ -438,7 +442,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 final userPoints = vm.UserPointBalance.isNotEmpty
                     ? vm.UserPointBalance.first.redemptionBalancePoints
                     : 0;
-                final totalRoomPoints = room.roomTypePoints *
+                final totalRoomPoints =
+                    room.roomTypePoints *
                     (duration == 0 ? 1 : duration) *
                     _selectedQuantity;
                 final affordable = totalRoomPoints <= userPoints;
