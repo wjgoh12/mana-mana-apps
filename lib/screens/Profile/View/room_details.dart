@@ -75,7 +75,7 @@ class _RoomDetailsState extends State<RoomDetails> {
     }
   }
 
-  int totalPoints() => widget.room.roomTypePoints * widget.quantity;
+  int totalPoints() => widget.room.roomTypePoints;
 
   String formattedTotalPoints() {
     final formatter = NumberFormat('#,###');
