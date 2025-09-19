@@ -6,6 +6,7 @@ import 'package:mana_mana_app/screens/All_Property/Widget/enhanced_statement_con
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
 import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
+import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
@@ -361,7 +362,23 @@ Widget _quickLinks(BuildContext context) {
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
-                    onTap: () {},
+                    onTap: () {
+                      // Create and initialize the VM
+                      final ownerVm = OwnerProfileVM();
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangeNotifierProvider(
+                            create: (_) => ownerVm,
+                            child: const ChoosePropertyLocation(
+                              selectedLocation: '',
+                              selectedUnitNo: '',
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
