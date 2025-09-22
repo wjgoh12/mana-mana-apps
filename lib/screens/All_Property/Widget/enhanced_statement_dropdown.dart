@@ -50,24 +50,24 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               color: const Color(0xFF3E51FF),
             ),
           ),
-          
+
           SizedBox(width: ResponsiveSize.scaleWidth(16)),
-          
+
           // Monthly Dropdown
           Expanded(
             child: DropdownButton2<String>(
               isExpanded: true,
               underline: const SizedBox(),
               value: selectedMonth,
-              hint: const Text('Monthly'),
+              hint: const Text('Month'),
               style: TextStyle(
                 fontFamily: 'Outfit',
-                fontSize: ResponsiveSize.text(14),
+                fontSize: ResponsiveSize.text(13),
                 color: Colors.black87,
               ),
               buttonStyleData: ButtonStyleData(
                 height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
@@ -103,9 +103,9 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               },
             ),
           ),
-          
-          SizedBox(width: ResponsiveSize.scaleWidth(12)),
-          
+
+          SizedBox(width: ResponsiveSize.scaleWidth(10)),
+
           // Year Dropdown
           Expanded(
             child: DropdownButton2<String>(
@@ -115,12 +115,12 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               hint: const Text('Year'),
               style: TextStyle(
                 fontFamily: 'Outfit',
-                fontSize: ResponsiveSize.text(14),
+                fontSize: ResponsiveSize.text(13),
                 color: Colors.black87,
               ),
               buttonStyleData: ButtonStyleData(
                 height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
