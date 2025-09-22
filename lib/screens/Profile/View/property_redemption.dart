@@ -37,13 +37,13 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     final globalData = GlobalDataManager();
     globalData.initializeData(); // ensures all data is preloaded
     final ownerVM = Provider.of<OwnerProfileVM>(context);
-    final sortedUnits = [...ownerVM.unitAvailablePoints]
-        .where((unit) => unit.redemptionBalancePoints > 0)
-        .toList()
-      ..sort(
-        (a, b) =>
-            b.redemptionBalancePoints.compareTo(a.redemptionBalancePoints),
-      );
+    final sortedUnits =
+        [
+          ...ownerVM.unitAvailablePoints,
+        ].where((unit) => unit.redemptionBalancePoints > 0).toList()..sort(
+          (a, b) =>
+              b.redemptionBalancePoints.compareTo(a.redemptionBalancePoints),
+        );
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -103,134 +103,126 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 child: ownerVM.isLoadingAvailablePoints
                     ? const Center(child: CircularProgressIndicator())
                     : ownerVM.unitAvailablePoints.isEmpty
-                        ? const Center(
-                            child: Text(
-                              "No available points found.",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'outfit',
+                    ? const Center(
+                        child: Text(
+                          "No available points found.",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'outfit',
+                          ),
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        child: Column(
+                          children: sortedUnits.map((unit) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(
+                                vertical: ResponsiveSize.scaleHeight(8),
+                                horizontal: ResponsiveSize.scaleWidth(6),
                               ),
-                            ),
-                          )
-                        : SingleChildScrollView(
-                            child: Column(
-                              children: sortedUnits.map((unit) {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(
-                                    vertical: ResponsiveSize.scaleHeight(8),
-                                    horizontal: ResponsiveSize.scaleWidth(6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 0),
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 0),
+                                ],
+                              ),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.scaleWidth(8),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => MultiProvider(
+                                        providers: [
+                                          ChangeNotifierProvider.value(
+                                            value: globalData,
+                                          ),
+                                          ChangeNotifierProvider.value(
+                                            value: ownerVM,
+                                          ),
+                                        ],
+                                        child: ChoosePropertyLocation(
+                                          selectedLocation: unit.location,
+                                          selectedUnitNo: unit.unitNo,
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(
-                                      ResponsiveSize.scaleWidth(8),
                                     ),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => MultiProvider(
-                                            providers: [
-                                              ChangeNotifierProvider.value(
-                                                value: globalData,
-                                              ),
-                                              ChangeNotifierProvider.value(
-                                                value: ownerVM,
-                                              ),
-                                            ],
-                                            child: ChoosePropertyLocation(
-                                              selectedLocation: unit.location,
-                                              selectedUnitNo: unit.unitNo,
+                                  );
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 16,
+                                    horizontal: ResponsiveSize.scaleWidth(16),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      // Left column
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${unit.location} - ${unit.unitNo}',
+                                            style: TextStyle(
+                                              fontSize: ResponsiveSize.text(15),
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'outfit',
+                                              color: const Color(0xFF3E51FF),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 16,
-                                        horizontal:
-                                            ResponsiveSize.scaleWidth(16),
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          // Left column
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                '${unit.location} - ${unit.unitNo}',
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      ResponsiveSize.text(15),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'outfit',
-                                                  color:
-                                                      const Color(0xFF3E51FF),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height:
-                                                    ResponsiveSize.scaleHeight(
-                                                  6,
-                                                ),
-                                              ),
-                                              Text(
-                                                'Available Points',
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      ResponsiveSize.text(12),
-                                                  fontFamily: 'outfit',
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height:
-                                                    ResponsiveSize.scaleHeight(
-                                                  6,
-                                                ),
-                                              ),
-                                              Text(
-                                                '${unit.redemptionBalancePoints}/${unit.redemptionPoints}',
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      ResponsiveSize.text(13),
-                                                  fontWeight: FontWeight.bold,
-                                                  color:
-                                                      const Color(0xFF3E51FF),
-                                                ),
-                                              ),
-                                            ],
+                                          SizedBox(
+                                            height: ResponsiveSize.scaleHeight(
+                                              6,
+                                            ),
                                           ),
-
-                                          const Spacer(),
-
-                                          // Arrow icon
-                                          const Icon(
-                                            Icons.arrow_forward_ios,
-                                            color: Colors.grey,
-                                            size: 13,
+                                          Text(
+                                            'Available Points',
+                                            style: TextStyle(
+                                              fontSize: ResponsiveSize.text(12),
+                                              fontFamily: 'outfit',
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: ResponsiveSize.scaleHeight(
+                                              6,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${unit.redemptionBalancePoints}/${unit.redemptionPoints}',
+                                            style: TextStyle(
+                                              fontSize: ResponsiveSize.text(13),
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color(0xFF3E51FF),
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ),
+
+                                      const Spacer(),
+
+                                      // Arrow icon
+                                      const Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Colors.grey,
+                                        size: 13,
+                                      ),
+                                    ],
                                   ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
               ),
             ),
             SizedBox(height: ResponsiveSize.scaleHeight(15)),
@@ -265,400 +257,371 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                       child: ownerVM.isLoadingBookingHistory
                           ? const Center(child: CircularProgressIndicator())
                           : ownerVM.bookingHistory.isEmpty
-                              ? const Center(
-                                  child: Text("No booking history found."),
-                                )
-                              : SingleChildScrollView(
-                                  child: Column(
-                                    children:
-                                        ownerVM.bookingHistory.map((booking) {
-                                      return InkWell(
-                                        onTap: () {
-                                          if (booking.status == "Confirmed") {
-                                            showDialog(
-                                              context: context,
-                                              builder: (_) {
-                                                return AlertDialog(
-                                                  backgroundColor: Colors.white,
-                                                  title: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        "Confirmed Booking Details",
-                                                        style: TextStyle(
-                                                            fontFamily:
-                                                                'outfit',
-                                                            fontSize:
-                                                                ResponsiveSize
-                                                                    .text(18),
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: const Color(
-                                                                0xFF3E51FF)),
+                          ? const Center(
+                              child: Text("No booking history found."),
+                            )
+                          : SingleChildScrollView(
+                              child: Column(
+                                children: ownerVM.bookingHistory.map((booking) {
+                                  return InkWell(
+                                    onTap: () {
+                                      if (booking.status == "Confirmed") {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) {
+                                            return AlertDialog(
+                                              backgroundColor: Colors.white,
+                                              title: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "Confirmed Booking Details",
+                                                    style: TextStyle(
+                                                      fontFamily: 'outfit',
+                                                      fontSize:
+                                                          ResponsiveSize.text(
+                                                            18,
+                                                          ),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: const Color(
+                                                        0xFF3E51FF,
                                                       ),
-                                                    ],
-                                                  ),
-                                                  content: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      const Text("Location",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'outfit')),
-                                                      Text(
-                                                          booking
-                                                              .bookingLocation,
-                                                          style: const TextStyle(
-                                                              fontFamily:
-                                                                  'outfit',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      const Text("Room Type",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'outfit')),
-                                                      Text(booking.typeRoom,
-                                                          style: const TextStyle(
-                                                              fontFamily:
-                                                                  'outfit',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      const Text("Total Points",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'outfit')),
-                                                      Text(
-                                                          '${booking.pointUsed}',
-                                                          style:
-                                                              const TextStyle(
-                                                            fontFamily:
-                                                                'outfit',
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          )),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      const Text("Check-In",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'outfit')),
-                                                      Text(
-                                                        DateFormat(
-                                                                'dd MMM yyyy')
-                                                            .format(booking
-                                                                .arrivalDate),
-                                                        style: const TextStyle(
-                                                          fontFamily: 'outfit',
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      const Text("Check-Out",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'outfit')),
-                                                      Text(
-                                                        DateFormat(
-                                                                'dd MMM yyyy')
-                                                            .format(booking
-                                                                .departureDate),
-                                                        style: const TextStyle(
-                                                          fontFamily: 'outfit',
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      const Text(
-                                                          'Points Redeemed From',
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'outfit')),
-                                                      Text(
-                                                          ' ${booking.location} - ${booking.unitNo}',
-                                                          style: const TextStyle(
-                                                              fontFamily:
-                                                                  'outfit',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                    ],
-                                                  ),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.of(context)
-                                                              .pop(),
-                                                      child:
-                                                          const Text("Close"),
                                                     ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
-                                          // else: do nothing
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.grey.shade300,
-                                            ),
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                ResponsiveSize.scaleWidth(8),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  const Text(
+                                                    "Location",
+                                                    style: TextStyle(
+                                                      fontFamily: 'outfit',
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    booking.bookingLocation,
+                                                    style: const TextStyle(
+                                                      fontFamily: 'outfit',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  const Text(
+                                                    "Room Type",
+                                                    style: TextStyle(
+                                                      fontFamily: 'outfit',
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    booking.typeRoom,
+                                                    style: const TextStyle(
+                                                      fontFamily: 'outfit',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  const Text(
+                                                    "Total Points",
+                                                    style: TextStyle(
+                                                      fontFamily: 'outfit',
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    '${booking.pointUsed}',
+                                                    style: const TextStyle(
+                                                      fontFamily: 'outfit',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  const Text(
+                                                    "Check-In",
+                                                    style: TextStyle(
+                                                      fontFamily: 'outfit',
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    DateFormat(
+                                                      'dd MMM yyyy',
+                                                    ).format(
+                                                      booking.arrivalDate,
+                                                    ),
+                                                    style: const TextStyle(
+                                                      fontFamily: 'outfit',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  const Text(
+                                                    "Check-Out",
+                                                    style: TextStyle(
+                                                      fontFamily: 'outfit',
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    DateFormat(
+                                                      'dd MMM yyyy',
+                                                    ).format(
+                                                      booking.departureDate,
+                                                    ),
+                                                    style: const TextStyle(
+                                                      fontFamily: 'outfit',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  const Text(
+                                                    'Points Redeemed From',
+                                                    style: TextStyle(
+                                                      fontFamily: 'outfit',
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    ' ${booking.location} - ${booking.unitNo}',
+                                                    style: const TextStyle(
+                                                      fontFamily: 'outfit',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.of(
+                                                    context,
+                                                  ).pop(),
+                                                  child: const Text("Close"),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }
+                                      // else: do nothing
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(
+                                            ResponsiveSize.scaleWidth(8),
                                           ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 16,
-                                              horizontal: 16,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: ResponsiveSize
-                                                      .scaleHeight(
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                          horizontal: 16,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height:
+                                                  ResponsiveSize.scaleHeight(
                                                     60,
                                                   ),
-                                                  width:
-                                                      ResponsiveSize.scaleWidth(
-                                                          60),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors
-                                                        .lightBlue.shade100,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                      8,
-                                                    ),
-                                                  ),
-                                                  child: const Icon(
-                                                    Icons.hotel,
-                                                    color: Colors.blueAccent,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width:
-                                                      ResponsiveSize.scaleWidth(
-                                                          16),
-                                                ),
-                                                // Wrap Column in Expanded so it has bounded width
-                                                Expanded(
-                                                  child: Column(
+                                              width: ResponsiveSize.scaleWidth(
+                                                60,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    Colors.lightBlue.shade100,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: const Icon(
+                                                Icons.hotel,
+                                                color: Colors.blueAccent,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: ResponsiveSize.scaleWidth(
+                                                16,
+                                              ),
+                                            ),
+                                            // Wrap Column in Expanded so it has bounded width
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            booking.typeRoom,
-                                                            maxLines: 5,
+                                                      Text(
+                                                        booking.typeRoom,
+                                                        maxLines: 5,
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              ResponsiveSize.text(
+                                                                11,
+                                                              ),
+                                                          fontFamily: 'outfit',
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
+                                                          color:
+                                                              booking.status ==
+                                                                  'Confirmed'
+                                                              ? Colors.green
+                                                              : booking.status ==
+                                                                    'Pending'
+                                                              ? Colors.orange
+                                                              : Colors.red,
+                                                          border: Border.all(
+                                                            color:
+                                                                booking.status ==
+                                                                    'Confirmed'
+                                                                ? Colors.green
+                                                                : booking.status ==
+                                                                      'Pending'
+                                                                ? Colors.orange
+                                                                : Colors.red,
+                                                          ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets.all(
+                                                                2,
+                                                              ),
+                                                          child: Text(
+                                                            booking.status,
                                                             style: TextStyle(
                                                               fontSize:
-                                                                  ResponsiveSize
-                                                                      .text(
-                                                                14,
-                                                              ),
+                                                                  ResponsiveSize.text(
+                                                                    10,
+                                                                  ),
                                                               fontFamily:
                                                                   'outfit',
+                                                              color:
+                                                                  Colors.white,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
                                                             ),
+                                                            maxLines: 2,
                                                           ),
-                                                          Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                10,
-                                                              ),
-                                                              color: booking
-                                                                          .status ==
-                                                                      'Confirmed'
-                                                                  ? Colors.green
-                                                                  : booking.status ==
-                                                                          'Pending'
-                                                                      ? Colors
-                                                                          .orange
-                                                                      : Colors
-                                                                          .red,
-                                                              border:
-                                                                  Border.all(
-                                                                color: booking
-                                                                            .status ==
-                                                                        'Confirmed'
-                                                                    ? Colors
-                                                                        .green
-                                                                    : booking.status ==
-                                                                            'Pending'
-                                                                        ? Colors
-                                                                            .orange
-                                                                        : Colors
-                                                                            .red,
-                                                              ),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(
-                                                                2,
-                                                              ),
-                                                              child: Text(
-                                                                booking.status,
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      ResponsiveSize
-                                                                          .text(
-                                                                    10,
-                                                                  ),
-                                                                  fontFamily:
-                                                                      'outfit',
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                                maxLines: 2,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Text(
-                                                        booking.bookingLocation,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            'Dates:',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'outfit',
-                                                              fontSize:
-                                                                  ResponsiveSize
-                                                                      .text(
-                                                                11,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            DateFormat(
-                                                              'yyyy-MM-dd',
-                                                            ).format(
-                                                              booking
-                                                                  .arrivalDate,
-                                                            ),
-                                                            style: TextStyle(
-                                                              fontSize:
-                                                                  ResponsiveSize
-                                                                      .text(
-                                                                12,
-                                                              ),
-                                                              fontFamily:
-                                                                  'outfit',
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            ' to ',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'outfit',
-                                                              fontSize:
-                                                                  ResponsiveSize
-                                                                      .text(
-                                                                11,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            DateFormat(
-                                                              'yyyy-MM-dd',
-                                                            ).format(
-                                                              booking
-                                                                  .departureDate,
-                                                            ),
-                                                            style: TextStyle(
-                                                              fontSize:
-                                                                  ResponsiveSize
-                                                                      .text(
-                                                                12,
-                                                              ),
-                                                              fontFamily:
-                                                                  'outfit',
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                          right: 8.0,
-                                                        ),
-                                                        child: Row(
-                                                          children: [
-                                                            const Spacer(), // Pushes the next widget to the end
-                                                            const Icon(
-                                                              Icons.star,
-                                                              size: 14,
-                                                              color:
-                                                                  Colors.purple,
-                                                            ),
-                                                            Text(
-                                                              '${booking.pointUsed.toString()}',
-                                                              style: TextStyle(
-                                                                fontSize:
-                                                                    ResponsiveSize
-                                                                        .text(
-                                                                  13,
-                                                                ),
-                                                                fontFamily:
-                                                                    'outfit',
-                                                              ),
-                                                            ),
-                                                          ],
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                ),
-                                              ],
+                                                  Text(booking.bookingLocation),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        'Dates:',
+                                                        style: TextStyle(
+                                                          fontFamily: 'outfit',
+                                                          fontSize:
+                                                              ResponsiveSize.text(
+                                                                11,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        DateFormat(
+                                                          'yyyy-MM-dd',
+                                                        ).format(
+                                                          booking.arrivalDate,
+                                                        ),
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              ResponsiveSize.text(
+                                                                12,
+                                                              ),
+                                                          fontFamily: 'outfit',
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        ' to ',
+                                                        style: TextStyle(
+                                                          fontFamily: 'outfit',
+                                                          fontSize:
+                                                              ResponsiveSize.text(
+                                                                11,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        DateFormat(
+                                                          'yyyy-MM-dd',
+                                                        ).format(
+                                                          booking.departureDate,
+                                                        ),
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              ResponsiveSize.text(
+                                                                12,
+                                                              ),
+                                                          fontFamily: 'outfit',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          right: 8.0,
+                                                        ),
+                                                    child: Row(
+                                                      children: [
+                                                        const Spacer(), // Pushes the next widget to the end
+                                                        const Icon(
+                                                          Icons.star,
+                                                          size: 14,
+                                                          color: Colors.purple,
+                                                        ),
+                                                        Text(
+                                                          '${booking.pointUsed.toString()}',
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                ResponsiveSize.text(
+                                                                  13,
+                                                                ),
+                                                            fontFamily:
+                                                                'outfit',
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
                     ),
                   ],
                 ),

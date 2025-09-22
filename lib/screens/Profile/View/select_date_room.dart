@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
@@ -25,7 +27,6 @@ class SelectDateRoom extends StatefulWidget {
     required this.state,
   }) : super(key: key);
 
-  // 👇 Put the static method here, in the widget class
   static int getUserPointsBalance(OwnerProfileVM vm) {
     final points = vm.UserPointBalance.isNotEmpty
         ? vm.UserPointBalance.first.redemptionBalancePoints
@@ -66,24 +67,22 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   bool _isLoadingBlockedDates = true;
 
   RoomType? _selectedRoom;
+  String? _selectedRoomId; // Track by ID to maintain selection across fetches
   late OwnerProfileVM _vm;
-  OwnerProfileVM get vm => context.watch<OwnerProfileVM>();
+  // Avoid listening outside of build. Use `_vm` for actions, and a local
+  // `vm = context.watch<OwnerProfileVM>()` inside build for UI updates.
 
-  @override
   @override
   void initState() {
     super.initState();
 
-    _focusedDay = DateTime.now().add(const Duration(days: 7)); // once only
+    _focusedDay = DateTime.now().add(const Duration(days: 7));
     _selectedDay = null;
     _fetchBlockedDates();
 
-    // Assign the VM immediately
     _vm = context.read<OwnerProfileVM>();
 
-    // Run async fetches after first frame to avoid build conflicts
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // Load points and room types in parallel
       await Future.wait([
         _vm.UserPointBalance.isEmpty
             ? _vm.fetchRedemptionBalancePoints(
@@ -105,7 +104,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }
 
   Future<void> _fetchBlockedDates() async {
-    if (_blockedDates.isNotEmpty) return; // Already loaded
+    if (_blockedDates.isNotEmpty) return;
 
     setState(() => _isLoadingBlockedDates = true);
     try {
@@ -118,7 +117,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         _isLoadingBlockedDates = false;
       });
     } catch (e) {
-      debugPrint("❌ Failed to fetch blocked dates: $e");
+      debugPrint("Failed to fetch blocked dates: $e");
       setState(() => _isLoadingBlockedDates = false);
     }
   }
@@ -133,14 +132,23 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }
 
   void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
+    if (start == null && end == null) {
+      setState(() {
+        _rangeStart = null;
+        _rangeEnd = null;
+        _selectedDay = null;
+        _selectedQuantity = 1;
+        _selectedRoom = null;
+        _selectedRoomId = null;
+      });
+      return;
+    }
+
     if (start != null && end != null) {
-      // Check if any day in the range is blocked
       bool hasBlocked = false;
-      for (
-        DateTime d = start;
-        !d.isAfter(end);
-        d = d.add(const Duration(days: 1))
-      ) {
+      for (DateTime d = start;
+          !d.isAfter(end);
+          d = d.add(const Duration(days: 1))) {
         if (_isBlackoutDay(d) || _isGreyDay(d)) {
           hasBlocked = true;
           break;
@@ -156,35 +164,113 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             backgroundColor: Color.fromARGB(255, 203, 46, 46),
           ),
         );
-        return; // Exit early, don't update selection
+        return;
       }
     }
 
     setState(() {
+      _rangeStart = null;
+      _rangeEnd = null;
       _selectedDay = null;
-      _focusedDay = focusedDay;
 
       if (start != null && end == null) {
-        // 🟢 user tapped a new start → clear previous end
         _rangeStart = start;
         _rangeEnd = null;
-        _selectedQuantity = 1; // reset if you want
       } else {
-        // normal case
         _rangeStart = start;
         _rangeEnd = end;
       }
     });
 
-    _validateSelectedRoom();
+    _fetchDebounce?.cancel();
+    _fetchDebounce = Timer(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      _fetchRoomTypesAndMaintainSelection();
+    });
+  }
 
-    _vm.fetchRoomTypes(
+  // New method to fetch room types while maintaining selection
+  Future<void> _fetchRoomTypesAndMaintainSelection() async {
+    await _vm.fetchRoomTypes(
       state: widget.state,
       bookingLocationName: widget.location,
       rooms: _selectedQuantity,
       arrivalDate: _rangeStart != null ? _toDateOnly(_rangeStart!) : null,
       departureDate: _rangeEnd != null ? _toDateOnly(_rangeEnd!) : null,
     );
+
+    // After fetching, try to restore selection if we had one
+    if (_selectedRoomId != null) {
+      _restoreRoomSelection();
+    }
+  }
+
+  // Method to restore room selection after room types are updated
+  void _restoreRoomSelection() {
+    if (_selectedRoomId == null) return;
+
+    // Find the room in the new list that matches our selected room
+    final matchingRoom = _vm.roomTypes.firstWhere(
+      (room) => room.roomTypeName == _selectedRoomId,
+      orElse: () => RoomType(
+        roomTypeName: '',
+        roomTypePoints: 0,
+        pic: '',
+      ),
+    );
+
+    if (matchingRoom.roomTypeName.isNotEmpty) {
+      // Check if it's still affordable
+      final duration = (_rangeStart != null && _rangeEnd != null)
+          ? _rangeEnd!.difference(_rangeStart!).inDays
+          : 1;
+
+      final isAffordable =
+          isRoomAffordable(matchingRoom, duration, _selectedQuantity);
+
+      if (isAffordable) {
+        // Room still exists and is affordable, maintain selection
+        setState(() {
+          _selectedRoom = matchingRoom;
+        });
+      } else {
+        // Room exists but no longer affordable
+        setState(() {
+          _selectedRoom = null;
+          _selectedRoomId = null;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Previously selected room is no longer affordable with current quantity/dates. Please select again.',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } else {
+      // Room no longer exists in the list
+      setState(() {
+        _selectedRoom = null;
+        _selectedRoomId = null;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Previously selected room is no longer available. Please select again.',
+          ),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _fetchDebounce?.cancel();
+    super.dispose();
   }
 
   int get duration {
@@ -216,39 +302,27 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     );
   }
 
-  BoxDecoration _rectDeco({Color? color}) => BoxDecoration(
-    color: color,
-    shape: BoxShape.circle,
-    // borderRadius: const BorderRadius.all(Radius.circular(8)),
-  );
-
   DateTime getInitialFocusedDay() {
     final today = DateTime.now();
     final sevenDaysFromNow = today.add(Duration(days: 7));
 
-    // Check if the current month has at least one selectable day
     bool hasAvailableDayThisMonth = false;
     DateTime firstOfMonth = DateTime(today.year, today.month, 1);
     DateTime lastOfMonth = DateTime(today.year, today.month + 1, 0);
 
-    for (
-      DateTime d = firstOfMonth;
-      d.isBefore(lastOfMonth.add(Duration(days: 1)));
-      d = d.add(Duration(days: 1))
-    ) {
+    for (DateTime d = firstOfMonth;
+        d.isBefore(lastOfMonth.add(Duration(days: 1)));
+        d = d.add(Duration(days: 1))) {
       if (_isDayEnabled(d)) {
-        // helper check
         hasAvailableDayThisMonth = true;
         break;
       }
     }
 
-    // If this month has available dates, keep today.
     if (hasAvailableDayThisMonth) {
       return today;
     }
 
-    // Otherwise, move to 7 days later (which may fall into next month)
     return sevenDaysFromNow;
   }
 
@@ -258,64 +332,29 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     return day.isAfter(sevenDaysFromNow) || isSameDay(day, sevenDaysFromNow);
   }
 
-  bool _isBlockedDay(DateTime day, String type) {
-    return _blockedDates.any(
-      (d) =>
-          d.contentType.toLowerCase() == type &&
-          !day.isBefore(d.dateFrom) &&
-          !day.isAfter(d.dateTo),
-    );
-  }
-
   bool isRoomAffordable(RoomType room, int duration, int quantity) {
-    final userPoints = vm.UserPointBalance.isNotEmpty
-        ? vm.UserPointBalance.first.redemptionBalancePoints
+    final userPoints = _vm.UserPointBalance.isNotEmpty
+        ? _vm.UserPointBalance.first.redemptionBalancePoints
         : 0;
     final totalPoints = room.roomTypePoints * duration * quantity;
     return totalPoints <= userPoints;
   }
 
-  void _validateSelectedRoom() {
-    if (_selectedRoom != null) {
-      final stillAffordable = isRoomAffordable(
-        _selectedRoom!,
-        duration == 0 ? 1 : duration,
-        _selectedQuantity,
-      );
-
-      if (!stillAffordable) {
-        setState(() {
-          _selectedRoom = null;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Your previously selected room is no longer affordable. Please select another room.',
-            ),
-            backgroundColor: Color.fromARGB(255, 203, 46, 46),
-          ),
-        );
-      }
-    }
-  }
+  Timer? _fetchDebounce;
 
   @override
   Widget build(BuildContext context) {
-    // at top of build()
+    final vm = context.watch<OwnerProfileVM>();
     int effectiveDuration = (_rangeStart != null && _rangeEnd != null)
         ? _rangeEnd!.difference(_rangeStart!).inDays
-        : 1; // default to 1 night while checkout not selected
+        : 1;
 
-    final int totalPoints = (_selectedRoom != null)
-        ? _selectedRoom!.roomTypePoints
-        : 0;
+    final int totalPoints =
+        (_selectedRoom != null) ? _selectedRoom!.roomTypePoints : 0;
 
     final String formattedPoints = NumberFormat('#,###').format(totalPoints);
-    ResponsiveSize.init(context);
 
     if (_isLoadingBlockedDates) {
-      // Show loading indicator while blocked dates are being fetched
       return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -347,24 +386,70 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 enabledDayPredicate: (day) {
                   final today = DateTime.now();
                   final sevenDaysFromNow = today.add(const Duration(days: 7));
-                  // Must be at least 7 days from today
                   if (day.isBefore(sevenDaysFromNow)) return false;
-
-                  // Disable if blackout
                   if (_isBlackoutDay(day)) return false;
-
-                  // Grey days should be disabled (if that's your business rule)
                   if (_isGreyDay(day)) return false;
-
                   return true;
                 },
                 calendarBuilders: CalendarBuilders(
-                  // For disabled days (black/grey)
                   disabledBuilder: (context, day, focusedDay) {
-                    if (_isBlackoutDay(day)) {
-                      return _buildBlockedDay(day, Colors.black);
-                    } else if (_isGreyDay(day)) {
-                      return _buildBlockedDay(day, Colors.grey);
+                    if (_isBlackoutDay(day) || _isGreyDay(day)) {
+                      final color =
+                          _isBlackoutDay(day) ? Colors.black : Colors.grey;
+
+                      bool isStart = _blockedDates.any((bd) =>
+                          (bd.contentType.toLowerCase() ==
+                              (_isBlackoutDay(day) ? "black" : "grey")) &&
+                          isSameDay(bd.dateFrom, day));
+                      bool isEnd = _blockedDates.any((bd) =>
+                          (bd.contentType.toLowerCase() ==
+                              (_isBlackoutDay(day) ? "black" : "grey")) &&
+                          isSameDay(bd.dateTo, day));
+
+                      if (isStart || isEnd) {
+                        return Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          margin: EdgeInsets.zero,
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(0.2),
+                          ),
+                          child: Center(
+                            child: Container(
+                              width: 35,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                color: color,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${day.day}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          margin: EdgeInsets.zero,
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(0.2),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${day.day}',
+                              style: TextStyle(
+                                color: color.withOpacity(0.8),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
                     }
                     return null;
                   },
@@ -417,7 +502,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             // Points Balance & Quantity
             Padding(
               padding: const EdgeInsets.all(18),
-              child: _buildPointsAndQuantity(),
+              child: _buildPointsAndQuantity(vm),
             ),
 
             const Padding(
@@ -442,22 +527,20 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 final userPoints = vm.UserPointBalance.isNotEmpty
                     ? vm.UserPointBalance.first.redemptionBalancePoints
                     : 0;
-                final totalRoomPoints =
-                    room.roomTypePoints *
+                final totalRoomPoints = room.roomTypePoints *
                     (duration == 0 ? 1 : duration) *
                     _selectedQuantity;
                 final affordable = totalRoomPoints <= userPoints;
 
                 return affordable
-                    ? _buildRoomCard(room, isSelected: room == _selectedRoom)
+                    ? _buildRoomCard(room,
+                        isSelected: room.roomTypeName == _selectedRoomId)
                     : Opacity(
-                        opacity: affordable
-                            ? 1
-                            : 0.5, // Grey out if not enough points
+                        opacity: 0.5,
                         child: Card(
                           shape: RoundedRectangleBorder(
                             side: BorderSide(
-                              color: _selectedRoom == room
+                              color: room.roomTypeName == _selectedRoomId
                                   ? const Color(0xFF3E51FF)
                                   : Colors.transparent,
                               width: 3,
@@ -465,21 +548,21 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: InkWell(
-                            onTap: () {
-                              setState(() => _selectedRoom = room);
-                            },
+                            onTap: null, // Disable tap for unaffordable rooms
                             child: _buildRoomTypeCard(
                               context,
                               room.roomTypeName,
                               room.roomTypePoints,
                               room.pic,
-                              isSelected: room == _selectedRoom,
+                              isSelected: room.roomTypeName == _selectedRoomId,
                             ),
                           ),
                         ),
                       );
               },
             ),
+
+            // Quantity Controller
             Column(
               children: [
                 Text(
@@ -492,26 +575,18 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     onChanged: (val) {
                       setState(() {
                         _selectedQuantity = val;
+                        // Keep the room selection ID but clear the room object temporarily
+                        // This will allow us to restore it after fetching
                       });
 
                       // Debounce the room type fetch
-                      Future.delayed(const Duration(milliseconds: 500), () {
+                      _fetchDebounce?.cancel();
+                      _fetchDebounce =
+                          Timer(const Duration(milliseconds: 500), () {
                         if (mounted && _selectedQuantity == val) {
-                          _vm.fetchRoomTypes(
-                            state: widget.state,
-                            bookingLocationName: widget.location,
-                            rooms: _selectedQuantity,
-                            arrivalDate: _rangeStart != null
-                                ? _toDateOnly(_rangeStart!)
-                                : null,
-                            departureDate: _rangeEnd != null
-                                ? _toDateOnly(_rangeEnd!)
-                                : null,
-                          );
+                          _fetchRoomTypesAndMaintainSelection();
                         }
                       });
-
-                      _validateSelectedRoom();
                     },
                   ),
                 ),
@@ -561,24 +636,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     );
   }
 
-  // Helper to build blocked day circle
-  Widget _buildBlockedDay(DateTime day, Color color) {
-    return Center(
-      child: Container(
-        width: 35,
-        height: 35,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        child: Center(
-          child: Text(
-            '${day.day}',
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Helper to build Check-in / Check-out card
   Widget _buildDateCard(String title, DateTime? date) {
     return SizedBox(
       width: 180,
@@ -607,19 +664,13 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     );
   }
 
-  // Helper to build points and quantity row
-  Widget _buildPointsAndQuantity() {
+  Widget _buildPointsAndQuantity(OwnerProfileVM vm) {
     final points = vm.UserPointBalance.isNotEmpty
         ? vm.UserPointBalance.first.redemptionBalancePoints
-        // or .totalPoints, depends on model
-        : 0;
-    final redemptionPoints = vm.UserPointBalance.isNotEmpty
-        ? vm.UserPointBalance.first.redemptionPoints
         : 0;
 
     final formatter = NumberFormat('#,###');
     final formattedPoints = formatter.format(points);
-    final formattedRedemptionPoints = formatter.format(redemptionPoints);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -645,35 +696,56 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             ),
           ),
           Text(
-            '${formattedPoints}',
+            formattedPoints,
             style: TextStyle(
               color: const Color(0xFF3E51FF),
               fontSize: ResponsiveSize.text(15),
               fontWeight: FontWeight.bold,
             ),
           ),
-          // const SizedBox(width: 5),
         ],
       ),
     );
   }
 
-  // Next button handler
+  // Enhanced Next button handler with proper validation
   void _onNextPressed() {
-    if (_selectedRoom == null || _rangeStart == null || _rangeEnd == null) {
-      // show snackbars as before
+    // Check if dates are selected
+    if (_rangeStart == null || _rangeEnd == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select check-in and check-out dates'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
 
-    final int effectiveDuration = (_rangeStart != null && _rangeEnd != null)
-        ? _rangeEnd!.difference(_rangeStart!).inDays
-        : 1;
+    // Check if room is selected
+    if (_selectedRoom == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a room type'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-    final int totalPoints = _selectedRoom!.roomTypePoints * _selectedQuantity;
+    // Double-check affordability before proceeding
+    final effectiveDuration = _rangeEnd!.difference(_rangeStart!).inDays;
+    if (!isRoomAffordable(
+        _selectedRoom!, effectiveDuration, _selectedQuantity)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Selected room is not affordable with current points'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-    // Use listen: false to safely read provider inside callback
     final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
-
     final int userPointsBalance = ownerVM.UserPointBalance.isNotEmpty
         ? ownerVM.UserPointBalance.first.redemptionBalancePoints
         : 0;
@@ -707,6 +779,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }) {
     final formatter = NumberFormat('#,###');
     final formattedPoints = formatter.format(point);
+
     Uint8List _decodeBase64Image(String base64String) {
       return base64Decode(base64String);
     }
@@ -717,13 +790,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         borderRadius: BorderRadius.circular(16),
         child: Stack(
           children: [
-            // Background Image
             Image.memory(
               _decodeBase64Image(imagePath),
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.cover,
-            ), // Gradient overlay at bottom
+            ),
             Positioned(
               bottom: 0,
               left: 0,
@@ -776,7 +848,10 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       ),
       child: InkWell(
         onTap: () {
-          setState(() => _selectedRoom = room);
+          setState(() {
+            _selectedRoom = room;
+            _selectedRoomId = room.roomTypeName; // Store the ID for tracking
+          });
         },
         child: _buildRoomTypeCard(
           context,
