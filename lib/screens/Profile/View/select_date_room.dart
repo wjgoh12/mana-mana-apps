@@ -336,7 +336,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     final userPoints = _vm.UserPointBalance.isNotEmpty
         ? _vm.UserPointBalance.first.redemptionBalancePoints
         : 0;
-    final totalPoints = room.roomTypePoints * duration * quantity;
+    // If a date range is selected and we refetched with rooms/dates,
+    // assume backend already returns total points for the selection.
+    final bool hasRange = _rangeStart != null && _rangeEnd != null;
+    final totalPoints = hasRange
+        ? room.roomTypePoints
+        : room.roomTypePoints * (duration == 0 ? 1 : duration) * quantity;
     return totalPoints <= userPoints;
   }
 
@@ -527,9 +532,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 final userPoints = vm.UserPointBalance.isNotEmpty
                     ? vm.UserPointBalance.first.redemptionBalancePoints
                     : 0;
-                final totalRoomPoints = room.roomTypePoints *
-                    (duration == 0 ? 1 : duration) *
-                    _selectedQuantity;
+                final bool hasRange = _rangeStart != null && _rangeEnd != null;
+                final totalRoomPoints = hasRange
+                    ? room.roomTypePoints // already includes duration * qty
+                    : room.roomTypePoints *
+                        (duration == 0 ? 1 : duration) *
+                        _selectedQuantity;
                 final affordable = totalRoomPoints <= userPoints;
 
                 return affordable

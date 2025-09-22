@@ -22,10 +22,9 @@ class ProfitChart extends StatelessWidget {
     final spots = _toSpots(series.values.toList());
 
     final maxX = _getMaxX();
-    // Fixed 2K step with rounded maxY to next 2K multiple; ensure at least 10K range
-    const double kStep = 2000.0;
-    final maxY = _computeMaxYFixedStep(series.values, kStep);
-    final leftInterval = kStep;
+    // Auto scale Y: pick a nice max above data and a nice tick interval
+    final maxY = _computeAutoMaxY(series.values);
+    final leftInterval = _computeAutoInterval(maxY);
 
     final titles = FlTitlesData(
       bottomTitles: AxisTitles(sideTitles: bottomTitles),
@@ -180,12 +179,17 @@ class ProfitChart extends StatelessWidget {
     return m;
   }
 
-  double _computeMaxYFixedStep(Iterable<double> values, double step) {
+  double _computeAutoMaxY(Iterable<double> values) {
     final maxValue = values.isEmpty ? 0.0 : values.reduce((a, b) => a > b ? a : b);
-    if (maxValue <= 0) return step * 5; // default 0..10K when no data
-    final multiples = (maxValue / step).ceil();
-    final rounded = multiples * step;
-    return math.max(rounded, step * 5);
+    // Headroom factor 1.5x; if no data, default to 1k
+    final target = maxValue <= 0 ? 1000.0 : maxValue * 1.5;
+    return _niceCeil(target);
+  }
+
+  double _computeAutoInterval(double maxY) {
+    // Aim for ~5 ticks
+    final raw = maxY / 5.0;
+    return _niceCeil(raw);
   }
 
   List<FlSpot> _toSpots(List<double> values) {
@@ -194,6 +198,24 @@ class ProfitChart extends StatelessWidget {
       spots.add(FlSpot(i.toDouble(), values[i]));
     }
     return spots;
+  }
+
+  // Round up to a "nice" number (1, 2, 5 multiples of powers of 10)
+  double _niceCeil(double value) {
+    if (value <= 0) return 1;
+    final power = math.pow(10, (math.log(value) / math.ln10).floor()).toDouble();
+    final n = value / power;
+    double nice;
+    if (n <= 1) {
+      nice = 1;
+    } else if (n <= 2) {
+      nice = 2;
+    } else if (n <= 5) {
+      nice = 5;
+    } else {
+      nice = 10;
+    }
+    return nice * power;
   }
 
   List<int> _getQuarterMonths(int quarter) {
