@@ -243,41 +243,41 @@ class NewDashboardV3 extends StatelessWidget {
                         ProfitBox(),
 
                         // Properties section
-                        Container(
-                          width: screenWidth,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding, vertical: 14),
-                          color: Colors.white,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _buildSectionTitle('Your Properties'),
-                                  _seeAllButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              AllPropertyNewScreen(),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                              PropertyListV3(
-                                model: model,
-                                controller: propertyScrollController,
-                              ),
-                              const SizedBox(
-                                  height: kBottomNavigationBarHeight + 50),
-                            ],
-                            // prevent blocking
-                          ),
-                        ),
+                        // Container(
+                        //   width: screenWidth,
+                        //   padding: EdgeInsets.symmetric(
+                        //       horizontal: horizontalPadding, vertical: 14),
+                        //   color: Colors.white,
+                        //   child: Column(
+                        //     children: [
+                        //       Row(
+                        //         mainAxisAlignment:
+                        //             MainAxisAlignment.spaceBetween,
+                        //         children: [
+                        //           _buildSectionTitle('Your Properties'),
+                        //           _seeAllButton(
+                        //             onPressed: () {
+                        //               Navigator.push(
+                        //                 context,
+                        //                 MaterialPageRoute(
+                        //                   builder: (context) =>
+                        //                       AllPropertyNewScreen(),
+                        //                 ),
+                        //               );
+                        //             },
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       PropertyListV3(
+                        //         model: model,
+                        //         controller: propertyScrollController,
+                        //       ),
+                        //       const SizedBox(
+                        //           height: kBottomNavigationBarHeight + 50),
+                        //     ],
+                        //     // prevent blocking
+                        //   ),
+                        // ),
 
                         //SizedBox(height: 2.height),
 

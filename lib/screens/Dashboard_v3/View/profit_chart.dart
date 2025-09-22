@@ -33,7 +33,7 @@ class ProfitChart extends StatelessWidget {
         sideTitles: SideTitles(
           showTitles: true,
           interval: leftInterval,
-          reservedSize: 48,
+          reservedSize: 64,
           getTitlesWidget: (value, meta) {
             final label = _formatCompact(value);
             return Text(
@@ -58,6 +58,12 @@ class ProfitChart extends StatelessWidget {
         gridData: gridData,
         titlesData: titles,
         borderData: borderData,
+        clipData: const FlClipData(
+          top: false,
+          bottom: false,
+          left: false,
+          right: false,
+        ),
         lineBarsData: [
           LineChartBarData(
             isCurved: true,
@@ -69,8 +75,9 @@ class ProfitChart extends StatelessWidget {
             spots: spots,
           ),
         ],
-        minX: 0,
-        maxX: maxX,
+        // Nudge domain to keep last labels visible inside chart area
+        minX: -0.2,
+        maxX: maxX + 0.4,
         maxY: maxY,
         minY: 0,
       ),
@@ -230,21 +237,49 @@ class ProfitChart extends StatelessWidget {
       fontSize: 10,
     );
 
+    // Only show labels at (near) integer positions to avoid duplicates
+    final nearest = value.round();
+    if ((value - nearest).abs() > 0.01) {
+      return const SizedBox.shrink();
+    }
+
     switch (period) {
       case 'Quarterly':
         const labels = ['Q1', 'Q2', 'Q3', 'Q4'];
-        final i = value.toInt();
+        final i = nearest;
         if (i >= 0 && i < labels.length) {
+          final child = Text(labels[i], style: style);
+          final isLast = i == labels.length - 1;
           return SideTitleWidget(
-              axisSide: meta.axisSide, child: Text(labels[i], style: style));
+            axisSide: meta.axisSide,
+            child: isLast
+                ? Transform.translate(
+                    offset: const Offset(-10, 0),
+                    child: child,
+                  )
+                : child,
+          );
         }
         break;
 
       case 'Yearly':
         final currentYear = DateTime.now().year;
-        final displayYear = currentYear - 3 + value.toInt();
-        return SideTitleWidget(
-            axisSide: meta.axisSide, child: Text('$displayYear', style: style));
+        final i = nearest;
+        if (i < 0 || i > 3) return const SizedBox.shrink();
+        final displayYear = currentYear - 3 + i;
+        {
+          final isLast = i == 3; // last of 4 slots
+          final child = Text('$displayYear', style: style);
+          return SideTitleWidget(
+            axisSide: meta.axisSide,
+            child: isLast
+                ? Transform.translate(
+                    offset: const Offset(-12, 0),
+                    child: child,
+                  )
+                : child,
+          );
+        }
 
       case 'Monthly':
       default:
@@ -262,10 +297,19 @@ class ProfitChart extends StatelessWidget {
           'NOV',
           'DEC'
         ];
-        final i = value.toInt();
+        final i = nearest;
         if (i >= 0 && i < months.length) {
+          final child = Text(months[i], style: style);
+          final isLast = i == months.length - 1; // DEC
           return SideTitleWidget(
-              axisSide: meta.axisSide, child: Text(months[i], style: style));
+            axisSide: meta.axisSide,
+            child: isLast
+                ? Transform.translate(
+                    offset: const Offset(-10, 0),
+                    child: child,
+                  )
+                : child,
+          );
         }
     }
 
