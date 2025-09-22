@@ -48,7 +48,13 @@ class ProfitChart extends StatelessWidget {
         ),
       ),
       rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 12,
+          getTitlesWidget: (value, meta) => const SizedBox.shrink(),
+        ),
+      ),
     );
 
     final chart = LineChart(
@@ -84,12 +90,124 @@ class ProfitChart extends StatelessWidget {
     );
 
     if (period == 'Monthly') {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Padding(
-          padding: const EdgeInsets.only(right: 24),
-          child: SizedBox(width: 900, child: chart),
+      // Build a fixed left-axis chart (no data, only Y titles) and a scrollable plot-only chart
+      final leftAxisOnly = LineChart(
+        LineChartData(
+          gridData: const FlGridData(show: false),
+          borderData: FlBorderData(
+            show: true,
+            border: Border(
+              left: const BorderSide(color: Colors.black12, width: 1),
+              bottom:
+                  BorderSide(color: Colors.black.withOpacity(0.5), width: 2),
+              right: BorderSide.none,
+              top: BorderSide.none,
+            ),
+          ),
+          clipData:
+              const FlClipData(top: false, bottom: false, left: false, right: false),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: leftInterval,
+                reservedSize: 64,
+                getTitlesWidget: (value, meta) {
+                  final label = _formatCompact(value);
+                  return Text(
+                    label,
+                    style: const TextStyle(
+                      fontFamily: 'outfit',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: Colors.black,
+                    ),
+                  );
+                },
+              ),
+            ),
+            bottomTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 12,
+                getTitlesWidget: (v, m) => const SizedBox.shrink(),
+              ),
+            ),
+          ),
+          minX: 0,
+          maxX: 0,
+          minY: 0,
+          maxY: maxY,
+          lineBarsData: const [],
         ),
+      );
+
+      final scrollableChart = LineChart(
+        LineChartData(
+          lineTouchData: lineTouchData,
+          gridData: gridData,
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(sideTitles: bottomTitles),
+            leftTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 12,
+                getTitlesWidget: (v, m) => const SizedBox.shrink(),
+              ),
+            ),
+          ),
+          borderData: FlBorderData(
+            show: true,
+            border: Border(
+              bottom:
+                  BorderSide(color: Colors.black.withOpacity(0.5), width: 2),
+              left: BorderSide.none,
+              right: BorderSide.none,
+              top: BorderSide.none,
+            ),
+          ),
+          clipData:
+              const FlClipData(top: false, bottom: false, left: false, right: false),
+          lineBarsData: [
+            LineChartBarData(
+              isCurved: true,
+              color: const Color(0XFF2900B7),
+              barWidth: 5,
+              isStrokeCapRound: true,
+              dotData: const FlDotData(show: true),
+              belowBarData: BarAreaData(show: false),
+              spots: spots,
+            ),
+          ],
+          minX: -0.2,
+          maxX: maxX + 0.4,
+          maxY: maxY,
+          minY: 0,
+        ),
+        duration: const Duration(milliseconds: 250),
+      );
+
+      return Row(
+        children: [
+          SizedBox(width: 64, child: leftAxisOnly),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 24),
+                child: SizedBox(width: 900, child: scrollableChart),
+              ),
+            ),
+          ),
+        ],
       );
     }
 
