@@ -574,7 +574,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             Column(
               children: [
                 Text(
-                  'Quantity',
+                  'Number of Rooms',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
