@@ -164,8 +164,6 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                         .toList(),
                   ),
                 ),
-
-              const Spacer(),
               // Container(
               //   margin: const EdgeInsets.all(16),
               //   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),

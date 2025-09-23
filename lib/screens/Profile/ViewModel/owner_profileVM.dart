@@ -43,6 +43,7 @@ class OwnerProfileVM extends ChangeNotifier {
   bool _isLoadingRoomTypes = false;
 
   //getters
+  bool get isLoading => _isLoadingStates || _isLoadingLocations || _isLoadingBookingHistory || _isLoadingAvailablePoints;
   List<BookingHistory> get bookingHistory => _bookingHistory;
   List<UnitAvailablePoint> get unitAvailablePoints => _unitAvailablePoints;
   bool get showMyInfo => _showMyInfo;
@@ -157,6 +158,8 @@ class OwnerProfileVM extends ChangeNotifier {
     } catch (e) {
       debugPrint('❌ Error fetching available points: $e');
     } finally {
+      _isLoadingAvailablePoints = false;
+      notifyListeners();
       // ❌ BUG: wrong flag here
       _isLoadingBookingHistory = false;
 
@@ -168,17 +171,24 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   Future<void> fetchLocationsByState(String state) async {
+    if (state.isEmpty) return;
+
     _isLoadingLocations = true;
     _error = null;
     notifyListeners();
 
     try {
-      final fetchedLocations =
-          await _ownerBookingRepository.getAllLocationsByState(state);
-
-      // Simple filtering - just check if location has basic data
-      _locationsInState =
-          fetchedLocations.where((loc) => loc.locationName.isNotEmpty).toList();
+      // First check if we already have the locations cached
+      final cached = _globalDataManager.getLocationsForState(state);
+      if (cached.isNotEmpty) {
+        _locationsInState = List<Propertystate>.from(cached);
+      } else {
+        final fetchedLocations =
+            await _ownerBookingRepository.getAllLocationsByState(state);
+        _locationsInState = fetchedLocations
+            .where((loc) => loc.locationName.isNotEmpty)
+            .toList();
+      }
     } catch (e) {
       _error = e.toString();
       debugPrint("❌ Error fetching locations by state: $e");
@@ -190,19 +200,40 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   Future<void> loadStates() async {
+    if (_isLoadingStates) return;
     _isLoadingStates = true;
     _error = null;
     notifyListeners();
 
     try {
+      // Get all states first
       _states = await _ownerBookingRepository.getAvailableStates();
-      _selectedState = ''; // let UI decide
+
+      // Batch load locations for all states
+      if (_states.isNotEmpty) {
+        await Future.wait(
+          _states.map((state) => _preloadLocationsForState(state)),
+        );
+      }
+
+      _selectedState = _states.isNotEmpty ? _states.first : '';
     } catch (e) {
       _error = e.toString();
       _states = [];
     } finally {
       _isLoadingStates = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> _preloadLocationsForState(String state) async {
+    try {
+      final locations =
+          await _ownerBookingRepository.getAllLocationsByState(state);
+      _locationsInState =
+          locations.where((loc) => loc.locationName.isNotEmpty).toList();
+    } catch (e) {
+      debugPrint("❌ Error preloading locations for state $state: $e");
     }
   }
 

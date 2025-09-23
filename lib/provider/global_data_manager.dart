@@ -36,6 +36,14 @@ class GlobalDataManager extends ChangeNotifier {
   Map<String, List<Propertystate>> _locationsByState = {};
   List<OccupancyRate> _occupancyRateHistory = [];
 
+  // Add new state properties
+  bool _isLoadingStates = false;
+  bool _isLoadingLocations = false;
+  String? _selectedState;
+
+  // Add cache for filtered locations
+  Map<String, List<Propertystate>> _filteredLocationCache = {};
+
   // Getters
   bool get isInitialized => _isInitialized;
   bool get isLoading => _isLoading;
@@ -55,6 +63,10 @@ class GlobalDataManager extends ChangeNotifier {
   List<OccupancyRate> get occupancyRateHistory =>
       List.unmodifiable(_occupancyRateHistory);
 
+  bool get isLoadingStates => _isLoadingStates;
+  bool get isLoadingLocations => _isLoadingLocations;
+  String? get selectedState => _selectedState;
+
   String get userNameAccount =>
       _users.isNotEmpty ? _users.first.ownerFullName ?? '-' : '-';
 
@@ -71,6 +83,12 @@ class GlobalDataManager extends ChangeNotifier {
 
   List<Propertystate> getLocationsForState(String state) {
     return _locationsByState[state] ?? [];
+  }
+
+  // Add this method to set selected state
+  Future<void> updateSelectedState(String state) async {
+    _selectedState = state;
+    notifyListeners();
   }
 
   // Initialize all data
@@ -91,15 +109,36 @@ class GlobalDataManager extends ChangeNotifier {
     try {
       // Fetch all core data
       await _fetchAllData();
+      await fetchRedemptionStatesAndLocations();
+
+      // Preload locations for all states
+      if (_availableStates.isNotEmpty) {
+        await Future.wait(
+          _availableStates.map((state) => preloadLocationsForState(state)),
+        );
+      }
 
       _isInitialized = true;
       _lastFetchTime = DateTime.now();
     } catch (e) {
       print('Error initializing global data: $e');
-      // Don't set initialized to true if there's an error
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+
+    await fetchRedemptionStatesAndLocations();
+
+    // Preload locations for all states
+    if (_availableStates.isNotEmpty) {
+      await Future.wait(
+        _availableStates.map((state) => preloadLocationsForState(state)),
+      );
+
+      // Auto-select the first state if none is selected
+      if (_selectedState == null) {
+        _selectedState = _availableStates.first;
+      }
     }
   }
 
@@ -313,29 +352,46 @@ class GlobalDataManager extends ChangeNotifier {
     }).toList();
   }
 
+  // Modify the existing fetchRedemptionStatesAndLocations method
   Future<void> fetchRedemptionStatesAndLocations() async {
+    if (_availableStates.isNotEmpty && !_isLoadingStates) return;
+
+    _isLoadingStates = true;
+    notifyListeners();
+
     try {
-      // Fetch all available states
       _availableStates = await _redemptionRepository.getAvailableStates();
-
-      // For each state, fetch its locations
-      Map<String, List<Propertystate>> stateLocationMap = {};
-      for (final state in _availableStates) {
-        try {
-          final locations =
-              await _redemptionRepository.getAllLocationsByState(state);
-          stateLocationMap[state] = locations.cast<Propertystate>();
-        } catch (e) {
-          debugPrint("⚠️ Failed to fetch locations for state $state: $e");
-        }
-      }
-
-      _locationsByState = stateLocationMap;
-      notifyListeners();
     } catch (e) {
-      debugPrint("❌ Error fetching redemption states and locations: $e");
+      debugPrint("❌ Error fetching redemption states: $e");
       _availableStates = [];
-      _locationsByState = {};
+    } finally {
+      _isLoadingStates = false;
+      notifyListeners();
+    }
+  }
+
+  // Make this method return Future<void>
+  Future<void> setSelectedState(String state) async {
+    _selectedState = state;
+    notifyListeners();
+  }
+
+  // Add new method for fetching locations by state
+  Future<void> fetchLocationsByState(String state) async {
+    if (_locationsByState.containsKey(state) && !_isLoadingLocations) return;
+
+    _isLoadingLocations = true;
+    notifyListeners();
+
+    try {
+      final locations =
+          await _redemptionRepository.getAllLocationsByState(state);
+      _locationsByState[state] = locations.cast<Propertystate>();
+    } catch (e) {
+      debugPrint("❌ Error fetching locations for state $state: $e");
+      _locationsByState[state] = [];
+    } finally {
+      _isLoadingLocations = false;
       notifyListeners();
     }
   }
@@ -362,6 +418,10 @@ class GlobalDataManager extends ChangeNotifier {
     _propertyContractType.clear();
     _propertyOccupancy.clear();
     _occupancyRateHistory.clear();
+
+    _availableStates.clear();
+    _locationsByState.clear();
+    _filteredLocationCache.clear();
 
     _isInitialized = false;
     _isLoading = false;
@@ -524,5 +584,28 @@ class GlobalDataManager extends ChangeNotifier {
     });
 
     return count == 0 ? 0.0 : total / count;
+  }
+
+  Future<void> preloadLocationsForState(String state) async {
+    if (_filteredLocationCache.containsKey(state)) return;
+
+    try {
+      final locations =
+          await _redemptionRepository.getAllLocationsByState(state);
+      // Cache the filtered locations
+      _filteredLocationCache[state] = locations
+          .where((loc) => loc.locationName.isNotEmpty)
+          .cast<Propertystate>()
+          .toList();
+
+      // Also update the main locations state
+      _locationsByState[state] = locations.cast<Propertystate>();
+    } catch (e) {
+      debugPrint("❌ Error preloading locations for state $state: $e");
+    }
+  }
+
+  List<Propertystate> getCachedLocationsForState(String state) {
+    return _filteredLocationCache[state] ?? [];
   }
 }

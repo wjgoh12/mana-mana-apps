@@ -14,12 +14,12 @@ import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
-class SelectDateRoom extends StatefulWidget {
+class SelectDateRoomBook extends StatefulWidget {
   final String ownedLocation;
   final String ownedUnitNo;
   final String location;
   final String state;
-  const SelectDateRoom({
+  const SelectDateRoomBook({
     Key? key,
     required this.ownedLocation,
     required this.ownedUnitNo,
@@ -56,7 +56,7 @@ class SelectDateRoom extends StatefulWidget {
   _SelectDateRoomState createState() => _SelectDateRoomState();
 }
 
-class _SelectDateRoomState extends State<SelectDateRoom> {
+class _SelectDateRoomState extends State<SelectDateRoomBook> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime? _focusedDay;
   DateTime? _selectedDay;

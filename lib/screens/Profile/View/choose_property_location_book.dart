@@ -1,0 +1,300 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
+import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
+import 'package:mana_mana_app/widgets/responsive_size.dart';
+import 'package:provider/provider.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
+
+import 'package:mana_mana_app/widgets/size_utils.dart';
+
+class ChoosePropertyLocationBook extends StatefulWidget {
+  final String selectedLocation;
+  final String selectedUnitNo;
+  const ChoosePropertyLocationBook({
+    Key? key,
+    required this.selectedLocation,
+    required this.selectedUnitNo,
+  }) : super(key: key);
+
+  @override
+  State<ChoosePropertyLocationBook> createState() =>
+      _ChoosePropertyLocationBookState();
+}
+
+class _ChoosePropertyLocationBookState
+    extends State<ChoosePropertyLocationBook> {
+  String? selectedState;
+  List<dynamic> locations = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final globalData = context.read<GlobalDataManager>();
+
+      setState(() {
+        selectedState = globalData.selectedState;
+        if (selectedState != null) {
+          locations = globalData.getLocationsForState(selectedState!) ?? [];
+        }
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(
+          'Choose Property Location',
+          style: TextStyle(fontSize: 20.fSize, fontWeight: FontWeight.bold),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+            ),
+          ),
+        ),
+      ),
+      body: Consumer<GlobalDataManager>(
+        builder: (context, global, child) {
+          final states = global.availableStates;
+
+          if (states.isEmpty) {
+            return const Center(child: Text("No states found"));
+          }
+
+          // Ensure selected state
+          if (selectedState == null) {
+            selectedState = states.first;
+            locations = global.getLocationsForState(selectedState!) ?? [];
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 🔽 Dropdown for states
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: ResponsiveSize.scaleWidth(200),
+                    padding: const EdgeInsets.only(left: 16, top: 16),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: const Text("Select State"),
+                        items: states
+                            .map(
+                              (state) => DropdownMenuItem<String>(
+                                value: state,
+                                child: Text(
+                                  state,
+                                  style: TextStyle(
+                                    fontSize: 20.fSize,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        value: selectedState,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() {
+                              selectedState = value;
+                              locations =
+                                  global.getLocationsForState(value) ?? [];
+                            });
+                          }
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade400),
+                            color: Colors.white,
+                          ),
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey.shade300),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              // 🔽 Locations grid
+              if (locations.isEmpty)
+                const Center(child: Text("No locations found"))
+              else
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    padding: const EdgeInsets.all(16),
+                    childAspectRatio: 0.7,
+                    children: locations
+                        .map(
+                          (loc) => _buildLocationCard(
+                            context,
+                            loc.locationName,
+                            loc.pic,
+                            loc.stateName,
+                            widget.selectedLocation,
+                            widget.selectedUnitNo,
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+Widget _buildLocationCard(
+  BuildContext context,
+  String? location,
+  String? picBase64,
+  String? propertyState,
+  String selectedLocation, // from PropertyRedemption
+  String selectedUnitNo, // from PropertyRedemption
+) {
+  Uint8List? _decodeBase64(String? base64String) {
+    try {
+      if (base64String == null || base64String.isEmpty) return null;
+
+      // Case 1: If API already provides "data:image/png;base64,..."
+      if (base64String.startsWith("data:image")) {
+        return Uri.parse(base64String).data?.contentAsBytes();
+      }
+
+      // Case 2: Raw base64 string
+      return base64Decode(base64String);
+    } catch (e) {
+      debugPrint("❌ Failed to decode Base64: $e");
+      return null;
+    }
+  }
+
+  final decodedImage = _decodeBase64(picBase64);
+
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    child: Column(
+      children: <Widget>[
+        Expanded(
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.fSize),
+            ),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider.value(
+                      value: context.read<OwnerProfileVM>(),
+                      child: SelectDateRoom(
+                        location: location ?? "Unknown Location",
+                        state: propertyState ?? "Unknown State",
+                        ownedLocation: selectedLocation,
+                        ownedUnitNo: selectedUnitNo,
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.fSize),
+                  image: decodedImage != null
+                      ? DecorationImage(
+                          image: MemoryImage(decodedImage),
+                          fit: BoxFit.cover,
+                        )
+                      : const DecorationImage(
+                          image: AssetImage("assets/images/placeholder.png"),
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          location ?? "Unknown Location",
+          style: TextStyle(
+            fontSize: 20.fSize,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF3E51FF),
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    ),
+  );
+}
+     // const Spacer(),
+              // Container(
+              //   margin: const EdgeInsets.all(16),
+              //   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              //   decoration: BoxDecoration(
+              //     color: const Color.fromARGB(255, 236, 247, 255),
+              //     borderRadius: BorderRadius.circular(12),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.black.withOpacity(0.1),
+              //         blurRadius: 8,
+              //         offset: const Offset(0, 1),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Text(
+              //         'Available Point Balance:  ',
+              //         style: TextStyle(
+              //           fontSize: ResponsiveSize.text(13),
+              //           fontWeight: FontWeight.bold,
+              //         ),
+              //       ),
+              //       Text(
+              //         '${SelectDateRoom.getFormatUserPointsBalance(vm)}',
+              //         style: TextStyle(
+              //           color: const Color(0xFF3E51FF),
+              //           fontSize: ResponsiveSize.text(15),
+              //           fontWeight: FontWeight.bold,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),

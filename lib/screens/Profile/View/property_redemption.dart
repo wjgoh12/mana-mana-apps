@@ -24,11 +24,12 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
   @override
   void initState() {
     super.initState();
-    // Fetch booking history once
-    Future.microtask(() {
+    // Fetch data in order
+    Future.microtask(() async {
       final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
-      ownerVM.fetchBookingHistory();
-      ownerVM.fetchUserAvailablePoints();
+      await ownerVM.fetchData(); // Ensure user data is loaded first
+      await ownerVM.fetchUserAvailablePoints(); // Then fetch points
+      await ownerVM.fetchBookingHistory(); // Then fetch booking history
     });
   }
 
@@ -37,13 +38,13 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     final globalData = GlobalDataManager();
     globalData.initializeData(); // ensures all data is preloaded
     final ownerVM = Provider.of<OwnerProfileVM>(context);
-    final sortedUnits =
-        [
-          ...ownerVM.unitAvailablePoints,
-        ].where((unit) => unit.redemptionBalancePoints > 0).toList()..sort(
-          (a, b) =>
-              b.redemptionBalancePoints.compareTo(a.redemptionBalancePoints),
-        );
+    final sortedUnits = [
+      ...ownerVM.unitAvailablePoints,
+    ].where((unit) => unit.redemptionBalancePoints > 0).toList()
+      ..sort(
+        (a, b) =>
+            b.redemptionBalancePoints.compareTo(a.redemptionBalancePoints),
+      );
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -100,9 +101,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               ),
               child: SizedBox(
                 height: ResponsiveSize.scaleHeight(350),
-                child: ownerVM.isLoadingAvailablePoints
-                    ? const Center(child: CircularProgressIndicator())
-                    : ownerVM.unitAvailablePoints.isEmpty
+                child: ownerVM.unitAvailablePoints.isEmpty
                     ? const Center(
                         child: Text(
                           "No available points found.",
@@ -254,11 +253,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                   children: [
                     Divider(height: 1, color: Colors.grey.shade300),
                     Expanded(
-                      child: ownerVM.isLoadingBookingHistory
-                          ? const Center(child: CircularProgressIndicator())
-                          : ownerVM.bookingHistory.isEmpty
+                      child: ownerVM.bookingHistory.isEmpty
                           ? const Center(
-                              child: Text("No booking history found."),
+                              child: Text("No booking history found.",
+                                  style: TextStyle(fontFamily: 'outfit')),
                             )
                           : SingleChildScrollView(
                               child: Column(
@@ -283,8 +281,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                       fontFamily: 'outfit',
                                                       fontSize:
                                                           ResponsiveSize.text(
-                                                            18,
-                                                          ),
+                                                        18,
+                                                      ),
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: const Color(
@@ -433,8 +431,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                             Container(
                                               height:
                                                   ResponsiveSize.scaleHeight(
-                                                    60,
-                                                  ),
+                                                60,
+                                              ),
                                               width: ResponsiveSize.scaleWidth(
                                                 60,
                                               ),
@@ -472,51 +470,59 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                         maxLines: 5,
                                                         style: TextStyle(
                                                           fontSize:
-                                                              ResponsiveSize.text(
-                                                                11,
-                                                              ),
+                                                              ResponsiveSize
+                                                                  .text(
+                                                            11,
+                                                          ),
                                                           fontFamily: 'outfit',
                                                           fontWeight:
                                                               FontWeight.bold,
                                                         ),
                                                       ),
                                                       Container(
-                                                        decoration: BoxDecoration(
+                                                        decoration:
+                                                            BoxDecoration(
                                                           borderRadius:
-                                                              BorderRadius.circular(
-                                                                10,
-                                                              ),
-                                                          color:
-                                                              booking.status ==
+                                                              BorderRadius
+                                                                  .circular(
+                                                            10,
+                                                          ),
+                                                          color: booking
+                                                                      .status ==
                                                                   'Confirmed'
                                                               ? Colors.green
                                                               : booking.status ==
-                                                                    'Pending'
-                                                              ? Colors.orange
-                                                              : Colors.red,
+                                                                      'Pending'
+                                                                  ? Colors
+                                                                      .orange
+                                                                  : Colors.red,
                                                           border: Border.all(
-                                                            color:
-                                                                booking.status ==
+                                                            color: booking
+                                                                        .status ==
                                                                     'Confirmed'
                                                                 ? Colors.green
                                                                 : booking.status ==
-                                                                      'Pending'
-                                                                ? Colors.orange
-                                                                : Colors.red,
+                                                                        'Pending'
+                                                                    ? Colors
+                                                                        .orange
+                                                                    : Colors
+                                                                        .red,
                                                           ),
                                                         ),
                                                         child: Padding(
                                                           padding:
-                                                              const EdgeInsets.all(
-                                                                2,
-                                                              ),
+                                                              const EdgeInsets
+                                                                  .all(
+                                                            2,
+                                                          ),
                                                           child: Text(
                                                             booking.status,
                                                             style: TextStyle(
                                                               fontSize:
-                                                                  ResponsiveSize.text(
-                                                                    10,
-                                                                  ),
+                                                                  ResponsiveSize
+                                                                      .text(
+                                                                10,
+                                                              ),
                                                               fontFamily:
                                                                   'outfit',
                                                               color:
@@ -539,9 +545,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                         style: TextStyle(
                                                           fontFamily: 'outfit',
                                                           fontSize:
-                                                              ResponsiveSize.text(
-                                                                11,
-                                                              ),
+                                                              ResponsiveSize
+                                                                  .text(
+                                                            11,
+                                                          ),
                                                         ),
                                                       ),
                                                       Text(
@@ -552,9 +559,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                         ),
                                                         style: TextStyle(
                                                           fontSize:
-                                                              ResponsiveSize.text(
-                                                                12,
-                                                              ),
+                                                              ResponsiveSize
+                                                                  .text(
+                                                            12,
+                                                          ),
                                                           fontFamily: 'outfit',
                                                         ),
                                                       ),
@@ -563,9 +571,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                         style: TextStyle(
                                                           fontFamily: 'outfit',
                                                           fontSize:
-                                                              ResponsiveSize.text(
-                                                                11,
-                                                              ),
+                                                              ResponsiveSize
+                                                                  .text(
+                                                            11,
+                                                          ),
                                                         ),
                                                       ),
                                                       Text(
@@ -576,9 +585,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                         ),
                                                         style: TextStyle(
                                                           fontSize:
-                                                              ResponsiveSize.text(
-                                                                12,
-                                                              ),
+                                                              ResponsiveSize
+                                                                  .text(
+                                                            12,
+                                                          ),
                                                           fontFamily: 'outfit',
                                                         ),
                                                       ),
@@ -587,8 +597,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
-                                                          right: 8.0,
-                                                        ),
+                                                      right: 8.0,
+                                                    ),
                                                     child: Row(
                                                       children: [
                                                         const Spacer(), // Pushes the next widget to the end
@@ -601,9 +611,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                           '${booking.pointUsed.toString()}',
                                                           style: TextStyle(
                                                             fontSize:
-                                                                ResponsiveSize.text(
-                                                                  13,
-                                                                ),
+                                                                ResponsiveSize
+                                                                    .text(
+                                                              13,
+                                                            ),
                                                             fontFamily:
                                                                 'outfit',
                                                           ),

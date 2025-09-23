@@ -134,47 +134,76 @@ class RedemptionRepository {
       "Labuan",
     ];
 
-    List<String> availableStates = [];
+    try {
+      // Create a list of futures for parallel execution
+      final futures = allStates.map((state) => _checkStateAvailability(state));
 
-    for (final state in allStates) {
-      try {
-        final res = await _apiService.get(
-          '${ApiEndpoint.getAllState}?state=${Uri.encodeQueryComponent(state)}',
-        );
+      // Execute all requests in parallel
+      final results = await Future.wait(futures);
 
-        if (res != null) {
-          // If API returns locations list and it's not empty, keep this state
-          final data = (res is Map && res['data'] is List) ? res['data'] : res;
-          if (data is List && data.isNotEmpty) {
-            availableStates.add(state);
-          }
+      // Filter out states that have locations
+      final availableStates = <String>[];
+      for (var i = 0; i < allStates.length; i++) {
+        if (results[i]) {
+          availableStates.add(allStates[i]);
         }
-      } catch (e) {
-        debugPrint("⚠️ Error checking state $state: $e");
       }
-    }
 
-    // debugPrint("✅ Available states: $availableStates");
-    return availableStates;
+      return availableStates;
+    } catch (e) {
+      debugPrint("❌ Error fetching available states: $e");
+      return [];
+    }
+  }
+
+  Future<bool> _checkStateAvailability(String state) async {
+    try {
+      final res = await _apiService.get(
+        '${ApiEndpoint.getAllState}?state=${Uri.encodeQueryComponent(state)}',
+      );
+
+      if (res == null) return false;
+
+      final data = (res is Map && res['data'] is List)
+          ? res['data'] as List
+          : (res is List ? res : null);
+
+      return data != null && data.isNotEmpty;
+    } catch (e) {
+      debugPrint("⚠️ Error checking state $state: $e");
+      return false;
+    }
   }
 
   Future<List<Propertystate>> getAllLocationsByState(String state) async {
     try {
+      // Get all locations in a single call
       final res = await _apiService.get(
-        '${ApiEndpoint.getAllState}?state=$state',
+        '${ApiEndpoint.getAllState}?state=${Uri.encodeQueryComponent(state)}',
       );
-
-      // debugPrint("🔍 Raw API Response for locations: $res");
 
       if (res == null) return [];
 
-      if (res is List) {
-        return res.map((item) => Propertystate.fromJson(item)).toList();
+      // Handle both List and Map response formats
+      final List<dynamic> data;
+      if (res is Map && res['data'] is List) {
+        data = res['data'] as List;
+      } else if (res is List) {
+        data = res;
+      } else {
+        throw Exception("Unexpected response format");
       }
 
-      throw Exception("Unexpected response: $res");
+      // Filter locations for the specific state and convert to Propertystate objects
+      return data
+          .where((item) =>
+              item is Map &&
+              item['stateName']?.toString().toLowerCase() ==
+                  state.toLowerCase())
+          .map((item) => Propertystate.fromJson(item))
+          .toList();
     } catch (e) {
-      debugPrint("❌ Error in getAllLocationsByState: $e");
+      debugPrint("❌ Error in getAllLocationsByState for $state: $e");
       rethrow;
     }
   }
