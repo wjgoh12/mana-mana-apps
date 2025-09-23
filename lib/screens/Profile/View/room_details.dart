@@ -11,6 +11,9 @@ import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// This shows the modifications needed for RoomDetails class to handle booking mode
+// Add this parameter to the RoomDetails constructor and modify the class accordingly
+
 class RoomDetails extends StatefulWidget {
   final RoomType room;
   final DateTime? checkIn;
@@ -20,17 +23,19 @@ class RoomDetails extends StatefulWidget {
   final String ownerLocation;
   final String ownerUnitNo;
   final String bookingLocationName;
+  final bool isBookingMode; // NEW: Add this parameter
 
   const RoomDetails({
     Key? key,
     required this.room,
-    this.checkIn,
-    this.checkOut,
-    this.quantity = 1,
+    required this.checkIn,
+    required this.checkOut,
+    required this.quantity,
     required this.userPointsBalance,
     required this.ownerLocation,
     required this.ownerUnitNo,
     required this.bookingLocationName,
+    this.isBookingMode = false,
   }) : super(key: key);
 
   @override
@@ -338,6 +343,7 @@ Total Points: ${totalPoints()}
                                       showDialog(
                                         context: context,
                                         builder: (_) => AlertDialog(
+                                          backgroundColor: Colors.white,
                                           contentPadding: const EdgeInsets.all(
                                               16), // reduce padding if needed
                                           content: Column(
@@ -350,8 +356,8 @@ Total Points: ${totalPoints()}
                                                 'Request Received!',
                                                 style: TextStyle(
                                                     fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Outfit'),
                                               ),
                                               SizedBox(
                                                   height: ResponsiveSize
@@ -360,12 +366,18 @@ Total Points: ${totalPoints()}
                                               const Text(
                                                 'You will be notified once your booking is confirmed​',
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 13),
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontFamily: 'Outfit'),
                                               ),
                                             ],
                                           ),
                                           actions: [
                                             TextButton(
+                                              style: TextButton.styleFrom(
+                                                backgroundColor:
+                                                    Color(0xFF3E51FF),
+                                              ),
                                               onPressed: () {
                                                 Navigator.pop(
                                                     context); // Close dialog
@@ -376,8 +388,12 @@ Total Points: ${totalPoints()}
                                                 Navigator.pop(context);
                                               },
                                               child: const Center(
-                                                  child: Text('OK')),
-                                            )
+                                                child: Text('OK',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontFamily: 'Outfit')),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       );
@@ -386,7 +402,10 @@ Total Points: ${totalPoints()}
                                           .showSnackBar(
                                         const SnackBar(
                                           content: Text(
-                                              'Failed to submit booking. Please try again.'),
+                                            'Failed to submit booking. Please try again.',
+                                            style:
+                                                TextStyle(fontFamily: 'Outfit'),
+                                          ),
                                           backgroundColor: Colors.red,
                                         ),
                                       );
