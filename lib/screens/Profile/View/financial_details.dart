@@ -128,13 +128,16 @@ class _FinancialDetailsState extends State<FinancialDetails> {
 }
 
 Widget _buildData({required String value}) {
-  return Text(
-    value ?? 'Not available',
-    maxLines: 2,
-    style: TextStyle(
-        fontFamily: 'outfit',
-        fontSize: ResponsiveSize.text(15),
-        fontWeight: FontWeight.bold),
-    overflow: TextOverflow.ellipsis,
+  return Container(
+    width: 180,
+    child: Text(
+      value ?? 'Not available',
+      maxLines: 2,
+      style: TextStyle(
+          fontFamily: 'outfit',
+          fontSize: ResponsiveSize.text(15),
+          fontWeight: FontWeight.bold),
+      overflow: TextOverflow.ellipsis,
+    ),
   );
 }

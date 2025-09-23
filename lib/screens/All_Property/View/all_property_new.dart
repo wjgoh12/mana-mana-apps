@@ -114,20 +114,27 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Global data manager at the top level
+        // Existing providers
         ChangeNotifierProvider.value(value: GlobalDataManager()),
-        // Dashboard ViewModel that will use cached data
         ChangeNotifierProvider(
           create: (_) {
             final model = NewDashboardVM_v3();
-            // Initialize data once - will use cached data if already loaded
             model.fetchData();
             return model;
           },
         ),
-        // Property Detail ViewModel that will use cached data
         ChangeNotifierProvider(
           create: (_) => PropertyDetailVM(),
+        ),
+        // Add OwnerProfileVM provider
+        ChangeNotifierProvider(
+          create: (_) {
+            final ownerVM = OwnerProfileVM();
+            // Initialize required data
+            ownerVM.fetchBookingHistory();
+            ownerVM.fetchUserAvailablePoints();
+            return ownerVM;
+          },
         ),
       ],
       child: Consumer2<NewDashboardVM_v3, PropertyDetailVM>(
@@ -239,48 +246,40 @@ Widget _unitDropDown() {
 }
 
 Widget _quickLinks(BuildContext context) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: EdgeInsets.only(
-          left: ResponsiveSize.scaleWidth(10),
-          bottom: ResponsiveSize.scaleHeight(8),
-        ),
-        child: Text(
-          'Quick Links',
-          style: TextStyle(
-            fontSize: ResponsiveSize.text(18),
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Outfit',
+  return Consumer<OwnerProfileVM>(
+    builder: (context, ownerVM, child) {
+      bool showFreeStayRedemption = ownerVM.bookingHistory.isNotEmpty &&
+          ownerVM.unitAvailablePoints.isNotEmpty;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              left: ResponsiveSize.scaleWidth(10),
+              bottom: ResponsiveSize.scaleHeight(8),
+            ),
+            child: Text(
+              'Quick Links',
+              style: TextStyle(
+                fontSize: ResponsiveSize.text(18),
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Outfit',
+              ),
+            ),
           ),
-        ),
-      ),
-      SizedBox(height: ResponsiveSize.scaleHeight(10)),
-      Padding(
-        padding:
-            EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(20)),
-        child: Row(
-          children: [
-            //1
-            Expanded(
-              child: SizedBox(
-                height: ResponsiveSize.scaleWidth(120),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
+          SizedBox(height: ResponsiveSize.scaleHeight(10)),
+          Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(20)),
+            child: Row(
+              children: [
+                // Financial Details
+                Expanded(
+                  child: _buildQuickLinkItem(
+                    context: context,
+                    icon: Icons.wallet,
+                    title: 'Financial Details',
                     onTap: () {
                       Navigator.of(context).push(
                         PageRouteBuilder(
@@ -309,68 +308,28 @@ Widget _quickLinks(BuildContext context) {
                         ),
                       );
                     },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                          ).createShader(
-                              Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                          child: Icon(
-                            Icons.wallet,
-                            size: ResponsiveSize.scaleWidth(40),
-                            color: Colors
-                                .white, // important! acts as a mask for the gradient
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Financial Details',
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(12),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
-              ),
-            ),
 
-            //2
-            Expanded(
-              child: SizedBox(
-                height: ResponsiveSize.scaleWidth(120),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
+                // Make a Booking
+                Expanded(
+                  child: _buildQuickLinkItem(
+                    context: context,
+                    icon: Icons.book,
+                    title: 'Make a Booking',
                     onTap: () {
-                      // Create and initialize the VM
-                      final ownerVm = OwnerProfileVM();
+                      // Get the existing OwnerProfileVM from the current context
+                      final ownerVM =
+                          Provider.of<OwnerProfileVM>(context, listen: false);
 
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChangeNotifierProvider(
-                            create: (_) => ownerVm,
+                          builder: (context) => MultiProvider(
+                            providers: [
+                              // Reuse the existing OwnerProfileVM instance
+                              ChangeNotifierProvider.value(value: ownerVM),
+                            ],
                             child: const ChoosePropertyLocation(
                               selectedLocation: '',
                               selectedUnitNo: '',
@@ -379,115 +338,102 @@ Widget _quickLinks(BuildContext context) {
                         ),
                       );
                     },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                          ).createShader(
-                              Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                          child: Icon(
-                            Icons.book,
-                            size: ResponsiveSize.scaleWidth(40),
-                            color: Colors
-                                .white, // important! acts as a mask for the gradient
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Make a Booking',
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(12),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
+
+                // Free Stay Redemption - conditionally shown
+                if (showFreeStayRedemption)
+                  Expanded(
+                    child: _buildQuickLinkItem(
+                      context: context,
+                      icon: Icons.hotel,
+                      title: 'Free Stay Redemption',
+                      onTap: () {
+                        // Get the existing OwnerProfileVM instance
+                        final ownerVM =
+                            Provider.of<OwnerProfileVM>(context, listen: false);
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MultiProvider(
+                              providers: [
+                                // Reuse the existing OwnerProfileVM instance
+                                ChangeNotifierProvider.value(value: ownerVM),
+                                // Add any other providers needed by PropertyRedemption
+                                ChangeNotifierProvider.value(
+                                    value: GlobalDataManager()),
+                              ],
+                              child: const PropertyRedemption(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          )
+        ],
+      );
+    },
+  );
+}
+
+// Helper method to build quick link items
+Widget _buildQuickLinkItem({
+  required BuildContext context,
+  required IconData icon,
+  required String title,
+  required VoidCallback onTap,
+}) {
+  return SizedBox(
+    height: ResponsiveSize.scaleWidth(120),
+    child: Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+              ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+              child: Icon(
+                icon,
+                size: ResponsiveSize.scaleWidth(40),
+                color: Colors.white,
               ),
             ),
-
-            //3
-            Expanded(
-              child: SizedBox(
-                height: ResponsiveSize.scaleWidth(120),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      // Create and initialize the VM
-                      final vm = OwnerProfileVM();
-                      vm.fetchBookingHistory();
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MultiProvider(
-                            providers: [
-                              ChangeNotifierProvider.value(value: vm),
-                            ],
-                            builder: (context, child) {
-                              return const PropertyRedemption();
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                          ).createShader(
-                              Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                          child: Icon(
-                            Icons.hotel,
-                            size: ResponsiveSize.scaleWidth(40),
-                            color: Colors
-                                .white, // important! acts as a mask for the gradient
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Free Stay Redemption',
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(12),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+            SizedBox(height: 8),
+            Text(
+              title,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: ResponsiveSize.text(12),
+                fontFamily: 'Outfit',
               ),
             ),
           ],
         ),
-      )
-    ],
+      ),
+    ),
   );
 }
 
