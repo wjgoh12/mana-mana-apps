@@ -6,7 +6,7 @@ import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
 import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
-import 'package:mana_mana_app/model/propertystate.dart';
+import 'package:mana_mana_app/model/propertyState.dart';
 import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/model/user_model.dart';
@@ -34,7 +34,7 @@ class OwnerProfileVM extends ChangeNotifier {
   List<User> _users = [];
   final UserPointBalance = [];
   List<String> _states = [];
-  List<Propertystate> _locationsInState = [];
+  List<PropertyState> _locationsInState = [];
   String _selectedState = '';
   List<BookingHistory> _bookingHistory = [];
   List<UnitAvailablePoint> _unitAvailablePoints = [];
@@ -43,12 +43,16 @@ class OwnerProfileVM extends ChangeNotifier {
   bool _isLoadingRoomTypes = false;
 
   //getters
-  bool get isLoading => _isLoadingStates || _isLoadingLocations || _isLoadingBookingHistory || _isLoadingAvailablePoints;
+  bool get isLoading =>
+      _isLoadingStates ||
+      _isLoadingLocations ||
+      _isLoadingBookingHistory ||
+      _isLoadingAvailablePoints;
   List<BookingHistory> get bookingHistory => _bookingHistory;
   List<UnitAvailablePoint> get unitAvailablePoints => _unitAvailablePoints;
   bool get showMyInfo => _showMyInfo;
   List<String> get states => _states;
-  List<Propertystate> get locations => _locationsInState;
+  List<PropertyState> get locations => _locationsInState;
   String get selectedState => _selectedState;
   bool get isLoadingStates => _isLoadingStates;
   bool get isLoadingLocations => _isLoadingLocations;
@@ -181,7 +185,7 @@ class OwnerProfileVM extends ChangeNotifier {
       // First check if we already have the locations cached
       final cached = _globalDataManager.getLocationsForState(state);
       if (cached.isNotEmpty) {
-        _locationsInState = List<Propertystate>.from(cached);
+        _locationsInState = List<PropertyState>.from(cached);
       } else {
         final fetchedLocations =
             await _ownerBookingRepository.getAllLocationsByState(state);
@@ -356,7 +360,7 @@ class OwnerProfileVM extends ChangeNotifier {
   Future<Map<String, dynamic>?> submitBooking({
     required BookingRoom bookingRoom,
     required UnitAvailablePoint point,
-    required List<Propertystate> propertyStates,
+    required List<PropertyState> propertyStates,
     required DateTime? checkIn,
     required DateTime? checkOut,
     required int quantity,
@@ -381,11 +385,11 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   // inside OwnerProfileVM
-  Propertystate? findPropertyStateForOwner(String ownerLocation) {
+  PropertyState? findPropertyStateForOwner(String ownerLocation) {
     try {
       return _locationsInState.firstWhere(
         (loc) => loc.locationName.toLowerCase() == ownerLocation.toLowerCase(),
-        orElse: () => Propertystate(
+        orElse: () => PropertyState(
           stateName: "",
           locationName: "",
           pic: "",

@@ -33,7 +33,7 @@ class GlobalDataManager extends ChangeNotifier {
   List<Map<String, dynamic>> _propertyContractType = [];
   Map<String, dynamic> _propertyOccupancy = {};
   List<String> _availableStates = [];
-  Map<String, List<Propertystate>> _locationsByState = {};
+  Map<String, List<PropertyState>> _locationsByState = {};
   List<OccupancyRate> _occupancyRateHistory = [];
 
   // Add new state properties
@@ -42,7 +42,7 @@ class GlobalDataManager extends ChangeNotifier {
   String? _selectedState;
 
   // Add cache for filtered locations
-  Map<String, List<Propertystate>> _filteredLocationCache = {};
+  Map<String, List<PropertyState>> _filteredLocationCache = {};
 
   // Getters
   bool get isInitialized => _isInitialized;
@@ -78,10 +78,10 @@ class GlobalDataManager extends ChangeNotifier {
       : DateTime.now().year.toString();
   List<String> get availableStates => List.unmodifiable(_availableStates);
 
-  Map<String, List<Propertystate>> get locationsByState =>
+  Map<String, List<PropertyState>> get locationsByState =>
       Map.unmodifiable(_locationsByState);
 
-  List<Propertystate> getLocationsForState(String state) {
+  List<PropertyState> getLocationsForState(String state) {
     return _locationsByState[state] ?? [];
   }
 
@@ -386,7 +386,7 @@ class GlobalDataManager extends ChangeNotifier {
     try {
       final locations =
           await _redemptionRepository.getAllLocationsByState(state);
-      _locationsByState[state] = locations.cast<Propertystate>();
+      _locationsByState[state] = locations.cast<PropertyState>();
     } catch (e) {
       debugPrint("❌ Error fetching locations for state $state: $e");
       _locationsByState[state] = [];
@@ -595,17 +595,17 @@ class GlobalDataManager extends ChangeNotifier {
       // Cache the filtered locations
       _filteredLocationCache[state] = locations
           .where((loc) => loc.locationName.isNotEmpty)
-          .cast<Propertystate>()
+          .cast<PropertyState>()
           .toList();
 
       // Also update the main locations state
-      _locationsByState[state] = locations.cast<Propertystate>();
+      _locationsByState[state] = locations.cast<PropertyState>();
     } catch (e) {
       debugPrint("❌ Error preloading locations for state $state: $e");
     }
   }
 
-  List<Propertystate> getCachedLocationsForState(String state) {
+  List<PropertyState> getCachedLocationsForState(String state) {
     return _filteredLocationCache[state] ?? [];
   }
 }

@@ -13,12 +13,14 @@ import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 
 class SelectDateRoomBook extends StatefulWidget {
   final String ownedLocation;
   final String ownedUnitNo;
   final String location;
   final String state;
+
   const SelectDateRoomBook({
     Key? key,
     required this.ownedLocation,
@@ -53,10 +55,10 @@ class SelectDateRoomBook extends StatefulWidget {
   }
 
   @override
-  _SelectDateRoomState createState() => _SelectDateRoomState();
+  _SelectDateRoomBookState createState() => _SelectDateRoomBookState();
 }
 
-class _SelectDateRoomState extends State<SelectDateRoomBook> {
+class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime? _focusedDay;
   DateTime? _selectedDay;
@@ -67,10 +69,12 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
   bool _isLoadingBlockedDates = true;
 
   RoomType? _selectedRoom;
-  String? _selectedRoomId; // Track by ID to maintain selection across fetches
+  String? _selectedRoomId;
   late OwnerProfileVM _vm;
-  // Avoid listening outside of build. Use `_vm` for actions, and a local
-  // `vm = context.watch<OwnerProfileVM>()` inside build for UI updates.
+
+  // Smart unit selection variables
+  UnitAvailablePoint? _currentSelectedUnit;
+  List<UnitAvailablePoint> _sortedUnits = [];
 
   @override
   void initState() {
@@ -83,24 +87,107 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
     _vm = context.read<OwnerProfileVM>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.wait([
-        _vm.UserPointBalance.isEmpty
-            ? _vm.fetchRedemptionBalancePoints(
-                location: widget.ownedLocation,
-                unitNo: widget.ownedUnitNo,
-              )
-            : Future.value(),
-        _vm.roomTypes.isEmpty
-            ? _vm.fetchRoomTypes(
-                state: widget.state,
-                bookingLocationName: widget.location,
-                rooms: _selectedQuantity,
-                arrivalDate: _focusedDay,
-                departureDate: _focusedDay?.add(const Duration(days: 1)),
-              )
-            : Future.value(),
-      ]);
+      // First, fetch all unit available points for smart selection
+      await _vm.fetchUserAvailablePoints();
+
+      // Initialize smart selection with lowest points unit
+      _initializeSmartUnitSelection();
+
+      // Then fetch room types
+      if (_vm.roomTypes.isEmpty) {
+        await _vm.fetchRoomTypes(
+          state: widget.state,
+          bookingLocationName: widget.location,
+          rooms: _selectedQuantity,
+          arrivalDate: _focusedDay,
+          departureDate: _focusedDay?.add(const Duration(days: 1)),
+        );
+      }
     });
+  }
+
+  // Initialize smart unit selection - start with lowest points unit
+  void _initializeSmartUnitSelection() {
+    if (_vm.unitAvailablePoints.isEmpty) return;
+
+    // Sort units by redemptionBalancePoints (ascending - lowest first)
+    _sortedUnits = [..._vm.unitAvailablePoints]..sort((a, b) =>
+        a.redemptionBalancePoints.compareTo(b.redemptionBalancePoints));
+
+    // Start with the lowest points unit
+    _currentSelectedUnit = _sortedUnits.first;
+
+    // Update UserPointBalance to reflect current selected unit
+    _updateUserPointBalanceForCurrentUnit();
+
+    debugPrint(
+        "🔹 Smart selection initialized: ${_currentSelectedUnit!.location} - ${_currentSelectedUnit!.unitNo} (${_currentSelectedUnit!.redemptionBalancePoints} points)");
+
+    setState(() {});
+  }
+
+  // Switch to a suitable unit that can afford the required points
+  bool _switchToSuitableUnit(int requiredPoints) {
+    if (_sortedUnits.isEmpty) return false;
+
+    // Find the unit with least points that can afford the required points
+    UnitAvailablePoint? suitableUnit;
+    for (final unit in _sortedUnits) {
+      if (unit.redemptionBalancePoints >= requiredPoints) {
+        suitableUnit = unit;
+        break;
+      }
+    }
+
+    if (suitableUnit != null) {
+      final previousUnit = _currentSelectedUnit;
+      _currentSelectedUnit = suitableUnit;
+
+      // Update UserPointBalance to reflect new selected unit
+      _updateUserPointBalanceForCurrentUnit();
+
+      // Show notification if unit changed
+      if (previousUnit != null &&
+          (previousUnit.location != suitableUnit.location ||
+              previousUnit.unitNo != suitableUnit.unitNo)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Switched to ${suitableUnit.location} - ${suitableUnit.unitNo} for sufficient points (${NumberFormat('#,###').format(suitableUnit.redemptionBalancePoints)} points)',
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+
+      setState(() {});
+      return true;
+    }
+
+    return false;
+  }
+
+  // Update UserPointBalance to reflect current selected unit
+  void _updateUserPointBalanceForCurrentUnit() {
+    if (_currentSelectedUnit == null) return;
+
+    // Create a temporary balance object for the current unit
+    final tempBalance = {
+      'location': _currentSelectedUnit!.location,
+      'unitNo': _currentSelectedUnit!.unitNo,
+      'redemptionBalancePoints': _currentSelectedUnit!.redemptionBalancePoints,
+      'redemptionPoints': _currentSelectedUnit!.redemptionPoints,
+    };
+
+    _vm.UserPointBalance.clear();
+    _vm.UserPointBalance.add(tempBalance);
+  }
+
+  // Check if any unit can afford the required points
+  bool _canAnyUnitAfford(int requiredPoints) {
+    return _sortedUnits
+        .any((unit) => unit.redemptionBalancePoints >= requiredPoints);
   }
 
   Future<void> _fetchBlockedDates() async {
@@ -189,7 +276,6 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
     });
   }
 
-  // New method to fetch room types while maintaining selection
   Future<void> _fetchRoomTypesAndMaintainSelection() async {
     await _vm.fetchRoomTypes(
       state: widget.state,
@@ -199,41 +285,37 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
       departureDate: _rangeEnd != null ? _toDateOnly(_rangeEnd!) : null,
     );
 
-    // After fetching, try to restore selection if we had one
     if (_selectedRoomId != null) {
       _restoreRoomSelection();
     }
   }
 
-  // Method to restore room selection after room types are updated
   void _restoreRoomSelection() {
     if (_selectedRoomId == null) return;
 
-    // Find the room in the new list that matches our selected room
     final matchingRoom = _vm.roomTypes.firstWhere(
       (room) => room.roomTypeName == _selectedRoomId,
       orElse: () => RoomType(roomTypeName: '', roomTypePoints: 0, pic: ''),
     );
 
     if (matchingRoom.roomTypeName.isNotEmpty) {
-      // Check if it's still affordable
       final duration = (_rangeStart != null && _rangeEnd != null)
           ? _rangeEnd!.difference(_rangeStart!).inDays
           : 1;
 
-      final isAffordable = isRoomAffordable(
-        matchingRoom,
-        duration,
-        _selectedQuantity,
-      );
+      final bool hasRange = _rangeStart != null && _rangeEnd != null;
+      final totalPoints = hasRange
+          ? matchingRoom.roomTypePoints
+          : matchingRoom.roomTypePoints *
+              (duration == 0 ? 1 : duration) *
+              _selectedQuantity;
 
-      if (isAffordable) {
-        // Room still exists and is affordable, maintain selection
+      // Try to switch to suitable unit for this room
+      if (_switchToSuitableUnit(totalPoints)) {
         setState(() {
           _selectedRoom = matchingRoom;
         });
       } else {
-        // Room exists but no longer affordable
         setState(() {
           _selectedRoom = null;
           _selectedRoomId = null;
@@ -242,27 +324,12 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'Previously selected room is no longer affordable with current quantity/dates. Please select again.',
+              'Previously selected room is no longer available with any unit points.',
             ),
             backgroundColor: Colors.orange,
           ),
         );
       }
-    } else {
-      // Room no longer exists in the list
-      setState(() {
-        _selectedRoom = null;
-        _selectedRoomId = null;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Previously selected room is no longer available. Please select again.',
-          ),
-          backgroundColor: Colors.orange,
-        ),
-      );
     }
   }
 
@@ -331,18 +398,14 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
     return day.isAfter(sevenDaysFromNow) || isSameDay(day, sevenDaysFromNow);
   }
 
-  bool isRoomAffordable(RoomType room, int duration, int quantity) {
-    final userPoints = _vm.UserPointBalance.isNotEmpty
-        ? _vm.UserPointBalance.first.redemptionBalancePoints
-        : 0;
-    // If a date range is selected and we refetched with rooms/dates,
-    // assume backend already returns total points for the selection.
-    final bool hasRange = _rangeStart != null && _rangeEnd != null;
-    final totalPoints = hasRange
-        ? room.roomTypePoints
-        : room.roomTypePoints * (duration == 0 ? 1 : duration) * quantity;
-    return totalPoints <= userPoints;
-  }
+  // bool isRoomAffordable(RoomType room, int duration, int quantity) {
+  //   final userPoints = _currentSelectedUnit?.redemptionBalancePoints ?? 0;
+  //   final bool hasRange = _rangeStart != null && _rangeEnd != null;
+  //   final totalPoints = hasRange
+  //       ? room.roomTypePoints
+  //       : room.roomTypePoints * (duration == 0 ? 1 : duration) * quantity;
+  //   return totalPoints <= userPoints;
+  // }
 
   Timer? _fetchDebounce;
 
@@ -362,7 +425,7 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
       return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Select Date and Room'),
+          title: const Text('Make a Booking'),
           backgroundColor: Colors.white,
         ),
         body: const Center(child: CircularProgressIndicator()),
@@ -372,7 +435,7 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Select Date and Room'),
+        title: const Text('Make a Booking'),
         backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -521,7 +584,7 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
               ),
             ),
 
-            // Room Types Grid
+            // Room Types Grid with Smart Selection Logic
             GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
@@ -532,43 +595,58 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
               itemCount: vm.roomTypes.length,
               itemBuilder: (context, index) {
                 final room = vm.roomTypes[index];
-                final userPoints = vm.UserPointBalance.isNotEmpty
-                    ? vm.UserPointBalance.first.redemptionBalancePoints
-                    : 0;
                 final bool hasRange = _rangeStart != null && _rangeEnd != null;
                 final totalRoomPoints = hasRange
-                    ? room.roomTypePoints // already includes duration * qty
+                    ? room.roomTypePoints
                     : room.roomTypePoints *
                         (duration == 0 ? 1 : duration) *
                         _selectedQuantity;
-                final affordable = totalRoomPoints <= userPoints;
 
-                return affordable
+                // Check if any unit can afford this room
+                final canAfford = _canAnyUnitAfford(totalRoomPoints);
+
+                return canAfford
                     ? _buildRoomCard(
                         room,
                         isSelected: room.roomTypeName == _selectedRoomId,
                       )
                     : Opacity(
-                        opacity: 0.5,
+                        opacity: 0.3,
                         child: Card(
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: room.roomTypeName == _selectedRoomId
-                                  ? const Color(0xFF3E51FF)
-                                  : Colors.transparent,
-                              width: 3,
-                            ),
+                            side: const BorderSide(color: Colors.red, width: 2),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: InkWell(
-                            onTap: null, // Disable tap for unaffordable rooms
-                            child: _buildRoomTypeCard(
-                              context,
-                              room.roomTypeName,
-                              room.roomTypePoints,
-                              room.pic,
-                              isSelected: room.roomTypeName == _selectedRoomId,
-                            ),
+                          child: Stack(
+                            children: [
+                              _buildRoomTypeCard(
+                                context,
+                                room.roomTypeName,
+                                room.roomTypePoints,
+                                room.pic,
+                                isSelected: false,
+                              ),
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Text(
+                                    'Insufficient Points',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );
@@ -588,11 +666,8 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
                     onChanged: (val) {
                       setState(() {
                         _selectedQuantity = val;
-                        // Keep the room selection ID but clear the room object temporarily
-                        // This will allow us to restore it after fetching
                       });
 
-                      // Debounce the room type fetch
                       _fetchDebounce?.cancel();
                       _fetchDebounce = Timer(
                         const Duration(milliseconds: 500),
@@ -626,7 +701,7 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
             ),
 
             const SizedBox(height: 10),
-            // Next Button
+            // Submit Button
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
@@ -639,7 +714,7 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
                     fixedSize: MaterialStateProperty.all(const Size(300, 40)),
                   ),
                   child: const Text(
-                    'Next',
+                    'Submit Booking Request',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
@@ -680,10 +755,8 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
   }
 
   Widget _buildPointsAndQuantity(OwnerProfileVM vm) {
-    final points = vm.UserPointBalance.isNotEmpty
-        ? vm.UserPointBalance.first.redemptionBalancePoints
-        : 0;
-
+    // Use current selected unit's points instead of UserPointBalance
+    final points = _currentSelectedUnit?.redemptionBalancePoints ?? 0;
     final formatter = NumberFormat('#,###');
     final formattedPoints = formatter.format(points);
 
@@ -700,30 +773,46 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Text(
-            'Available Point Balance:  ',
-            style: TextStyle(
-              fontSize: ResponsiveSize.text(13),
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Available Point Balance:',
+                style: TextStyle(
+                  fontSize: ResponsiveSize.text(13),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                formattedPoints,
+                style: TextStyle(
+                  color: const Color(0xFF3E51FF),
+                  fontSize: ResponsiveSize.text(15),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          Text(
-            formattedPoints,
-            style: TextStyle(
-              color: const Color(0xFF3E51FF),
-              fontSize: ResponsiveSize.text(15),
-              fontWeight: FontWeight.bold,
+          // Show which unit is being used
+          if (_currentSelectedUnit != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                'From: ${_currentSelectedUnit!.location} - ${_currentSelectedUnit!.unitNo}',
+                style: TextStyle(
+                  fontSize: ResponsiveSize.text(11),
+                  color: const Color(0xFF3E51FF),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );
   }
 
-  // Enhanced Next button handler with proper validation
   void _onNextPressed() {
     // Check if dates are selected
     if (_rangeStart == null || _rangeEnd == null) {
@@ -747,26 +836,25 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
       return;
     }
 
-    // Double-check affordability before proceeding
+    // Calculate required points and ensure we have suitable unit
     final effectiveDuration = _rangeEnd!.difference(_rangeStart!).inDays;
-    if (!isRoomAffordable(
-      _selectedRoom!,
-      effectiveDuration,
-      _selectedQuantity,
-    )) {
+    final bool hasRange = _rangeStart != null && _rangeEnd != null;
+    final totalPoints = hasRange
+        ? _selectedRoom!.roomTypePoints
+        : _selectedRoom!.roomTypePoints * effectiveDuration * _selectedQuantity;
+
+    if (!_switchToSuitableUnit(totalPoints)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Selected room is not affordable with current points'),
+          content: Text('No unit has sufficient points for this booking'),
           backgroundColor: Colors.red,
         ),
       );
       return;
     }
 
-    final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
-    final int userPointsBalance = ownerVM.UserPointBalance.isNotEmpty
-        ? ownerVM.UserPointBalance.first.redemptionBalancePoints
-        : 0;
+    final int userPointsBalance =
+        _currentSelectedUnit?.redemptionBalancePoints ?? 0;
 
     Navigator.push(
       context,
@@ -779,9 +867,10 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
             checkOut: _rangeEnd,
             quantity: _selectedQuantity,
             userPointsBalance: userPointsBalance,
-            ownerLocation: widget.ownedLocation,
-            ownerUnitNo: widget.ownedUnitNo,
+            ownerLocation: _currentSelectedUnit?.location ?? '',
+            ownerUnitNo: _currentSelectedUnit?.unitNo ?? '',
             bookingLocationName: widget.location,
+            isBookingMode: true, // Set to true for booking mode
           ),
         ),
       ),
@@ -866,10 +955,28 @@ class _SelectDateRoomState extends State<SelectDateRoomBook> {
       ),
       child: InkWell(
         onTap: () {
-          setState(() {
-            _selectedRoom = room;
-            _selectedRoomId = room.roomTypeName; // Store the ID for tracking
-          });
+          // Calculate required points for this room
+          final bool hasRange = _rangeStart != null && _rangeEnd != null;
+          final totalRoomPoints = hasRange
+              ? room.roomTypePoints
+              : room.roomTypePoints *
+                  (duration == 0 ? 1 : duration) *
+                  _selectedQuantity;
+
+          // Try to switch to suitable unit
+          if (_switchToSuitableUnit(totalRoomPoints)) {
+            setState(() {
+              _selectedRoom = room;
+              _selectedRoomId = room.roomTypeName;
+            });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No unit has sufficient points for this room'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         },
         child: _buildRoomTypeCard(
           context,

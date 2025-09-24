@@ -5,12 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
 import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
+import 'package:mana_mana_app/model/propertyState.dart';
 import 'package:mana_mana_app/model/redemptionBalancePoints.dart';
 import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
-import 'package:mana_mana_app/model/propertystate.dart';
 
 class RedemptionRepository {
   final ApiService _apiService = ApiService();
@@ -175,7 +175,7 @@ class RedemptionRepository {
     }
   }
 
-  Future<List<Propertystate>> getAllLocationsByState(String state) async {
+  Future<List<PropertyState>> getAllLocationsByState(String state) async {
     try {
       // Get all locations in a single call
       final res = await _apiService.get(
@@ -200,7 +200,7 @@ class RedemptionRepository {
               item is Map &&
               item['stateName']?.toString().toLowerCase() ==
                   state.toLowerCase())
-          .map((item) => Propertystate.fromJson(item))
+          .map((item) => PropertyState.fromJson(item))
           .toList();
     } catch (e) {
       debugPrint("❌ Error in getAllLocationsByState for $state: $e");
@@ -334,7 +334,7 @@ class RedemptionRepository {
   Future<Map<String, dynamic>?> submitBooking({
     required BookingRoom bookingRoom,
     required UnitAvailablePoint point,
-    required List<Propertystate> propertyStates,
+    required List<PropertyState> propertyStates,
     required DateTime? checkIn,
     required DateTime? checkOut,
     required int quantity,
@@ -355,7 +355,7 @@ class RedemptionRepository {
       (state) =>
           state.locationName.toUpperCase() ==
           _getLocationName(point.location).toUpperCase(),
-      orElse: () => Propertystate(pic: '', stateName: '', locationName: ''),
+      orElse: () => PropertyState(pic: '', stateName: '', locationName: ''),
     );
 
     final body = {

@@ -1,16 +1,16 @@
-class Propertystate {
+class PropertyState {
   final String pic;
   final String stateName;
   final String locationName;
 
-  Propertystate({
+  PropertyState({
     required this.pic,
     required this.stateName,
     required this.locationName,
   });
 
-  factory Propertystate.fromJson(Map<String, dynamic> json) {
-    return Propertystate(
+  factory PropertyState.fromJson(Map<String, dynamic> json) {
+    return PropertyState(
       pic: json['pic'] ?? '',
       stateName: json['stateName'] ?? '',
       locationName: json['locationName'] ?? '',
@@ -27,13 +27,13 @@ class Propertystate {
 }
 
 class LocationResponse {
-  final List<Propertystate> locations;
+  final List<PropertyState> locations;
 
   LocationResponse({required this.locations});
 
   factory LocationResponse.fromJson(List<dynamic> json) {
     return LocationResponse(
-      locations: json.map((item) => Propertystate.fromJson(item)).toList(),
+      locations: json.map((item) => PropertyState.fromJson(item)).toList(),
     );
   }
 }
