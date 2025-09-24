@@ -4,6 +4,7 @@ import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/enhanced_statement_dropdown.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/enhanced_statement_container.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
+import 'package:mana_mana_app/screens/Profile/View/choose_property_location_book.dart';
 import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
 import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
 import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
@@ -365,13 +366,24 @@ Widget _quickLinks(BuildContext context) {
                     onTap: () {
                       // Create and initialize the VM
                       final ownerVm = OwnerProfileVM();
+                      final globalData = Provider.of<GlobalDataManager>(context,
+                          listen: false);
 
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChangeNotifierProvider(
-                            create: (_) => ownerVm,
-                            child: const ChoosePropertyLocation(
+                          builder: (context) => MultiProvider(
+                            providers: [
+                              // Provide GlobalDataManager first
+                              ChangeNotifierProvider.value(
+                                value: globalData,
+                              ),
+                              // Then provide OwnerProfileVM
+                              ChangeNotifierProvider.value(
+                                value: ownerVm,
+                              ),
+                            ],
+                            child: const ChoosePropertyLocationBook(
                               selectedLocation: '',
                               selectedUnitNo: '',
                             ),

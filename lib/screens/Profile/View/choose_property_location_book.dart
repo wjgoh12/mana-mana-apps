@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
+import 'package:mana_mana_app/screens/Profile/View/select_date_room_book.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
@@ -218,7 +219,7 @@ Widget _buildLocationCard(
                   MaterialPageRoute(
                     builder: (_) => ChangeNotifierProvider.value(
                       value: context.read<OwnerProfileVM>(),
-                      child: SelectDateRoom(
+                      child: SelectDateRoomBook(
                         location: location ?? "Unknown Location",
                         state: propertyState ?? "Unknown State",
                         ownedLocation: selectedLocation,
