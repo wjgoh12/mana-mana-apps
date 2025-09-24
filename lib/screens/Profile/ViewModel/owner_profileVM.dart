@@ -273,6 +273,56 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
+  Future<void> fetchRedemptionBalancePointsBook({
+    required String location,
+    required String unitNo,
+  }) async {
+    debugPrint('📍 Starting to fetch redemption points...');
+
+    try {
+      // First check if we have any available points
+      if (_unitAvailablePoints.isEmpty) {
+        debugPrint('⚠️ Fetching available points first...');
+        await fetchUserAvailablePoints();
+      }
+
+      // Use provided location/unit or fall back to first available
+      String effectiveLocation = location.isNotEmpty
+          ? location
+          : _unitAvailablePoints.firstOrNull?.location ?? '';
+      String effectiveUnitNo = unitNo.isNotEmpty
+          ? unitNo
+          : _unitAvailablePoints.firstOrNull?.unitNo ?? '';
+
+      debugPrint(
+          '🏢 Using location: $effectiveLocation, unit: $effectiveUnitNo');
+
+      if (effectiveLocation.isEmpty || effectiveUnitNo.isEmpty) {
+        debugPrint('❌ No valid location/unit available');
+        return;
+      }
+
+      _isLoadingAvailablePoints = true;
+      notifyListeners();
+
+      final response = await _ownerBookingRepository.getRedemptionBalancePoints(
+        location: effectiveLocation,
+        unitNo: effectiveUnitNo,
+      );
+
+      UserPointBalance.clear();
+      UserPointBalance.addAll(response);
+
+      debugPrint(
+          '✅ Points updated successfully: ${UserPointBalance.length} entries');
+    } catch (e) {
+      debugPrint('❌ Error fetching redemption points: $e');
+    } finally {
+      _isLoadingAvailablePoints = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> fetchBlockedDates({
     required String location,
     required String state,

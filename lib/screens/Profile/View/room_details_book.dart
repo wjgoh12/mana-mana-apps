@@ -13,7 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 // This shows the modifications needed for RoomDetails class to handle booking mode
 // Add this parameter to the RoomDetails constructor and modify the class accordingly
 
-class RoomDetails extends StatefulWidget {
+class RoomDetailsBook extends StatefulWidget {
   final RoomType room;
   final DateTime? checkIn;
   final DateTime? checkOut;
@@ -24,7 +24,7 @@ class RoomDetails extends StatefulWidget {
   final String bookingLocationName;
   final bool isBookingMode; // NEW: Add this parameter
 
-  const RoomDetails({
+  const RoomDetailsBook({
     Key? key,
     required this.room,
     required this.checkIn,
@@ -38,10 +38,10 @@ class RoomDetails extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _RoomDetailsState createState() => _RoomDetailsState();
+  _RoomDetailsBookState createState() => _RoomDetailsBookState();
 }
 
-class _RoomDetailsState extends State<RoomDetails> {
+class _RoomDetailsBookState extends State<RoomDetailsBook> {
   final TextEditingController _guestNameController = TextEditingController();
   bool _isChecked = false;
   bool _highlightCheckBox = false;
@@ -382,7 +382,6 @@ Total Points: ${totalPoints()}
                                                     context); // Close dialog
                                                 Navigator.pop(
                                                     context); // Back to room selection
-                                                Navigator.pop(context);
                                                 Navigator.pop(context);
                                                 Navigator.pop(context);
                                               },
