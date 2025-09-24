@@ -653,7 +653,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
   Widget _buildDateCard(String title, DateTime? date) {
     return SizedBox(
-      width: 180,
+      width: 160,
       child: Card(
         color: Colors.white,
         child: Padding(

@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 void main() {
   // Initialize the app
   WidgetsFlutterBinding.ensureInitialized();
-  initApp('prod');
+  initApp('dev');
 
   runApp(
     MultiProvider(
@@ -16,9 +16,7 @@ void main() {
         ChangeNotifierProvider(
           create: (context) => NewDashboardVM()..fetchData(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => GlobalDataManager(),
-        ),
+        ChangeNotifierProvider(create: (context) => GlobalDataManager()),
       ],
       child: const MyApp(),
     ),

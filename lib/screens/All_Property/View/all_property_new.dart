@@ -15,6 +15,7 @@ import 'package:mana_mana_app/widgets/property_app_bar.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/unit_overview_container.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AllPropertyNewScreen extends StatefulWidget {
   const AllPropertyNewScreen({super.key});
@@ -369,27 +370,8 @@ Widget _quickLinks(BuildContext context) {
                       final globalData = Provider.of<GlobalDataManager>(context,
                           listen: false);
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MultiProvider(
-                            providers: [
-                              // Provide GlobalDataManager first
-                              ChangeNotifierProvider.value(
-                                value: globalData,
-                              ),
-                              // Then provide OwnerProfileVM
-                              ChangeNotifierProvider.value(
-                                value: ownerVm,
-                              ),
-                            ],
-                            child: const ChoosePropertyLocationBook(
-                              selectedLocation: '',
-                              selectedUnitNo: '',
-                            ),
-                          ),
-                        ),
-                      );
+                      launchUrl(Uri.parse(
+                          'https://booking.manamanasuites.com/inst/#group?groupId=24567&promoCode=OWNERZB89A9'));
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
