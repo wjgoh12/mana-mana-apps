@@ -872,6 +872,15 @@ class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
       );
       return;
     }
+    if (totalPointsNeeded == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invalid room selection!.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     // Calculate required points and ensure we have suitable unit
     final effectiveDuration = _rangeEnd!.difference(_rangeStart!).inDays;
