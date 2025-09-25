@@ -86,6 +86,7 @@ class GlobalDataManager extends ChangeNotifier {
   }
 
   // Add this method to set selected state
+
   Future<void> updateSelectedState(String state) async {
     _selectedState = state;
     notifyListeners();
@@ -607,5 +608,48 @@ class GlobalDataManager extends ChangeNotifier {
 
   List<PropertyState> getCachedLocationsForState(String state) {
     return _filteredLocationCache[state] ?? [];
+  }
+
+  void clearLocationCache() {
+    // Clear state and location related data
+    availableStates.clear();
+    locationsByState.clear();
+
+    // Reset any selected state if you have one
+    // selectedState = null; // uncomment if you have this variable
+
+    debugPrint("✅ Location cache cleared in GlobalDataManager");
+    notifyListeners();
+  }
+
+  // Clear selection cache method
+  void clearSelectionCache() {
+    // Clear any selection-related cached data
+    // Reset any selection state variables you might have
+
+    debugPrint("✅ Selection cache cleared in GlobalDataManager");
+    notifyListeners();
+  }
+
+  // Clear previous selections method
+  void clearPreviousSelections() {
+    // Clear any previous selection data that might interfere with new selections
+
+    debugPrint("✅ Previous selections cleared in GlobalDataManager");
+    notifyListeners();
+  }
+
+  // Optional: Complete reset method
+  void resetAllData() {
+    // Complete reset of all cached data
+    users.clear();
+    ownerUnits.clear();
+    availableStates.clear();
+    locationsByState.clear();
+
+    // Reset any other state variables you have
+
+    debugPrint("✅ All data reset in GlobalDataManager");
+    notifyListeners();
   }
 }

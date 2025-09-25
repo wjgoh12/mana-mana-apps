@@ -450,4 +450,68 @@ class OwnerProfileVM extends ChangeNotifier {
       return null;
     }
   }
+
+  void clearSelectionCache() {
+    // Clear any selection-related state variables
+    _selectedState = '';
+    _locationsInState.clear();
+    _roomTypes.clear();
+    _blockedDates.clear();
+
+    // Clear room type cache to ensure fresh data on next selection
+    _roomTypeCache.clear();
+
+    // IMPORTANT: Clear user point balance to force refresh for new unit
+    UserPointBalance.clear();
+
+    debugPrint("✅ Selection cache cleared in OwnerProfileVM");
+    notifyListeners();
+  }
+
+  // Clear location cache method
+  void clearLocationCache() {
+    // Clear location-related cached data
+    _states.clear();
+    _locationsInState.clear();
+    _selectedState = '';
+
+    // Clear room types as they are location-dependent
+    _roomTypes.clear();
+    _roomTypeCache.clear();
+
+    // Clear blocked dates as they are location-dependent
+    _blockedDates.clear();
+
+    debugPrint("✅ Location cache cleared in OwnerProfileVM");
+    notifyListeners();
+  }
+
+  // Optional: Complete reset method for thorough clearing
+  void resetNavigationState() {
+    // Reset all navigation-related state
+    clearSelectionCache();
+    clearLocationCache();
+
+    // Reset loading states
+    _isLoadingStates = false;
+    _isLoadingLocations = false;
+    _isLoadingRoomTypes = false;
+    _isLoadingBlockedDates = false;
+
+    // Clear any error states
+    _error = null;
+
+    debugPrint("✅ Navigation state completely reset in OwnerProfileVM");
+    notifyListeners();
+  }
+
+  // Add this method to OwnerProfileVM
+  Future<void> refreshPointsForUnit(String location, String unitNo) async {
+    // Force clear and refresh points for specific unit
+    UserPointBalance.clear();
+    await fetchRedemptionBalancePoints(
+      location: location,
+      unitNo: unitNo,
+    );
+  }
 }

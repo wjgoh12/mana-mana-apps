@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
@@ -28,8 +29,8 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final vm = context.read<OwnerProfileVM>();
-      vm.loadStates();
+      final globalData = context.read<GlobalDataManager>();
+      globalData.fetchRedemptionStatesAndLocations();
     });
   }
 
@@ -50,24 +51,24 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
           ),
         ),
       ),
-      body: Consumer<OwnerProfileVM>(
-        builder: (context, vm, child) {
-          if (selectedState == null && vm.states.isNotEmpty) {
-            selectedState = vm.states.first;
-            vm.fetchLocationsByState(selectedState!);
+      body: Consumer<GlobalDataManager>(
+        builder: (context, globalData, child) {
+          if (selectedState == null && globalData.availableStates.isNotEmpty) {
+            selectedState = globalData.availableStates.first;
+            globalData.fetchLocationsByState(selectedState!);
           }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 🔽 Dropdown for states
-              if (vm.isLoadingStates) // <-- add this flag in your ViewModel
+              if (globalData.isLoadingStates)
                 const Center(
                   child: Padding(
                     padding: EdgeInsets.all(16.0),
                     child: CircularProgressIndicator(),
                   ),
                 )
-              else if (vm.states.isEmpty)
+              else if (globalData.availableStates.isEmpty)
                 const Center(
                   child: Padding(
                     padding: EdgeInsets.all(16.0),
@@ -85,7 +86,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                         child: DropdownButton2<String>(
                           isExpanded: true,
                           hint: const Text("Select State"),
-                          items: vm.states
+                          items: globalData.availableStates
                               .map(
                                 (state) => DropdownMenuItem<String>(
                                   value: state,
@@ -103,7 +104,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                           onChanged: (String? value) {
                             if (value != null) {
                               setState(() => selectedState = value);
-                              vm.fetchLocationsByState(value);
+                              globalData.fetchLocationsByState(value);
                             }
                           },
                           buttonStyleData: ButtonStyleData(
@@ -138,9 +139,9 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
 
               // 🔽 Locations grid
 
-              if (vm.isLoadingLocations)
+              if (globalData.isLoadingLocations)
                 const Center(child: CircularProgressIndicator())
-              else if (vm.locations.isEmpty)
+              else if (globalData.locationsByState.isEmpty)
                 const Center(child: Text("No locations found"))
               else
                 Expanded(
@@ -150,7 +151,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                     mainAxisSpacing: 8,
                     padding: const EdgeInsets.all(16),
                     childAspectRatio: 0.7,
-                    children: vm.locations
+                    children: globalData.locationsByState[selectedState]!
                         .map(
                           (loc) => _buildLocationCard(
                             context,
@@ -164,6 +165,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                         .toList(),
                   ),
                 ),
+
               // Container(
               //   margin: const EdgeInsets.all(16),
               //   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),

@@ -24,6 +24,15 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
+      ownerVM.clearSelectionCache(); // Add this method to your VM
+
+      final globalData = Provider.of<GlobalDataManager>(context, listen: false);
+      globalData
+          .clearLocationCache(); // Add this method to clear location cache
+    });
+
     // Fetch data in order
     Future.microtask(() async {
       final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
@@ -135,6 +144,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                   ResponsiveSize.scaleWidth(8),
                                 ),
                                 onTap: () {
+                                  ownerVM.UserPointBalance.clear();
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -148,6 +158,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                           ),
                                         ],
                                         child: ChoosePropertyLocation(
+                                          // globalData: globalData,
                                           selectedLocation: unit.location,
                                           selectedUnitNo: unit.unitNo,
                                         ),

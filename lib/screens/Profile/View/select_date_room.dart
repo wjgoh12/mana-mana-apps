@@ -82,14 +82,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     _vm = context.read<OwnerProfileVM>();
 
+    // In SelectDateRoom initState(), change this:
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.wait([
-        _vm.UserPointBalance.isEmpty
-            ? _vm.fetchRedemptionBalancePoints(
-                location: widget.ownedLocation,
-                unitNo: widget.ownedUnitNo,
-              )
-            : Future.value(),
+        // ALWAYS fetch points for the current unit, don't check if empty
+        _vm.fetchRedemptionBalancePoints(
+          location: widget.ownedLocation,
+          unitNo: widget.ownedUnitNo,
+        ),
         _vm.roomTypes.isEmpty
             ? _vm.fetchRoomTypes(
                 state: widget.state,
