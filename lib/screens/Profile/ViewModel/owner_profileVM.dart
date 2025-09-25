@@ -187,8 +187,8 @@ class OwnerProfileVM extends ChangeNotifier {
       if (cached.isNotEmpty) {
         _locationsInState = List<PropertyState>.from(cached);
       } else {
-        final fetchedLocations =
-            await _ownerBookingRepository.getAllLocationsByState(state);
+        final fetchedLocations = await _ownerBookingRepository
+            .getAllLocationsByState(state);
         _locationsInState = fetchedLocations
             .where((loc) => loc.locationName.isNotEmpty)
             .toList();
@@ -232,10 +232,12 @@ class OwnerProfileVM extends ChangeNotifier {
 
   Future<void> _preloadLocationsForState(String state) async {
     try {
-      final locations =
-          await _ownerBookingRepository.getAllLocationsByState(state);
-      _locationsInState =
-          locations.where((loc) => loc.locationName.isNotEmpty).toList();
+      final locations = await _ownerBookingRepository.getAllLocationsByState(
+        state,
+      );
+      _locationsInState = locations
+          .where((loc) => loc.locationName.isNotEmpty)
+          .toList();
     } catch (e) {
       debugPrint("❌ Error preloading locations for state $state: $e");
     }
@@ -247,7 +249,8 @@ class OwnerProfileVM extends ChangeNotifier {
   }) async {
     if (location.isEmpty || unitNo.isEmpty) {
       debugPrint(
-          "⚠️ Location or Unit No is empty, cannot fetch redemption balance points.");
+        "⚠️ Location or Unit No is empty, cannot fetch redemption balance points.",
+      );
       return;
     }
 
@@ -264,7 +267,8 @@ class OwnerProfileVM extends ChangeNotifier {
       UserPointBalance.addAll(response);
 
       debugPrint(
-          "✅ Redemption balance points length: ${UserPointBalance.length}");
+        "✅ Redemption balance points length: ${UserPointBalance.length}",
+      );
     } catch (e) {
       debugPrint('❌ Error fetching redemption balance points: $e');
     } finally {
@@ -295,7 +299,8 @@ class OwnerProfileVM extends ChangeNotifier {
           : _unitAvailablePoints.firstOrNull?.unitNo ?? '';
 
       debugPrint(
-          '🏢 Using location: $effectiveLocation, unit: $effectiveUnitNo');
+        '🏢 Using location: $effectiveLocation, unit: $effectiveUnitNo',
+      );
 
       if (effectiveLocation.isEmpty || effectiveUnitNo.isEmpty) {
         debugPrint('❌ No valid location/unit available');
@@ -314,7 +319,8 @@ class OwnerProfileVM extends ChangeNotifier {
       UserPointBalance.addAll(response);
 
       debugPrint(
-          '✅ Points updated successfully: ${UserPointBalance.length} entries');
+        '✅ Points updated successfully: ${UserPointBalance.length} entries',
+      );
     } catch (e) {
       debugPrint('❌ Error fetching redemption points: $e');
     } finally {
@@ -349,8 +355,13 @@ class OwnerProfileVM extends ChangeNotifier {
   // Cache for room types
   Map<String, List<RoomType>> _roomTypeCache = {};
 
-  String _getRoomTypeCacheKey(String state, String location, int rooms,
-      DateTime? arrival, DateTime? departure) {
+  String _getRoomTypeCacheKey(
+    String state,
+    String location,
+    int rooms,
+    DateTime? arrival,
+    DateTime? departure,
+  ) {
     return '$state|$location|$rooms|${arrival?.toIso8601String()}|${departure?.toIso8601String()}';
   }
 
@@ -368,7 +379,12 @@ class OwnerProfileVM extends ChangeNotifier {
         departureDate ?? DateTime.now().add(const Duration(days: 8));
 
     final cacheKey = _getRoomTypeCacheKey(
-        state, bookingLocationName, defaultRooms, arrivalDate, departureDate);
+      state,
+      bookingLocationName,
+      defaultRooms,
+      arrivalDate,
+      departureDate,
+    );
 
     // Return cached data immediately if available
     if (_roomTypeCache.containsKey(cacheKey)) {
@@ -439,11 +455,7 @@ class OwnerProfileVM extends ChangeNotifier {
     try {
       return _locationsInState.firstWhere(
         (loc) => loc.locationName.toLowerCase() == ownerLocation.toLowerCase(),
-        orElse: () => PropertyState(
-          stateName: "",
-          locationName: "",
-          pic: "",
-        ),
+        orElse: () => PropertyState(stateName: "", locationName: "", pic: ""),
       );
     } catch (e) {
       debugPrint("❌ No matching property state for $ownerLocation");
@@ -509,9 +521,13 @@ class OwnerProfileVM extends ChangeNotifier {
   Future<void> refreshPointsForUnit(String location, String unitNo) async {
     // Force clear and refresh points for specific unit
     UserPointBalance.clear();
-    await fetchRedemptionBalancePoints(
-      location: location,
-      unitNo: unitNo,
-    );
+    await fetchRedemptionBalancePoints(location: location, unitNo: unitNo);
+  }
+
+  // Add this method to OwnerProfileVM
+  void clearRoomTypesForNewLocation() {
+    _roomTypes.clear();
+    _roomTypeCache.clear();
+    notifyListeners();
   }
 }

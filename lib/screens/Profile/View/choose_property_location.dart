@@ -14,9 +14,11 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 class ChoosePropertyLocation extends StatefulWidget {
   final String selectedLocation;
   final String selectedUnitNo;
-  const ChoosePropertyLocation(
-      {Key? key, required this.selectedLocation, required this.selectedUnitNo})
-      : super(key: key);
+  const ChoosePropertyLocation({
+    Key? key,
+    required this.selectedLocation,
+    required this.selectedUnitNo,
+  }) : super(key: key);
 
   @override
   State<ChoosePropertyLocation> createState() => _ChoosePropertyLocationState();
@@ -24,6 +26,7 @@ class ChoosePropertyLocation extends StatefulWidget {
 
 class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
   String? selectedState;
+  static const String ALL_STATES = "All States";
 
   @override
   void initState() {
@@ -53,14 +56,30 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
       ),
       body: Consumer<GlobalDataManager>(
         builder: (context, globalData, child) {
-          if (selectedState == null && globalData.availableStates.isNotEmpty) {
-            selectedState = globalData.availableStates.first;
-            globalData.fetchLocationsByState(selectedState!);
+          // Create dropdown options with "All States" as first option
+          List<String> dropdownOptions = [];
+          if (globalData.availableStates.isNotEmpty) {
+            dropdownOptions = [ALL_STATES, ...globalData.availableStates];
+
+            // Auto-select "All States" if nothing is selected
+            if (selectedState == null) {
+              selectedState = ALL_STATES;
+              _handleStateSelection(globalData, ALL_STATES);
+            }
           }
+
+          // Get locations to display based on selection
+          List<dynamic> locationsToShow = [];
+          if (selectedState == ALL_STATES) {
+            locationsToShow = globalData.getAllLocationsFromAllStates();
+          } else if (selectedState != null) {
+            locationsToShow = globalData.locationsByState[selectedState] ?? [];
+          }
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔽 Dropdown for states
+              // 🔽 Dropdown for states (including "All States")
               if (globalData.isLoadingStates)
                 const Center(
                   child: Padding(
@@ -68,7 +87,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                     child: CircularProgressIndicator(),
                   ),
                 )
-              else if (globalData.availableStates.isEmpty)
+              else if (dropdownOptions.isEmpty)
                 const Center(
                   child: Padding(
                     padding: EdgeInsets.all(16.0),
@@ -86,16 +105,28 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                         child: DropdownButton2<String>(
                           isExpanded: true,
                           hint: const Text("Select State"),
-                          items: globalData.availableStates
+                          items: dropdownOptions
                               .map(
                                 (state) => DropdownMenuItem<String>(
                                   value: state,
-                                  child: Text(
-                                    state,
-                                    style: TextStyle(
-                                      fontSize: 20.fSize,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      // Add icon for "All States" option
+                                      if (state == ALL_STATES)
+                                        // const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            state,
+                                            style: TextStyle(
+                                              fontSize: 20.fSize,
+                                              fontWeight: FontWeight.bold,
+                                              color: state == ALL_STATES
+                                                  ? Colors.black
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                 ),
                               )
@@ -104,30 +135,30 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                           onChanged: (String? value) {
                             if (value != null) {
                               setState(() => selectedState = value);
-                              globalData.fetchLocationsByState(value);
+                              _handleStateSelection(globalData, value);
                             }
                           },
                           buttonStyleData: ButtonStyleData(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                  12), // Border radius for the button
-                              border: Border.all(
-                                color: Colors.grey.shade400,
-                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey.shade400),
                               color: Colors.white,
                             ),
                           ),
                           dropdownStyleData: DropdownStyleData(
+                            maxHeight: 300, // Limit height for better UX
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    12), // Border radius for the dropdown menu
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey.shade300),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0),
-                                  )
-                                ]),
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                              border: Border.all(color: Colors.grey.shade300),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -137,75 +168,60 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
 
               const SizedBox(height: 16),
 
-              // 🔽 Locations grid
+              const SizedBox(height: 16),
 
+              // 🔽 Locations grid
               if (globalData.isLoadingLocations)
-                const Center(child: CircularProgressIndicator())
-              else if (globalData.locationsByState.isEmpty)
-                const Center(child: Text("No locations found"))
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (locationsToShow.isEmpty)
+                const Expanded(child: Center(child: Text("No locations found")))
               else
                 Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                          childAspectRatio: 0.7,
+                        ),
                     padding: const EdgeInsets.all(16),
-                    childAspectRatio: 0.7,
-                    children: globalData.locationsByState[selectedState]!
-                        .map(
-                          (loc) => _buildLocationCard(
-                            context,
-                            loc.locationName,
-                            loc.pic,
-                            loc.stateName,
-                            widget.selectedLocation,
-                            widget.selectedUnitNo,
-                          ),
-                        )
-                        .toList(),
+                    itemCount: locationsToShow.length,
+                    itemBuilder: (context, index) {
+                      final location = locationsToShow[index];
+                      return _buildLocationCard(
+                        context,
+                        location.locationName,
+                        location.pic,
+                        location.stateName,
+                        widget.selectedLocation,
+                        widget.selectedUnitNo,
+                        showStateName:
+                            selectedState ==
+                            ALL_STATES, // Show state name when viewing all
+                      );
+                    },
                   ),
                 ),
-
-              // Container(
-              //   margin: const EdgeInsets.all(16),
-              //   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              //   decoration: BoxDecoration(
-              //     color: const Color.fromARGB(255, 236, 247, 255),
-              //     borderRadius: BorderRadius.circular(12),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.black.withOpacity(0.1),
-              //         blurRadius: 8,
-              //         offset: const Offset(0, 1),
-              //       ),
-              //     ],
-              //   ),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Text(
-              //         'Available Point Balance:  ',
-              //         style: TextStyle(
-              //           fontSize: ResponsiveSize.text(13),
-              //           fontWeight: FontWeight.bold,
-              //         ),
-              //       ),
-              //       Text(
-              //         '${SelectDateRoom.getFormatUserPointsBalance(vm)}',
-              //         style: TextStyle(
-              //           color: const Color(0xFF3E51FF),
-              //           fontSize: ResponsiveSize.text(15),
-              //           fontWeight: FontWeight.bold,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ],
           );
         },
       ),
     );
+  }
+
+  // In ChoosePropertyLocation, simplify the _handleStateSelection method
+  void _handleStateSelection(GlobalDataManager globalData, String state) {
+    if (state == ALL_STATES) {
+      // No need to fetch - all locations are already preloaded!
+      // Just trigger a rebuild by calling notifyListeners if needed
+    } else {
+      // For specific states, data should already be available too
+      // But you can still call this if you want to ensure fresh data
+      globalData.fetchLocationsByState(state);
+    }
   }
 }
 
@@ -215,8 +231,10 @@ Widget _buildLocationCard(
   String? picBase64,
   String? propertyState,
   String selectedLocation, // from PropertyRedemption
-  String selectedUnitNo, // from PropertyRedemption
-) {
+  String selectedUnitNo, { // from PropertyRedemption
+  bool showStateName = false,
+  // New parameter to show state name
+}) {
   Uint8List? _decodeBase64(String? base64String) {
     try {
       if (base64String == null || base64String.isEmpty) return null;
@@ -247,12 +265,17 @@ Widget _buildLocationCard(
               borderRadius: BorderRadius.circular(8.fSize),
             ),
             child: InkWell(
+              // In _buildLocationCard onTap:
               onTap: () {
+                final ownerVM = context.read<OwnerProfileVM>();
+                ownerVM
+                    .clearRoomTypesForNewLocation(); // Clear before navigating
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => ChangeNotifierProvider.value(
-                      value: context.read<OwnerProfileVM>(),
+                      value: ownerVM,
                       child: SelectDateRoom(
                         location: location ?? "Unknown Location",
                         state: propertyState ?? "Unknown State",
@@ -277,20 +300,60 @@ Widget _buildLocationCard(
                           fit: BoxFit.cover,
                         ),
                 ),
+                // Add overlay with state name when showing all states
+                child: showStateName
+                    ? Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.fSize),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.7),
+                              ],
+                              stops: const [0.6, 1.0],
+                            ),
+                          ),
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                propertyState ?? "Unknown State",
+                                style: TextStyle(
+                                  fontSize: 12.fSize,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      offset: const Offset(1, 1),
+                                      blurRadius: 2,
+                                      color: Colors.black.withOpacity(0.8),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : null,
               ),
             ),
           ),
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 8),
         Text(
           location ?? "Unknown Location",
           style: TextStyle(
-            fontSize: 20.fSize,
+            fontSize: 16.fSize,
             fontWeight: FontWeight.bold,
             color: const Color(0xFF3E51FF),
           ),
           textAlign: TextAlign.center,
-          maxLines: 1,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
       ],

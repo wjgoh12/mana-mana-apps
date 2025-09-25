@@ -114,9 +114,7 @@ class GlobalDataManager extends ChangeNotifier {
 
       // Preload locations for all states
       if (_availableStates.isNotEmpty) {
-        await Future.wait(
-          _availableStates.map((state) => preloadLocationsForState(state)),
-        );
+        await _preloadAllLocationsForAllStates();
       }
 
       _isInitialized = true;
@@ -651,5 +649,77 @@ class GlobalDataManager extends ChangeNotifier {
 
     debugPrint("✅ All data reset in GlobalDataManager");
     notifyListeners();
+  }
+  // Add these methods to your GlobalDataManager class
+
+// Method to get all locations from all states (already loaded)
+// Add this method to GlobalDataManager
+  List<PropertyState> getAllLocationsFromAllStates() {
+    List<PropertyState> allLocations = [];
+    _locationsByState.forEach((state, locations) {
+      allLocations.addAll(locations);
+    });
+    return allLocations;
+  }
+
+// Method to fetch all locations for all states
+  Future<void> fetchAllLocationsForAllStates() async {
+    if (_availableStates.isEmpty) {
+      await fetchRedemptionStatesAndLocations();
+    }
+
+    _isLoadingLocations = true;
+    notifyListeners();
+
+    try {
+      // Fetch locations for all states in parallel
+      await Future.wait(
+        _availableStates.map((state) async {
+          try {
+            final locations =
+                await _redemptionRepository.getAllLocationsByState(state);
+            _locationsByState[state] = locations.cast<PropertyState>();
+          } catch (e) {
+            debugPrint("❌ Error fetching locations for state $state: $e");
+            _locationsByState[state] = [];
+          }
+        }),
+      );
+    } catch (e) {
+      debugPrint("❌ Error fetching all locations: $e");
+    } finally {
+      _isLoadingLocations = false;
+      notifyListeners();
+    }
+  }
+
+  // Add this method to GlobalDataManager
+  Future<void> _preloadAllLocationsForAllStates() async {
+    try {
+      debugPrint(
+          "🔄 Preloading locations for all ${_availableStates.length} states...");
+
+      // Fetch locations for all states in parallel
+      await Future.wait(
+        _availableStates.map((state) async {
+          try {
+            if (!_locationsByState.containsKey(state)) {
+              final locations =
+                  await _redemptionRepository.getAllLocationsByState(state);
+              _locationsByState[state] = locations.cast<PropertyState>();
+              debugPrint(
+                  "✅ Preloaded ${locations.length} locations for $state");
+            }
+          } catch (e) {
+            debugPrint("❌ Error preloading locations for state $state: $e");
+            _locationsByState[state] = [];
+          }
+        }),
+      );
+
+      debugPrint("✅ Completed preloading all locations");
+    } catch (e) {
+      debugPrint("❌ Error in preloading all locations: $e");
+    }
   }
 }

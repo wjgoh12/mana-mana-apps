@@ -51,6 +51,35 @@ class UnitOverviewContainer extends StatelessWidget {
           unit.stype == selectedType &&
           unit.sunitno == selectedUnit,
     );
+    Map<String, String> getPreviousMonthYear(DateTime now) {
+      int prevMonth = now.month - 1;
+      int year = now.year;
+
+      if (prevMonth == 0) {
+        prevMonth = 12; // December
+        year -= 1; // Go back one year
+      }
+
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+
+      return {
+        "month": months[prevMonth - 1],
+        "year": year.toString(),
+      };
+    }
 
     // Also check if the selected unit data has meaningful values (not just 0.00)
     final hasMeaningfulData = hasData &&
@@ -134,9 +163,10 @@ class UnitOverviewContainer extends StatelessWidget {
     }
     final formattedOcc = '${occupancyRate.toStringAsFixed(1)}%';
 
-    DateTime now = DateTime.now();
-    String shortMonth = monthNumberToName(now.month);
-    String year = now.year.toString();
+    final prev = getPreviousMonthYear(DateTime.now());
+
+    String shortMonth = prev["month"]!;
+    String year = prev["year"]!;
 
     Widget buildCard(
       String title,

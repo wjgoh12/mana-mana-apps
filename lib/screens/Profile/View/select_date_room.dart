@@ -85,20 +85,19 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     // In SelectDateRoom initState(), change this:
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.wait([
-        // ALWAYS fetch points for the current unit, don't check if empty
+        // ALWAYS fetch points for the current unit
         _vm.fetchRedemptionBalancePoints(
           location: widget.ownedLocation,
           unitNo: widget.ownedUnitNo,
         ),
-        _vm.roomTypes.isEmpty
-            ? _vm.fetchRoomTypes(
-                state: widget.state,
-                bookingLocationName: widget.location,
-                rooms: _selectedQuantity,
-                arrivalDate: _focusedDay,
-                departureDate: _focusedDay?.add(const Duration(days: 1)),
-              )
-            : Future.value(),
+        // ALWAYS fetch room types for the current location - don't check if empty
+        _vm.fetchRoomTypes(
+          state: widget.state,
+          bookingLocationName: widget.location,
+          rooms: _selectedQuantity,
+          arrivalDate: _focusedDay,
+          departureDate: _focusedDay?.add(const Duration(days: 1)),
+        ),
       ]);
     });
   }
@@ -146,9 +145,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     if (start != null && end != null) {
       bool hasBlocked = false;
-      for (DateTime d = start;
-          !d.isAfter(end);
-          d = d.add(const Duration(days: 1))) {
+      for (
+        DateTime d = start;
+        !d.isAfter(end);
+        d = d.add(const Duration(days: 1))
+      ) {
         if (_isBlackoutDay(d) || _isGreyDay(d)) {
           hasBlocked = true;
           break;
@@ -309,9 +310,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     DateTime firstOfMonth = DateTime(today.year, today.month, 1);
     DateTime lastOfMonth = DateTime(today.year, today.month + 1, 0);
 
-    for (DateTime d = firstOfMonth;
-        d.isBefore(lastOfMonth.add(Duration(days: 1)));
-        d = d.add(Duration(days: 1))) {
+    for (
+      DateTime d = firstOfMonth;
+      d.isBefore(lastOfMonth.add(Duration(days: 1)));
+      d = d.add(Duration(days: 1))
+    ) {
       if (_isDayEnabled(d)) {
         hasAvailableDayThisMonth = true;
         break;
@@ -353,8 +356,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ? _rangeEnd!.difference(_rangeStart!).inDays
         : 1;
 
-    final int totalPoints =
-        (_selectedRoom != null) ? _selectedRoom!.roomTypePoints : 0;
+    final int totalPoints = (_selectedRoom != null)
+        ? _selectedRoom!.roomTypePoints
+        : 0;
 
     final String formattedPoints = NumberFormat('#,###').format(totalPoints);
 
@@ -398,8 +402,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 calendarBuilders: CalendarBuilders(
                   disabledBuilder: (context, day, focusedDay) {
                     if (_isBlackoutDay(day) || _isGreyDay(day)) {
-                      final color =
-                          _isBlackoutDay(day) ? Colors.black : Colors.grey;
+                      final color = _isBlackoutDay(day)
+                          ? Colors.black
+                          : Colors.grey;
 
                       bool isStart = _blockedDates.any(
                         (bd) =>
@@ -537,10 +542,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     : 0;
                 final bool hasRange = _rangeStart != null && _rangeEnd != null;
                 final totalRoomPoints = hasRange
-                    ? room.roomTypePoints // already includes duration * qty
+                    ? room
+                          .roomTypePoints // already includes duration * qty
                     : room.roomTypePoints *
-                        (duration == 0 ? 1 : duration) *
-                        _selectedQuantity;
+                          (duration == 0 ? 1 : duration) *
+                          _selectedQuantity;
                 final affordable = totalRoomPoints <= userPoints;
 
                 return affordable
