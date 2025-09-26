@@ -26,7 +26,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
-      ownerVM.clearSelectionCache(); // Add this method to your VM
+      ownerVM.clearSelectionCache(); // Add this method to VM
 
       final globalData = Provider.of<GlobalDataManager>(context, listen: false);
       globalData

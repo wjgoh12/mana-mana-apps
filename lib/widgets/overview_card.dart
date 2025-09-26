@@ -67,9 +67,13 @@ class OverviewCard extends StatelessWidget {
     String shortMonth = monthNumberToName(now.month);
     String year = now.year.toString();
 
-    final uniqueLocations =
-        model.totalByMonth.map((e) => e['slocation']).toSet().toList();
-    final locationCount = uniqueLocations.length;
+    // Calculate active/managed units count
+    final managedUnitsCount = model.totalByMonth
+        .where(
+            (e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE')
+        .map((e) => e['sunit'])
+        .toSet()
+        .length;
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -111,7 +115,7 @@ class OverviewCard extends StatelessWidget {
                   width: cardWidth,
                   child: Column(
                     children: [
-                      // 1st
+                      // 1st - Updated to show total properties count
                       Card(
                         margin: EdgeInsets.only(bottom: responsiveHeight(5)),
                         child: Container(
@@ -153,13 +157,45 @@ class OverviewCard extends StatelessWidget {
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(right: 15),
-                                        child: Text(
-                                          '$locationCount',
-                                          style: TextStyle(
-                                            fontSize: ResponsiveSize.text(50),
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                                        child: FutureBuilder<int>(
+                                          future: PropertyListRepository
+                                              .getTotalPropertyCount(),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return Text(
+                                                '0',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      ResponsiveSize.text(50),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              );
+                                            }
+                                            if (snapshot.hasError) {
+                                              return Text(
+                                                '0',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      ResponsiveSize.text(50),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              );
+                                            }
+                                            final totalCount =
+                                                snapshot.data ?? 0;
+                                            return Text(
+                                              '$totalCount',
+                                              style: TextStyle(
+                                                fontSize:
+                                                    ResponsiveSize.text(50),
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
                                     ],
@@ -188,14 +224,65 @@ class OverviewCard extends StatelessWidget {
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(left: 10),
-                                        child: Text(
-                                          'Managed: $locationCount ',
-                                          style: TextStyle(
-                                            fontFamily: 'outfit',
-                                            color: Colors.white,
-                                            fontSize: ResponsiveSize.text(14),
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              'Managed:', // Show managed units count
+                                              style: TextStyle(
+                                                fontFamily: 'outfit',
+                                                color: Colors.white,
+                                                fontSize:
+                                                    ResponsiveSize.text(14),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            FutureBuilder<int>(
+                                                future: PropertyListRepository
+                                                    .getTotalPropertyCount(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return Text(
+                                                      '0',
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            ResponsiveSize.text(
+                                                                14),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    );
+                                                  }
+                                                  if (snapshot.hasError) {
+                                                    return Text(
+                                                      '0',
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            ResponsiveSize.text(
+                                                                14),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    );
+                                                  }
+                                                  final totalCount =
+                                                      snapshot.data ?? 0;
+                                                  return Text(
+                                                    '$totalCount',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          ResponsiveSize.text(
+                                                              14),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  );
+                                                })
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -206,112 +293,6 @@ class OverviewCard extends StatelessWidget {
                           ),
                         ),
                       ),
-
-                      // 2nd
-                      //   Card(
-                      //     margin: EdgeInsets.only(bottom: responsiveHeight(10)),
-                      //     color: const Color(0xFFFFE7B8),
-                      //     child: SizedBox(
-                      //       width: double.infinity, // fill column width
-                      //       height: cardHeightSmall,
-                      //       child: Row(
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //           Align(
-                      //             alignment: Alignment.centerLeft,
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.symmetric(
-                      //                   vertical: 15, horizontal: 10),
-                      //               child: CircleAvatar(
-                      //                 radius: 19.fSize,
-                      //                 backgroundColor: Colors.white,
-                      //                 child: Image.asset(
-                      //                   'assets/images/OverviewOccupancy.png',
-                      //                   width: 30.fSize,
-                      //                   height: 20.fSize,
-                      //                 ),
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Column(
-                      //             crossAxisAlignment: CrossAxisAlignment.start,
-                      //             children: [
-                      //               Padding(
-                      //                 padding:
-                      //                     const EdgeInsets.only(left: 8, top: 10),
-                      //                 child: Text(
-                      //                   'Occupancy Rate',
-                      //                   style: TextStyle(
-                      //                     fontFamily: 'outfit',
-                      //                     fontSize: ResponsiveSize.text(8),
-                      //                     fontWeight: FontWeight.normal,
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //               Padding(
-                      //                 padding: const EdgeInsets.only(left: 8),
-                      //                 child: FutureBuilder<String>(
-                      //                   future: model.locationByMonth.isNotEmpty
-                      //                       ? model
-                      //                           .calculateTotalOccupancyForLocation(
-                      //                               model.locationByMonth
-                      //                                   .first['location'])
-                      //                       : Future.value('0.0'),
-                      //                   builder: (context, snapshot) {
-                      //                     if (snapshot.connectionState ==
-                      //                         ConnectionState.waiting) {
-                      //                       return Text(
-                      //                         'Loading...',
-                      //                         style: TextStyle(
-                      //                           fontFamily: 'outfit',
-                      //                           fontSize: ResponsiveSize.text(15),
-                      //                           fontWeight: FontWeight.bold,
-                      //                         ),
-                      //                       );
-                      //                     }
-                      //                     if (snapshot.hasError) {
-                      //                       return Text(
-                      //                         'Error',
-                      //                         style: TextStyle(
-                      //                           fontFamily: 'outfit',
-                      //                           fontSize: ResponsiveSize.text(12),
-                      //                           fontWeight: FontWeight.bold,
-                      //                         ),
-                      //                       );
-                      //                     }
-                      //                     final occupancy =
-                      //                         snapshot.data ?? '0.0';
-                      //                     return const Text(
-                      //                       // Keep 12 fixed to match your design
-                      //                       // (can use ResponsiveSize.text if you prefer)
-                      //                       '0%', // placeholder will be replaced below
-                      //                       style: TextStyle(
-                      //                         fontFamily: 'outfit',
-                      //                         fontSize: 12,
-                      //                         fontWeight: FontWeight.bold,
-                      //                         color: Colors.black,
-                      //                       ),
-                      //                     ).buildWithText('$occupancy%');
-                      //                   },
-                      //                 ),
-                      //               ),
-                      //               Padding(
-                      //                 padding: const EdgeInsets.only(left: 8),
-                      //                 child: Text(
-                      //                   'As of Month ${model.propertyOccupancy.isNotEmpty && model.propertyOccupancy.values.first['units'] != null && model.propertyOccupancy.values.first['units'].values.first != null && model.propertyOccupancy.values.first['units'].values.first is Map<String, dynamic> ? '${monthNumberToName(model.propertyOccupancy.values.first['units'].values.first['month'])} ${model.propertyOccupancy.values.first['units'].values.first['year']}' : '$shortMonth $year'}',
-                      //                   style: TextStyle(
-                      //                     fontSize: ResponsiveSize.text(7),
-                      //                     fontFamily: 'outfit',
-                      //                     fontWeight: FontWeight.normal,
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
                     ],
                   ),
                 ),
@@ -324,12 +305,12 @@ class OverviewCard extends StatelessWidget {
                   width: cardWidth,
                   child: Column(
                     children: [
-                      // 3rd
+                      // 3rd - Monthly Profit Card (unchanged)
                       Card(
                         margin: EdgeInsets.only(bottom: responsiveHeight(5)),
                         color: const Color(0xFF9EEAFF),
                         child: SizedBox(
-                          width: double.infinity, // fill column width
+                          width: double.infinity,
                           height: cardHeightSmall,
                           child: Row(
                             children: [
@@ -465,7 +446,7 @@ class OverviewCard extends StatelessWidget {
                         ),
                       ),
 
-                      // 4th
+                      // 4th - Accumulated Profit Card (unchanged)
                       Card(
                         margin: EdgeInsets.zero,
                         color: const Color(0xFFDBC7FF),

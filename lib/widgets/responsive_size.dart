@@ -4,7 +4,6 @@ class ResponsiveSize {
   static late double screenWidth;
   static late double screenHeight;
 
-  // Base sizes (you can adjust to match your design prototype, e.g. Figma width = 375)
   static const double baseWidth = 375.0;
   static const double baseHeight = 812.0;
 

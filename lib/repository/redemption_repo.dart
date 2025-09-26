@@ -266,7 +266,6 @@ class RedemptionRepository {
             .toList();
       }
 
-      // ✅ Case 2: API returns a single object (your example)
       if (res.containsKey('redemptionPoints') &&
           res.containsKey('redemptionBalancePoints')) {
         return [

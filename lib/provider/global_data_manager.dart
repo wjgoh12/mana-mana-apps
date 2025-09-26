@@ -650,7 +650,7 @@ class GlobalDataManager extends ChangeNotifier {
     debugPrint("✅ All data reset in GlobalDataManager");
     notifyListeners();
   }
-  // Add these methods to your GlobalDataManager class
+  // Add these methods to GlobalDataManager class
 
 // Method to get all locations from all states (already loaded)
 // Add this method to GlobalDataManager

@@ -109,7 +109,7 @@ class ApiService {
 
   Future<dynamic> get(String endpoint, {Map<String, String>? headers}) async {
     try {
-      // Add authentication like your other methods
+      // Add authentication
       final AuthService authService = AuthService();
       bool isTokenValid = await authService.checkToken();
       if (!isTokenValid) {

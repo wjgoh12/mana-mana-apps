@@ -12,8 +12,6 @@ class Responsive extends StatelessWidget {
     required this.desktop,
   }) : super(key: key);
 
-// This size work fine on my design, maybe you need some customization depends on your design
-
   static final _tablet = 1100;
   static final _phone = 600;
 
@@ -23,7 +21,8 @@ class Responsive extends StatelessWidget {
   static bool isTablet(BuildContext context) =>
       measureWidth(context) < _tablet && measureWidth(context) >= _phone;
 
-  static bool isDesktop(BuildContext context) => measureWidth(context) >= _tablet;
+  static bool isDesktop(BuildContext context) =>
+      measureWidth(context) >= _tablet;
 
   static double measureWidth(BuildContext context) =>
       MediaQuery.of(context).size.width;
