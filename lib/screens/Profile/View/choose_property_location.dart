@@ -71,7 +71,12 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
           // Get locations to display based on selection
           List<dynamic> locationsToShow = [];
           if (selectedState == ALL_STATES) {
-            locationsToShow = globalData.getAllLocationsFromAllStates();
+            locationsToShow = globalData.getAllLocationsFromAllStates()
+              ..sort((a, b) => (a.locationName ?? '')
+                  .toLowerCase()
+                  .compareTo((b.locationName ?? '').toLowerCase()));
+          } else if (selectedState != null) {
+            locationsToShow = globalData.locationsByState[selectedState] ?? [];
           } else if (selectedState != null) {
             locationsToShow = globalData.locationsByState[selectedState] ?? [];
           }

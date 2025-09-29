@@ -403,7 +403,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                    vertical: 16,
+                                    vertical: 10,
                                     horizontal: ResponsiveSize.scaleWidth(8),
                                   ),
                                   child: Row(
@@ -435,11 +435,23 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                           SizedBox(
                                               height:
                                                   ResponsiveSize.scaleHeight(
-                                                      6)),
+                                                      4)),
                                           Container(
-                                            decoration: const BoxDecoration(
-                                                color: Color.fromARGB(
-                                                    15, 225, 251, 255)),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                                  ResponsiveSize.scaleWidth(8),
+                                              vertical:
+                                                  ResponsiveSize.scaleHeight(6),
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromARGB(
+                                                  97,
+                                                  204,
+                                                  248,
+                                                  255), // light background
+                                              borderRadius: BorderRadius.circular(
+                                                  8), // optional rounded corners
+                                            ),
                                             child: Row(
                                               children: [
                                                 Text(
@@ -466,7 +478,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 ),
                                               ],
                                             ),
-                                          ),
+                                          )
                                         ],
                                       ),
                                       const Spacer(),
