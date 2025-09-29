@@ -109,24 +109,14 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                               .map(
                                 (state) => DropdownMenuItem<String>(
                                   value: state,
-                                  child: Row(
-                                    children: [
-                                      // Add icon for "All States" option
-                                      if (state == ALL_STATES)
-                                        // const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            state,
-                                            style: TextStyle(
-                                              fontSize: 20.fSize,
-                                              fontWeight: FontWeight.bold,
-                                              color: state == ALL_STATES
-                                                  ? Colors.black
-                                                  : null,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
+                                  child: Text(
+                                    state,
+                                    style: TextStyle(
+                                      fontSize: 20.fSize,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                      fontFamily: 'outfit',
+                                    ),
                                   ),
                                 ),
                               )
@@ -182,11 +172,11 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                   child: GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                          childAspectRatio: 0.7,
-                        ),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 0.7,
+                    ),
                     padding: const EdgeInsets.all(16),
                     itemCount: locationsToShow.length,
                     itemBuilder: (context, index) {
@@ -198,8 +188,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                         location.stateName,
                         widget.selectedLocation,
                         widget.selectedUnitNo,
-                        showStateName:
-                            selectedState ==
+                        showStateName: selectedState ==
                             ALL_STATES, // Show state name when viewing all
                       );
                     },
@@ -231,7 +220,8 @@ Widget _buildLocationCard(
   String? picBase64,
   String? propertyState,
   String selectedLocation, // from PropertyRedemption
-  String selectedUnitNo, { // from PropertyRedemption
+  String selectedUnitNo, {
+  // from PropertyRedemption
   bool showStateName = false,
   // New parameter to show state name
 }) {
@@ -326,6 +316,7 @@ Widget _buildLocationCard(
                                   fontSize: 12.fSize,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
+                                  fontFamily: 'Outfit',
                                   shadows: [
                                     Shadow(
                                       offset: const Offset(1, 1),
@@ -350,6 +341,7 @@ Widget _buildLocationCard(
           style: TextStyle(
             fontSize: 16.fSize,
             fontWeight: FontWeight.bold,
+            fontFamily: 'Outfit',
             color: const Color(0xFF3E51FF),
           ),
           textAlign: TextAlign.center,

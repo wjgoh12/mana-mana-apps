@@ -46,18 +46,18 @@ Widget topBar(context, function) {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () => print('Notification button pressed'),
-            icon: Image.asset(
-              'assets/images/Notification.png',
-              width: 50,
-              //opacity: const AlwaysStoppedAnimation(0),
-              height: 50,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () => print('Notification button pressed'),
+        //     icon: Image.asset(
+        //       'assets/images/Notification.png',
+        //       width: 50,
+        //       //opacity: const AlwaysStoppedAnimation(0),
+        //       height: 50,
+        //       fit: BoxFit.contain,
+        //     ),
+        //   ),
+        // ],
       ),
     ),
   );

@@ -12,8 +12,43 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class OwnerProfile_v3 extends StatelessWidget {
+class OwnerProfile_v3 extends StatefulWidget {
   const OwnerProfile_v3({super.key});
+
+  @override
+  State<OwnerProfile_v3> createState() => _OwnerProfile_v3State();
+}
+
+class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
+  final OwnerProfileVM model = OwnerProfileVM();
+  bool _isLoggingOut = false;
+
+  @override
+  void initState() {
+    super.initState();
+    model.fetchData();
+  }
+
+  Future<void> _handleLogout() async {
+    if (_isLoggingOut) return; // prevent duplicate presses
+
+    setState(() {
+      _isLoggingOut = true;
+    });
+
+    try {
+      final authService = AuthService();
+      await authService.logout(context);
+    } catch (e) {
+      debugPrint("Logout failed: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoggingOut = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -321,25 +356,30 @@ class OwnerProfile_v3 extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextButton(
-                              onPressed: () {
-                                //logout
-                                final authService = AuthService();
-                                authService.logout(context);
-                              },
-                              style: ButtonStyle(
-                                  backgroundColor: WidgetStateProperty.all(
-                                      const Color(0xFFF2F2F2)),
-                                  shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ))),
-                              child: const Text('Logout',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                  ))),
+                            onPressed: _isLoggingOut ? null : _handleLogout,
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all(
+                                  const Color(0xFFF2F2F2)),
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                            child: _isLoggingOut
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  )
+                                : const Text(
+                                    'Logout',
+                                    style: TextStyle(fontFamily: 'outfit'),
+                                  ),
+                          ),
                         ],
                       ),
-
                       SizedBox(height: 35.fSize),
 
                       //terms and conditions and privacy policy

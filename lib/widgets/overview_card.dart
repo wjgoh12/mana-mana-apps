@@ -41,7 +41,15 @@ class OverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String monthNumberToName(int month) {
+    Map<String, String> getPreviousMonthYear(DateTime now) {
+      int prevMonth = now.month - 1;
+      int year = now.year;
+
+      if (prevMonth == 0) {
+        prevMonth = 12; // December
+        year -= 1; // Go back one year
+      }
+
       const months = [
         'Jan',
         'Feb',
@@ -54,19 +62,19 @@ class OverviewCard extends StatelessWidget {
         'Sep',
         'Oct',
         'Nov',
-        'Dec'
+        'Dec',
       ];
-      if (month >= 1 && month <= 12) {
-        return months[month - 1];
-      } else {
-        return 'Unknown';
-      }
+
+      return {
+        "month": months[prevMonth - 1],
+        "year": year.toString(),
+      };
     }
 
-    DateTime now = DateTime.now();
-    String shortMonth = monthNumberToName(now.month);
-    String year = now.year.toString();
+    final prev = getPreviousMonthYear(DateTime.now());
 
+    String shortMonth = prev["month"]!;
+    String year = prev["year"]!;
     // Calculate active/managed units count
     final managedUnitsCount = model.totalByMonth
         .where(
@@ -566,7 +574,15 @@ class RevenueContainer extends StatelessWidget {
   }
 
   Widget _buildDateRow() {
-    String monthNumberToName(int month) {
+    Map<String, String> getPreviousMonthYear(DateTime now) {
+      int prevMonth = now.month - 1;
+      int year = now.year;
+
+      if (prevMonth == 0) {
+        prevMonth = 12; // December
+        year -= 1; // Go back one year
+      }
+
       const months = [
         'Jan',
         'Feb',
@@ -579,18 +595,19 @@ class RevenueContainer extends StatelessWidget {
         'Sep',
         'Oct',
         'Nov',
-        'Dec'
+        'Dec',
       ];
-      if (month >= 1 && month <= 12) {
-        return months[month - 1];
-      } else {
-        return 'Unknown';
-      }
+
+      return {
+        "month": months[prevMonth - 1],
+        "year": year.toString(),
+      };
     }
 
-    DateTime now = DateTime.now();
-    String shortMonth = monthNumberToName(now.month);
-    String year = now.year.toString();
+    final prev = getPreviousMonthYear(DateTime.now());
+
+    String shortMonth = prev["month"]!;
+    String year = prev["year"]!;
     return Row(
       children: [
         Text(
