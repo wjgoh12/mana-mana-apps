@@ -240,21 +240,17 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: booking.status == 'Confirmed'
-                                ? Colors.green.shade100
+                                ? Colors.green
                                 : booking.status == 'Pending'
-                                    ? Colors.orange.shade100
-                                    : Colors.red.shade100,
+                                    ? Colors.orange
+                                    : Colors.red,
                           ),
                           child: Text(
                             booking.status,
                             style: TextStyle(
                               fontSize: ResponsiveSize.text(10),
                               fontFamily: 'outfit',
-                              color: booking.status == 'Confirmed'
-                                  ? Colors.green.shade700
-                                  : booking.status == 'Pending'
-                                      ? Colors.orange.shade700
-                                      : Colors.red.shade700,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

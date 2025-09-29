@@ -846,12 +846,23 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         borderRadius: BorderRadius.circular(16),
         child: Stack(
           children: [
+            // Room image
             Image.memory(
               _decodeBase64Image(imagePath),
               width: double.infinity,
-              height: double.infinity,
+              height: 180, // fixed height for consistency
               fit: BoxFit.cover,
             ),
+
+            // 🔹 Black overlay if selected
+            if (isSelected)
+              Container(
+                width: double.infinity,
+                height: 180,
+                color: Colors.black.withOpacity(0.6),
+              ),
+
+            // Title + points (always visible with gradient)
             Positioned(
               bottom: 0,
               left: 0,
@@ -894,28 +905,19 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }
 
   Widget _buildRoomCard(RoomType room, {required bool isSelected}) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: isSelected ? const Color(0xFF3E51FF) : Colors.transparent,
-          width: 3,
-        ),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            _selectedRoom = room;
-            _selectedRoomId = room.roomTypeName; // Store the ID for tracking
-          });
-        },
-        child: _buildRoomTypeCard(
-          context,
-          room.roomTypeName,
-          room.roomTypePoints,
-          room.pic,
-          isSelected: isSelected,
-        ),
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _selectedRoom = room;
+          _selectedRoomId = room.roomTypeName; // Store the ID for tracking
+        });
+      },
+      child: _buildRoomTypeCard(
+        context,
+        room.roomTypeName,
+        room.roomTypePoints,
+        room.pic,
+        isSelected: isSelected,
       ),
     );
   }

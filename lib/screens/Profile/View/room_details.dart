@@ -68,49 +68,42 @@ class _RoomDetailsState extends State<RoomDetails> {
   }
 
   // Send email notification to admin (via backend API)
-  // Future<void> sendEmailNotificationToAdmin({
-  //   required String guestName,
-  //   required String userEmail,
-  //   required DateTime? checkIn,
-  //   required DateTime? checkOut,
-  //   required int points,
-  //   required String roomType,
-  //   required String bookingLocation,
-  // }) async {
-  //   try {
-  //     // TODO: Implement your backend API call here
-  //     // This should call your backend service that sends emails
+  Future<void> sendEmailNotificationToAdmin({
+    required String guestName,
+    required String userEmail,
+    required DateTime? checkIn,
+    required DateTime? checkOut,
+    required int points,
+    required String roomType,
+    required String bookingLocation,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://your-backend-api.com/send-booking-notification'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'to': ADMIN_EMAIL,
+          'subject': 'New Booking Request - $bookingLocation',
+          'guestName': guestName,
+          'userEmail': userEmail,
+          'roomType': roomType,
+          'bookingLocation': bookingLocation,
+          'checkIn': checkIn?.toIso8601String(),
+          'checkOut': checkOut?.toIso8601String(),
+          'totalPoints': points,
+        }),
+      );
 
-  //     //  Example implementation:
-  //     final response = await http.post(
-  //       Uri.parse('https://your-backend-api.com/send-booking-notification'),
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: jsonEncode({
-  //         'to': ADMIN_EMAIL,
-  //         'subject': 'New Booking Request - $bookingLocation',
-  //         'guestName': guestName,
-  //         'userEmail': userEmail,
-  //         'roomType': roomType,
-  //         'bookingLocation': bookingLocation,
-  //         'checkIn': checkIn?.toIso8601String(),
-  //         'checkOut': checkOut?.toIso8601String(),
-  //         'totalPoints': points,
-  //       }),
-  //     );
+      if (response.statusCode != 200) {
+        throw Exception('Failed to send email notification');
+      }
 
-  //     if (response.statusCode != 200) {
-  //       throw Exception('Failed to send email notification');
-  //     }
-
-  //     debugPrint('Email notification sent to admin: $ADMIN_EMAIL');
-  //     debugPrint('Guest: $guestName, Email: $userEmail');
-  //     debugPrint('Booking: $roomType at $bookingLocation');
-  //     debugPrint('Check-in: $checkIn, Check-out: $checkOut, Points: $points');
-  //   } catch (e) {
-  //     debugPrint('Error sending email notification: $e');
-  //     // Don't throw - we don't want email failure to stop the booking process
-  //   }
-  // }
+      debugPrint('✅ Email notification sent to admin: $ADMIN_EMAIL');
+    } catch (e) {
+      debugPrint('❌ Error sending email notification: $e');
+      // Don’t throw, so booking still goes through
+    }
+  }
 
   int totalPoints() => widget.room.roomTypePoints;
 
