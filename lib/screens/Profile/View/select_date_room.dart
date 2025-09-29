@@ -145,12 +145,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     if (start != null && end != null) {
       bool hasBlocked = false;
-      for (
-        DateTime d = start;
-        !d.isAfter(end);
-        d = d.add(const Duration(days: 1))
-      ) {
-        if (_isBlackoutDay(d) || _isGreyDay(d)) {
+      for (DateTime d = start;
+          !d.isAfter(end);
+          d = d.add(const Duration(days: 1))) {
+        // Only check for BLACK dates, not grey
+        if (_isBlackoutDay(d)) {
           hasBlocked = true;
           break;
         }
@@ -310,11 +309,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     DateTime firstOfMonth = DateTime(today.year, today.month, 1);
     DateTime lastOfMonth = DateTime(today.year, today.month + 1, 0);
 
-    for (
-      DateTime d = firstOfMonth;
-      d.isBefore(lastOfMonth.add(Duration(days: 1)));
-      d = d.add(Duration(days: 1))
-    ) {
+    for (DateTime d = firstOfMonth;
+        d.isBefore(lastOfMonth.add(Duration(days: 1)));
+        d = d.add(Duration(days: 1))) {
       if (_isDayEnabled(d)) {
         hasAvailableDayThisMonth = true;
         break;
@@ -356,9 +353,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ? _rangeEnd!.difference(_rangeStart!).inDays
         : 1;
 
-    final int totalPoints = (_selectedRoom != null)
-        ? _selectedRoom!.roomTypePoints
-        : 0;
+    final int totalPoints =
+        (_selectedRoom != null) ? _selectedRoom!.roomTypePoints : 0;
 
     final String formattedPoints = NumberFormat('#,###').format(totalPoints);
 
@@ -394,28 +390,30 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 enabledDayPredicate: (day) {
                   final today = DateTime.now();
                   final sevenDaysFromNow = today.add(const Duration(days: 7));
+
+                  // Check if day is before the 7-day buffer
                   if (day.isBefore(sevenDaysFromNow)) return false;
+
+                  // Block only BLACK dates, allow GREY dates
                   if (_isBlackoutDay(day)) return false;
-                  if (_isGreyDay(day)) return false;
+
+                  // Grey dates are now selectable
                   return true;
                 },
                 calendarBuilders: CalendarBuilders(
                   disabledBuilder: (context, day, focusedDay) {
-                    if (_isBlackoutDay(day) || _isGreyDay(day)) {
-                      final color = _isBlackoutDay(day)
-                          ? Colors.black
-                          : Colors.grey;
+                    // Only style BLACK dates as disabled
+                    if (_isBlackoutDay(day)) {
+                      final color = Colors.black;
 
                       bool isStart = _blockedDates.any(
                         (bd) =>
-                            (bd.contentType.toLowerCase() ==
-                                (_isBlackoutDay(day) ? "black" : "grey")) &&
+                            (bd.contentType.toLowerCase() == "black") &&
                             isSameDay(bd.dateFrom, day),
                       );
                       bool isEnd = _blockedDates.any(
                         (bd) =>
-                            (bd.contentType.toLowerCase() ==
-                                (_isBlackoutDay(day) ? "black" : "grey")) &&
+                            (bd.contentType.toLowerCase() == "black") &&
                             isSameDay(bd.dateTo, day),
                       );
 
@@ -463,6 +461,28 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                           ),
                         );
                       }
+                    }
+                    return null;
+                  },
+                  // Add a default builder to style GREY dates while keeping them selectable
+                  defaultBuilder: (context, day, focusedDay) {
+                    if (_isGreyDay(day)) {
+                      return Container(
+                        margin: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${day.day}',
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      );
                     }
                     return null;
                   },
@@ -542,11 +562,10 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     : 0;
                 final bool hasRange = _rangeStart != null && _rangeEnd != null;
                 final totalRoomPoints = hasRange
-                    ? room
-                          .roomTypePoints // already includes duration * qty
+                    ? room.roomTypePoints // already includes duration * qty
                     : room.roomTypePoints *
-                          (duration == 0 ? 1 : duration) *
-                          _selectedQuantity;
+                        (duration == 0 ? 1 : duration) *
+                        _selectedQuantity;
                 final affordable = totalRoomPoints <= userPoints;
 
                 return affordable
@@ -750,6 +769,17 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
           backgroundColor: Colors.red,
         ),
       );
+// Check if total points is 0
+      if (_selectedRoom!.roomTypePoints == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Cannot proceed with 0 points. Please select a valid room.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
       return;
     }
 

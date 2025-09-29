@@ -1,17 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
+import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-// This shows the modifications needed for RoomDetails class to handle booking mode
-// Add this parameter to the RoomDetails constructor and modify the class accordingly
 
 class RoomDetails extends StatefulWidget {
   final RoomType room;
@@ -22,7 +20,7 @@ class RoomDetails extends StatefulWidget {
   final String ownerLocation;
   final String ownerUnitNo;
   final String bookingLocationName;
-  final bool isBookingMode; // NEW: Add this parameter
+  final bool isBookingMode;
 
   const RoomDetails({
     Key? key,
@@ -47,6 +45,9 @@ class _RoomDetailsState extends State<RoomDetails> {
   bool _highlightCheckBox = false;
   bool _isSubmitting = false;
 
+  // TODO: Replace with your actual admin email
+  static const String ADMIN_EMAIL = 'wjingggoh15@gmail.com';
+
   String? _getLocationCode(String locationName) {
     switch (locationName.toUpperCase()) {
       case "EXPRESSIONZ":
@@ -66,16 +67,48 @@ class _RoomDetailsState extends State<RoomDetails> {
     }
   }
 
-  void sendEmailToCS(String content) async {
-    final Uri emailUri = Uri(
-      scheme: 'mailto',
-      path: '',
-      queryParameters: {'subject': 'Booking Request', 'body': content},
-    );
-    if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri);
-    } else {
-      debugPrint('Could not launch email app');
+  // Send email notification to admin (via backend API)
+  Future<void> sendEmailNotificationToAdmin({
+    required String guestName,
+    required String userEmail,
+    required DateTime? checkIn,
+    required DateTime? checkOut,
+    required int points,
+    required String roomType,
+    required String bookingLocation,
+  }) async {
+    try {
+      // TODO: Implement your backend API call here
+      // This should call your backend service that sends emails
+
+      //  Example implementation:
+      final response = await http.post(
+        Uri.parse('https://your-backend-api.com/send-booking-notification'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'to': ADMIN_EMAIL,
+          'subject': 'New Booking Request - $bookingLocation',
+          'guestName': guestName,
+          'userEmail': userEmail,
+          'roomType': roomType,
+          'bookingLocation': bookingLocation,
+          'checkIn': checkIn?.toIso8601String(),
+          'checkOut': checkOut?.toIso8601String(),
+          'totalPoints': points,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to send email notification');
+      }
+
+      debugPrint('Email notification sent to admin: $ADMIN_EMAIL');
+      debugPrint('Guest: $guestName, Email: $userEmail');
+      debugPrint('Booking: $roomType at $bookingLocation');
+      debugPrint('Check-in: $checkIn, Check-out: $checkOut, Points: $points');
+    } catch (e) {
+      debugPrint('Error sending email notification: $e');
+      // Don't throw - we don't want email failure to stop the booking process
     }
   }
 
@@ -90,7 +123,6 @@ class _RoomDetailsState extends State<RoomDetails> {
   Widget build(BuildContext context) {
     final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
 
-// get matching state
     final propertyState =
         ownerVM.findPropertyStateForOwner(widget.ownerLocation);
     if (propertyState == null) {
@@ -217,7 +249,10 @@ class _RoomDetailsState extends State<RoomDetails> {
                             fontFamily: 'Outfit'),
                       ),
                     ),
-                    MyCheckboxWidget(
+                    const SizedBox(height: 16),
+
+                    /// Expandable Terms Widget
+                    ExpandableTermsWidget(
                       initialValue: _isChecked,
                       highlight: _highlightCheckBox,
                       onChecked: (value) {
@@ -227,6 +262,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                         });
                       },
                     ),
+
                     const SizedBox(height: 10),
                     Text(
                       'Booking request will be submitted for review.',
@@ -241,11 +277,10 @@ class _RoomDetailsState extends State<RoomDetails> {
                     Center(
                       child: TextButton(
                         onPressed: _isSubmitting
-                            ? null // Disable button while submitting
+                            ? null
                             : () async {
                                 bool isValid = true;
 
-                                // Check validations before setting loading state
                                 if (_guestNameController.text.trim().isEmpty) {
                                   isValid = false;
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -270,13 +305,6 @@ class _RoomDetailsState extends State<RoomDetails> {
                                   );
                                 }
 
-                                // Only set loading state if form is valid
-                                if (isValid) {
-                                  setState(() {
-                                    _isSubmitting = true;
-                                  });
-                                }
-
                                 if (totalPoints() > widget.userPointsBalance) {
                                   isValid = false;
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -289,6 +317,10 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 }
 
                                 if (isValid) {
+                                  setState(() {
+                                    _isSubmitting = true;
+                                  });
+
                                   final ownerVM = Provider.of<OwnerProfileVM>(
                                       context,
                                       listen: false);
@@ -318,9 +350,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                     final result = await ownerVM.submitBooking(
                                       bookingRoom: bookingRoom,
                                       point: point,
-                                      propertyStates: [
-                                        propertyState
-                                      ], // wrap in a list if submitBooking expects list
+                                      propertyStates: [propertyState],
                                       checkIn: widget.checkIn,
                                       checkOut: widget.checkOut,
                                       quantity: widget.quantity,
@@ -330,24 +360,27 @@ class _RoomDetailsState extends State<RoomDetails> {
                                     );
 
                                     if (result != null) {
-                                      final emailContent = '''
-Booking request submitted!
-Guest Name: ${_guestNameController.text}
-Check-In: ${widget.checkIn}
-Check-Out: ${widget.checkOut}
-Total Points: ${totalPoints()}
-''';
-                                      sendEmailToCS(emailContent);
+                                      // Send email notification to admin
+                                      await sendEmailNotificationToAdmin(
+                                        guestName:
+                                            _guestNameController.text.trim(),
+                                        userEmail: userEmail,
+                                        checkIn: widget.checkIn,
+                                        checkOut: widget.checkOut,
+                                        points: totalPoints(),
+                                        roomType: widget.room.roomTypeName,
+                                        bookingLocation:
+                                            widget.bookingLocationName,
+                                      );
 
                                       showDialog(
                                         context: context,
                                         builder: (_) => AlertDialog(
                                           backgroundColor: Colors.white,
-                                          contentPadding: const EdgeInsets.all(
-                                              16), // reduce padding if needed
+                                          contentPadding:
+                                              const EdgeInsets.all(16),
                                           content: Column(
-                                            mainAxisSize: MainAxisSize
-                                                .min, // shrink dialog height
+                                            mainAxisSize: MainAxisSize.min,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
@@ -360,8 +393,7 @@ Total Points: ${totalPoints()}
                                               ),
                                               SizedBox(
                                                   height: ResponsiveSize
-                                                      .scaleHeight(
-                                                          3)), // reduce spacing
+                                                      .scaleHeight(3)),
                                               const Text(
                                                 'You will be notified once your booking is confirmed​',
                                                 textAlign: TextAlign.center,
@@ -378,10 +410,8 @@ Total Points: ${totalPoints()}
                                                     Color(0xFF3E51FF),
                                               ),
                                               onPressed: () {
-                                                Navigator.pop(
-                                                    context); // Close dialog
-                                                Navigator.pop(
-                                                    context); // Back to room selection
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
                                                 Navigator.pop(context);
                                                 Navigator.pop(context);
                                                 Navigator.pop(context);
@@ -417,7 +447,6 @@ Total Points: ${totalPoints()}
                                       ),
                                     );
                                   } finally {
-                                    // Reset submitting state whether successful or not
                                     if (mounted) {
                                       setState(() {
                                         _isSubmitting = false;
@@ -449,6 +478,7 @@ Total Points: ${totalPoints()}
                               ),
                       ),
                     ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -510,24 +540,26 @@ Total Points: ${totalPoints()}
   }
 }
 
-class MyCheckboxWidget extends StatefulWidget {
+// Expandable Terms Widget
+class ExpandableTermsWidget extends StatefulWidget {
   final bool initialValue;
   final ValueChanged<bool> onChecked;
   final bool highlight;
 
-  const MyCheckboxWidget(
-      {Key? key,
-      this.initialValue = false,
-      required this.onChecked,
-      this.highlight = false})
-      : super(key: key);
+  const ExpandableTermsWidget({
+    Key? key,
+    this.initialValue = false,
+    required this.onChecked,
+    this.highlight = false,
+  }) : super(key: key);
 
   @override
-  State<MyCheckboxWidget> createState() => _MyCheckboxWidgetState();
+  State<ExpandableTermsWidget> createState() => _ExpandableTermsWidgetState();
 }
 
-class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
+class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
   late bool isChecked;
+  bool isExpanded = false;
 
   @override
   void initState() {
@@ -536,7 +568,7 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
   }
 
   @override
-  void didUpdateWidget(covariant MyCheckboxWidget oldWidget) {
+  void didUpdateWidget(covariant ExpandableTermsWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialValue != widget.initialValue) {
       isChecked = widget.initialValue;
@@ -545,154 +577,173 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Checkbox(
-          value: isChecked,
-          side: BorderSide(
-              color: widget.highlight ? Colors.red : Colors.grey, width: 2),
-          onChanged: (value) {
-            setState(() {
-              isChecked = value ?? false;
-            });
-            widget.onChecked(isChecked);
-          },
-        ),
-        Row(
-          children: [
-            Text(
-              'Tick box to confirm ',
-              style: TextStyle(
-                fontSize: ResponsiveSize.text(13),
-                fontFamily: 'Outfit',
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Colors.white,
-                    title: Text(
-                      "Terms & Conditions",
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(18),
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Outfit',
+        // Expandable T&C Card
+        Container(
+          margin: const EdgeInsets.only(top: 8),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Column(
+            children: [
+              // Header
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    isExpanded = !isExpanded;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Icon(
+                        isExpanded ? Icons.expand_less : Icons.expand_more,
                         color: const Color(0xFF3E51FF),
                       ),
-                    ),
-                    content: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          // Guarantee
-                          Text("Guarantee:",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text(
-                            "All bookings must be guaranteed with valid payment or points redemption at the time of reservation. Pending submissions are not a guaranteed reservation until they are confirmed by the reservations team.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Booking Status
-                          Text("Booking Status:",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text(
-                            "Pending (your request has been received), Confirmed (your booking has been confirmed), Unavailable (your request has been denied due to hotel unavailability).\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Check-in / Check-out
-                          Text("Check-in / Check-out:",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text(
-                            "Check-in from 3PM, check-out by 11AM. Early check-in or late check-out is subject to availability and may have extra charges.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Cancellations
-                          Text("Cancellations:",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text(
-                            "Cancel at least 3 days before arrival for a full refund of points or payment. Cancellations within 3 days or no-shows are non-refundable.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Changes
-                          Text("Changes:",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text(
-                            "Date changes must be made at least 3 days before arrival and are subject to room availability.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // ID
-                          Text("ID:",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text("Please present a valid ID at check-in.\n"),
-
-                          // Hotel Rights
-                          Text("Hotel Rights:",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text(
-                            "The hotel may cancel or adjust bookings in case of misuse or fraud.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-
-                          // Valuables
-                          Text("Valuables:",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text(
-                            "The hotel is not responsible for items left inside the room.\n",
-                            textAlign: TextAlign.justify,
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: [
-                      Center(
-                        child: TextButton.icon(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.close,
-                              color: Colors.red, size: 20),
-                          label: Text(
-                            "Close",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                              fontSize: ResponsiveSize.text(15),
-                              fontFamily: 'Outfit',
-                            ),
-                          ),
+                      const SizedBox(width: 8),
+                      GradientText1(
+                        text: isExpanded
+                            ? 'Hide Terms & Conditions'
+                            : 'View Terms & Conditions',
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.text(13),
+                          fontFamily: 'Outfit',
+                          fontWeight: FontWeight.w700,
+                        ),
+                        gradient: const LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
                         ),
                       ),
                     ],
                   ),
-                );
+                ),
+              ),
+
+              // Expandable content
+              if (isExpanded)
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Divider(height: 1),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Terms & Conditions',
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.text(14),
+                          fontFamily: 'Outfit',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildTermItem(
+                        'Guarantee',
+                        'All bookings must be guaranteed with valid payment or points redemption at the time of reservation. Pending submissions are not a guaranteed reservation until they are confirmed by the reservations team.',
+                      ),
+                      _buildTermItem(
+                        'Booking Status',
+                        'Pending (your request has been received), Confirmed (your booking has been confirmed), Unavailable (your request has been denied due to hotel unavailability).',
+                      ),
+                      _buildTermItem(
+                        'Check-in / Check-out',
+                        'Check-in from 3PM, check-out by 11AM. Early check-in or late check-out is subject to availability and may have extra charges.',
+                      ),
+                      _buildTermItem(
+                        'Cancellations',
+                        'Cancel at least 3 days before arrival for a full refund of points or payment. Cancellations within 3 days or no-shows are non-refundable.',
+                      ),
+                      _buildTermItem(
+                        'Changes',
+                        'Date changes must be made at least 3 days before arrival and are subject to room availability.',
+                      ),
+                      _buildTermItem(
+                        'ID',
+                        'Please present a valid ID at check-in.',
+                      ),
+                      _buildTermItem(
+                        'Hotel Rights',
+                        'The hotel may cancel or adjust bookings in case of misuse or fraud.',
+                      ),
+                      _buildTermItem(
+                        'Valuables',
+                        'The hotel is not responsible for items left inside the room.',
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+        // Checkbox row
+        Row(
+          children: [
+            Checkbox(
+              value: isChecked,
+              side: BorderSide(
+                color: widget.highlight ? Colors.red : Colors.grey,
+                width: 2,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  isChecked = value ?? false;
+                });
+                widget.onChecked(isChecked);
               },
+            ),
+            Expanded(
               child: Text(
-                'T&C',
+                'I have read and agree to the T&C',
                 style: TextStyle(
-                  fontFamily: 'Outfit',
-                  color: const Color(0xFF3E51FF),
-                  decoration: TextDecoration.underline,
-                  fontWeight: FontWeight.bold,
                   fontSize: ResponsiveSize.text(13),
+                  fontFamily: 'Outfit',
                 ),
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildTermItem(String title, String content) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '• $title',
+            style: TextStyle(
+              fontSize: ResponsiveSize.text(12),
+              fontFamily: 'Outfit',
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.justify,
+          ),
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Text(
+              content,
+              style: TextStyle(
+                fontSize: ResponsiveSize.text(11),
+                fontFamily: 'Outfit',
+                color: Colors.grey.shade700,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.justify,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
