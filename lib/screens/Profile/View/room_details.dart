@@ -46,7 +46,7 @@ class _RoomDetailsState extends State<RoomDetails> {
   bool _isSubmitting = false;
 
   // TODO: Replace with your actual admin email
-  static const String ADMIN_EMAIL = 'wjingggoh15@gmail.com';
+  static const String ADMIN_EMAIL = 'admin@example.com';
 
   String? _getLocationCode(String locationName) {
     switch (locationName.toUpperCase()) {
@@ -332,14 +332,14 @@ class _RoomDetailsState extends State<RoomDetails> {
                                     if (userEmail.isEmpty)
                                       throw Exception("No user email");
 
-                                    final locationCode =
-                                        _getLocationCode(widget.ownerLocation);
-                                    if (locationCode == null)
-                                      throw Exception(
-                                          "Invalid location: ${widget.ownerLocation}");
+                                    // final locationCode =
+                                    //     _getLocationCode(widget.ownerLocation);
+                                    // if (locationCode == null)
+                                    //   throw Exception(
+                                    //       "Invalid location: ${widget.ownerLocation}");
 
                                     final point = UnitAvailablePoint(
-                                      location: locationCode,
+                                      location: widget.ownerLocation,
                                       unitNo: widget.ownerUnitNo,
                                       redemptionBalancePoints:
                                           widget.userPointsBalance,

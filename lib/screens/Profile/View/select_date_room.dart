@@ -769,17 +769,19 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
           backgroundColor: Colors.red,
         ),
       );
-// Check if total points is 0
-      if (_selectedRoom!.roomTypePoints == 0) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Cannot proceed with 0 points. Please select a valid room.'),
-            backgroundColor: Colors.red,
+      return;
+    }
+
+    // ✅ Now check if total points = 0
+    if (_selectedRoom!.roomTypePoints == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Cannot proceed with 0 points. Please select a valid room.',
           ),
-        );
-        return;
-      }
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
 
