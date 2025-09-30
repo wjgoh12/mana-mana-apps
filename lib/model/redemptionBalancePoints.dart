@@ -1,8 +1,8 @@
 class RedemptionBalancePoints {
   final String locationName;
   final String unitNo;
-  final int redemptionPoints;
-  final int redemptionBalancePoints;
+  final double redemptionPoints;
+  final double redemptionBalancePoints;
 
   RedemptionBalancePoints({
     required this.locationName,
@@ -15,8 +15,8 @@ class RedemptionBalancePoints {
     return RedemptionBalancePoints(
       locationName: json['locationName'] ?? '',
       unitNo: json['unitNo'] ?? '',
-      redemptionPoints: json['redemptionPoints'] ?? 0,
-      redemptionBalancePoints: json['redemptionBalancePoints'] ?? 0,
+      redemptionPoints: json['redemptionPoints'] ?? 0.00,
+      redemptionBalancePoints: json['redemptionBalancePoints'] ?? 0.00,
     );
   }
 }

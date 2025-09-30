@@ -6,7 +6,6 @@ import 'package:mana_mana_app/splashscreen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  // Initialize the app
   WidgetsFlutterBinding.ensureInitialized();
   initApp('prod');
 

@@ -28,7 +28,7 @@ android {
     ndkVersion "26.1.10909125"
 
     defaultConfig {
-        applicationId "com.dfs.manamanaowners"
+        applicationId "com.mana_mana_app"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()

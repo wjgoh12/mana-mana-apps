@@ -309,7 +309,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     final ownerVM = Provider.of<OwnerProfileVM>(context);
     final sortedUnits = [
       ...ownerVM.unitAvailablePoints,
-    ].where((unit) => unit.redemptionBalancePoints > 0).toList()
+    ].where((unit) => unit.redemptionBalancePoints > 0.0).toList()
       ..sort((a, b) =>
           b.redemptionBalancePoints.compareTo(a.redemptionBalancePoints));
 

@@ -151,14 +151,15 @@ class OwnerProfileVM extends ChangeNotifier {
     }
 
     try {
+      debugPrint('📍 Fetching available points...');
       _isLoadingAvailablePoints = true;
       notifyListeners();
       final response = await _ownerBookingRepository.getUnitAvailablePoints(
         email: email,
       );
-
+      debugPrint('ab');
       _unitAvailablePoints = response;
-      // debugPrint("✅ Available points length: ${_unitAvailablePoints.length}");
+      debugPrint("✅ Available points length: ${_unitAvailablePoints.length}");
     } catch (e) {
       debugPrint('❌ Error fetching available points: $e');
     } finally {

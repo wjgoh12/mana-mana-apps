@@ -18,8 +18,9 @@ class UnitAvailablePoint {
       email: json['email'] ?? '',
       location: json['location'] ?? '',
       unitNo: json['unitNo'] ?? '',
-      redemptionPoints: json['redemptionPoints'] ?? 0,
-      redemptionBalancePoints: json['redemptionBalancePoints'] ?? 0,
+      redemptionPoints: (json['redemptionPoints'] ?? 0).toDouble(),
+      redemptionBalancePoints:
+          (json['redemptionBalancePoints'] ?? 0).toDouble(),
     );
   }
 }
