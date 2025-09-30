@@ -281,61 +281,66 @@ Widget _buildLocationCard(
                   ),
                 );
               },
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.fSize),
-                  image: decodedImage != null
-                      ? DecorationImage(
-                          image: MemoryImage(decodedImage),
-                          fit: BoxFit.cover,
-                        )
-                      : const DecorationImage(
-                          image: AssetImage("assets/images/placeholder.png"),
-                          fit: BoxFit.cover,
-                        ),
-                ),
-                // Add overlay with state name when showing all states
-                child: showStateName
-                    ? Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.fSize),
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withOpacity(0.7),
-                              ],
-                              stops: const [0.6, 1.0],
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.fSize),
+                      image: decodedImage != null
+                          ? DecorationImage(
+                              image: MemoryImage(decodedImage),
+                              fit: BoxFit.cover,
+                            )
+                          : const DecorationImage(
+                              image:
+                                  AssetImage("assets/images/placeholder.png"),
+                              fit: BoxFit.cover,
                             ),
-                          ),
-                          child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                propertyState ?? "Unknown State",
-                                style: TextStyle(
-                                  fontSize: 12.fSize,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                  fontFamily: 'Outfit',
-                                  shadows: [
-                                    Shadow(
-                                      offset: const Offset(1, 1),
-                                      blurRadius: 2,
-                                      color: Colors.black.withOpacity(0.8),
-                                    ),
+                    ),
+                    // Add overlay with state name when showing all states
+                    child: showStateName
+                        ? Positioned.fill(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.fSize),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.7),
                                   ],
+                                  stops: const [0.6, 1.0],
+                                ),
+                              ),
+                              child: Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    propertyState ?? "Unknown State",
+                                    style: TextStyle(
+                                      fontSize: 12.fSize,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontFamily: 'Outfit',
+                                      shadows: [
+                                        Shadow(
+                                          offset: const Offset(1, 1),
+                                          blurRadius: 2,
+                                          color: Colors.black.withOpacity(0.8),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      )
-                    : null,
+                          )
+                        : null,
+                  ),
+                ],
               ),
             ),
           ),
