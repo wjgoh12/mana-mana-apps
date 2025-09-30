@@ -1,7 +1,7 @@
 class RoomType {
   final String pic;
   final String roomTypeName;
-  final int roomTypePoints;
+  final double roomTypePoints;
 
   RoomType({
     required this.pic,
@@ -13,7 +13,7 @@ class RoomType {
     return RoomType(
       pic: json['pic'] ?? '', // fallback to empty string if null
       roomTypeName: json['roomTypeName'] ?? '',
-      roomTypePoints: (json['roomTypePoints'] is int)
+      roomTypePoints: (json['roomTypePoints'] is double)
           ? json['roomTypePoints']
           : int.tryParse(json['roomTypePoints'].toString()) ?? 0,
     );

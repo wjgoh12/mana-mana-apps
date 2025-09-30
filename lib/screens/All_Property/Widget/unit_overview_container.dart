@@ -295,33 +295,29 @@ class UnitOverviewContainer extends StatelessWidget {
                 '0xFF000000',
               ),
               const SizedBox(width: 8),
-              buildCard(
-                'Group Occupancy',
-                formattedOcc,
-                '$shortMonth $year',
-                '0xFFDBC7FF',
-                '0xFF000000',
-                isCurrency: false,
-                onTap: () => showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) => AlertDialog(
-                    backgroundColor:
-                        Colors.transparent, // Set transparent background
-                    elevation: 0, // Remove dialog shadow
-                    insetPadding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveSize.scaleWidth(20),
-                      vertical: ResponsiveSize.scaleHeight(40),
-                    ),
-                    content: ChangeNotifierProvider.value(
-                      value: dashboardModel,
-                      child: OccupancyRateBox(
-                        model: dashboardModel,
-                      ),
-                    ),
+              buildCard('Group Occupancy', formattedOcc, '$shortMonth $year',
+                  '0xFFDBC7FF', '0xFF000000',
+                  isCurrency: false, onTap: () {}
+                  // => showDialog(
+                  //   context: context,
+                  //   barrierDismissible: false,
+                  //   builder: (BuildContext context) => AlertDialog(
+                  //     backgroundColor:
+                  //         Colors.transparent, // Set transparent background
+                  //     elevation: 0, // Remove dialog shadow
+                  //     insetPadding: EdgeInsets.symmetric(
+                  //       horizontal: ResponsiveSize.scaleWidth(20),
+                  //       vertical: ResponsiveSize.scaleHeight(40),
+                  //     ),
+                  //     content: ChangeNotifierProvider.value(
+                  //       value: dashboardModel,
+                  //       child: OccupancyRateBox(
+                  //         model: dashboardModel,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   ),
-                ),
-              ),
             ],
           ),
         ],

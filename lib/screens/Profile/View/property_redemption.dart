@@ -461,7 +461,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 SizedBox(
                                                   width:
                                                       ResponsiveSize.scaleWidth(
-                                                          20),
+                                                          10),
                                                 ),
                                                 Text(
                                                   '${unit.redemptionBalancePoints}/${unit.redemptionPoints}',
@@ -507,7 +507,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 BorderRadius.circular(15),
                                           ),
                                           child: const Padding(
-                                            padding: EdgeInsets.all(8),
+                                            padding: EdgeInsets.all(7),
                                             child: Text(
                                               "Book Now",
                                               style: TextStyle(

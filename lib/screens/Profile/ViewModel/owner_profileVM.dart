@@ -187,8 +187,8 @@ class OwnerProfileVM extends ChangeNotifier {
       if (cached.isNotEmpty) {
         _locationsInState = List<PropertyState>.from(cached);
       } else {
-        final fetchedLocations = await _ownerBookingRepository
-            .getAllLocationsByState(state);
+        final fetchedLocations =
+            await _ownerBookingRepository.getAllLocationsByState(state);
         _locationsInState = fetchedLocations
             .where((loc) => loc.locationName.isNotEmpty)
             .toList();
@@ -235,9 +235,8 @@ class OwnerProfileVM extends ChangeNotifier {
       final locations = await _ownerBookingRepository.getAllLocationsByState(
         state,
       );
-      _locationsInState = locations
-          .where((loc) => loc.locationName.isNotEmpty)
-          .toList();
+      _locationsInState =
+          locations.where((loc) => loc.locationName.isNotEmpty).toList();
     } catch (e) {
       debugPrint("❌ Error preloading locations for state $state: $e");
     }
@@ -381,7 +380,7 @@ class OwnerProfileVM extends ChangeNotifier {
     final cacheKey = _getRoomTypeCacheKey(
       state,
       bookingLocationName,
-      defaultRooms,
+      defaultRooms.toInt(),
       arrivalDate,
       departureDate,
     );
@@ -403,7 +402,7 @@ class OwnerProfileVM extends ChangeNotifier {
       final response = await _ownerBookingRepository.getRoomTypes(
         state: state,
         bookingLocationName: bookingLocationName,
-        rooms: defaultRooms,
+        rooms: defaultRooms.toInt(),
         arrivalDate: defaultArrival,
         departureDate: defaultDeparture,
       );
@@ -430,7 +429,7 @@ class OwnerProfileVM extends ChangeNotifier {
     required DateTime? checkIn,
     required DateTime? checkOut,
     required int quantity,
-    required int points,
+    required double points,
     required String guestName,
   }) async {
     try {

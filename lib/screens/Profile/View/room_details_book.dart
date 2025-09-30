@@ -18,7 +18,7 @@ class RoomDetailsBook extends StatefulWidget {
   final DateTime? checkIn;
   final DateTime? checkOut;
   final int quantity;
-  final int userPointsBalance;
+  final double userPointsBalance;
   final String ownerLocation;
   final String ownerUnitNo;
   final String bookingLocationName;
@@ -79,7 +79,7 @@ class _RoomDetailsBookState extends State<RoomDetailsBook> {
     }
   }
 
-  int totalPoints() => widget.room.roomTypePoints;
+  double totalPoints() => widget.room.roomTypePoints;
 
   String formattedTotalPoints() {
     final formatter = NumberFormat('#,###');

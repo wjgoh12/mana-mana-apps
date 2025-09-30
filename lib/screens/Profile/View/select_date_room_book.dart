@@ -51,7 +51,8 @@ class SelectDateRoomBook extends StatefulWidget {
     return formatter.format(getUserPointsBalance(vm));
   }
 
-  static int calculateTotalPoints(RoomType room, int quantity, int duration) {
+  static double calculateTotalPoints(
+      RoomType room, int quantity, int duration) {
     return room.roomTypePoints * quantity * duration;
   }
 
@@ -169,7 +170,7 @@ class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
   }
 
   // Switch to a suitable unit that can afford the required points
-  bool _switchToSuitableUnit(int requiredPoints) {
+  bool _switchToSuitableUnit(double requiredPoints) {
     debugPrint('\n=== Switching Unit Debug ===');
     debugPrint("🔄 Attempting to switch to unit with sufficient points");
     debugPrint("Required points: $requiredPoints");
@@ -261,7 +262,7 @@ class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
   }
 
   // Check if any unit can afford the required points
-  bool _canAnyUnitAfford(int requiredPoints) {
+  bool _canAnyUnitAfford(double requiredPoints) {
     return _sortedUnits
         .any((unit) => unit.redemptionBalancePoints >= requiredPoints);
   }
@@ -464,7 +465,7 @@ class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
         ? _rangeEnd!.difference(_rangeStart!).inDays
         : 1;
 
-    final int totalPoints =
+    final double totalPoints =
         (_selectedRoom != null) ? _selectedRoom!.roomTypePoints : 0;
 
     final String formattedPoints = NumberFormat('#,###').format(totalPoints);
@@ -885,7 +886,7 @@ class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
     // Calculate required points and ensure we have suitable unit
     final effectiveDuration = _rangeEnd!.difference(_rangeStart!).inDays;
     final bool hasRange = _rangeStart != null && _rangeEnd != null;
-    final totalPoints = hasRange
+    final double totalPoints = hasRange
         ? _selectedRoom!.roomTypePoints
         : _selectedRoom!.roomTypePoints * effectiveDuration * _selectedQuantity;
 
@@ -899,7 +900,7 @@ class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
       return;
     }
 
-    final int userPointsBalance =
+    final double userPointsBalance =
         _currentSelectedUnit?.redemptionBalancePoints ?? 0;
 
     Navigator.push(
@@ -926,7 +927,7 @@ class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
   Widget _buildRoomTypeCard(
     BuildContext context,
     String roomType,
-    int point,
+    double point,
     String imagePath, {
     required bool isSelected,
   }) {

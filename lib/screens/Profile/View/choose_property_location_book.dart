@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
-import 'package:mana_mana_app/screens/Profile/View/select_date_room_book.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
@@ -12,37 +11,29 @@ import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
 
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
-class ChoosePropertyLocationBook extends StatefulWidget {
+class ChoosePropertyLocation extends StatefulWidget {
   final String selectedLocation;
   final String selectedUnitNo;
-  const ChoosePropertyLocationBook({
+  const ChoosePropertyLocation({
     Key? key,
     required this.selectedLocation,
     required this.selectedUnitNo,
   }) : super(key: key);
 
   @override
-  State<ChoosePropertyLocationBook> createState() =>
-      _ChoosePropertyLocationBookState();
+  State<ChoosePropertyLocation> createState() => _ChoosePropertyLocationState();
 }
 
-class _ChoosePropertyLocationBookState
-    extends State<ChoosePropertyLocationBook> {
+class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
   String? selectedState;
-  List<dynamic> locations = [];
+  static const String ALL_STATES = "All States";
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final globalData = context.read<GlobalDataManager>();
-
-      setState(() {
-        selectedState = globalData.selectedState;
-        if (selectedState != null) {
-          locations = globalData.getLocationsForState(selectedState!) ?? [];
-        }
-      });
+      globalData.fetchRedemptionStatesAndLocations();
     });
   }
 
@@ -64,107 +55,139 @@ class _ChoosePropertyLocationBookState
         ),
       ),
       body: Consumer<GlobalDataManager>(
-        builder: (context, global, child) {
-          final states = global.availableStates;
+        builder: (context, globalData, child) {
+          List<String> dropdownOptions = [];
+          if (globalData.availableStates.isNotEmpty) {
+            dropdownOptions = [ALL_STATES, ...globalData.availableStates];
 
-          if (states.isEmpty) {
-            return const Center(child: Text("No states found"));
+            if (selectedState == null) {
+              selectedState = ALL_STATES;
+              _handleStateSelection(globalData, ALL_STATES);
+            }
           }
 
-          // Ensure selected state
-          if (selectedState == null) {
-            selectedState = states.first;
-            locations = global.getLocationsForState(selectedState!) ?? [];
+          List<dynamic> locationsToShow = [];
+          if (selectedState == ALL_STATES) {
+            locationsToShow = globalData.getAllLocationsFromAllStates()
+              ..sort((a, b) => (a.locationName ?? '')
+                  .toLowerCase()
+                  .compareTo((b.locationName ?? '').toLowerCase()));
+          } else if (selectedState != null) {
+            locationsToShow = globalData.locationsByState[selectedState] ?? [];
           }
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔽 Dropdown for states
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: ResponsiveSize.scaleWidth(200),
-                    padding: const EdgeInsets.only(left: 16, top: 16),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Text("Select State"),
-                        items: states
-                            .map(
-                              (state) => DropdownMenuItem<String>(
-                                value: state,
-                                child: Text(
-                                  state,
-                                  style: TextStyle(
-                                    fontSize: 20.fSize,
-                                    fontWeight: FontWeight.bold,
+              if (globalData.isLoadingStates)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              else if (dropdownOptions.isEmpty)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text("No states found"),
+                  ),
+                )
+              else
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: ResponsiveSize.scaleWidth(200),
+                      padding: const EdgeInsets.only(left: 16, top: 16),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: const Text("Select State"),
+                          items: dropdownOptions
+                              .map(
+                                (state) => DropdownMenuItem<String>(
+                                  value: state,
+                                  child: Text(
+                                    state,
+                                    style: TextStyle(
+                                      fontSize: 20.fSize,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                      fontFamily: 'outfit',
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                        value: selectedState,
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            setState(() {
-                              selectedState = value;
-                              locations =
-                                  global.getLocationsForState(value) ?? [];
-                            });
-                          }
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey.shade400),
-                            color: Colors.white,
-                          ),
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey.shade300),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0),
                               )
-                            ],
+                              .toList(),
+                          value: selectedState,
+                          onChanged: (String? value) {
+                            if (value != null) {
+                              setState(() => selectedState = value);
+                              _handleStateSelection(globalData, value);
+                            }
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey.shade400),
+                              color: Colors.white,
+                            ),
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 300,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                              border: Border.all(color: Colors.grey.shade300),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-
+                  ],
+                ),
               const SizedBox(height: 16),
-
-              // 🔽 Locations grid
-              if (locations.isEmpty)
-                const Center(child: Text("No locations found"))
+              if (globalData.isLoadingLocations)
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (locationsToShow.isEmpty)
+                const Expanded(child: Center(child: Text("No locations found")))
               else
                 Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 0.7,
+                    ),
                     padding: const EdgeInsets.all(16),
-                    childAspectRatio: 0.7,
-                    children: locations
-                        .map(
-                          (loc) => _buildLocationCard(
-                            context,
-                            loc.locationName,
-                            loc.pic,
-                            loc.stateName,
-                            widget.selectedLocation,
-                            widget.selectedUnitNo,
-                          ),
-                        )
-                        .toList(),
+                    itemCount: locationsToShow.length,
+                    // Add cache extent to reduce memory pressure
+                    cacheExtent: 400,
+                    itemBuilder: (context, index) {
+                      final location = locationsToShow[index];
+                      return LocationCard(
+                        key: ValueKey(
+                            '${location.locationName}_${location.stateName}'),
+                        locationName: location.locationName,
+                        picBase64: location.pic,
+                        propertyState: location.stateName,
+                        selectedLocation: widget.selectedLocation,
+                        selectedUnitNo: widget.selectedUnitNo,
+                        showStateName: selectedState == ALL_STATES,
+                      );
+                    },
                   ),
                 ),
             ],
@@ -173,129 +196,205 @@ class _ChoosePropertyLocationBookState
       ),
     );
   }
+
+  void _handleStateSelection(GlobalDataManager globalData, String state) {
+    if (state == ALL_STATES) {
+      // No need to fetch - all locations are already preloaded!
+    } else {
+      globalData.fetchLocationsByState(state);
+    }
+  }
 }
 
-Widget _buildLocationCard(
-  BuildContext context,
-  String? location,
-  String? picBase64,
-  String? propertyState,
-  String selectedLocation, // from PropertyRedemption
-  String selectedUnitNo, // from PropertyRedemption
-) {
-  Uint8List? _decodeBase64(String? base64String) {
-    try {
-      if (base64String == null || base64String.isEmpty) return null;
+// Separate StatefulWidget for better memory management
+class LocationCard extends StatefulWidget {
+  final String? locationName;
+  final String? picBase64;
+  final String? propertyState;
+  final String selectedLocation;
+  final String selectedUnitNo;
+  final bool showStateName;
 
-      // Case 1: If API already provides "data:image/png;base64,..."
-      if (base64String.startsWith("data:image")) {
-        return Uri.parse(base64String).data?.contentAsBytes();
+  const LocationCard({
+    Key? key,
+    required this.locationName,
+    required this.picBase64,
+    required this.propertyState,
+    required this.selectedLocation,
+    required this.selectedUnitNo,
+    this.showStateName = false,
+  }) : super(key: key);
+
+  @override
+  State<LocationCard> createState() => _LocationCardState();
+}
+
+class _LocationCardState extends State<LocationCard>
+    with AutomaticKeepAliveClientMixin {
+  Uint8List? _decodedImage;
+  bool _isDecoded = false;
+
+  @override
+  bool get wantKeepAlive => true; // Keep state alive to avoid re-decoding
+
+  @override
+  void initState() {
+    super.initState();
+    _decodeImageAsync();
+  }
+
+  Future<void> _decodeImageAsync() async {
+    if (widget.picBase64 == null || widget.picBase64!.isEmpty) {
+      if (mounted) setState(() => _isDecoded = true);
+      return;
+    }
+
+    try {
+      // Decode in a separate isolate/compute to avoid blocking UI
+      Uint8List? result;
+
+      if (widget.picBase64!.startsWith("data:image")) {
+        result = Uri.parse(widget.picBase64!).data?.contentAsBytes();
+      } else {
+        result = base64Decode(widget.picBase64!);
       }
 
-      // Case 2: Raw base64 string
-      return base64Decode(base64String);
+      if (mounted) {
+        setState(() {
+          _decodedImage = result;
+          _isDecoded = true;
+        });
+      }
     } catch (e) {
-      debugPrint("❌ Failed to decode Base64: $e");
-      return null;
+      debugPrint("❌ Failed to decode image for ${widget.locationName}: $e");
+      if (mounted) setState(() => _isDecoded = true);
     }
   }
 
-  final decodedImage = _decodeBase64(picBase64);
+  @override
+  void dispose() {
+    _decodedImage = null; // Clear memory
+    super.dispose();
+  }
 
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    child: Column(
-      children: <Widget>[
-        Expanded(
-          child: Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.fSize),
-            ),
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChangeNotifierProvider.value(
-                      value: context.read<OwnerProfileVM>(),
-                      child: SelectDateRoomBook(
-                        location: location ?? "Unknown Location",
-                        state: propertyState ?? "Unknown State",
-                        ownedLocation: selectedLocation,
-                        ownedUnitNo: selectedUnitNo,
+  @override
+  Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.fSize),
+              ),
+              child: InkWell(
+                onTap: () {
+                  final ownerVM = context.read<OwnerProfileVM>();
+                  ownerVM.clearRoomTypesForNewLocation();
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChangeNotifierProvider.value(
+                        value: ownerVM,
+                        child: SelectDateRoom(
+                          location: widget.locationName ?? "Unknown Location",
+                          state: widget.propertyState ?? "Unknown State",
+                          ownedLocation: widget.selectedLocation,
+                          ownedUnitNo: widget.selectedUnitNo,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
+                  );
+                },
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.fSize),
-                  image: decodedImage != null
-                      ? DecorationImage(
-                          image: MemoryImage(decodedImage),
-                          fit: BoxFit.cover,
+                  child: _isDecoded
+                      ? Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            // Background image with caching
+                            _decodedImage != null
+                                ? Image.memory(
+                                    _decodedImage!,
+                                    fit: BoxFit.cover,
+                                    cacheHeight: 400, // Reduce memory footprint
+                                    cacheWidth: 400,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      debugPrint(
+                                          "❌ Error displaying image for ${widget.locationName}: $error");
+                                      return _buildPlaceholder();
+                                    },
+                                  )
+                                : _buildPlaceholder(),
+                            // Overlay with state name
+                            if (widget.showStateName)
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      Colors.black.withOpacity(0.7),
+                                    ],
+                                    stops: const [0.6, 1.0],
+                                  ),
+                                ),
+                                alignment: Alignment.bottomLeft,
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  widget.propertyState ?? "Unknown State",
+                                  style: TextStyle(
+                                    fontSize: 12.fSize,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    fontFamily: 'Outfit',
+                                    shadows: [
+                                      Shadow(
+                                        offset: const Offset(1, 1),
+                                        blurRadius: 2,
+                                        color: Colors.black.withOpacity(0.8),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
                         )
-                      : const DecorationImage(
-                          image: AssetImage("assets/images/placeholder.png"),
-                          fit: BoxFit.cover,
-                        ),
+                      : const Center(child: CircularProgressIndicator()),
                 ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          location ?? "Unknown Location",
-          style: TextStyle(
-            fontSize: 20.fSize,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF3E51FF),
+          const SizedBox(height: 8),
+          Text(
+            widget.locationName ?? "Unknown Location",
+            style: TextStyle(
+              fontSize: 16.fSize,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Outfit',
+              color: const Color(0xFF3E51FF),
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Colors.grey[300],
+      child: const Center(
+        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+      ),
+    );
+  }
 }
-     // const Spacer(),
-              // Container(
-              //   margin: const EdgeInsets.all(16),
-              //   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              //   decoration: BoxDecoration(
-              //     color: const Color.fromARGB(255, 236, 247, 255),
-              //     borderRadius: BorderRadius.circular(12),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.black.withOpacity(0.1),
-              //         blurRadius: 8,
-              //         offset: const Offset(0, 1),
-              //       ),
-              //     ],
-              //   ),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Text(
-              //         'Available Point Balance:  ',
-              //         style: TextStyle(
-              //           fontSize: ResponsiveSize.text(13),
-              //           fontWeight: FontWeight.bold,
-              //         ),
-              //       ),
-              //       Text(
-              //         '${SelectDateRoom.getFormatUserPointsBalance(vm)}',
-              //         style: TextStyle(
-              //           color: const Color(0xFF3E51FF),
-              //           fontSize: ResponsiveSize.text(15),
-              //           fontWeight: FontWeight.bold,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),

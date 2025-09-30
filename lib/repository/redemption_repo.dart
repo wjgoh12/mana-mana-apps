@@ -337,7 +337,7 @@ class RedemptionRepository {
     required DateTime? checkIn,
     required DateTime? checkOut,
     required int quantity,
-    required int points,
+    required double points,
     required String guestName,
   }) async {
     // debugPrint("🔎 point.location raw: '${point.location}'");

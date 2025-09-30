@@ -2,8 +2,8 @@ class UnitAvailablePoint {
   final String email;
   final String location;
   final String unitNo;
-  final int redemptionPoints;
-  final int redemptionBalancePoints;
+  final double redemptionPoints;
+  final double redemptionBalancePoints;
 
   UnitAvailablePoint({
     required this.email,

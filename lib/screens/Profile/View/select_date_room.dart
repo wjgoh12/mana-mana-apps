@@ -48,7 +48,8 @@ class SelectDateRoom extends StatefulWidget {
     return formatter.format(getUserPointsBalance(vm));
   }
 
-  static int calculateTotalPoints(RoomType room, int quantity, int duration) {
+  static double calculateTotalPoints(
+      RoomType room, int quantity, int duration) {
     return room.roomTypePoints * quantity * duration;
   }
 
@@ -224,7 +225,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       final isAffordable = isRoomAffordable(
         matchingRoom,
         duration,
-        _selectedQuantity,
+        _selectedQuantity.toInt(),
       );
 
       if (isAffordable) {
@@ -354,7 +355,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         : 1;
 
     final int totalPoints =
-        (_selectedRoom != null) ? _selectedRoom!.roomTypePoints : 0;
+        (_selectedRoom != null) ? _selectedRoom!.roomTypePoints.toInt() : 0;
 
     final String formattedPoints = NumberFormat('#,###').format(totalPoints);
 
@@ -802,7 +803,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     }
 
     final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
-    final int userPointsBalance = ownerVM.UserPointBalance.isNotEmpty
+    final double userPointsBalance = ownerVM.UserPointBalance.isNotEmpty
         ? ownerVM.UserPointBalance.first.redemptionBalancePoints
         : 0;
 
@@ -829,7 +830,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   Widget _buildRoomTypeCard(
     BuildContext context,
     String roomType,
-    int point,
+    double point,
     String imagePath, {
     required bool isSelected,
   }) {

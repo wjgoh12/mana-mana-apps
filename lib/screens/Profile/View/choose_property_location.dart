@@ -56,19 +56,16 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
       ),
       body: Consumer<GlobalDataManager>(
         builder: (context, globalData, child) {
-          // Create dropdown options with "All States" as first option
           List<String> dropdownOptions = [];
           if (globalData.availableStates.isNotEmpty) {
             dropdownOptions = [ALL_STATES, ...globalData.availableStates];
 
-            // Auto-select "All States" if nothing is selected
             if (selectedState == null) {
               selectedState = ALL_STATES;
               _handleStateSelection(globalData, ALL_STATES);
             }
           }
 
-          // Get locations to display based on selection
           List<dynamic> locationsToShow = [];
           if (selectedState == ALL_STATES) {
             locationsToShow = globalData.getAllLocationsFromAllStates()
@@ -77,14 +74,11 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                   .compareTo((b.locationName ?? '').toLowerCase()));
           } else if (selectedState != null) {
             locationsToShow = globalData.locationsByState[selectedState] ?? [];
-          } else if (selectedState != null) {
-            locationsToShow = globalData.locationsByState[selectedState] ?? [];
           }
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔽 Dropdown for states (including "All States")
               if (globalData.isLoadingStates)
                 const Center(
                   child: Padding(
@@ -141,7 +135,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                             ),
                           ),
                           dropdownStyleData: DropdownStyleData(
-                            maxHeight: 300, // Limit height for better UX
+                            maxHeight: 300,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               color: Colors.white,
@@ -160,12 +154,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                     ),
                   ],
                 ),
-
               const SizedBox(height: 16),
-
-              const SizedBox(height: 16),
-
-              // 🔽 Locations grid
               if (globalData.isLoadingLocations)
                 const Expanded(
                   child: Center(child: CircularProgressIndicator()),
@@ -184,17 +173,19 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                     ),
                     padding: const EdgeInsets.all(16),
                     itemCount: locationsToShow.length,
+                    // Add cache extent to reduce memory pressure
+                    cacheExtent: 400,
                     itemBuilder: (context, index) {
                       final location = locationsToShow[index];
-                      return _buildLocationCard(
-                        context,
-                        location.locationName,
-                        location.pic,
-                        location.stateName,
-                        widget.selectedLocation,
-                        widget.selectedUnitNo,
-                        showStateName: selectedState ==
-                            ALL_STATES, // Show state name when viewing all
+                      return LocationCard(
+                        key: ValueKey(
+                            '${location.locationName}_${location.stateName}'),
+                        locationName: location.locationName,
+                        picBase64: location.pic,
+                        propertyState: location.stateName,
+                        selectedLocation: widget.selectedLocation,
+                        selectedUnitNo: widget.selectedUnitNo,
+                        showStateName: selectedState == ALL_STATES,
                       );
                     },
                   ),
@@ -206,159 +197,204 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
     );
   }
 
-  // In ChoosePropertyLocation, simplify the _handleStateSelection method
   void _handleStateSelection(GlobalDataManager globalData, String state) {
     if (state == ALL_STATES) {
       // No need to fetch - all locations are already preloaded!
-      // Just trigger a rebuild by calling notifyListeners if needed
     } else {
-      // For specific states, data should already be available too
-      // But you can still call this if you want to ensure fresh data
       globalData.fetchLocationsByState(state);
     }
   }
 }
 
-Widget _buildLocationCard(
-  BuildContext context,
-  String? location,
-  String? picBase64,
-  String? propertyState,
-  String selectedLocation, // from PropertyRedemption
-  String selectedUnitNo, {
-  // from PropertyRedemption
-  bool showStateName = false,
-  // New parameter to show state name
-}) {
-  Uint8List? _decodeBase64(String? base64String) {
-    try {
-      if (base64String == null || base64String.isEmpty) return null;
+// Separate StatefulWidget for better memory management
+class LocationCard extends StatefulWidget {
+  final String? locationName;
+  final String? picBase64;
+  final String? propertyState;
+  final String selectedLocation;
+  final String selectedUnitNo;
+  final bool showStateName;
 
-      // Case 1: If API already provides "data:image/png;base64,..."
-      if (base64String.startsWith("data:image")) {
-        return Uri.parse(base64String).data?.contentAsBytes();
+  const LocationCard({
+    Key? key,
+    required this.locationName,
+    required this.picBase64,
+    required this.propertyState,
+    required this.selectedLocation,
+    required this.selectedUnitNo,
+    this.showStateName = false,
+  }) : super(key: key);
+
+  @override
+  State<LocationCard> createState() => _LocationCardState();
+}
+
+class _LocationCardState extends State<LocationCard>
+    with AutomaticKeepAliveClientMixin {
+  Uint8List? _decodedImage;
+  bool _isDecoded = false;
+
+  @override
+  bool get wantKeepAlive => true; // Keep state alive to avoid re-decoding
+
+  @override
+  void initState() {
+    super.initState();
+    _decodeImageAsync();
+  }
+
+  Future<void> _decodeImageAsync() async {
+    if (widget.picBase64 == null || widget.picBase64!.isEmpty) {
+      if (mounted) setState(() => _isDecoded = true);
+      return;
+    }
+
+    try {
+      // Decode in a separate isolate/compute to avoid blocking UI
+      Uint8List? result;
+
+      if (widget.picBase64!.startsWith("data:image")) {
+        result = Uri.parse(widget.picBase64!).data?.contentAsBytes();
+      } else {
+        result = base64Decode(widget.picBase64!);
       }
 
-      // Case 2: Raw base64 string
-      return base64Decode(base64String);
+      if (mounted) {
+        setState(() {
+          _decodedImage = result;
+          _isDecoded = true;
+        });
+      }
     } catch (e) {
-      debugPrint("❌ Failed to decode Base64: $e");
-      return null;
+      debugPrint("❌ Failed to decode image for ${widget.locationName}: $e");
+      if (mounted) setState(() => _isDecoded = true);
     }
   }
 
-  final decodedImage = _decodeBase64(picBase64);
+  @override
+  void dispose() {
+    _decodedImage = null; // Clear memory
+    super.dispose();
+  }
 
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    child: Column(
-      children: <Widget>[
-        Expanded(
-          child: Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.fSize),
-            ),
-            child: InkWell(
-              // In _buildLocationCard onTap:
-              onTap: () {
-                final ownerVM = context.read<OwnerProfileVM>();
-                ownerVM
-                    .clearRoomTypesForNewLocation(); // Clear before navigating
+  @override
+  Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChangeNotifierProvider.value(
-                      value: ownerVM,
-                      child: SelectDateRoom(
-                        location: location ?? "Unknown Location",
-                        state: propertyState ?? "Unknown State",
-                        ownedLocation: selectedLocation,
-                        ownedUnitNo: selectedUnitNo,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.fSize),
+              ),
+              child: InkWell(
+                onTap: () {
+                  final ownerVM = context.read<OwnerProfileVM>();
+                  ownerVM.clearRoomTypesForNewLocation();
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChangeNotifierProvider.value(
+                        value: ownerVM,
+                        child: SelectDateRoom(
+                          location: widget.locationName ?? "Unknown Location",
+                          state: widget.propertyState ?? "Unknown State",
+                          ownedLocation: widget.selectedLocation,
+                          ownedUnitNo: widget.selectedUnitNo,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-              child: Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.fSize),
-                      image: decodedImage != null
-                          ? DecorationImage(
-                              image: MemoryImage(decodedImage),
-                              fit: BoxFit.cover,
-                            )
-                          : const DecorationImage(
-                              image:
-                                  AssetImage("assets/images/placeholder.png"),
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    // Add overlay with state name when showing all states
-                    child: showStateName
-                        ? Positioned.fill(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.fSize),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    Colors.black.withOpacity(0.7),
-                                  ],
-                                  stops: const [0.6, 1.0],
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.fSize),
+                  child: _isDecoded
+                      ? Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            // Background image with caching
+                            _decodedImage != null
+                                ? Image.memory(
+                                    _decodedImage!,
+                                    fit: BoxFit.cover,
+                                    cacheHeight: 400, // Reduce memory footprint
+                                    cacheWidth: 400,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      debugPrint(
+                                          "❌ Error displaying image for ${widget.locationName}: $error");
+                                      return _buildPlaceholder();
+                                    },
+                                  )
+                                : _buildPlaceholder(),
+                            // Overlay with state name
+                            if (widget.showStateName)
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      Colors.black.withOpacity(0.7),
+                                    ],
+                                    stops: const [0.6, 1.0],
+                                  ),
                                 ),
-                              ),
-                              child: Align(
                                 alignment: Alignment.bottomLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    propertyState ?? "Unknown State",
-                                    style: TextStyle(
-                                      fontSize: 12.fSize,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      fontFamily: 'Outfit',
-                                      shadows: [
-                                        Shadow(
-                                          offset: const Offset(1, 1),
-                                          blurRadius: 2,
-                                          color: Colors.black.withOpacity(0.8),
-                                        ),
-                                      ],
-                                    ),
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  widget.propertyState ?? "Unknown State",
+                                  style: TextStyle(
+                                    fontSize: 12.fSize,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    fontFamily: 'Outfit',
+                                    shadows: [
+                                      Shadow(
+                                        offset: const Offset(1, 1),
+                                        blurRadius: 2,
+                                        color: Colors.black.withOpacity(0.8),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ),
-                          )
-                        : null,
-                  ),
-                ],
+                          ],
+                        )
+                      : const Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          location ?? "Unknown Location",
-          style: TextStyle(
-            fontSize: 16.fSize,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Outfit',
-            color: const Color(0xFF3E51FF),
+          const SizedBox(height: 8),
+          Text(
+            widget.locationName ?? "Unknown Location",
+            style: TextStyle(
+              fontSize: 16.fSize,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Outfit',
+              color: const Color(0xFF3E51FF),
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Colors.grey[300],
+      child: const Center(
+        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+      ),
+    );
+  }
 }
