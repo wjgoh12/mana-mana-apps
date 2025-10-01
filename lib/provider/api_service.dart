@@ -69,12 +69,11 @@ class ApiService {
 
   Future<dynamic> postJson(String url, {Map<String, dynamic>? data}) async {
     final AuthService authService = AuthService();
-    bool isTokenValid = await authService.checkToken();
-    if (!isTokenValid) {
+    String? token = await authService.getValidAccessToken();
+    if (token == null) {
       throw Exception('Authentication required');
     }
 
-    String? token = await authService.getAccessToken();
     final fullUrl = '$baseUrl$url';
     // debugPrint("➡️ FULL URL: $fullUrl");
     // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
@@ -109,12 +108,10 @@ class ApiService {
     try {
       // Add authentication
       final AuthService authService = AuthService();
-      bool isTokenValid = await authService.checkToken();
-      if (!isTokenValid) {
+      String? token = await authService.getValidAccessToken();
+      if (token == null) {
         throw Exception('Authentication required');
       }
-
-      String? token = await authService.getAccessToken();
 
       final url = Uri.parse('$baseUrl$endpoint');
 
@@ -139,7 +136,7 @@ class ApiService {
             'GET request failed with status: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('❌ GET request error: $e');
+      // debugPrint('❌ GET request error: $e');
       throw e;
     }
   }
