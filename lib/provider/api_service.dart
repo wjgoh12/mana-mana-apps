@@ -9,12 +9,11 @@ class ApiService {
 
   Future<dynamic> post(String url, {Map<String, dynamic>? data}) async {
     final AuthService authService = AuthService();
-    bool isTokenValid = await authService.checkToken();
-    if (!isTokenValid) {
+    String? token = await authService.getValidAccessToken();
+
+    if (token == null) {
       throw Exception('Authentication required');
     }
-
-    String? token = await authService.getAccessToken();
 
     final response = await http.post(
       Uri.parse('$baseUrl$url'),
@@ -41,12 +40,11 @@ class ApiService {
     Map<String, dynamic>? data,
   }) async {
     final AuthService authService = AuthService();
-    bool isTokenValid = await authService.checkToken();
-    if (!isTokenValid) {
+    String? token = await authService.getValidAccessToken();
+    if (token == null) {
       throw Exception('Authentication required');
     }
 
-    String? token = await authService.getAccessToken();
     final response = await http.post(
       Uri.parse('$baseUrl$url'),
       headers: {

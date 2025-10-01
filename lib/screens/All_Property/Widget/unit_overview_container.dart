@@ -294,10 +294,10 @@ class UnitOverviewContainer extends StatelessWidget {
                 '0xFFFFE7B8',
                 '0xFF000000',
               ),
-              const SizedBox(width: 8),
-              buildCard('Group Occupancy', formattedOcc, '$shortMonth $year',
-                  '0xFFDBC7FF', '0xFF000000',
-                  isCurrency: false, onTap: () {}
+              // const SizedBox(width: 8),
+              // buildCard('Group Occupancy', formattedOcc, '$shortMonth $year',
+              //     '0xFFDBC7FF', '0xFF000000',
+              //     isCurrency: false, onTap: () {}
                   // => showDialog(
                   //   context: context,
                   //   barrierDismissible: false,
@@ -317,7 +317,7 @@ class UnitOverviewContainer extends StatelessWidget {
                   //     ),
                   //   ),
                   // ),
-                  ),
+                  // ),
             ],
           ),
         ],

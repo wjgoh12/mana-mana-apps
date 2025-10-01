@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/splashscreen.dart';
 import '../env_config.dart';
 import 'package:http/http.dart' as http;
@@ -13,8 +13,8 @@ class AuthService {
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  // DateTime? _tokenExpiryTime;
   Timer? _refreshTimer;
+  bool _isRefreshing = false;
 
   Future<bool> authenticate() async {
     try {
@@ -36,157 +36,257 @@ class AuthService {
             key: 'access_token', value: result.accessToken);
         await _secureStorage.write(
             key: 'refresh_token', value: result.refreshToken);
-        // Calculate the token expiration time and start the timer
-        // _tokenExpiryTime = DateTime.now().add(const Duration(
-        //     minutes:
-        //         EnvConfig.tokenExpirationMinutes)); // Set expiry to 20 minutes
+
+        _startTokenRefreshTimer(result.accessToken!);
         return true;
       }
     } catch (e) {
-      // print('Error during authentication: $e');
+      print('❌ Authentication error: $e');
     }
     return false;
   }
 
   Future<bool> checkToken() async {
     String? accessToken = await getAccessToken();
-    // print(JwtDecoder.getRemainingTime(accessToken!));
     if (accessToken == null) {
-      return await authenticate();
+      print('⚠️ No access token found - user needs to login');
+      return false; // Don't automatically authenticate, let the app handle login UI
     }
+
+    Duration remaining = JwtDecoder.getRemainingTime(accessToken);
+    print(
+        '⏰ Token expires in: ${remaining.inMinutes}m ${remaining.inSeconds % 60}s');
+
     bool tokenValid = await validateToken(accessToken);
     if (!tokenValid) {
-      return await refreshToken();
+      print('🔄 Token invalid or near expiry, refreshing...');
+      bool refreshed = await refreshTokenFunction();
+      if (!refreshed) {
+        print('❌ Failed to refresh token - user needs to re-login');
+        return false;
+      }
+      return true;
     }
+
+    // Token is valid, start the refresh timer
+    _startTokenRefreshTimer(accessToken);
     return true;
   }
 
-  Future<bool> validateToken(String token) async {
-    try {
-      if (!JwtDecoder.isExpired(token)) {
-        // Get remaining time before token expires
-        Duration timeUntilExpiry = JwtDecoder.getRemainingTime(token);
+  Future<String?> getValidAccessToken() async {
+  String? accessToken = await getAccessToken();
+  String? refreshToken = await _secureStorage.read(key: 'refresh_token');
 
-        // If token expires in less than 5 minutes, consider it invalid
-        if (timeUntilExpiry.inMinutes <= 3) {
-          return false;
-        }
+  if (accessToken == null || refreshToken == null) {
+    print('❌ Missing tokens - need to login');
+    return null;
+  }
+
+  // Check if refresh token is expired first
+  try {
+    if (JwtDecoder.isExpired(refreshToken)) {
+      print('❌ Refresh token expired - need to re-login');
+      await _removeAllAppData();
+      return null;
+    }
+  } catch (e) {
+    print('❌ Error checking refresh token: $e');
+    await _removeAllAppData();
+    return null;
+  }
+
+  // Check access token
+  if (JwtDecoder.isExpired(accessToken) ||
+      JwtDecoder.getRemainingTime(accessToken).inSeconds <= 60) {
+    print('🔄 Access token expired/expiring, refreshing...');
+    bool refreshed = await refreshTokenFunction();
+
+    if (refreshed) {
+      accessToken = await getAccessToken();
+    } else {
+      print('❌ Token refresh failed - need to re-login');
+      await _removeAllAppData();
+      return null;
+    }
+  }
+
+  return accessToken;
+}
+
+  Future<bool> isLoggedIn() async {
+    try {
+      String? validToken = await getValidAccessToken();
+      if (validToken != null) {
+        _startTokenRefreshTimer(validToken); // Still keep timer as backup
         return true;
       }
       return false;
+    } catch (e) {
+      print('❌ Error checking login status: $e');
+      return false;
+    }
+  }
+
+  // Modify existing methods to use detection-based approach
+  Future<bool> validateToken(String token) async {
+    try {
+      // Simply check if token is expired
+      return !JwtDecoder.isExpired(token);
     } catch (e) {
       return false;
     }
   }
 
   Future<void> logout(BuildContext context) async {
-    _refreshTimer?.cancel(); // Cancel the refresh timer on logout
+    _refreshTimer?.cancel();
 
-    String? token = await _secureStorage.read(key: 'refresh_token');
-    if (token != null) {
-      final String url =
-          '${EnvConfig.apiBaseUrl}/mobile/dash/refs/logout?refToken=$token';
-      String? accessToken = await _secureStorage.read(key: 'access_token');
+    String? refreshToken = await _secureStorage.read(key: 'refresh_token');
+    String? accessToken = await _secureStorage.read(key: 'access_token');
 
-      try {
-        final response = await http.post(
-          Uri.parse(url),
+    try {
+      if (refreshToken != null) {
+        final apiLogoutUrl =
+            '${EnvConfig.apiBaseUrl}/mobile/dash/refs/logout?refToken=$refreshToken';
+
+        await http.post(
+          Uri.parse(apiLogoutUrl),
           headers: {
             'Authorization': 'Bearer $accessToken',
           },
         );
-
-        if (response.statusCode == 200) {
-          // print('API Logout successful');
-        } else {
-          // print('Failed to logout: ${response.statusCode}');
-          // print('Response body: ${response.body}');
-        }
-      } catch (e) {
-        // print('Error during logout: $e');
       }
-    } else {
-      // print('No refresh token found');
-    }
 
-    final String url =
-        '${EnvConfig.keycloakBaseUrl}/auth/realms/mana/protocol/openid-connect/logout';
+      final keycloakLogoutUrl =
+          '${EnvConfig.keycloakBaseUrl}/auth/realms/mana/protocol/openid-connect/logout';
 
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {
-        'post_logout_redirect_uri': EnvConfig.keycloakRedirectUrl,
-        'client_id': EnvConfig.keycloakClientId,
-        'refresh_token': token,
-        'client_secret': EnvConfig.keycloakClientSecret,
-      },
-    );
-    // print('Response status code: ${response.body}');
-
-    if (response.statusCode == 200 || response.statusCode == 204) {
-      // print('Keycloak Logout successful');
-      await _removeAllAppData();
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const Splashscreen()),
-        (Route<dynamic> route) => false,
+      await http.post(
+        Uri.parse(keycloakLogoutUrl),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {
+          'post_logout_redirect_uri': EnvConfig.keycloakRedirectUrl,
+          'client_id': EnvConfig.keycloakClientId,
+          'refresh_token': refreshToken,
+          'client_secret': EnvConfig.keycloakClientSecret,
+        },
       );
-    } else {
-      // print('Failed to logout: ${response.statusCode}');
-      // print('Response body: ${response.body}');
+    } catch (e) {
+      //print('❌ Logout error: $e');
     }
+
+    await _removeAllAppData();
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const Splashscreen()),
+      (Route<dynamic> route) => false,
+    );
   }
 
   Future<void> _removeAllAppData() async {
     await _secureStorage.deleteAll();
-    
-    // Clear all cached data from GlobalDataManager
-    final globalDataManager = GlobalDataManager();
-    globalDataManager.clearAllData();
-
-    // final cacheDir = await getTemporaryDirectory();
-    // if (cacheDir.existsSync()) {
-    //   cacheDir.deleteSync(recursive: true);
-    // }
   }
 
   Future<String?> getAccessToken() async {
     return await _secureStorage.read(key: 'access_token');
   }
 
-  Future<bool> refreshToken() async {
+  Future<void> _startTokenRefreshTimer(String accessToken) async {
+    _refreshTimer?.cancel();
+
     try {
-      final String? refreshToken =
-          await _secureStorage.read(key: 'refresh_token');
-      if (refreshToken == null) return false;
+      DateTime expiryDate = JwtDecoder.getExpirationDate(accessToken);
+      Duration timeUntilExpiry = expiryDate.difference(DateTime.now());
+      Duration refreshBefore = const Duration(minutes: 1);
+      Duration refreshIn = timeUntilExpiry - refreshBefore;
 
-      final TokenResponse? result = await _appAuth.token(
-        TokenRequest(
-          EnvConfig.keycloakClientId,
-          EnvConfig.keycloakRedirectUrl,
-          discoveryUrl: EnvConfig.keycloakDiscoveryUrl,
-          clientSecret: EnvConfig.keycloakClientSecret,
-          refreshToken: refreshToken,
-          scopes: ['openid', 'profile', 'email'],
-        ),
-      );
-
-      if (result != null) {
-        await _secureStorage.write(
-            key: 'refresh_token', value: result.refreshToken);
-        await _secureStorage.write(
-            key: 'access_token', value: result.accessToken);
-        // Update the token expiry time and restart the timer
-        // _tokenExpiryTime = DateTime.now().add(const Duration(
-        //     minutes: EnvConfig
-        //         .tokenExpirationMinutes)); // Reset expiry to 20 minutes
-        return true;
+      if (refreshIn.isNegative) {
+        //print('⚠️ Token already expired or near expiry, refreshing now.');
+        await refreshTokenFunction();
+        return;
       }
+
+      _refreshTimer = Timer(refreshIn, () async {
+        //print('⏱️ Timer triggered token refresh');
+        await refreshTokenFunction();
+      });
+
+      //print('🕒 Refresh timer set for ${refreshIn.inSeconds} seconds');
     } catch (e) {
-      // print('Refresh token error: $e');
+      //print('❌ Failed to set refresh timer: $e');
     }
+  }
+
+  Future<bool> refreshTokenFunction() async {
+  if (_isRefreshing) {
+    print('⏳ Already refreshing...');
     return false;
   }
+
+  _isRefreshing = true;
+
+  try {
+    final String? refreshToken =
+        await _secureStorage.read(key: 'refresh_token');
+
+    if (refreshToken == null) {
+      print('❌ No refresh token available.');
+      _isRefreshing = false;
+      return false;
+    }
+
+    // Check refresh token expiry before using it
+    if (JwtDecoder.isExpired(refreshToken)) {
+      print('❌ Refresh token expired - clearing tokens');
+      await _removeAllAppData();
+      _isRefreshing = false;
+      return false;
+    }
+
+    final Uri tokenEndpoint = Uri.parse(
+        '${EnvConfig.keycloakBaseUrl}/auth/realms/mana/protocol/openid-connect/token');
+
+    final response = await http.post(
+      tokenEndpoint,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: {
+        'grant_type': 'refresh_token',
+        'client_id': EnvConfig.keycloakClientId,
+        'client_secret': EnvConfig.keycloakClientSecret,
+        'refresh_token': refreshToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> tokenData = json.decode(response.body);
+
+      // Store new tokens
+      await _secureStorage.write(
+          key: 'access_token', value: tokenData['access_token']);
+
+      if (tokenData['refresh_token'] != null) {
+        await _secureStorage.write(
+            key: 'refresh_token', value: tokenData['refresh_token']);
+      }
+
+      // Start new timer with the new token
+      _startTokenRefreshTimer(tokenData['access_token']);
+
+      print('✅ Token refreshed successfully');
+      _isRefreshing = false;
+      return true;
+    } else {
+      print('❌ Token refresh failed: ${response.statusCode} - ${response.body}');
+      
+      // If refresh fails, likely means refresh token is invalid/expired
+      if (response.statusCode == 400 || response.statusCode == 401) {
+        await _removeAllAppData();
+      }
+      
+      _isRefreshing = false;
+      return false;
+    }
+  } catch (e) {
+    print('❌ Token refresh error: $e');
+    _isRefreshing = false;
+    return false;
+  }
+}
 }

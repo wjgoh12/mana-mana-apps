@@ -625,12 +625,12 @@ class PropertyOverviewSection extends StatelessWidget {
                 children: [
                   _buildCard('$year Accumulated Profit', formattedTotalBlc,
                       '$shortMonth $year'),
-                  const SizedBox(width: 8),
-                  _buildCard(
-                      'Group Occupancy',
-                      '${dashboardModel.getUnitOccupancyFromCache(location, unitNo)}',
-                      '$shortMonth $year',
-                      isCurrency: false),
+                  // const SizedBox(width: 8),
+                  // _buildCard(
+                  //     'Group Occupancy',
+                  //     '${dashboardModel.getUnitOccupancyFromCache(location, unitNo)}',
+                  //     '$shortMonth $year',
+                  //     isCurrency: false),
                 ],
               ),
             ],
