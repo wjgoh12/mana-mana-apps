@@ -68,264 +68,284 @@ class NewDashboardV3 extends StatelessWidget {
             child: Scaffold(
               extendBodyBehindAppBar: true,
               backgroundColor: Colors.white,
-              body: NestedScrollView(
-                headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                  SliverAppBar(
-                    pinned: true,
-                    floating: false,
-                    expandedHeight: _getExpandedHeight(context),
-                    backgroundColor: Colors.white,
-                    surfaceTintColor: Colors.transparent,
-                    elevation: 0,
-                    automaticallyImplyLeading: false,
-                    systemOverlayStyle: const SystemUiOverlayStyle(
-                      statusBarColor: Colors.transparent,
-                      statusBarIconBrightness: Brightness.dark,
-                      statusBarBrightness: Brightness.light,
-                    ),
-                    title: innerBoxIsScrolled
-                        ? Text(
-                            'Dashboard',
-                            style: TextStyle(
-                              fontSize: 18.fSize,
-                              fontFamily: 'Open Sans',
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black,
-                            ),
-                          )
-                        : null,
-                    centerTitle: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: _buildHeaderContent(
-                          context, model, isRefreshing, innerBoxIsScrolled),
-                      collapseMode: CollapseMode.pin,
-                    ),
-                  ),
-                ],
-                body: RefreshIndicator(
-                  onRefresh: () async {
-                    isRefreshing.value = true;
-                    await model.refreshData();
-                    isRefreshing.value = false;
-                  },
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding),
-                          alignment: Alignment.center,
-                          color: Colors.white,
-                          child: Column(
-                            children: [
-                              // Greeting
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+              body: Stack(
+                children: [
+                  NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      SliverAppBar(
+                        pinned: true,
+                        floating: false,
+                        expandedHeight: _getExpandedHeight(context),
+                        backgroundColor: Colors.white,
+                        surfaceTintColor: Colors.transparent,
+                        elevation: 0,
+                        automaticallyImplyLeading: false,
+                        systemOverlayStyle: const SystemUiOverlayStyle(
+                          statusBarColor: Colors.transparent,
+                          statusBarIconBrightness: Brightness.dark,
+                          statusBarBrightness: Brightness.light,
+                        ),
+                        title: innerBoxIsScrolled
+                            ? Text(
+                                'Dashboard',
+                                style: TextStyle(
+                                  fontSize: 18.fSize,
+                                  fontFamily: 'Open Sans',
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black,
+                                ),
+                              )
+                            : null,
+                        centerTitle: true,
+                        flexibleSpace: FlexibleSpaceBar(
+                          background: _buildHeaderContent(
+                              context, model, isRefreshing, innerBoxIsScrolled),
+                          collapseMode: CollapseMode.pin,
+                        ),
+                      ),
+                    ],
+                    body: RefreshIndicator(
+                      onRefresh: () async {
+                        isRefreshing.value = true;
+                        await model.refreshData();
+                        isRefreshing.value = false;
+                      },
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: horizontalPadding),
+                              alignment: Alignment.center,
+                              color: Colors.white,
+                              child: Column(
                                 children: [
-                                  Text(
-                                    'Hey, ${model.userNameAccount} 👋',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: responsiveFont(15),
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF383838),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 2.height),
-
-                              // Gradient title
-                              Row(
-                                children: [
-                                  ShaderMask(
-                                    shaderCallback: (bounds) =>
-                                        const LinearGradient(
-                                      colors: [
-                                        Color(0xFFB82B7D),
-                                        Color.fromRGBO(62, 81, 255, 1)
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ).createShader(bounds),
-                                    child: Text(
-                                      'Simple, Timeless \nAssets Management',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: responsiveFont(28),
-                                        fontWeight: FontWeight.w700,
-                                        color: const Color(0xFFFFFFFF),
+                                  // Greeting
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Hey, ${model.userNameAccount} 👋',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: responsiveFont(15),
+                                          fontWeight: FontWeight.w500,
+                                          color: const Color(0xFF383838),
+                                        ),
                                       ),
-                                    ).animate(
-                                      onPlay: (controller) {
-                                        if (isRefreshing.value) {
-                                          controller.repeat();
-                                        } else {
-                                          controller.stop();
-                                        }
-                                      },
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              // SizedBox(height: 4.height),
+                                  SizedBox(height: 2.height),
 
-                              // Search bar
-                              // TextField(
-                              //   decoration: InputDecoration(
-                              //     prefixIcon: SizedBox(
-                              //       width: 20,
-                              //       height: 20,
-                              //       child: Image.asset(
-                              //           'assets/images/searchIcon.png'),
-                              //     ),
-                              //     hintText: 'Search Your Properties',
-                              //     hintStyle: TextStyle(
-                              //       fontSize: ResponsiveSize.text(12),
-                              //       fontFamily: 'outfit',
-                              //       fontWeight: FontWeight.w400,
-                              //     ),
-                              //     suffixIcon: IconButton(
-                              //       icon: Image.asset(
-                              //         'assets/images/Settingsbutton.png',
-                              //         width: 20,
-                              //         height: 20,
-                              //       ),
-                              //       onPressed: () {},
-                              //     ),
-                              //     border: OutlineInputBorder(
-                              //       borderRadius: BorderRadius.circular(12),
-                              //     ),
-                              //     focusedBorder: OutlineInputBorder(
-                              //       borderRadius: BorderRadius.circular(12),
-                              //       borderSide: const BorderSide(
-                              //         color: Color(0XFFD9D9D9),
-                              //         width: 1.5,
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                              //   SizedBox(height: 2.height),
-                            ],
-                          ),
-                        ),
+                                  // Gradient title
+                                  Row(
+                                    children: [
+                                      ShaderMask(
+                                        shaderCallback: (bounds) =>
+                                            const LinearGradient(
+                                          colors: [
+                                            Color(0xFFB82B7D),
+                                            Color.fromRGBO(62, 81, 255, 1)
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ).createShader(bounds),
+                                        child: Text(
+                                          'Simple, Timeless \nAssets Management',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: responsiveFont(28),
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFFFFFFFF),
+                                          ),
+                                        ).animate(
+                                          onPlay: (controller) {
+                                            if (isRefreshing.value) {
+                                              controller.repeat();
+                                            } else {
+                                              controller.stop();
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  // SizedBox(height: 4.height),
 
-                        // Overview section
-                        Container(
-                          width: screenWidth,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding, vertical: 14),
-                          color: Colors.white,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  _buildSectionTitle('Overview'),
-                                  // _seeAllButton(
-                                  //   onPressed: () {
-                                  //     Navigator.push(
-                                  //         context,
-                                  //         MaterialPageRoute(
-                                  //             builder: (context) =>
-                                  //                 PropertySummaryScreen()));
-                                  //   },
+                                  // Search bar
+                                  // TextField(
+                                  //   decoration: InputDecoration(
+                                  //     prefixIcon: SizedBox(
+                                  //       width: 20,
+                                  //       height: 20,
+                                  //       child: Image.asset(
+                                  //           'assets/images/searchIcon.png'),
+                                  //     ),
+                                  //     hintText: 'Search Your Properties',
+                                  //     hintStyle: TextStyle(
+                                  //       fontSize: ResponsiveSize.text(12),
+                                  //       fontFamily: 'outfit',
+                                  //       fontWeight: FontWeight.w400,
+                                  //     ),
+                                  //     suffixIcon: IconButton(
+                                  //       icon: Image.asset(
+                                  //         'assets/images/Settingsbutton.png',
+                                  //         width: 20,
+                                  //         height: 20,
+                                  //       ),
+                                  //       onPressed: () {},
+                                  //     ),
+                                  //     border: OutlineInputBorder(
+                                  //       borderRadius: BorderRadius.circular(12),
+                                  //     ),
+                                  //     focusedBorder: OutlineInputBorder(
+                                  //       borderRadius: BorderRadius.circular(12),
+                                  //       borderSide: const BorderSide(
+                                  //         color: Color(0XFFD9D9D9),
+                                  //         width: 1.5,
+                                  //       ),
+                                  //     ),
+                                  //   ),
                                   // ),
+                                  //   SizedBox(height: 2.height),
                                 ],
                               ),
-                              const SizedBox(height: 12),
-                              OverviewCard(model: model),
-                            ],
-                          ),
+                            ),
+
+                            // Overview section
+                            Container(
+                              width: screenWidth,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: horizontalPadding, vertical: 14),
+                              color: Colors.white,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      _buildSectionTitle('Overview'),
+                                      // _seeAllButton(
+                                      //   onPressed: () {
+                                      //     Navigator.push(
+                                      //         context,
+                                      //         MaterialPageRoute(
+                                      //             builder: (context) =>
+                                      //                 PropertySummaryScreen()));
+                                      //   },
+                                      // ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  OverviewCard(model: model),
+                                ],
+                              ),
+                            ),
+
+                            // SizedBox(height: 2.height),
+                            ProfitBox(),
+
+                            // Properties section
+                            // Container(
+                            //   width: screenWidth,
+                            //   padding: EdgeInsets.symmetric(
+                            //       horizontal: horizontalPadding, vertical: 14),
+                            //   color: Colors.white,
+                            //   child: Column(
+                            //     children: [
+                            //       Row(
+                            //         mainAxisAlignment:
+                            //             MainAxisAlignment.spaceBetween,
+                            //         children: [
+                            //           _buildSectionTitle('Your Properties'),
+                            //           _seeAllButton(
+                            //             onPressed: () {
+                            //               Navigator.push(
+                            //                 context,
+                            //                 MaterialPageRoute(
+                            //                   builder: (context) =>
+                            //                       AllPropertyNewScreen(),
+                            //                 ),
+                            //               );
+                            //             },
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       PropertyListV3(
+                            //         model: model,
+                            //         controller: propertyScrollController,
+                            //       ),
+                            //       const SizedBox(
+                            //           height: kBottomNavigationBarHeight + 50),
+                            //     ],
+                            //     // prevent blocking
+                            //   ),
+                            // ),
+
+                            //SizedBox(height: 2.height),
+
+                            // Newsletter section
+                            // Container(
+                            //   width: screenWidth,
+                            //   padding: EdgeInsets.symmetric(
+                            //       horizontal: horizontalPadding),
+                            //   color: Colors.white,
+                            //   child: Column(
+                            //     children: [
+                            //       Row(
+                            //         mainAxisAlignment:
+                            //             MainAxisAlignment.spaceBetween,
+                            //         crossAxisAlignment: CrossAxisAlignment.center,
+                            //         children: [
+                            //           _buildSectionTitle('Newsletter'),
+                            //           _seeAllButton(
+                            //             onPressed: () {
+                            //               Navigator.push(
+                            //                 context,
+                            //                 MaterialPageRoute(
+                            //                     builder: (context) =>
+                            //                         AllNewsletter()),
+                            //               );
+                            //             },
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       SizedBox(height: responsiveHeight(15)),
+                            //       NewsletterListV3(
+                            //         model: model,
+                            //         controller: newsletterScrollController,
+                            //       ),
+                            //       SizedBox(
+                            //           height: kBottomNavigationBarHeight +
+                            //               20), // prevent blocking
+                            //     ],
+                            //   ),
+                            // ),
+                          ],
                         ),
-
-                        // SizedBox(height: 2.height),
-                        ProfitBox(),
-
-                        // Properties section
-                        // Container(
-                        //   width: screenWidth,
-                        //   padding: EdgeInsets.symmetric(
-                        //       horizontal: horizontalPadding, vertical: 14),
-                        //   color: Colors.white,
-                        //   child: Column(
-                        //     children: [
-                        //       Row(
-                        //         mainAxisAlignment:
-                        //             MainAxisAlignment.spaceBetween,
-                        //         children: [
-                        //           _buildSectionTitle('Your Properties'),
-                        //           _seeAllButton(
-                        //             onPressed: () {
-                        //               Navigator.push(
-                        //                 context,
-                        //                 MaterialPageRoute(
-                        //                   builder: (context) =>
-                        //                       AllPropertyNewScreen(),
-                        //                 ),
-                        //               );
-                        //             },
-                        //           ),
-                        //         ],
-                        //       ),
-                        //       PropertyListV3(
-                        //         model: model,
-                        //         controller: propertyScrollController,
-                        //       ),
-                        //       const SizedBox(
-                        //           height: kBottomNavigationBarHeight + 50),
-                        //     ],
-                        //     // prevent blocking
-                        //   ),
-                        // ),
-
-                        //SizedBox(height: 2.height),
-
-                        // Newsletter section
-                        // Container(
-                        //   width: screenWidth,
-                        //   padding: EdgeInsets.symmetric(
-                        //       horizontal: horizontalPadding),
-                        //   color: Colors.white,
-                        //   child: Column(
-                        //     children: [
-                        //       Row(
-                        //         mainAxisAlignment:
-                        //             MainAxisAlignment.spaceBetween,
-                        //         crossAxisAlignment: CrossAxisAlignment.center,
-                        //         children: [
-                        //           _buildSectionTitle('Newsletter'),
-                        //           _seeAllButton(
-                        //             onPressed: () {
-                        //               Navigator.push(
-                        //                 context,
-                        //                 MaterialPageRoute(
-                        //                     builder: (context) =>
-                        //                         AllNewsletter()),
-                        //               );
-                        //             },
-                        //           ),
-                        //         ],
-                        //       ),
-                        //       SizedBox(height: responsiveHeight(15)),
-                        //       NewsletterListV3(
-                        //         model: model,
-                        //         controller: newsletterScrollController,
-                        //       ),
-                        //       SizedBox(
-                        //           height: kBottomNavigationBarHeight +
-                        //               20), // prevent blocking
-                        //     ],
-                        //   ),
-                        // ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                  if (model.isLoading)
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.7),
+                        child: const Center(
+                          child: _SmartLoadingDialog(),
+                        ),
+                      ),
+                    ),
+                ],
               ),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
-              bottomNavigationBar: const BottomNavBar(currentIndex: 0),
+              bottomNavigationBar: AbsorbPointer(
+                ignoringSemantics: false,
+                absorbing: model.isLoading, // Disable bottom nav when loading
+                child: Opacity(
+                  opacity: model.isLoading ? 0.3 : 1.0, // Dim when loading
+                  child: const BottomNavBar(currentIndex: 0),
+                ),
+              ),
               extendBody: true,
             ),
           );
@@ -375,6 +395,38 @@ class NewDashboardV3 extends StatelessWidget {
           fontFamily: 'outfit',
           fontSize: 16.fSize,
         ),
+      ),
+    );
+  }
+}
+
+class _SmartLoadingDialog extends StatelessWidget {
+  const _SmartLoadingDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 20,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text(
+            "Loading data, please wait...",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     );
   }

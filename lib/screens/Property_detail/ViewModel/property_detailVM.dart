@@ -371,11 +371,20 @@ class PropertyDetailVM extends ChangeNotifier {
 
     _selectedYearValue = newSelectedYear;
 
-    // Month items will be automatically updated through the getter
+    // Try to preserve the current month selection if it exists in the new year
     final monthItemsList = _getMonthItems();
-    selectedMonthValue = monthItemsList.isNotEmpty
-        ? monthItemsList.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
-        : null;
+    if (monthItemsList.isNotEmpty) {
+      // Check if current month is still available in the new year
+      if (selectedMonthValue != null && monthItemsList.contains(selectedMonthValue)) {
+        // Keep the current month if it's available in the new year
+        // Don't change selectedMonthValue
+      } else {
+        // Fall back to latest month if current month is not available
+        selectedMonthValue = monthItemsList.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b);
+      }
+    } else {
+      selectedMonthValue = null;
+    }
 
     _isMonthLoadng = false;
     notifyListeners();

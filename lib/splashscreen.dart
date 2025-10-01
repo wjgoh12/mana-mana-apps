@@ -32,42 +32,31 @@ class _SplashScreenState extends State<Splashscreen>
     globalDataManager.clearAllData();
 
     final versionChecker = VersionChecker();
-    if (await versionChecker.needsUpdate())
-      //{
-      //   if (mounted) {
-      //     showDialog(
-      //       context: context,
-      //       barrierDismissible: false,
-      //       builder: (context) => AlertDialog(
-      //         title: const Text('Update Available'),
-      //         content: const Text(
-      //             'A new version is available. Please update to continue.'),
-      //         actions: [
-      //           TextButton(
-      //             onPressed: () {
-      //               versionChecker.launchUpdate();
-      //             },
-      //             child: const Text('Update Now'),
-      //           ),
-      //         ],
-      //       ),
-      //     );
-      //   }
-      // } else
-      await _checkAuthStatus();
-    // {
-    //   // Proceed with login only if no update is needed
-    //   Future.delayed(const Duration(seconds: 2), () async {
-    //     final authService = AuthService();
-    //     bool success = await authService.authenticate();
-    //     if (mounted) {
-    //       if (success) {
-    //         Navigator.of(context).pushReplacement(
-    //             MaterialPageRoute(builder: (_) => const NewDashboardV3()));
-    //       } else {}
-    //     }
-    //   });
-    // }
+    if (await versionChecker.needsUpdate()) {
+      // Handle update logic here if needed
+    }
+    
+    // Add timeout to prevent infinite loading
+    try {
+      await _checkAuthStatus().timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _needsLogin = true;
+            });
+          }
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _needsLogin = true;
+        });
+      }
+    }
   }
 
   Future<void> _checkAuthStatus() async {
@@ -84,9 +73,9 @@ class _SplashScreenState extends State<Splashscreen>
           // User needs to login - automatically trigger login
           await _handleLogin();
         }
+      } else {
       }
     } catch (e) {
-      print('❌ Error checking auth status: $e');
       if (mounted) {
         // If error checking auth, try to login
         await _handleLogin();
@@ -124,9 +113,9 @@ class _SplashScreenState extends State<Splashscreen>
           //   ),
           // );
         }
+      } else {
       }
     } catch (e) {
-      print('❌ Login error: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;

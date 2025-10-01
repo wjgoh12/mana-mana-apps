@@ -13,7 +13,11 @@ class EnhancedStatementContainer extends StatefulWidget {
 }
 
 class _EnhancedStatementContainerState extends State<EnhancedStatementContainer> {
-  String? _lastPrintedValue;
+  String? _lastYearValue;
+  String? _lastMonthValue;
+  String? _lastPropertyValue;
+  String? _lastUnitValue;
+  String? _lastTypeValue;
 
   String monthNumberToName(int month) {
     const months = [
@@ -39,8 +43,32 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
     return ListenableBuilder(
       listenable: widget.model,
       builder: (context, child) {
-        if (_lastPrintedValue != widget.model.selectedYearValue) {
-          _lastPrintedValue = widget.model.selectedYearValue;
+        // Track changes to force rebuild when selections change
+        final currentYear = widget.model.selectedYearValue?.toString();
+        final currentMonth = widget.model.selectedMonthValue?.toString();
+        final currentProperty = widget.model.selectedProperty;
+        final currentUnit = widget.model.selectedUnitNo;
+        final currentType = widget.model.selectedType;
+
+        // Track changes but don't force rebuild (ListenableBuilder handles this)
+        if (_lastYearValue != currentYear ||
+            _lastMonthValue != currentMonth ||
+            _lastPropertyValue != currentProperty ||
+            _lastUnitValue != currentUnit ||
+            _lastTypeValue != currentType) {
+          
+          print('🔄 Selection changed - StatementContainer updating');
+          print('Year: $_lastYearValue -> $currentYear');
+          print('Month: $_lastMonthValue -> $currentMonth');
+          print('Property: $_lastPropertyValue -> $currentProperty');
+          print('Unit: $_lastUnitValue -> $currentUnit');
+          print('Type: $_lastTypeValue -> $currentType');
+          
+          _lastYearValue = currentYear;
+          _lastMonthValue = currentMonth;
+          _lastPropertyValue = currentProperty;
+          _lastUnitValue = currentUnit;
+          _lastTypeValue = currentType;
         }
 
         // Check if we have valid selections
@@ -61,16 +89,29 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
 
         // Get filtered items for the selected unit and year
         final allItems = widget.model.unitByMonth;
+        
         final seen = <String>{};
         final filteredItems = allItems.where((item) {
-          // Filter by selected property, unit type, unit number, and year
-          final isSameProperty = item.slocation == widget.model.selectedProperty;
-          final isSameUnitType = item.stype == widget.model.selectedType;
-          final isSameUnit = item.sunitno == widget.model.selectedUnitNo;
+                    // Filter by selected property, unit type, unit number, and year
+          final isSameProperty = item.slocation == currentProperty;
+          final isSameUnitType = item.stype == currentType;
+          final isSameUnit = item.sunitno == currentUnit;
           final isSameYear = item.iyear != null &&
-              item.iyear.toString() == widget.model.selectedYearValue.toString();
+              item.iyear.toString() == currentYear;
 
-          if (!isSameProperty || !isSameUnitType || !isSameUnit || !isSameYear) return false;
+          // Also filter by month if a specific month is selected
+          bool isSameMonth = true;
+          if (currentMonth != null && currentMonth.isNotEmpty) {
+            // Try to parse the month value and compare
+            try {
+              final selectedMonthInt = int.parse(currentMonth);
+              isSameMonth = item.imonth == selectedMonthInt;
+            } catch (e) {
+              isSameMonth = true; // Show all months if parsing fails
+            }
+          }
+
+          if (!isSameProperty || !isSameUnitType || !isSameUnit || !isSameYear || !isSameMonth) return false;
 
           // Remove duplicates
           final key = '${item.slocation}-${item.stype}-${item.sunitno}-${item.imonth}-${item.iyear}';
@@ -81,6 +122,14 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
             return true;
           }
         }).toList();
+
+        // Only print debug info when selection changes
+        if (_lastYearValue != currentYear || _lastMonthValue != currentMonth) {
+          print('� Filtering results:');
+          print('Total items: ${allItems.length}');
+          print('Filtered items: ${filteredItems.length}');
+          print('Filter criteria: Property=$currentProperty, Type=$currentType, Unit=$currentUnit, Year=$currentYear, Month=$currentMonth');
+        }
 
         if (filteredItems.isEmpty) {
           return Container(
@@ -129,6 +178,7 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
         });
 
         return Container(
+          key: ValueKey('${currentProperty}_${currentType}_${currentUnit}_${currentYear}_${currentMonth}'),
           margin: EdgeInsets.only(
             top: ResponsiveSize.scaleHeight(16),
             bottom: ResponsiveSize.scaleHeight(20),

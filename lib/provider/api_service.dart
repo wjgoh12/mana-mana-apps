@@ -4,6 +4,15 @@ import 'package:http/http.dart' as http;
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/config/env_config.dart';
 
+// Custom exception for authentication failures
+class AuthenticationException implements Exception {
+  final String message;
+  AuthenticationException(this.message);
+  
+  @override
+  String toString() => 'AuthenticationException: $message';
+}
+
 class ApiService {
   final String baseUrl = EnvConfig.apiBaseUrl;
 
@@ -12,7 +21,8 @@ class ApiService {
     String? token = await authService.getValidAccessToken();
 
     if (token == null) {
-      throw Exception('Authentication required');
+      print('❌ No valid token available for API call - session expired');
+      throw AuthenticationException('Session expired');
     }
 
     final response = await http.post(
@@ -23,6 +33,14 @@ class ApiService {
       },
       body: json.encode(data ?? {}), // always send at least {}
     );
+
+    // Check for authentication errors
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      print('❌ API authentication failed - server rejected token');
+      // Clear tokens and trigger session expiry handling
+      await authService.handleServerAuthenticationFailure();
+      throw AuthenticationException('Authentication failed');
+    }
 
     if (response.body.isEmpty) return null;
     // debugPrint("➡️ FULL URL: $baseUrl$url");
@@ -42,7 +60,8 @@ class ApiService {
     final AuthService authService = AuthService();
     String? token = await authService.getValidAccessToken();
     if (token == null) {
-      throw Exception('Authentication required');
+      print('❌ No valid token available for API call - session expired');
+      throw AuthenticationException('Session expired');
     }
 
     final response = await http.post(
@@ -53,6 +72,15 @@ class ApiService {
       },
       body: json.encode(data ?? {}),
     );
+    
+    // Check for authentication errors
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      print('❌ API authentication failed - server rejected token');
+      // Clear tokens and trigger session expiry handling
+      await authService.handleServerAuthenticationFailure();
+      throw AuthenticationException('Authentication failed');
+    }
+    
     // debugPrint("➡️ FULL URL: $baseUrl$url");
     // debugPrint("➡️ POST BYTES URL: $baseUrl$url");
     // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
@@ -71,11 +99,11 @@ class ApiService {
     final AuthService authService = AuthService();
     String? token = await authService.getValidAccessToken();
     if (token == null) {
-      throw Exception('Authentication required');
+      print('❌ No valid token available for API call - session expired');
+      throw AuthenticationException('Session expired');
     }
 
-    final fullUrl = '$baseUrl$url';
-    // debugPrint("➡️ FULL URL: $fullUrl");
+    // debugPrint("➡️ FULL URL: $baseUrl$url");
     // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
     // debugPrint("Posting to full URL: $baseUrl$url");
 
@@ -87,6 +115,14 @@ class ApiService {
       },
       body: json.encode(data ?? {}),
     );
+
+    // Check for authentication errors
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      print('❌ API authentication failed - server rejected token');
+      // Clear tokens and trigger session expiry handling
+      await authService.handleServerAuthenticationFailure();
+      throw AuthenticationException('Authentication failed');
+    }
 
     // debugPrint("➡️ FULL URL: $baseUrl$url");
     // debugPrint("➡️ POST JSON URL: $baseUrl$url");
@@ -110,7 +146,8 @@ class ApiService {
       final AuthService authService = AuthService();
       String? token = await authService.getValidAccessToken();
       if (token == null) {
-        throw Exception('Authentication required');
+        print('❌ No valid token available for API call - session expired');
+        throw AuthenticationException('Session expired');
       }
 
       final url = Uri.parse('$baseUrl$endpoint');
@@ -131,13 +168,18 @@ class ApiService {
       if (response.statusCode == 200) {
         if (response.body.isEmpty) return null;
         return json.decode(response.body);
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        print('❌ API authentication failed - server rejected token');
+        // Clear tokens and trigger session expiry handling
+        await authService.handleServerAuthenticationFailure();
+        throw AuthenticationException('Authentication failed');
       } else {
         throw Exception(
             'GET request failed with status: ${response.statusCode}');
       }
     } catch (e) {
       // debugPrint('❌ GET request error: $e');
-      throw e;
+      rethrow; // Re-throw to preserve the exception type
     }
   }
 }

@@ -15,6 +15,32 @@ class AuthService {
 
   Timer? _refreshTimer;
   bool _isRefreshing = false;
+  
+  // Add a global navigation key reference
+  static GlobalKey<NavigatorState>? _navigatorKey;
+  
+  // Method to set the navigator key from main app
+  static void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
+    _navigatorKey = navigatorKey;
+  }
+  
+  // Method to handle session expiry globally
+  void _handleSessionExpiry() {
+    print('🚪 Session expired - navigating to login');
+    if (_navigatorKey?.currentContext != null) {
+      Navigator.of(_navigatorKey!.currentContext!).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const Splashscreen()),
+        (Route<dynamic> route) => false,
+      );
+    }
+  }
+
+  // Method to handle server authentication failures (401/403 responses)
+  Future<void> handleServerAuthenticationFailure() async {
+    print('🚫 Server rejected authentication - clearing tokens and redirecting to login');
+    await _removeAllAppData();
+    _handleSessionExpiry();
+  }
 
   Future<bool> authenticate() async {
     try {
@@ -87,11 +113,13 @@ class AuthService {
     if (JwtDecoder.isExpired(refreshToken)) {
       print('❌ Refresh token expired - need to re-login');
       await _removeAllAppData();
+      _handleSessionExpiry();
       return null;
     }
   } catch (e) {
     print('❌ Error checking refresh token: $e');
     await _removeAllAppData();
+    _handleSessionExpiry();
     return null;
   }
 
@@ -106,6 +134,7 @@ class AuthService {
     } else {
       print('❌ Token refresh failed - need to re-login');
       await _removeAllAppData();
+      _handleSessionExpiry();
       return null;
     }
   }
@@ -236,6 +265,7 @@ class AuthService {
     if (JwtDecoder.isExpired(refreshToken)) {
       print('❌ Refresh token expired - clearing tokens');
       await _removeAllAppData();
+      _handleSessionExpiry();
       _isRefreshing = false;
       return false;
     }
@@ -278,6 +308,7 @@ class AuthService {
       // If refresh fails, likely means refresh token is invalid/expired
       if (response.statusCode == 400 || response.statusCode == 401) {
         await _removeAllAppData();
+        _handleSessionExpiry();
       }
       
       _isRefreshing = false;

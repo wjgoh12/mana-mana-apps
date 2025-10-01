@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
+import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
+import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
+import 'package:provider/provider.dart';
 
 class OverviewCard extends StatelessWidget {
   final NewDashboardVM_v3 model;
@@ -15,6 +18,59 @@ class OverviewCard extends StatelessWidget {
   String getTotalProfit() {
     final profit = model.overallProfit.toString();
     return profit;
+  }
+
+  PageRouteBuilder _createRoute(Widget page,
+      {String transitionType = 'slide'}) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionDuration: const Duration(milliseconds: 300),
+      reverseTransitionDuration: const Duration(milliseconds: 300),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        switch (transitionType) {
+          case 'fade':
+            return FadeTransition(opacity: animation, child: child);
+
+          case 'scale':
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+              ),
+              child: child,
+            );
+
+          case 'slideUp':
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.0, 1.0),
+                end: Offset.zero,
+              ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              child: child,
+            );
+
+          case 'slideLeft':
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(-1.0, 0.0),
+                end: Offset.zero,
+              ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              child: child,
+            );
+
+          default: // 'slide' - slide from right
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              child: child,
+            );
+        }
+      },
+    );
   }
 
   String getOccupancyRate() {
@@ -210,49 +266,86 @@ class OverviewCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              Container(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      bottom: ResponsiveSize.scaleHeight(20)),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                        child: Text(
-                                          'Total Properties',
-                                          style: TextStyle(
-                                            fontFamily: 'outfit',
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w300,
+                              InkWell(
+                                onTap: () {
+                                  final newDashboardVM =
+                                      context.read<NewDashboardVM>();
+                                  Navigator.pushReplacement(
+                                      context,
+                                      _createRoute(const AllPropertyNewScreen(),
+                                          transitionType: 'fade'));
+                                },
+                                child: Container(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: ResponsiveSize.scaleHeight(20)),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                          child: Text(
+                                            'Total Properties',
+                                            style: TextStyle(
+                                              fontFamily: 'outfit',
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w300,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              'Managed:', // Show managed units count
-                                              style: TextStyle(
-                                                fontFamily: 'outfit',
-                                                color: Colors.white,
-                                                fontSize:
-                                                    ResponsiveSize.text(14),
-                                                fontWeight: FontWeight.bold,
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 10),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                'Managed:', // Show managed units count
+                                                style: TextStyle(
+                                                  fontFamily: 'outfit',
+                                                  color: Colors.white,
+                                                  fontSize:
+                                                      ResponsiveSize.text(14),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            FutureBuilder<int>(
-                                                future: PropertyListRepository
-                                                    .getTotalPropertyCount(),
-                                                builder: (context, snapshot) {
-                                                  if (snapshot
-                                                          .connectionState ==
-                                                      ConnectionState.waiting) {
+                                              FutureBuilder<int>(
+                                                  future: PropertyListRepository
+                                                      .getTotalPropertyCount(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      return Text(
+                                                        '0',
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              ResponsiveSize
+                                                                  .text(14),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      );
+                                                    }
+                                                    if (snapshot.hasError) {
+                                                      return Text(
+                                                        '0',
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              ResponsiveSize
+                                                                  .text(14),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      );
+                                                    }
+                                                    final totalCount =
+                                                        snapshot.data ?? 0;
                                                     return Text(
-                                                      '0',
+                                                      '$totalCount',
                                                       style: TextStyle(
                                                         fontSize:
                                                             ResponsiveSize.text(
@@ -262,38 +355,12 @@ class OverviewCard extends StatelessWidget {
                                                         color: Colors.white,
                                                       ),
                                                     );
-                                                  }
-                                                  if (snapshot.hasError) {
-                                                    return Text(
-                                                      '0',
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                            ResponsiveSize.text(
-                                                                14),
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.white,
-                                                      ),
-                                                    );
-                                                  }
-                                                  final totalCount =
-                                                      snapshot.data ?? 0;
-                                                  return Text(
-                                                    '$totalCount',
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          ResponsiveSize.text(
-                                                              14),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  );
-                                                })
-                                          ],
+                                                  })
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
