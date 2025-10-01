@@ -136,31 +136,22 @@ class UnitOverviewContainer extends StatelessWidget {
           (Match m) => '${m[1]},',
         );
 
-    // Get occupancy rate from the property detail model
+    // Get occupancy rate from the dashboard model
     double occupancyRate = 0.0;
     if (selectedUnit != null && selectedProperty != null) {
-      // Try to get occupancy from the dashboard model first
+      // Get occupancy from the dashboard model (now with improved fallback logic)
       String occString = dashboardModel.getUnitOccupancyFromCache(
         selectedProperty,
         selectedUnit,
       );
-      occupancyRate = double.tryParse(occString.replaceAll('%', '')) ?? 0.0;
-
-      // Fallback to property model if needed
-      if (occupancyRate == 0.0 && propertyModel.locationByMonth.isNotEmpty) {
-        final currentLocation = propertyModel.locationByMonth.firstWhere(
-          (location) => location['location'] == selectedProperty,
-          orElse: () => {},
-        );
-
-        if (currentLocation.containsKey('units')) {
-          final units = currentLocation['units'] as Map<String, dynamic>;
-          if (units.containsKey(selectedUnit)) {
-            occupancyRate = units[selectedUnit]['occupancy'] ?? 0.0;
-          }
-        }
+      occupancyRate = double.tryParse(occString) ?? 0.0;
+      
+      // Debug: only log if we have a meaningful occupancy rate
+      if (occupancyRate > 0) {
+        print('✅ Group Occupancy for $selectedProperty unit $selectedUnit: $occupancyRate%');
       }
     }
+    
     final formattedOcc = '${occupancyRate.toStringAsFixed(1)}%';
 
     final prev = getPreviousMonthYear(DateTime.now());
@@ -294,10 +285,10 @@ class UnitOverviewContainer extends StatelessWidget {
                 '0xFFFFE7B8',
                 '0xFF000000',
               ),
-              // const SizedBox(width: 8),
-              // buildCard('Group Occupancy', formattedOcc, '$shortMonth $year',
-              //     '0xFFDBC7FF', '0xFF000000',
-              //     isCurrency: false, onTap: () {}
+              const SizedBox(width: 8),
+              buildCard('Group Occupancy', formattedOcc, '$shortMonth $year',
+                  '0xFFDBC7FF', '0xFF000000',
+                  isCurrency: false, onTap: () {}
                   // => showDialog(
                   //   context: context,
                   //   barrierDismissible: false,
@@ -317,7 +308,7 @@ class UnitOverviewContainer extends StatelessWidget {
                   //     ),
                   //   ),
                   // ),
-                  // ),
+                  ),
             ],
           ),
         ],

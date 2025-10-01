@@ -186,20 +186,86 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     // Try to get occupancy from propertyOccupancy map
     if (propertyOccupancy.containsKey(location)) {
       final locationData = propertyOccupancy[location];
-      if (locationData is Map<String, dynamic> &&
-          locationData.containsKey('units') &&
-          locationData['units'] is Map<String, dynamic>) {
-        final units = locationData['units'] as Map<String, dynamic>;
-        if (units.containsKey(unitNo)) {
-          final unitData = units[unitNo];
-          if (unitData is Map<String, dynamic> &&
-              unitData.containsKey('amount')) {
-            return unitData['amount']?.toString() ?? '0';
+      if (locationData is Map<String, dynamic>) {
+        // Check for direct amount field (current data structure)
+        if (locationData.containsKey('amount')) {
+          return locationData['amount']?.toString() ?? '0';
+        }
+        
+        // Check for nested units structure (fallback)
+        if (locationData.containsKey('units') &&
+            locationData['units'] is Map<String, dynamic>) {
+          final units = locationData['units'] as Map<String, dynamic>;
+          if (units.containsKey(unitNo)) {
+            final unitData = units[unitNo];
+            if (unitData is Map<String, dynamic> &&
+                unitData.containsKey('amount')) {
+              return unitData['amount']?.toString() ?? '0';
+            }
           }
         }
       }
     }
 
+    // Fallback: calculate from contract-based owners data
+    return _calculateOccupancyFromOwners(location, unitNo);
+  }
+
+  // Helper method to calculate occupancy from owners/contract data
+  String _calculateOccupancyFromOwners(String location, String unitNo) {
+    try {
+      // Get location data from locationByMonth which contains owners info
+      final currentLocation = locationByMonth.firstWhere(
+        (loc) => loc['location'] == location,
+        orElse: () => {},
+      );
+      
+      if (currentLocation.containsKey('owners')) {
+        final owners = currentLocation['owners'] as List<dynamic>;
+        final now = DateTime.now();
+        
+        // Count active contracts
+        int activeContracts = 0;
+        int totalUnits = 0;
+        
+        for (var owner in owners) {
+          if (owner is Map<String, dynamic>) {
+            // Count total units for this location
+            if (owner.containsKey('unitNo')) {
+              totalUnits++;
+              
+              // Check if contract is active
+              final startDateStr = owner['startDate'] as String?;
+              final endDateStr = owner['endDate'] as String?;
+              final contractType = owner['contractType'] as String?;
+              
+              if (startDateStr != null && endDateStr != null && contractType != null) {
+                try {
+                  final startDate = DateTime.parse(startDateStr);
+                  final endDate = DateTime.parse(endDateStr);
+                  
+                  // Check if contract is currently active
+                  if (now.isAfter(startDate) && now.isBefore(endDate)) {
+                    activeContracts++;
+                  }
+                } catch (e) {
+                  // Skip invalid dates
+                }
+              }
+            }
+          }
+        }
+        
+        // Calculate occupancy percentage
+        if (totalUnits > 0) {
+          final occupancyRate = (activeContracts / totalUnits) * 100;
+          return occupancyRate.toStringAsFixed(2);
+        }
+      }
+    } catch (e) {
+      print('Error calculating occupancy from owners: $e');
+    }
+    
     return '0';
   }
 
