@@ -168,8 +168,8 @@ class OverviewCard extends StatelessWidget {
             isMobile ? screenWidth * 0.28 : screenWidth * 0.21;
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

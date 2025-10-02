@@ -98,7 +98,6 @@ class PropertyDetailVM extends ChangeNotifier {
     // Set initial selections from ownerData - Default to first unit only if not already set
     if (ownerData.isNotEmpty &&
         (selectedType == null || selectedUnitNo == null)) {
-      print('🔄 Setting initial selection from first unit');
       final firstUnit = ownerData.firstWhere(
           (data) => data.location == property,
           orElse: () => ownerData.first);
@@ -255,7 +254,6 @@ class PropertyDetailVM extends ChangeNotifier {
     if (selectedType == null || selectedUnitNo == null) return [];
 
     final currentProperty = selectedProperty ?? property;
-
     return unitByMonth
         .where((item) =>
             item.slocation == currentProperty &&
@@ -346,11 +344,8 @@ class PropertyDetailVM extends ChangeNotifier {
         ? yearItemsList.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : null;
 
-    // Update month selection
-    final monthItemsList = _getMonthItems();
-    selectedMonthValue = monthItemsList.isNotEmpty
-        ? monthItemsList.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
-        : null;
+    // Update month selection - Set to null to show all months by default
+    selectedMonthValue = null; // Show all months by default
 
     // Recalculate latest year and month
     _calculateLatestYearMonth();
@@ -371,20 +366,8 @@ class PropertyDetailVM extends ChangeNotifier {
 
     _selectedYearValue = newSelectedYear;
 
-    // Try to preserve the current month selection if it exists in the new year
-    final monthItemsList = _getMonthItems();
-    if (monthItemsList.isNotEmpty) {
-      // Check if current month is still available in the new year
-      if (selectedMonthValue != null && monthItemsList.contains(selectedMonthValue)) {
-        // Keep the current month if it's available in the new year
-        // Don't change selectedMonthValue
-      } else {
-        // Fall back to latest month if current month is not available
-        selectedMonthValue = monthItemsList.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b);
-      }
-    } else {
-      selectedMonthValue = null;
-    }
+    // Reset to show all months when year changes
+    selectedMonthValue = null;
 
     _isMonthLoadng = false;
     notifyListeners();
@@ -395,7 +378,7 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSelectedMonth(String newSelectedMonth) {
+  void updateSelectedMonth(String? newSelectedMonth) {
     selectedMonthValue = newSelectedMonth;
     notifyListeners();
   }
@@ -499,12 +482,45 @@ class PropertyDetailVM extends ChangeNotifier {
 
   Future<void> downloadSpecificPdfStatement(
       BuildContext context, dynamic item) async {
-    // Set the specific item data before downloading
-    _selectedYearValue = item.iyear.toString();
-    selectedMonthValue = item.imonth.toString();
+    // Download the PDF directly using the item's data without updating UI state
+    try {
+      _isDownloading = true;
+      notifyListeners();
 
-    // Call existing download method
-    await downloadPdfStatement(context);
+      final bytes = await ownerPropertyListRepository.downloadPdfStatement(
+        context,
+        property,
+        item.iyear.toString(),
+        item.imonth.toString(),
+        selectedType,
+        selectedUnitNo,
+        users,
+      );
+
+      if (bytes != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfViewerFromMemory(
+              property: property,
+              year: item.iyear.toString(),
+              month: item.imonth.toString(),
+              unitType: selectedType,
+              unitNo: selectedUnitNo,
+              pdfData: bytes,
+            ),
+          ),
+        );
+      } else {
+        _showErrorDialog(
+            context, "Failed to download PDF. Please try again later.");
+      }
+    } catch (e) {
+      _showErrorDialog(context, "Error downloading PDF: $e");
+    } finally {
+      _isDownloading = false;
+      notifyListeners();
+    }
   }
 }
 

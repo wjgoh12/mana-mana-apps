@@ -66,7 +66,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
           return month; // Return original if not a number
       }
     }
-
+    
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(16)),
       child: Row(
@@ -90,7 +90,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               isExpanded: true,
               underline: const SizedBox(),
               value: selectedMonth,
-              hint: const Text('Month'),
+              hint: Text(selectedMonth == null ? 'All' : 'Month'),
               style: TextStyle(
                 fontFamily: 'Outfit',
                 fontSize: ResponsiveSize.text(13),
@@ -112,25 +112,38 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                 ),
                 offset: const Offset(0, -5),
               ),
-              items: widget.monthOptions.map((month) {
-                return DropdownMenuItem(
-                  value: month,
+              items: [
+                // Add "All" option
+                DropdownMenuItem(
+                  value: null,
                   child: Text(
-                    getMonthName(month),
+                    'All',
                     style: TextStyle(
                       fontFamily: 'Outfit',
                       fontSize: ResponsiveSize.text(14),
                     ),
                   ),
-                );
-              }).toList(),
+                ),
+                // Add individual month options
+                ...widget.monthOptions.map((month) {
+                  return DropdownMenuItem(
+                    value: month,
+                    child: Text(
+                      getMonthName(month),
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: ResponsiveSize.text(14),
+                      ),
+                    ),
+                  );
+                }),
+              ],
               onChanged: (value) {
                 setState(() {
                   selectedMonth = value;
                 });
-                if (value != null) {
-                  widget.model.updateSelectedMonth(value);
-                }
+                // Update the model with the selected month (null means "All")
+                widget.model.updateSelectedMonth(value);
               },
             ),
           ),

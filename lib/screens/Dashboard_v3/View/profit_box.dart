@@ -53,70 +53,73 @@ class _ProfitBoxState extends State<ProfitBox> {
     final height = 280.0;
     final fontScale = 1.0;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min, // Important: prevents extra space
-      children: [
-        Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF3E51FF).withOpacity(0.15),
-                blurRadius: 10,
-                offset: const Offset(0, 0),
+    return Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.05, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Important: prevents extra space
+          children: [
+            Container(
+              // width: width,
+              height: height,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF3E51FF).withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 10, top: 15),
-                      child: Text(
-                        'Accumulated Profit',
-                        style: TextStyle(
-                          fontFamily: 'outfit',
-                          fontSize: ResponsiveSize.text(15),
-                          fontWeight: FontWeight.bold,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 10, top: 15),
+                          child: Text(
+                            'Accumulated Profit',
+                            style: TextStyle(
+                              fontFamily: 'outfit',
+                              fontSize: ResponsiveSize.text(15),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      Flexible(
+                        child: OccupancyPeriodDropdown(
+                          selectedValue: selectedPeriod,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedPeriod = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  Flexible(
-                    child: OccupancyPeriodDropdown(
-                      selectedValue: selectedPeriod,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedPeriod = value;
-                        });
-                      },
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: ProfitChart(
+                        period: selectedPeriod,
+                        model: model,
+                      ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 10),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: ProfitChart(
-                    period: selectedPeriod,
-                    model: model,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 16),
-      ],
-    );
+            ),
+            SizedBox(height: 16),
+          ],
+        ));
   }
 }
 
