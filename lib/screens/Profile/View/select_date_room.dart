@@ -88,7 +88,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       // First ensure all location data is loaded globally
       // debugPrint("🔄 Ensuring all location data is loaded...");
       await _vm.ensureAllLocationDataLoaded();
-      
+
       await Future.wait([
         // ALWAYS fetch points for the current unit
         _vm.fetchRedemptionBalancePoints(
@@ -104,7 +104,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
           departureDate: _focusedDay?.add(const Duration(days: 1)),
         ),
       ]);
-      
+
       // debugPrint("✅ Initial data loading completed");
     });
   }
@@ -383,6 +383,19 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 3),
+            const Padding(
+              padding: EdgeInsets.only(left: 18),
+              child: Text(
+                '* The purple circle indicates the peak hour', // Your custom text here
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.purple,
+                  // fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+            const SizedBox(height: 3),
             // Calendar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -474,7 +487,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       return Container(
                         margin: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.15),
+                          color: Colors.purple.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
