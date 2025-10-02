@@ -370,11 +370,11 @@ class RedemptionRepository {
       "departureDate":
           checkOut != null ? DateFormat('yyyy-MM-dd').format(checkOut) : "",
       "rooms": quantity.toString(), // ✅ cast to string
-      "totalRate": points.toString(), // ✅ cast to string
+      "totalRate": points.toInt().toString(), // ✅ cast to string
       "guestName": guestName.trim(),
     };
 
-    debugPrint("📤 Request body for booking: $body");
+    // debugPrint("📤 Request body for booking: $body");
 
     final res = await _apiService.post(
       ApiEndpoint.saveBookingDetailsAndRoomType,

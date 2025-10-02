@@ -453,13 +453,61 @@ class OwnerProfileVM extends ChangeNotifier {
   // inside OwnerProfileVM
   PropertyState? findPropertyStateForOwner(String ownerLocation) {
     try {
-      return _locationsInState.firstWhere(
-        (loc) => loc.locationName.toLowerCase() == ownerLocation.toLowerCase(),
-        orElse: () => PropertyState(stateName: "", locationName: "", pic: ""),
-      );
-    } catch (e) {
-      debugPrint("❌ No matching property state for $ownerLocation");
+      // Convert location code to full name for matching
+      String fullLocationName = _getLocationName(ownerLocation);
+      
+      debugPrint("🔍 Looking for property state for: '$ownerLocation' -> '$fullLocationName'");
+      debugPrint("🔍 Available locations in state: ${_locationsInState.map((l) => l.locationName).toList()}");
+      
+      // First try exact match with full location name in current state list
+      PropertyState? found = _locationsInState.where(
+        (loc) => loc.locationName.toLowerCase() == fullLocationName.toLowerCase()
+      ).firstOrNull;
+      
+      if (found != null) {
+        debugPrint("✅ Found exact match in current state: ${found.stateName}");
+        return found;
+      }
+      
+      // If not found in current state list, check the global data manager
+      debugPrint("🔍 Searching in global data manager for location: $fullLocationName");
+      final allLocations = _globalDataManager.getAllLocationsFromAllStates();
+      found = allLocations.where(
+        (loc) => loc.locationName.toLowerCase() == fullLocationName.toLowerCase()
+      ).firstOrNull;
+      
+      if (found != null) {
+        debugPrint("✅ Found in global data: stateName='${found.stateName}', locationName='${found.locationName}'");
+        return found;
+      }
+      
+      debugPrint("❌ Location '$fullLocationName' not found anywhere");
+      debugPrint("❌ Available locations in global data: ${allLocations.map((l) => '${l.locationName}(${l.stateName})').toList()}");
       return null;
+      
+    } catch (e) {
+      debugPrint("❌ Error in findPropertyStateForOwner for $ownerLocation: $e");
+      return null;
+    }
+  }
+
+  // Helper method to convert location code to full name
+  String _getLocationName(String code) {
+    switch (code.toUpperCase()) {
+      case "EXPR":
+        return "EXPRESSIONZ";
+      case "CEYL":
+        return "CEYLONZ";
+      case "SCAR":
+        return "SCARLETZ";
+      case "MILL":
+        return "MILLERZ";
+      case "MOSS":
+        return "MOSSAZ";
+      case "PAXT":
+        return "PAXTONZ";
+      default:
+        return code; // Return original code if no match found
     }
   }
 
@@ -478,6 +526,13 @@ class OwnerProfileVM extends ChangeNotifier {
 
     debugPrint("✅ Selection cache cleared in OwnerProfileVM");
     notifyListeners();
+  }
+
+  // Add public method to ensure all location data is loaded
+  Future<void> ensureAllLocationDataLoaded() async {
+    debugPrint("🔄 Ensuring all location data is loaded in OwnerProfileVM...");
+    await _globalDataManager.fetchAllLocationsForAllStates();
+    debugPrint("✅ All location data loaded in OwnerProfileVM");
   }
 
   // Clear location cache method

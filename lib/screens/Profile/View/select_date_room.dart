@@ -83,8 +83,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     _vm = context.read<OwnerProfileVM>();
 
-    // In SelectDateRoom initState(), change this:
+    // Ensure global data manager loads all location data before proceeding
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // First ensure all location data is loaded globally
+      // debugPrint("🔄 Ensuring all location data is loaded...");
+      await _vm.ensureAllLocationDataLoaded();
+      
       await Future.wait([
         // ALWAYS fetch points for the current unit
         _vm.fetchRedemptionBalancePoints(
@@ -100,6 +104,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
           departureDate: _focusedDay?.add(const Duration(days: 1)),
         ),
       ]);
+      
+      // debugPrint("✅ Initial data loading completed");
     });
   }
 
@@ -350,9 +356,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<OwnerProfileVM>();
-    int effectiveDuration = (_rangeStart != null && _rangeEnd != null)
-        ? _rangeEnd!.difference(_rangeStart!).inDays
-        : 1;
 
     final int totalPoints =
         (_selectedRoom != null) ? _selectedRoom!.roomTypePoints.toInt() : 0;

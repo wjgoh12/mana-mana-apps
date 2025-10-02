@@ -13,10 +13,18 @@ class RoomType {
     return RoomType(
       pic: json['pic'] ?? '', // fallback to empty string if null
       roomTypeName: json['roomTypeName'] ?? '',
-      roomTypePoints: (json['roomTypePoints'] is double)
-          ? json['roomTypePoints']
-          : int.tryParse(json['roomTypePoints'].toString()) ?? 0,
+      roomTypePoints: _parseToDouble(json['roomTypePoints']),
     );
+  }
+
+  static double _parseToDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value) ?? 0.0;
+    }
+    return 0.0;
   }
 
   Map<String, dynamic> toJson() {
