@@ -353,9 +353,9 @@ class _LocationCardState extends State<LocationCard>
                             _decodedImage != null
                                 ? Image.memory(
                                     _decodedImage!,
-                                    fit: BoxFit.cover,
-                                    cacheHeight: 400, // Reduce memory footprint
-                                    cacheWidth: 400,
+                                    fit: BoxFit.contain,
+                                    // cacheHeight: 400, // Reduce memory footprint
+                                    // cacheWidth: 400,
                                     errorBuilder: (context, error, stackTrace) {
                                       // debugPrint(
                                       //     "❌ Error displaying image for ${widget.locationName}: $error");
