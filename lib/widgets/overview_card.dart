@@ -503,17 +503,17 @@ class OverviewCard extends StatelessWidget {
                                       }
                                     },
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      '$shortMonth $year',
-                                      style: TextStyle(
-                                        fontFamily: 'outfit',
-                                        fontSize: ResponsiveSize.text(8),
-                                        fontStyle: FontStyle.normal,
-                                      ),
-                                    ),
-                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.only(left: 10),
+                                  //   child: Text(
+                                  //     '$shortMonth $year',
+                                  //     style: TextStyle(
+                                  //       fontFamily: 'outfit',
+                                  //       fontSize: ResponsiveSize.text(8),
+                                  //       fontStyle: FontStyle.normal,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ],
@@ -599,7 +599,7 @@ class RevenueContainer extends StatelessWidget {
                     SizedBox(height: (0.5).height),
                     _buildTitleRow(),
                     _buildAmountText(context),
-                    _buildDateRow(),
+                    // _buildDateRow(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.end,

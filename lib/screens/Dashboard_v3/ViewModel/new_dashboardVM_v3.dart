@@ -4,17 +4,56 @@ import 'package:mana_mana_app/model/occupancy_rate.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
-import 'package:mana_mana_app/repository/user_repo.dart';
-import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
+import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
+import 'package:mana_mana_app/widgets/new_features_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewDashboardVM_v3 extends ChangeNotifier {
+  static const String _hasExploredFeaturesKey = 'has_explored_new_features';
+
   bool contractTypeLoaded = false;
   bool occupancyRateLoaded = false;
+  bool _hasShownNewFeaturesDialog = false;
+  bool _userHasExploredFeatures = false; // Track if user clicked "Explore Now"
 
   bool isLoading = true;
   final GlobalDataManager _globalDataManager = GlobalDataManager();
   final PropertyListRepository ownerPropertyListRepository =
       PropertyListRepository();
+
+  NewDashboardVM_v3() {
+    _loadExploredFeaturesState();
+  }
+
+  // Load saved state from SharedPreferences
+  Future<void> _loadExploredFeaturesState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _userHasExploredFeatures =
+          prefs.getBool(_hasExploredFeaturesKey) ?? false;
+      notifyListeners();
+    } catch (e) {
+      print('Error loading explored features state: $e');
+    }
+  }
+
+  // Save state to SharedPreferences
+  Future<void> _saveExploredFeaturesState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_hasExploredFeaturesKey, _userHasExploredFeatures);
+    } catch (e) {
+      print('Error saving explored features state: $e');
+    }
+  }
+
+  // Optional: Method to reset the dialog state for testing
+  Future<void> resetNewFeaturesDialog() async {
+    _userHasExploredFeatures = false;
+    _hasShownNewFeaturesDialog = false;
+    await _saveExploredFeaturesState();
+    notifyListeners();
+  }
 
   // Getters that delegate to GlobalDataManager
   String get userNameAccount => _globalDataManager.userNameAccount;
@@ -65,6 +104,42 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  void checkAndShowNewFeaturesDialog(BuildContext context) {
+    // Only show dialog if:
+    // 1. Loading is complete
+    // 2. Dialog hasn't been shown yet
+    // 3. User hasn't explored features yet
+    if (!isLoading &&
+        !_hasShownNewFeaturesDialog &&
+        !_userHasExploredFeatures) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showNewFeaturesDialog(context);
+        _hasShownNewFeaturesDialog = true;
+      });
+    }
+  }
+
+  void _showNewFeaturesDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return NewFeaturesDialog(
+          onExploreNow: () async {
+            _userHasExploredFeatures = true; // Mark as explored
+            await _saveExploredFeaturesState(); // Save to SharedPreferences
+            Navigator.pushReplacement(
+                context,
+                _createRoute(const AllPropertyNewScreen(),
+                    transitionType: 'fade'));
+            // You can add navigation to features page here
+            // Navigator.push(context, MaterialPageRoute(builder: (context) => FeaturesPage()));
+          },
+        );
+      },
+    );
   }
 
   Future<void> refreshData() async {
@@ -191,7 +266,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         if (locationData.containsKey('amount')) {
           return locationData['amount']?.toString() ?? '0';
         }
-        
+
         // Check for nested units structure (fallback)
         if (locationData.containsKey('units') &&
             locationData['units'] is Map<String, dynamic>) {
@@ -219,31 +294,33 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         (loc) => loc['location'] == location,
         orElse: () => {},
       );
-      
+
       if (currentLocation.containsKey('owners')) {
         final owners = currentLocation['owners'] as List<dynamic>;
         final now = DateTime.now();
-        
+
         // Count active contracts
         int activeContracts = 0;
         int totalUnits = 0;
-        
+
         for (var owner in owners) {
           if (owner is Map<String, dynamic>) {
             // Count total units for this location
             if (owner.containsKey('unitNo')) {
               totalUnits++;
-              
+
               // Check if contract is active
               final startDateStr = owner['startDate'] as String?;
               final endDateStr = owner['endDate'] as String?;
               final contractType = owner['contractType'] as String?;
-              
-              if (startDateStr != null && endDateStr != null && contractType != null) {
+
+              if (startDateStr != null &&
+                  endDateStr != null &&
+                  contractType != null) {
                 try {
                   final startDate = DateTime.parse(startDateStr);
                   final endDate = DateTime.parse(endDateStr);
-                  
+
                   // Check if contract is currently active
                   if (now.isAfter(startDate) && now.isBefore(endDate)) {
                     activeContracts++;
@@ -255,7 +332,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
             }
           }
         }
-        
+
         // Calculate occupancy percentage
         if (totalUnits > 0) {
           final occupancyRate = (activeContracts / totalUnits) * 100;
@@ -265,7 +342,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     } catch (e) {
       print('Error calculating occupancy from owners: $e');
     }
-    
+
     return '0';
   }
 
@@ -402,4 +479,57 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   List<OccupancyRate> getOccupancyDataForPeriod(String period) {
     return _globalDataManager.getOccupancyDataForPeriod(period);
   }
+
+  PageRouteBuilder _createRoute(Widget page,
+        {String transitionType = 'slide'}) {
+      return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => page,
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          switch (transitionType) {
+            case 'fade':
+              return FadeTransition(opacity: animation, child: child);
+
+            case 'scale':
+              return ScaleTransition(
+                scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                ),
+                child: child,
+              );
+
+            case 'slideUp':
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0.0, 1.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                    parent: animation, curve: Curves.easeInOut)),
+                child: child,
+              );
+
+            case 'slideLeft':
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(-1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                    parent: animation, curve: Curves.easeInOut)),
+                child: child,
+              );
+
+            default: // 'slide' - slide from right
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                    parent: animation, curve: Curves.easeInOut)),
+                child: child,
+              );
+          }
+        },
+      );
+    }
 }

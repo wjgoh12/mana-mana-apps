@@ -225,14 +225,14 @@ class UnitOverviewContainer extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: ResponsiveSize.scaleHeight(4)),
-                  Text(
-                    footer,
-                    style: TextStyle(
-                      fontFamily: 'outfit',
-                      fontSize: ResponsiveSize.text(10),
-                      color: Color(int.parse(fontColor)),
-                    ),
-                  ),
+                  // Text(
+                  //   footer,
+                  //   style: TextStyle(
+                  //     fontFamily: 'outfit',
+                  //     fontSize: ResponsiveSize.text(10),
+                  //     color: Color(int.parse(fontColor)),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
