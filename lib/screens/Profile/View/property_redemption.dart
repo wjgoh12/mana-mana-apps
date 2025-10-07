@@ -351,7 +351,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
       body: Container(
         height: ResponsiveSize.scaleHeight(900),
         color: Colors.white,
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -404,7 +404,9 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                   ),
                                   child: Row(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Column(
                                         crossAxisAlignment:
@@ -461,7 +463,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 SizedBox(
                                                   width:
                                                       ResponsiveSize.scaleWidth(
-                                                          10),
+                                                          7),
                                                 ),
                                                 Text(
                                                   '${unit.redemptionBalancePoints}/${unit.redemptionPoints}',
@@ -477,7 +479,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                           )
                                         ],
                                       ),
-                                      const Spacer(),
+                                      // const Spacer(),
                                       TextButton(
                                         onPressed: () {
                                           ownerVM.UserPointBalance.clear();
@@ -500,6 +502,11 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                             ),
                                           );
                                         },
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: Size(70,
+                                              35), // ✅ avoid taking too much width
+                                        ),
                                         child: Container(
                                           decoration: BoxDecoration(
                                             color: const Color(0xFF3E51FF),

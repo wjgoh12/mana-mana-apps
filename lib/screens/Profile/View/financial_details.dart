@@ -108,7 +108,7 @@ class _FinancialDetailsState extends State<FinancialDetails> {
         (value / 812.0) * screenHeight; // font scaling
 
     return SizedBox(
-      width: responsiveWidth(175),
+      width: responsiveWidth(160),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
