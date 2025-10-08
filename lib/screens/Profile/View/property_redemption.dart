@@ -23,6 +23,22 @@ class PropertyRedemption extends StatefulWidget {
 class _PropertyRedemptionState extends State<PropertyRedemption> {
   String selectedFilter = 'All'; // Filter state
 
+  // Helper method to remove prefix uppercase letters
+  String _sanitizeRoomTypeName(String raw) {
+    final s = raw.trim();
+    if (s.isEmpty) return s;
+
+    final firstToken = s.split(RegExp(r'\s+'))[0];
+
+    // Check if first token is all uppercase and between 2-5 characters
+    final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
+    if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 5) {
+      return s.substring(firstToken.length).trim();
+    }
+
+    return s;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -76,7 +92,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     );
   }
 
-  // Get filtered bookings - already sorted by date in ViewModel
+  // Get filtered bookings - REVERSED to show latest first
   List<dynamic> _getFilteredBookings(OwnerProfileVM ownerVM) {
     List<dynamic> filteredList;
 
@@ -99,8 +115,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
       }).toList();
     }
 
-    // No need to reverse since it's already sorted by date in ViewModel
-    return filteredList;
+    // Reverse the list so latest bookings appear first
+    return filteredList.reversed.toList();
   }
 
   // Build booking card
@@ -143,7 +159,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     const Text("Room Type",
                         style: TextStyle(fontFamily: 'outfit')),
                     Text(
-                      booking.typeRoom,
+                      _sanitizeRoomTypeName(booking.typeRoom),
                       style: const TextStyle(
                           fontFamily: 'outfit', fontWeight: FontWeight.bold),
                     ),
@@ -223,7 +239,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                       children: [
                         Expanded(
                           child: Text(
-                            booking.typeRoom,
+                            _sanitizeRoomTypeName(booking.typeRoom),
                             style: TextStyle(
                               fontSize: ResponsiveSize.text(14),
                               fontFamily: 'outfit',

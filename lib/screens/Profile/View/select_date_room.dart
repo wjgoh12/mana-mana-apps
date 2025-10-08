@@ -87,7 +87,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     _focusedDay = DateTime.now().add(const Duration(days: 7));
     _selectedDay = null;
-    
+
     // Initialize VM and load data
     _vm = context.read<OwnerProfileVM>();
     _initializeData();
@@ -252,14 +252,16 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         _lastFetchedEnd = end;
         _lastFetchedQuantity = _selectedQuantity;
         _hasPendingChanges = false;
-        
+
         // If we don't have a selection and rooms are available, auto-select first affordable room
         if (_selectedRoomId == null && _vm.roomTypes.isNotEmpty) {
           final affordableRoom = _vm.roomTypes.firstWhere(
-            (room) => isRoomAffordable(room, end.difference(start).inDays, _selectedQuantity),
-            orElse: () => RoomType(roomTypeName: '', roomTypePoints: 0, pic: ''),
+            (room) => isRoomAffordable(
+                room, end.difference(start).inDays, _selectedQuantity),
+            orElse: () =>
+                RoomType(roomTypeName: '', roomTypePoints: 0, pic: ''),
           );
-          
+
           if (affordableRoom.roomTypeName.isNotEmpty) {
             _selectedRoom = affordableRoom;
             _selectedRoomId = affordableRoom.roomTypeName;
@@ -409,10 +411,10 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     final userPoints = _vm.UserPointBalance.isNotEmpty
         ? _vm.UserPointBalance.first.redemptionBalancePoints
         : 0;
-    final bool hasRange = _rangeStart != null && _rangeEnd != null;
-    final totalPoints = hasRange
-        ? room.roomTypePoints
-        : room.roomTypePoints * (duration == 0 ? 1 : duration) * quantity;
+
+    // Always calculate total points based on duration and quantity
+    final totalPoints =
+        room.roomTypePoints * (duration == 0 ? 1 : duration) * quantity;
     return totalPoints <= userPoints;
   }
 
@@ -697,24 +699,36 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         : room.roomTypePoints *
                             (duration == 0 ? 1 : duration) *
                             _selectedQuantity;
-                    final affordable = totalRoomPoints <= userPoints;
+                    final start = _rangeStart ??
+                        DateTime.now().add(const Duration(days: 7));
+                    final end = _rangeEnd ?? start.add(const Duration(days: 1));
 
                     return RoomTypeTile(
-                      key: ValueKey(
-                          displayName), // stable key preserves tile state and cache
+                      key: ValueKey(displayName),
                       room: room,
                       displayName: displayName,
                       isSelected: displayName == (_selectedRoomId ?? ''),
-                      enabled: affordable,
-                      onTap: affordable
-                          ? () {
-                              setState(() {
-                                _selectedRoom = room;
-                                // store sanitized display name to match UI
-                                _selectedRoomId = displayName;
-                              });
-                            }
-                          : null,
+                      enabled: true,
+                      startDate: start,
+                      endDate: end,
+                      quantity: _selectedQuantity,
+                      selectedRoomId: _selectedRoomId,
+                      checkAffordable: (room, duration, quantity) {
+                        final userPoints = vm.UserPointBalance.isNotEmpty
+                            ? vm.UserPointBalance.first.redemptionBalancePoints
+                            : 0;
+                        final totalPoints =
+                            room.roomTypePoints * duration * quantity;
+                        return totalPoints <= userPoints;
+                      },
+                      onSelect: (selectedRoom) {
+                        setState(() {
+                          _selectedRoom = selectedRoom;
+                          _selectedRoomId = selectedRoom != null
+                              ? sanitizeRoomTypeName(selectedRoom.roomTypeName)
+                              : null;
+                        });
+                      },
                     );
                   },
                 ),
@@ -1009,117 +1023,35 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       ),
     );
   }
-
-  Widget _buildRoomTypeCard(
-    BuildContext context,
-    String roomType,
-    double point,
-    String imagePath, {
-    required bool isSelected,
-  }) {
-    final formatter = NumberFormat('#,###');
-    final formattedPoints = formatter.format(point);
-
-    Uint8List _decodeBase64Image(String base64String) {
-      return base64Decode(base64String);
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          children: [
-            Image.memory(
-              _decodeBase64Image(imagePath),
-              width: double.infinity,
-              height: 180,
-              fit: BoxFit.cover,
-            ),
-            if (isSelected)
-              Container(
-                width: double.infinity,
-                height: 180,
-                color: Colors.black.withOpacity(0.6),
-              ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.transparent, Colors.black54],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      roomType,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(
-                      '$formattedPoints points',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRoomCard(RoomType room, {required bool isSelected}) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _selectedRoom = room;
-          _selectedRoomId = room.roomTypeName;
-        });
-      },
-      child: _buildRoomTypeCard(
-        context,
-        room.roomTypeName,
-        room.roomTypePoints,
-        room.pic,
-        isSelected: isSelected,
-      ),
-    );
-  }
 }
 
 /// Small tile widget that decodes base64 once and preserves state.
 /// Use ValueKey(displayName) when instantiating so Flutter keeps the state.
 class RoomTypeTile extends StatefulWidget {
   final RoomType room;
-  final String displayName; // already sanitized if you use sanitize
+  final String displayName;
   final bool isSelected;
-  final VoidCallback? onTap;
   final bool enabled;
-  final Function(RoomType room)? onRoomSelected; // Added callback for room selection
+  final DateTime startDate;
+  final DateTime endDate;
+  final int quantity;
+  final String? selectedRoomId;
+  final Function(RoomType? room)? onSelect;
+  final bool Function(RoomType room, int duration, int quantity)
+      checkAffordable;
 
   const RoomTypeTile({
     Key? key,
     required this.room,
     required this.displayName,
     this.isSelected = false,
-    this.onTap,
     this.enabled = true,
-    this.onRoomSelected, // New parameter
+    required this.startDate,
+    required this.endDate,
+    required this.quantity,
+    this.selectedRoomId,
+    this.onSelect,
+    required this.checkAffordable,
   }) : super(key: key);
 
   @override
@@ -1142,15 +1074,14 @@ class _RoomTypeTileState extends State<RoomTypeTile>
     _decoding = true;
 
     try {
-      final pic = widget.room.pic ?? '';
-      if (pic.isEmpty) {
+      if (widget.room.pic.isEmpty) {
         _bytes = null;
-      } else if (pic.startsWith('data:image')) {
+      } else if (widget.room.pic.startsWith('data:image')) {
         // data URI: parse
-        final data = Uri.parse(pic).data;
+        final data = Uri.parse(widget.room.pic).data;
         _bytes = data?.contentAsBytes();
       } else {
-        _bytes = base64Decode(pic);
+        _bytes = base64Decode(widget.room.pic);
       }
     } catch (e) {
       // decoding failed -> leave _bytes null
@@ -1188,12 +1119,48 @@ class _RoomTypeTileState extends State<RoomTypeTile>
             ),
           );
 
-    // Make selection highlight smooth with AnimatedOpacity or AnimatedContainer
-    return GestureDetector(
-      onTap: widget.enabled ? widget.onTap : null,
-      child: Card(
-        margin: const EdgeInsets.all(8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    final bool isSelected = widget.room.roomTypeName == widget.selectedRoomId;
+    final int duration = widget.endDate.difference(widget.startDate).inDays;
+    final bool canAfford = widget.checkAffordable(
+      widget.room,
+      duration,
+      widget.quantity,
+    );
+
+    return Card(
+      margin: const EdgeInsets.all(8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () {
+          if (!canAfford) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    const Icon(Icons.error_outline, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.room.roomTypePoints * duration * widget.quantity)}',
+                      ),
+                    ),
+                  ],
+                ),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+            return;
+          }
+
+          if (!widget.enabled) return;
+
+          if (isSelected) {
+            widget.onSelect?.call(null);
+          } else {
+            widget.onSelect?.call(widget.room);
+          }
+        },
         child: Stack(
           children: [
             ClipRRect(
@@ -1204,6 +1171,16 @@ class _RoomTypeTileState extends State<RoomTypeTile>
                 child: imageWidget,
               ),
             ),
+            // Unaffordable overlay
+            if (!canAfford)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
             // selection overlay
             AnimatedOpacity(
               duration: const Duration(milliseconds: 180),

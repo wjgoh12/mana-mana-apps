@@ -19,7 +19,8 @@ class BookingHistory {
     required this.pointUsed,
     required this.status,
     DateTime? createdAt, // Optional in constructor but will be initialized
-  }) : this.createdAt = createdAt ?? DateTime.now(); // Default to current time if not provided
+  }) : this.createdAt = createdAt ??
+            DateTime.now(); // Default to current time if not provided
 
   factory BookingHistory.fromJson(Map<String, dynamic> json) {
     return BookingHistory(
@@ -31,7 +32,7 @@ class BookingHistory {
       departureDate: DateTime.parse(json['departureDate']),
       pointUsed: json['pointUsed'] ?? 0,
       status: json['status'] ?? '',
-      createdAt: json['createdAt'] != null 
+      createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(), // Default to current time if not provided in API
     );
