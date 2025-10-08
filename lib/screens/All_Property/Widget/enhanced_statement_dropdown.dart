@@ -23,50 +23,49 @@ class EnhancedStatementDropdown extends StatefulWidget {
 }
 
 class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
-  String? selectedMonth;
-  String? selectedYear;
-
   @override
   void initState() {
     super.initState();
-    // Initialize with current values from model
-    selectedYear = widget.model.selectedYearValue;
-    selectedMonth = widget.model.selectedMonthValue;
+    // Don't do anything here, let the model control the state
+  }
+
+  String getMonthName(String month) {
+    switch (month) {
+      case '1':
+        return 'Jan';
+      case '2':
+        return 'Feb';
+      case '3':
+        return 'Mar';
+      case '4':
+        return 'Apr';
+      case '5':
+        return 'May';
+      case '6':
+        return 'Jun';
+      case '7':
+        return 'Jul';
+      case '8':
+        return 'Aug';
+      case '9':
+        return 'Sep';
+      case '10':
+        return 'Oct';
+      case '11':
+        return 'Nov';
+      case '12':
+        return 'Dec';
+      default:
+        return month;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    String getMonthName(String month) {
-      switch (month) {
-        case '1':
-          return 'Jan';
-        case '2':
-          return 'Feb';
-        case '3':
-          return 'Mar';
-        case '4':
-          return 'Apr';
-        case '5':
-          return 'May';
-        case '6':
-          return 'Jun';
-        case '7':
-          return 'Jul';
-        case '8':
-          return 'Aug';
-        case '9':
-          return 'Sep';
-        case '10':
-          return 'Oct';
-        case '11':
-          return 'Nov';
-        case '12':
-          return 'Dec';
-        default:
-          return month; // Return original if not a number
-      }
-    }
-    
+    // Read values directly from model - no local state
+    final selectedYear = widget.model.selectedYearValue;
+    final selectedMonth = widget.model.selectedMonthValue;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(16)),
       child: Row(
@@ -139,10 +138,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                 }),
               ],
               onChanged: (value) {
-                setState(() {
-                  selectedMonth = value;
-                });
-                // Update the model with the selected month (null means "All")
+                print('📅 Month dropdown changed to: $value');
                 widget.model.updateSelectedMonth(value);
               },
             ),
@@ -178,26 +174,39 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                 ),
                 offset: const Offset(0, -5),
               ),
-              items: widget.yearOptions.map((year) {
-                return DropdownMenuItem(
-                  value: year,
-                  child: Text(
-                    year,
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: ResponsiveSize.text(14),
-                    ),
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedYear = value;
-                });
-                if (value != null) {
-                  widget.model.updateSelectedYear(value);
-                }
-              },
+              items: widget.yearOptions.isEmpty
+                  ? [
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text(
+                          'No Data',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: ResponsiveSize.text(14),
+                          ),
+                        ),
+                      ),
+                    ]
+                  : widget.yearOptions.map((year) {
+                      return DropdownMenuItem(
+                        value: year,
+                        child: Text(
+                          year,
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: ResponsiveSize.text(14),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+              onChanged: widget.yearOptions.isEmpty
+                  ? null
+                  : (value) {
+                      print('📅 Year dropdown changed to: $value');
+                      if (value != null) {
+                        widget.model.updateSelectedYear(value);
+                      }
+                    },
             ),
           ),
         ],

@@ -170,61 +170,6 @@ class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
   }
 
   // Switch to a suitable unit that can afford the required points
-  bool _switchToSuitableUnit(double requiredPoints) {
-    debugPrint('\n=== Switching Unit Debug ===');
-    debugPrint("🔄 Attempting to switch to unit with sufficient points");
-    debugPrint("Required points: $requiredPoints");
-    debugPrint("Available units: ${_sortedUnits.length}");
-
-    // Print all sorted units for debugging
-    _sortedUnits.forEach((unit) {
-      debugPrint(
-          '💳 Unit ${unit.location} - ${unit.unitNo}: ${unit.redemptionBalancePoints} points');
-    });
-
-    if (_sortedUnits.isEmpty) {
-      debugPrint("❌ No units available for switching");
-      return false;
-    }
-
-    // Find the unit with least points that can afford the required points
-    UnitAvailablePoint? suitableUnit;
-    for (final unit in _sortedUnits) {
-      if (unit.redemptionBalancePoints >= requiredPoints) {
-        suitableUnit = unit;
-        break;
-      }
-    }
-
-    if (suitableUnit != null) {
-      final previousUnit = _currentSelectedUnit;
-      _currentSelectedUnit = suitableUnit;
-
-      // Update UserPointBalance to reflect new selected unit
-      _updateUserPointBalanceForCurrentUnit();
-
-      // Show notification if unit changed
-      if (previousUnit != null &&
-          (previousUnit.location != suitableUnit.location ||
-              previousUnit.unitNo != suitableUnit.unitNo)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Switched to ${suitableUnit.location} - ${suitableUnit.unitNo} for sufficient points (${NumberFormat('#,###').format(suitableUnit.redemptionBalancePoints)} points)',
-            ),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-
-      setState(() {});
-      return true;
-    }
-
-    return false;
-  }
-
   // Update UserPointBalance to reflect current selected unit
   void _updateUserPointBalanceForCurrentUnit() {
     if (_currentSelectedUnit == null) {
@@ -729,6 +674,61 @@ class _SelectDateRoomBookState extends State<SelectDateRoomBook> {
         ),
       ),
     );
+  }
+
+  bool _switchToSuitableUnit(double requiredPoints) {
+    debugPrint('\n=== Switching Unit Debug ===');
+    debugPrint("🔄 Attempting to switch to unit with sufficient points");
+    debugPrint("Required points: $requiredPoints");
+    debugPrint("Available units: ${_sortedUnits.length}");
+
+    // Print all sorted units for debugging
+    _sortedUnits.forEach((unit) {
+      debugPrint(
+          '💳 Unit ${unit.location} - ${unit.unitNo}: ${unit.redemptionBalancePoints} points');
+    });
+
+    if (_sortedUnits.isEmpty) {
+      debugPrint("❌ No units available for switching");
+      return false;
+    }
+
+    // Find the unit with least points that can afford the required points
+    UnitAvailablePoint? suitableUnit;
+    for (final unit in _sortedUnits) {
+      if (unit.redemptionBalancePoints >= requiredPoints) {
+        suitableUnit = unit;
+        break;
+      }
+    }
+
+    if (suitableUnit != null) {
+      final previousUnit = _currentSelectedUnit;
+      _currentSelectedUnit = suitableUnit;
+
+      // Update UserPointBalance to reflect new selected unit
+      _updateUserPointBalanceForCurrentUnit();
+
+      // Show notification if unit changed
+      if (previousUnit != null &&
+          (previousUnit.location != suitableUnit.location ||
+              previousUnit.unitNo != suitableUnit.unitNo)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Switched to ${suitableUnit.location} - ${suitableUnit.unitNo} for sufficient points (${NumberFormat('#,###').format(suitableUnit.redemptionBalancePoints)} points)',
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+
+      setState(() {});
+      return true;
+    }
+
+    return false;
   }
 
   Widget _buildDateCard(String title, DateTime? date) {

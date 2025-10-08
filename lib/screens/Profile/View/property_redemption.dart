@@ -466,7 +466,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                           7),
                                                 ),
                                                 Text(
-                                                  '${unit.redemptionBalancePoints}/${unit.redemptionPoints}',
+                                                  '${unit.redemptionBalancePoints.toInt()}/${unit.redemptionPoints.toInt()}',
                                                   style: TextStyle(
                                                     fontSize:
                                                         ResponsiveSize.text(12),

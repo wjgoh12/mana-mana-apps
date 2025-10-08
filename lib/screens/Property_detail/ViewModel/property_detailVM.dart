@@ -71,12 +71,9 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   Future<void> fetchData(List<Map<String, dynamic>> newLocationByMonth) async {
-    // print(
-    //     '📡 fetchData called - current selection: $selectedType, $selectedUnitNo');
     isLoading = true;
     notifyListeners();
 
-    // Use global data manager to get data (no API calls)
     await _globalDataManager.initializeData();
 
     locationByMonth = newLocationByMonth;
@@ -88,14 +85,9 @@ class PropertyDetailVM extends ChangeNotifier {
     }
 
     property = locationByMonth[0]['location'];
-
-    // Always default to UnitDetails
     selectedView = 'UnitDetails';
-
-    // Set location details based on property
     _setLocationDetails();
 
-    // Set initial selections from ownerData - Default to first unit only if not already set
     if (ownerData.isNotEmpty &&
         (selectedType == null || selectedUnitNo == null)) {
       final firstUnit = ownerData.firstWhere(
@@ -104,13 +96,8 @@ class PropertyDetailVM extends ChangeNotifier {
 
       selectedType = firstUnit.type?.toString() ?? '';
       selectedUnitNo = firstUnit.unitno?.toString() ?? '';
-      // print('✅ Initial selection set: $selectedType, $selectedUnitNo');
-    } else {
-      // print(
-      //     '⏭️ Skipping initial selection - already set: $selectedType, $selectedUnitNo');
     }
 
-    // Set initial values for dropdowns - Default to first unit if above didn't work
     final typeItemsList = typeItems;
     if (typeItemsList.isNotEmpty &&
         (selectedType == null || selectedType!.isEmpty)) {
@@ -119,20 +106,21 @@ class PropertyDetailVM extends ChangeNotifier {
       selectedUnitNo = firstItem.split(" (")[1].replaceAll(")", "");
     }
 
-    // Calculate latest year and month for selected unit
     _calculateLatestYearMonth();
-
-    // Set selected unit data
     _setSelectedUnitData();
 
-    // Auto-select latest year for eStatements
-    final yearItemsList = _getYearItems();
-    if (yearItemsList.isNotEmpty) {
-      _selectedYearValue =
-          yearItemsList.first; // First item is latest (sorted descending)
+    // ✅ ONLY set year if it's not already set
+    if (_selectedYearValue == null) {
+      final yearItemsList = _getYearItems();
+      if (yearItemsList.isNotEmpty) {
+        _selectedYearValue = yearItemsList.first;
+      }
     }
 
-    selectedAnnualYearValue = _selectedYearValue;
+    // ✅ ONLY set annual year if it's not already set
+    if (selectedAnnualYearValue == null) {
+      selectedAnnualYearValue = _selectedYearValue;
+    }
 
     _buildRecentActivities();
 
@@ -360,7 +348,12 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateSelectedYear(String newSelectedYear) async {
+  Future<void> updateSelectedYear(String? newSelectedYear) async {
+    // Only update if value actually changed
+    if (_selectedYearValue == newSelectedYear) {
+      return; // No change, don't notify
+    }
+
     _isMonthLoadng = true;
     notifyListeners();
 
@@ -379,6 +372,11 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   void updateSelectedMonth(String? newSelectedMonth) {
+    // Only update if value actually changed
+    if (selectedMonthValue == newSelectedMonth) {
+      return; // No change, don't notify
+    }
+
     selectedMonthValue = newSelectedMonth;
     notifyListeners();
   }
@@ -396,10 +394,10 @@ class PropertyDetailVM extends ChangeNotifier {
       final bytes = await ownerPropertyListRepository.downloadPdfStatement(
         context,
         property,
-        selectedYearValue,
+        selectedYearValue.toString(),
         selectedMonthValue,
-        selectedType,
-        selectedUnitNo,
+        selectedType.toString(),
+        selectedUnitNo.toString(),
         users,
       );
 
@@ -482,27 +480,27 @@ class PropertyDetailVM extends ChangeNotifier {
 
   Future<void> downloadSpecificPdfStatement(
       BuildContext context, dynamic item) async {
-    // Download the PDF directly using the item's data without updating UI state
     try {
       _isDownloading = true;
       notifyListeners();
 
       final bytes = await ownerPropertyListRepository.downloadPdfStatement(
         context,
-        property,
+        item.slocation,
         item.iyear.toString(),
         item.imonth.toString(),
-        selectedType,
-        selectedUnitNo,
+        selectedType.toString(),
+        selectedUnitNo.toString(),
         users,
       );
+      print('📄 PDF downloaded for Year: ${item.iyear}, Month: ${item.imonth}');
 
       if (bytes != null) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PdfViewerFromMemory(
-              property: property,
+              property: item.slocation,
               year: item.iyear.toString(),
               month: item.imonth.toString(),
               unitType: selectedType,
@@ -512,11 +510,26 @@ class PropertyDetailVM extends ChangeNotifier {
           ),
         );
       } else {
+        // Handle null response
         _showErrorDialog(
-            context, "Failed to download PDF. Please try again later.");
+          context,
+          "Unable to retrieve PDF data. Please check your connection and try again.",
+        );
       }
     } catch (e) {
-      _showErrorDialog(context, "Error downloading PDF: $e");
+      // Handle specific errors
+      String errorMessage;
+      if (e.toString().contains('NO_RECORD')) {
+        errorMessage =
+            "No record available for this unit in the selected month.";
+      } else if (e.toString().contains('API_ERROR')) {
+        errorMessage =
+            "Server error: ${e.toString().replaceAll('Exception: API_ERROR: ', '')}";
+      } else {
+        errorMessage = "Failed to download PDF. Please try again later.";
+      }
+
+      _showErrorDialog(context, errorMessage);
     } finally {
       _isDownloading = false;
       notifyListeners();

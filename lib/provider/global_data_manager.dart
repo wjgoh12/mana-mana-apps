@@ -609,9 +609,12 @@ class GlobalDataManager extends ChangeNotifier {
   }
 
   void clearLocationCache() {
-    _availableStates.clear(); // ✅ use the internal list
-    _locationsByState.clear(); // ✅ use the internal map
+    // Clear state and location related data
+    availableStates.clear();
+    locationsByState.clear();
 
+    // Reset any selected state if you have one
+    // selectedState = null; // uncomment if you have this variable
     debugPrint("✅ Location cache cleared in GlobalDataManager");
     notifyListeners();
   }

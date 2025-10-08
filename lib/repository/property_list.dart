@@ -42,40 +42,31 @@ class PropertyListRepository {
       }
     };
 
-    final res = await _apiService
-        .postWithBytes(ApiEndpoint.downloadPdfStatement, data: data);
-    if (res is Uint8List) {
-      return res;
-    } else if (res == "Incorrect result size") {
-      // Show pop-up message
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('No Record'),
-            content: const Text(
-                'No record available for this unit in the selected month.'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-            contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-            titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-            actionsPadding: const EdgeInsets.fromLTRB(0, 0, 8, 8),
-          );
-        },
-      );
-      return null;
-    } else if (res is Map<String, dynamic>) {
-      throw Exception(
-          'Failed to process PDF data: ${res['error'] ?? 'Unexpected response format'}');
-    } else {
-      throw Exception(
-          'Failed to process PDF data: Unexpected response type ${res.runtimeType}');
+    try {
+      print('📤 Sending PDF request with data: $data');
+      final res = await _apiService
+          .postWithBytes(ApiEndpoint.downloadPdfStatement, data: data);
+      print('📥 Received response type: ${res.runtimeType}, value: $res');
+
+      if (res == null) {
+        // Just return null, let VM handle the error message
+        return null;
+      }
+
+      if (res is Uint8List) {
+        return res;
+      } else if (res == "Incorrect result size") {
+        // Return null with a specific error that VM can handle
+        throw Exception('NO_RECORD');
+      } else if (res is Map<String, dynamic>) {
+        throw Exception(
+            'API_ERROR: ${res['error'] ?? 'Unexpected response format'}');
+      } else {
+        throw Exception('UNEXPECTED_TYPE: ${res.runtimeType}');
+      }
+    } catch (e) {
+      print('❌ Error in downloadPdfStatement: $e');
+      rethrow; // Let VM handle the error
     }
   }
 

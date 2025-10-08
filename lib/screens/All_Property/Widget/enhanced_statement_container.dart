@@ -5,14 +5,17 @@ import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class EnhancedStatementContainer extends StatefulWidget {
   final PropertyDetailVM model;
-  
-  const EnhancedStatementContainer({Key? key, required this.model}) : super(key: key);
+
+  const EnhancedStatementContainer({Key? key, required this.model})
+      : super(key: key);
 
   @override
-  State<EnhancedStatementContainer> createState() => _EnhancedStatementContainerState();
+  State<EnhancedStatementContainer> createState() =>
+      _EnhancedStatementContainerState();
 }
 
-class _EnhancedStatementContainerState extends State<EnhancedStatementContainer> {
+class _EnhancedStatementContainerState
+    extends State<EnhancedStatementContainer> {
   String? _lastYearValue;
   String? _lastMonthValue;
   String? _lastPropertyValue;
@@ -21,8 +24,18 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
 
   String monthNumberToName(int month) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ];
     return (month >= 1 && month <= 12) ? months[month - 1] : 'Unknown';
   }
@@ -33,9 +46,50 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
 
   String formatAmount(double amount) {
     return 'RM ${amount.toStringAsFixed(2).replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]},',
-    )}';
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        )}';
+  }
+
+  // Check if statement is available for download
+  bool _isStatementAvailable(dynamic item) {
+    final currentDate = DateTime.now();
+    final statementDate = DateTime(item.iyear ?? 0, item.imonth ?? 0);
+
+    // Statement should be available if it's at least 1 month old
+    // and the total amount is greater than 0
+    final isOldEnough =
+        statementDate.isBefore(DateTime(currentDate.year, currentDate.month));
+    final hasAmount = (item.total ?? 0.0) > 0;
+
+    return isOldEnough && hasAmount;
+  }
+
+  void _showStatementNotAvailableDialog(
+      BuildContext context, String monthName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Statement Not Available'),
+          content: Text(
+            'The $monthName statement is not yet available for download. '
+            'Please check back later or contact support if you believe this is an error.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+          contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+          titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+          actionsPadding: const EdgeInsets.fromLTRB(0, 0, 8, 8),
+        );
+      },
+    );
   }
 
   @override
@@ -43,27 +97,25 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
     return ListenableBuilder(
       listenable: widget.model,
       builder: (context, child) {
-        // Track changes to force rebuild when selections change
-        final currentYear = widget.model.selectedYearValue?.toString();
-        final currentMonth = widget.model.selectedMonthValue?.toString();
+        final currentYear = widget.model.selectedYearValue.toString();
+        final currentMonth = widget.model.selectedMonthValue.toString();
         final currentProperty = widget.model.selectedProperty;
         final currentUnit = widget.model.selectedUnitNo;
         final currentType = widget.model.selectedType;
 
-        // Track changes but don't force rebuild (ListenableBuilder handles this)
+        // Track changes
         if (_lastYearValue != currentYear ||
             _lastMonthValue != currentMonth ||
             _lastPropertyValue != currentProperty ||
             _lastUnitValue != currentUnit ||
             _lastTypeValue != currentType) {
-          
           print('🔄 Selection changed - StatementContainer updating');
           print('Year: $_lastYearValue -> $currentYear');
           print('Month: $_lastMonthValue -> $currentMonth');
           print('Property: $_lastPropertyValue -> $currentProperty');
           print('Unit: $_lastUnitValue -> $currentUnit');
           print('Type: $_lastTypeValue -> $currentType');
-          
+
           _lastYearValue = currentYear;
           _lastMonthValue = currentMonth;
           _lastPropertyValue = currentProperty;
@@ -72,8 +124,8 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
         }
 
         // Check if we have valid selections
-        if (widget.model.selectedProperty == null || 
-            widget.model.selectedUnitNo == null || 
+        if (widget.model.selectedProperty == null ||
+            widget.model.selectedUnitNo == null ||
             widget.model.selectedType == null) {
           return const SizedBox.shrink();
         }
@@ -87,34 +139,37 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
           );
         }
 
-        // Get filtered items for the selected unit and year
+        // Get filtered items
         final allItems = widget.model.unitByMonth;
-        
+
         final seen = <String>{};
         final filteredItems = allItems.where((item) {
-                    // Filter by selected property, unit type, unit number, and year
           final isSameProperty = item.slocation == currentProperty;
           final isSameUnitType = item.stype == currentType;
           final isSameUnit = item.sunitno == currentUnit;
-          final isSameYear = item.iyear != null &&
-              item.iyear.toString() == currentYear;
+          final isSameYear =
+              item.iyear != null && item.iyear.toString() == currentYear;
 
-          // Also filter by month if a specific month is selected
+          // Filter by month if selected
           bool isSameMonth = true;
           if (currentMonth != null && currentMonth.isNotEmpty) {
-            // Try to parse the month value and compare
             try {
               final selectedMonthInt = int.parse(currentMonth);
               isSameMonth = item.imonth == selectedMonthInt;
             } catch (e) {
-              isSameMonth = true; // Show all months if parsing fails
+              isSameMonth = true;
             }
           }
 
-          if (!isSameProperty || !isSameUnitType || !isSameUnit || !isSameYear || !isSameMonth) return false;
+          if (!isSameProperty ||
+              !isSameUnitType ||
+              !isSameUnit ||
+              !isSameYear ||
+              !isSameMonth) return false;
 
           // Remove duplicates
-          final key = '${item.slocation}-${item.stype}-${item.sunitno}-${item.imonth}-${item.iyear}';
+          final key =
+              '${item.slocation}-${item.stype}-${item.sunitno}-${item.imonth}-${item.iyear}';
           if (seen.contains(key)) {
             return false;
           } else {
@@ -123,17 +178,25 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
           }
         }).toList();
 
-        // Only print debug info when selection changes
+        // Debug logging
         if (_lastYearValue != currentYear || _lastMonthValue != currentMonth) {
-          print('� Filtering results:');
+          print('📊 Filtering results:');
           print('Total items: ${allItems.length}');
           print('Filtered items: ${filteredItems.length}');
-          print('Filter criteria: Property=$currentProperty, Type=$currentType, Unit=$currentUnit, Year=$currentYear, Month=$currentMonth');
+          print(
+              'Filter criteria: Property=$currentProperty, Type=$currentType, Unit=$currentUnit, Year=$currentYear, Month=$currentMonth');
+
+          // Print details of filtered items
+          for (var item in filteredItems) {
+            print(
+                '  - Month: ${item.imonth}, Year: ${item.iyear}, Total: ${item.total}, TransCode: ${item.stranscode}');
+          }
         }
 
         if (filteredItems.isEmpty) {
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(16)),
+            margin:
+                EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(16)),
             height: 200,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -170,7 +233,7 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
           );
         }
 
-        // Sort by month (descending - most recent first)
+        // Sort by month (descending)
         filteredItems.sort((a, b) {
           final monthA = a.imonth ?? 0;
           final monthB = b.imonth ?? 0;
@@ -178,7 +241,8 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
         });
 
         return Container(
-          key: ValueKey('${currentProperty}_${currentType}_${currentUnit}_${currentYear}_${currentMonth}'),
+          key: ValueKey(
+              '${currentProperty}_${currentType}_${currentUnit}_${currentYear}_${currentMonth}'),
           margin: EdgeInsets.only(
             top: ResponsiveSize.scaleHeight(16),
             bottom: ResponsiveSize.scaleHeight(20),
@@ -190,17 +254,30 @@ class _EnhancedStatementContainerState extends State<EnhancedStatementContainer>
             itemBuilder: (context, index) {
               final item = filteredItems[index];
               final monthName = monthNumberToName(item.imonth ?? 0);
-              final statementDate = formatDate(20, item.imonth ?? 1, item.iyear ?? 2024);
+              final statementDate =
+                  formatDate(20, item.imonth ?? 1, item.iyear ?? 2024);
               final statementAmount = formatAmount(item.total ?? 0.0);
+              final isAvailable = _isStatementAvailable(item);
 
-              return StatementCard(
-                month: monthName,
-                statementDate: statementDate,
-                statementAmount: statementAmount,
-                onTap: () {
-                  // Download the specific PDF statement
-                  widget.model.downloadSpecificPdfStatement(context, item);
-                },
+              return Opacity(
+                opacity: isAvailable ? 1.0 : 0.6,
+                child: StatementCard(
+                  month: monthName,
+                  statementDate: statementDate,
+                  statementAmount: statementAmount,
+                  onTap: () {
+                    print(
+                        '🎯 Tapped statement: Month=${item.imonth}, Year=${item.iyear}, Total=${item.total}');
+
+                    if (!isAvailable) {
+                      _showStatementNotAvailableDialog(context, monthName);
+                      return;
+                    }
+
+                    // Download the specific PDF statement
+                    widget.model.downloadSpecificPdfStatement(context, item);
+                  },
+                ),
               );
             },
           ),

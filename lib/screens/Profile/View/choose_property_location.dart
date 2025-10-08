@@ -27,30 +27,13 @@ class ChoosePropertyLocation extends StatefulWidget {
 class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
   String? selectedState;
   static const String ALL_STATES = "All States";
-  bool _hasInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    // print("🚀 ChoosePropertyLocation: initState called");
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final globalData = context.read<GlobalDataManager>();
-      // print("🔄 ChoosePropertyLocation: Fetching states and locations");
-      globalData.fetchRedemptionStatesAndLocations().then((_) {
-        // print("✅ ChoosePropertyLocation: States fetched, available states: ${globalData.availableStates}");
-        // After states are loaded, initialize with "All States"
-        if (!_hasInitialized && mounted) {
-          setState(() {
-            selectedState = ALL_STATES;
-            _hasInitialized = true;
-          });
-          // print("🌍 ChoosePropertyLocation: Set to All States, fetching all locations");
-          // Fetch all locations for all states
-          globalData.fetchAllLocationsForAllStates().then((_) {
-            // print("✅ ChoosePropertyLocation: All locations fetched");
-          });
-        }
-      });
+      globalData.fetchRedemptionStatesAndLocations();
     });
   }
 
@@ -73,39 +56,24 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
       ),
       body: Consumer<GlobalDataManager>(
         builder: (context, globalData, child) {
-          // print("🔄 Consumer rebuild - Available states: ${globalData.availableStates.length}, Selected state: $selectedState, Has initialized: $_hasInitialized");
-          
           List<String> dropdownOptions = [];
           if (globalData.availableStates.isNotEmpty) {
             dropdownOptions = [ALL_STATES, ...globalData.availableStates];
 
-            // Initialize selectedState only once when states are loaded
-            if (selectedState == null && !_hasInitialized) {
-              // print("🔄 Initializing selectedState to All States");
+            if (selectedState == null) {
               selectedState = ALL_STATES;
-              _hasInitialized = true;
-              // Trigger fetching all locations
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                // print("🌍 PostFrameCallback: Fetching all locations for all states");
-                globalData.fetchAllLocationsForAllStates();
-              });
+              _handleStateSelection(globalData, ALL_STATES);
             }
           }
 
           List<dynamic> locationsToShow = [];
           if (selectedState == ALL_STATES) {
-            locationsToShow = globalData.getAllLocationsFromAllStates();
-            // print("🔍 All States selected - Found ${locationsToShow.length} locations");
-            if (locationsToShow.isNotEmpty) {
-              locationsToShow.sort((a, b) {
-                final aName = a.locationName.toLowerCase();
-                final bName = b.locationName.toLowerCase();
-                return aName.compareTo(bName);
-              });
-            }
+            locationsToShow = globalData.getAllLocationsFromAllStates()
+              ..sort((a, b) => (a.locationName ?? '')
+                  .toLowerCase()
+                  .compareTo((b.locationName ?? '').toLowerCase()));
           } else if (selectedState != null) {
             locationsToShow = globalData.locationsByState[selectedState] ?? [];
-            // print("🔍 State '$selectedState' selected - Found ${locationsToShow.length} locations");
           }
 
           return Column(
@@ -231,7 +199,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
 
   void _handleStateSelection(GlobalDataManager globalData, String state) {
     if (state == ALL_STATES) {
-      globalData.fetchAllLocationsForAllStates();
+      // No need to fetch - all locations are already preloaded!
     } else {
       globalData.fetchLocationsByState(state);
     }
@@ -298,7 +266,7 @@ class _LocationCardState extends State<LocationCard>
         });
       }
     } catch (e) {
-      // debugPrint("❌ Failed to decode image for ${widget.locationName}: $e");
+      debugPrint("❌ Failed to decode image for ${widget.locationName}: $e");
       if (mounted) setState(() => _isDecoded = true);
     }
   }
@@ -324,10 +292,10 @@ class _LocationCardState extends State<LocationCard>
                 borderRadius: BorderRadius.circular(8.fSize),
               ),
               child: InkWell(
-                onTap: () {
+                onTap: () async {
                   final ownerVM = context.read<OwnerProfileVM>();
                   ownerVM.clearRoomTypesForNewLocation();
-
+                  await ownerVM.fetchUserAvailablePoints();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -353,12 +321,12 @@ class _LocationCardState extends State<LocationCard>
                             _decodedImage != null
                                 ? Image.memory(
                                     _decodedImage!,
-                                    fit: BoxFit.contain,
-                                    // cacheHeight: 400, // Reduce memory footprint
-                                    // cacheWidth: 400,
+                                    fit: BoxFit.cover,
+                                    cacheHeight: 400, // Reduce memory footprint
+                                    cacheWidth: 400,
                                     errorBuilder: (context, error, stackTrace) {
-                                      // debugPrint(
-                                      //     "❌ Error displaying image for ${widget.locationName}: $error");
+                                      debugPrint(
+                                          "❌ Error displaying image for ${widget.locationName}: $error");
                                       return _buildPlaceholder();
                                     },
                                   )

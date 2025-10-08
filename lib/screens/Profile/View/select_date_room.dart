@@ -107,6 +107,20 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     });
   }
 
+  String sanitizeRoomTypeName(String raw) {
+    final s = raw.trim();
+    if (s.isEmpty) return s;
+
+    final firstToken = s.split(RegExp(r'\s+'))[0];
+
+    final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
+    if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 5) {
+      return s.substring(firstToken.length).trim();
+    }
+
+    return s;
+  }
+
   Future<void> _fetchBlockedDates() async {
     if (_blockedDates.isNotEmpty) return;
 
@@ -647,6 +661,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   itemCount: vm.roomTypes.length,
                   itemBuilder: (context, index) {
                     final room = vm.roomTypes[index];
+                    final displayName = sanitizeRoomTypeName(room.roomTypeName);
                     final userPoints = vm.UserPointBalance.isNotEmpty
                         ? vm.UserPointBalance.first.redemptionBalancePoints
                         : 0;
@@ -659,36 +674,23 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                             _selectedQuantity;
                     final affordable = totalRoomPoints <= userPoints;
 
-                    return affordable
-                        ? _buildRoomCard(
-                            room,
-                            isSelected: room.roomTypeName == _selectedRoomId,
-                          )
-                        : Opacity(
-                            opacity: 0.5,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  color: room.roomTypeName == _selectedRoomId
-                                      ? const Color(0xFF3E51FF)
-                                      : Colors.transparent,
-                                  width: 3,
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: InkWell(
-                                onTap: null,
-                                child: _buildRoomTypeCard(
-                                  context,
-                                  room.roomTypeName,
-                                  room.roomTypePoints,
-                                  room.pic,
-                                  isSelected:
-                                      room.roomTypeName == _selectedRoomId,
-                                ),
-                              ),
-                            ),
-                          );
+                    return RoomTypeTile(
+                      key: ValueKey(
+                          displayName), // stable key preserves tile state and cache
+                      room: room,
+                      displayName: displayName,
+                      isSelected: displayName == (_selectedRoomId ?? ''),
+                      enabled: affordable,
+                      onTap: affordable
+                          ? () {
+                              setState(() {
+                                _selectedRoom = room;
+                                // store sanitized display name to match UI
+                                _selectedRoomId = displayName;
+                              });
+                            }
+                          : null,
+                    );
                   },
                 ),
 
@@ -1072,6 +1074,171 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         room.roomTypePoints,
         room.pic,
         isSelected: isSelected,
+      ),
+    );
+  }
+}
+
+/// Small tile widget that decodes base64 once and preserves state.
+/// Use ValueKey(displayName) when instantiating so Flutter keeps the state.
+class RoomTypeTile extends StatefulWidget {
+  final RoomType room;
+  final String displayName; // already sanitized if you use sanitize
+  final bool isSelected;
+  final VoidCallback? onTap;
+  final bool enabled;
+
+  const RoomTypeTile({
+    Key? key,
+    required this.room,
+    required this.displayName,
+    this.isSelected = false,
+    this.onTap,
+    this.enabled = true,
+  }) : super(key: key);
+
+  @override
+  State<RoomTypeTile> createState() => _RoomTypeTileState();
+}
+
+class _RoomTypeTileState extends State<RoomTypeTile>
+    with AutomaticKeepAliveClientMixin {
+  Uint8List? _bytes;
+  bool _decoding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _decodeOnce();
+  }
+
+  Future<void> _decodeOnce() async {
+    if (_bytes != null || _decoding) return;
+    _decoding = true;
+
+    try {
+      final pic = widget.room.pic ?? '';
+      if (pic.isEmpty) {
+        _bytes = null;
+      } else if (pic.startsWith('data:image')) {
+        // data URI: parse
+        final data = Uri.parse(pic).data;
+        _bytes = data?.contentAsBytes();
+      } else {
+        _bytes = base64Decode(pic);
+      }
+    } catch (e) {
+      // decoding failed -> leave _bytes null
+      _bytes = null;
+    } finally {
+      if (mounted) {
+        _decoding = false;
+        setState(() {});
+      }
+    }
+  }
+
+  @override
+  bool get wantKeepAlive => true; // keep decoded bytes alive
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context); // for AutomaticKeepAliveClientMixin
+
+    // Use the cached _bytes (or placeholder)
+    final imageWidget = _bytes != null
+        ? Image.memory(
+            _bytes!,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 180,
+          )
+        : Container(
+            width: double.infinity,
+            height: 180,
+            color: Colors.grey[300],
+            child: const Center(
+              child:
+                  Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
+            ),
+          );
+
+    // Make selection highlight smooth with AnimatedOpacity or AnimatedContainer
+    return GestureDetector(
+      onTap: widget.enabled ? widget.onTap : null,
+      child: Card(
+        margin: const EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: SizedBox(
+                width: double.infinity,
+                height: 180,
+                child: imageWidget,
+              ),
+            ),
+            // selection overlay
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 180),
+              opacity: widget.isSelected ? 0.55 : 0.0,
+              child: Container(
+                width: double.infinity,
+                height: 180,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            // bottom gradient + name + points
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.transparent, Colors.black54],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.displayName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '${NumberFormat("#,###").format(widget.room.roomTypePoints)} points',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // disabled overlay when not affordable
+            if (!widget.enabled)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.white.withOpacity(0.6),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

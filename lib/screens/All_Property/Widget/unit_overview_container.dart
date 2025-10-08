@@ -148,8 +148,8 @@ class UnitOverviewContainer extends StatelessWidget {
 
       // Debug: only log if we have a meaningful occupancy rate
       if (occupancyRate > 0) {
-        print(
-            '✅ Group Occupancy for $selectedProperty unit $selectedUnit: $occupancyRate%');
+        // print(
+        //     '✅ Group Occupancy for $selectedProperty unit $selectedUnit: $occupancyRate%');
       }
     }
 
