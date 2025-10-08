@@ -7,6 +7,7 @@ import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
+import 'package:mana_mana_app/services/booking_submission_service.dart';
 
 class PropertyRedemption extends StatefulWidget {
   const PropertyRedemption({super.key});
@@ -88,8 +89,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     );
   }
 
-  // Get filtered bookings - sorted by createdAt (latest first)
-  List<dynamic> _getFilteredBookings(OwnerProfileVM ownerVM) {
+  // Get filtered bookings - sorted by submission time (latest first)
+  Future<List<dynamic>> _getFilteredBookings(OwnerProfileVM ownerVM) async {
     List<dynamic> filteredList;
 
     if (selectedFilter == 'All') {
@@ -111,8 +112,27 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
       }).toList();
     }
 
-    // Sort by createdAt - latest first
+    // Get submission times for all bookings
+    Map<String, DateTime> submissionTimes = {};
+    for (var booking in filteredList) {
+      final submissionTime =
+          await BookingSubmissionService.getSubmissionTime(booking);
+      if (submissionTime != null) {
+        submissionTimes[booking.storageKey] = submissionTime;
+      }
+    }
+
+    // Sort by submission time if available, otherwise by createdAt
     filteredList.sort((a, b) {
+      final timeA = submissionTimes[a.storageKey];
+      final timeB = submissionTimes[b.storageKey];
+
+      if (timeA != null && timeB != null) {
+        return timeB.compareTo(timeA);
+      }
+      if (timeA != null) return -1;
+      if (timeB != null) return 1;
+
       return b.createdAt.compareTo(a.createdAt);
     });
 
@@ -613,18 +633,30 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     ),
                   ],
                 ),
-                child: _getFilteredBookings(ownerVM).isEmpty
-                    ? const Center(
+                child: FutureBuilder<List<dynamic>>(
+                  future: _getFilteredBookings(ownerVM),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
                         child: Text(
                           "No booking history found.",
                           style: TextStyle(fontFamily: 'outfit'),
                         ),
-                      )
-                    : ListView(
-                        padding: const EdgeInsets.all(16),
-                        children: _buildGroupedBookings(
-                            _getFilteredBookings(ownerVM)),
-                      ),
+                      );
+                    }
+
+                    return ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: _buildGroupedBookings(snapshot.data!),
+                    );
+                  },
+                ),
               ),
             ),
           ],
