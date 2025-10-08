@@ -41,7 +41,7 @@ class NewDashboardV3 extends StatelessWidget {
         builder: (context, model, child) {
           // Call dialog check from ViewModel after loading is complete
           model.checkAndShowNewFeaturesDialog(context);
-          
+
           final ScrollController propertyScrollController = ScrollController();
           final ScrollController newsletterScrollController =
               ScrollController();
@@ -330,10 +330,16 @@ class NewDashboardV3 extends StatelessWidget {
                   ),
                   if (model.isLoading)
                     Positioned.fill(
-                      child: Container(
-                        color: Colors.black.withOpacity(0.7),
-                        child: const Center(
-                          child: _SmartLoadingDialog(),
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 200),
+                        opacity: model.isLoading ? 1.0 : 0.0,
+                        child: Container(
+                          color: Colors.black.withOpacity(0.5),
+                          child: const Center(
+                            child: RepaintBoundary(
+                              child: _SmartLoadingDialog(),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -408,28 +414,45 @@ class _SmartLoadingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 20,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text(
-            "Loading data, please wait...",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-        ],
+    // Use RepaintBoundary to optimize rendering
+    return RepaintBoundary(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        width: 200, // Fixed width for better performance
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Use SizedBox to prevent layout shifts
+            const SizedBox(
+              height: 36,
+              width: 36,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3E51FF)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Loading...",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'outfit',
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

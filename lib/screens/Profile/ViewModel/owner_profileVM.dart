@@ -132,23 +132,14 @@ class OwnerProfileVM extends ChangeNotifier {
         email: email,
       );
 
-      // Sort the booking history by creation date in descending order (latest request first)
       _bookingHistory = response;
-      _sortBookingsByCreationDate();
-
-      debugPrint(
-          "✅ Booking history sorted by request date: ${_bookingHistory.length} entries");
+      // debugPrint("✅ Booking history length: ${_bookingHistory.length}");
     } catch (e) {
       debugPrint('❌ Error fetching booking history: $e');
     } finally {
       _isLoadingBookingHistory = false;
       notifyListeners();
     }
-  }
-
-  // Helper method to sort bookings by creation date
-  void _sortBookingsByCreationDate() {
-    _bookingHistory.sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
   Future<void> fetchUserAvailablePoints() async {
@@ -476,21 +467,8 @@ class OwnerProfileVM extends ChangeNotifier {
               loc.locationName.toLowerCase() == fullLocationName.toLowerCase())
           .firstOrNull;
 
-      // If not found, try fuzzy matching in current state list
-      if (found == null) {
-        found = _locationsInState
-            .where((loc) =>
-                loc.locationName
-                    .toLowerCase()
-                    .contains(fullLocationName.toLowerCase()) ||
-                fullLocationName
-                    .toLowerCase()
-                    .contains(loc.locationName.toLowerCase()))
-            .firstOrNull;
-      }
-
       if (found != null) {
-        debugPrint("✅ Found match in current state: ${found.stateName}");
+        debugPrint("✅ Found exact match in current state: ${found.stateName}");
         return found;
       }
 
@@ -498,25 +476,10 @@ class OwnerProfileVM extends ChangeNotifier {
       debugPrint(
           "🔍 Searching in global data manager for location: $fullLocationName");
       final allLocations = _globalDataManager.getAllLocationsFromAllStates();
-
-      // Try exact match first
       found = allLocations
           .where((loc) =>
               loc.locationName.toLowerCase() == fullLocationName.toLowerCase())
           .firstOrNull;
-
-      // If not found, try fuzzy matching
-      if (found == null) {
-        found = allLocations
-            .where((loc) =>
-                loc.locationName
-                    .toLowerCase()
-                    .contains(fullLocationName.toLowerCase()) ||
-                fullLocationName
-                    .toLowerCase()
-                    .contains(loc.locationName.toLowerCase()))
-            .firstOrNull;
-      }
 
       if (found != null) {
         debugPrint(
@@ -549,15 +512,7 @@ class OwnerProfileVM extends ChangeNotifier {
         return "MOSSAZ";
       case "PAXT":
         return "PAXTONZ";
-      case "22M":
-      case "22MAC":
-        return "22MACALISTERZ";
       default:
-        // Check if it's a partial match of 22MACALISTERZ
-        if (code.toUpperCase().startsWith("22") &&
-            code.toUpperCase().contains("M")) {
-          return "22MACALISTERZ";
-        }
         return code; // Return original code if no match found
     }
   }

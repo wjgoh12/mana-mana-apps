@@ -97,15 +97,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     // First load blocked dates
     await _fetchBlockedDates();
 
-    // Then load initial room types with default dates
-    final defaultStart = DateTime.now().add(const Duration(days: 7));
-    final defaultEnd = defaultStart.add(const Duration(days: 1));
-
-    setState(() {
-      _rangeStart = defaultStart;
-      _rangeEnd = defaultEnd;
-    });
-
     // Load required data
     await Future.wait([
       _vm.ensureAllLocationDataLoaded(),
@@ -117,8 +108,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         state: widget.state,
         bookingLocationName: widget.location,
         rooms: _selectedQuantity,
-        arrivalDate: defaultStart,
-        departureDate: defaultEnd,
+        arrivalDate: DateTime.now().add(const Duration(days: 7)),
+        departureDate: DateTime.now().add(const Duration(days: 8)),
       ),
     ]);
   }

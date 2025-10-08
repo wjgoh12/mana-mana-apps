@@ -1,3 +1,4 @@
+// ignore: file_names
 class BookingHistory {
   final String location;
   final String unitNo;
@@ -19,7 +20,7 @@ class BookingHistory {
     required this.pointUsed,
     required this.status,
     DateTime? createdAt, // Optional in constructor but will be initialized
-  }) : this.createdAt = createdAt ??
+  }) : createdAt = createdAt ??
             DateTime.now(); // Default to current time if not provided
 
   factory BookingHistory.fromJson(Map<String, dynamic> json) {

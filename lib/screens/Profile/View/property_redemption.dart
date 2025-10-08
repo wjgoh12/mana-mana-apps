@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
-import 'package:mana_mana_app/screens/Profile/View/select_date_room.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
-import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +46,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     });
 
     Future.microtask(() async {
+      // ignore: use_build_context_synchronously
       final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
       await ownerVM.fetchData();
       await ownerVM.fetchUserAvailablePoints();
@@ -92,7 +88,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     );
   }
 
-  // Get filtered bookings - REVERSED to show latest first
+  // Get filtered bookings - sorted by createdAt (latest first)
   List<dynamic> _getFilteredBookings(OwnerProfileVM ownerVM) {
     List<dynamic> filteredList;
 
@@ -115,8 +111,20 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
       }).toList();
     }
 
-    // Reverse the list so latest bookings appear first
-    return filteredList.reversed.toList();
+    // Sort by createdAt - latest first
+    filteredList.sort((a, b) {
+      return b.createdAt.compareTo(a.createdAt);
+    });
+
+    return filteredList;
+  }
+
+  List<Widget> _buildGroupedBookings(List<dynamic> bookings) {
+    // Sort bookings by creation date (newest first)
+    bookings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    // Just return the sorted list
+    return bookings.map((booking) => _buildBookingCard(booking)).toList();
   }
 
   // Build booking card
@@ -195,6 +203,14 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                       style: const TextStyle(
                           fontFamily: 'outfit', fontWeight: FontWeight.bold),
                     ),
+                    const SizedBox(height: 10),
+                    // const Text('Confirmation Date',
+                    //     style: TextStyle(fontFamily: 'outfit')),
+                    // Text(
+                    //   DateFormat('dd MMM yyyy HH:mm').format(booking.createdAt),
+                    //   style: const TextStyle(
+                    //       fontFamily: 'outfit', fontWeight: FontWeight.bold),
+                    // ),
                   ],
                 ),
                 actions: [
@@ -284,13 +300,23 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Dates: ${DateFormat('yyyy-MM-dd').format(booking.arrivalDate)} to ${DateFormat('yyyy-MM-dd').format(booking.departureDate)}',
+                      'Stay Period: ${DateFormat('dd MMM yyyy').format(booking.arrivalDate)} to ${DateFormat('dd MMM yyyy').format(booking.departureDate)}',
                       style: TextStyle(
                         fontSize: ResponsiveSize.text(11),
                         fontFamily: 'outfit',
                         color: Colors.grey.shade600,
                       ),
                     ),
+                    const SizedBox(height: 4),
+                    // Text(
+                    //   'Submitted: ${DateFormat('dd MMM yyyy HH:mm').format(booking.createdAt)}',
+                    //   style: TextStyle(
+                    //     fontSize: ResponsiveSize.text(11),
+                    //     fontFamily: 'outfit',
+                    //     color: Colors.grey.shade500,
+                    //     fontStyle: FontStyle.italic,
+                    //   ),
+                    // ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
@@ -436,7 +462,9 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 fontSize:
                                                     ResponsiveSize.text(15),
                                                 fontWeight: FontWeight.w700,
-                                                fontFamilyFallback: ['outfit']),
+                                                fontFamilyFallback: const [
+                                                  'outfit'
+                                                ]),
                                             gradient: const LinearGradient(
                                               begin: Alignment.centerLeft,
                                               end: Alignment.centerRight,
@@ -459,12 +487,9 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                             ),
                                             decoration: BoxDecoration(
                                               color: const Color.fromARGB(
-                                                  97,
-                                                  204,
-                                                  248,
-                                                  255), // light background
-                                              borderRadius: BorderRadius.circular(
-                                                  8), // optional rounded corners
+                                                  97, 204, 248, 255),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
                                             child: Row(
                                               children: [
@@ -495,7 +520,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                           )
                                         ],
                                       ),
-                                      // const Spacer(),
                                       TextButton(
                                         onPressed: () {
                                           ownerVM.UserPointBalance.clear();
@@ -522,8 +546,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                         },
                                         style: TextButton.styleFrom(
                                           padding: EdgeInsets.zero,
-                                          minimumSize: Size(70,
-                                              35), // ✅ avoid taking too much width
+                                          minimumSize: const Size(70, 35),
                                         ),
                                         child: Container(
                                           decoration: BoxDecoration(
@@ -599,9 +622,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                       )
                     : ListView(
                         padding: const EdgeInsets.all(16),
-                        children: _getFilteredBookings(ownerVM).map((booking) {
-                          return _buildBookingCard(booking);
-                        }).toList(),
+                        children: _buildGroupedBookings(
+                            _getFilteredBookings(ownerVM)),
                       ),
               ),
             ),

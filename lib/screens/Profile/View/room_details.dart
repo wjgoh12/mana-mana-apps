@@ -46,26 +46,8 @@ class _RoomDetailsState extends State<RoomDetails> {
   bool _isSubmitting = false;
 
   // TODO: Replace with your actual admin email
+  // ignore: constant_identifier_names
   static const String ADMIN_EMAIL = 'admin@example.com';
-
-  String? _getLocationCode(String locationName) {
-    switch (locationName.toUpperCase()) {
-      case "EXPRESSIONZ":
-        return "EXPR";
-      case "CEYLONZ":
-        return "CEYL";
-      case "SCARLETZ":
-        return "SCAR";
-      case "MILLERZ":
-        return "MILL";
-      case "MOSSAZ":
-        return "MOSS";
-      case "PAXTONZ":
-        return "PAXT";
-      default:
-        return null;
-    }
-  }
 
   // Send email notification to admin (via backend API)
   Future<void> sendEmailNotificationToAdmin({
@@ -91,6 +73,7 @@ class _RoomDetailsState extends State<RoomDetails> {
           'checkIn': checkIn?.toIso8601String(),
           'checkOut': checkOut?.toIso8601String(),
           'totalPoints': points,
+          'submissionDateTime': DateTime.now().toIso8601String(),
         }),
       );
 
@@ -334,17 +317,13 @@ class _RoomDetailsState extends State<RoomDetails> {
                                       listen: false);
 
                                   try {
+                                    // Record submission date/time at the moment of booking
+
                                     final userEmail = ownerVM.users.isNotEmpty
                                         ? ownerVM.users.first.email ?? ''
                                         : '';
                                     if (userEmail.isEmpty)
                                       throw Exception("No user email");
-
-                                    // final locationCode =
-                                    //     _getLocationCode(widget.ownerLocation);
-                                    // if (locationCode == null)
-                                    //   throw Exception(
-                                    //       "Invalid location: ${widget.ownerLocation}");
 
                                     final point = UnitAvailablePoint(
                                       location: widget.ownerLocation,

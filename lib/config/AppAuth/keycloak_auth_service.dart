@@ -105,7 +105,7 @@ class AuthService {
     String? refreshToken = await _secureStorage.read(key: 'refresh_token');
 
     if (accessToken == null || refreshToken == null) {
-      print('❌ Missing tokens - need to login');
+      // print('❌ Missing tokens - need to login');
       return null;
     }
 

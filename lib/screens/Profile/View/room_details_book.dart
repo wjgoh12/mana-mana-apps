@@ -297,14 +297,16 @@ class _RoomDetailsBookState extends State<RoomDetailsBook> {
                                     final userEmail = ownerVM.users.isNotEmpty
                                         ? ownerVM.users.first.email ?? ''
                                         : '';
-                                    if (userEmail.isEmpty)
+                                    if (userEmail.isEmpty) {
                                       throw Exception("No user email");
+                                    }
 
                                     final locationCode =
                                         _getLocationCode(widget.ownerLocation);
-                                    if (locationCode == null)
+                                    if (locationCode == null) {
                                       throw Exception(
                                           "Invalid location: ${widget.ownerLocation}");
+                                    }
 
                                     final point = UnitAvailablePoint(
                                       location: locationCode,
@@ -340,6 +342,7 @@ Total Points: ${totalPoints()}
                                       sendEmailToCS(emailContent);
 
                                       showDialog(
+                                        // ignore: use_build_context_synchronously
                                         context: context,
                                         builder: (_) => AlertDialog(
                                           backgroundColor: Colors.white,
@@ -375,7 +378,7 @@ Total Points: ${totalPoints()}
                                             TextButton(
                                               style: TextButton.styleFrom(
                                                 backgroundColor:
-                                                    Color(0xFF3E51FF),
+                                                    const Color(0xFF3E51FF),
                                               ),
                                               onPressed: () {
                                                 Navigator.pop(
@@ -396,6 +399,7 @@ Total Points: ${totalPoints()}
                                         ),
                                       );
                                     } else {
+                                      // ignore: use_build_context_synchronously
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         const SnackBar(
@@ -409,6 +413,7 @@ Total Points: ${totalPoints()}
                                       );
                                     }
                                   } catch (e) {
+                                    // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text('Error: $e'),
@@ -430,7 +435,7 @@ Total Points: ${totalPoints()}
                           fixedSize: const Size(300, 40),
                         ),
                         child: _isSubmitting
-                            ? SizedBox(
+                            ? const SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
@@ -479,7 +484,7 @@ Total Points: ${totalPoints()}
                   fontSize: ResponsiveSize.text(12),
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Outfit',
-                  color: Color(0xFF3E51FF)),
+                  color: const Color(0xFF3E51FF)),
             ),
           ],
         ),
@@ -501,7 +506,7 @@ Total Points: ${totalPoints()}
               style: TextStyle(
                   fontSize: ResponsiveSize.text(16),
                   fontFamily: 'Outfit',
-                  color: Color(0xFF3E51FF),
+                  color: const Color(0xFF3E51FF),
                   fontWeight: FontWeight.bold)),
         ],
       ),
@@ -581,11 +586,11 @@ class _MyCheckboxWidgetState extends State<MyCheckboxWidget> {
                         color: const Color(0xFF3E51FF),
                       ),
                     ),
-                    content: SingleChildScrollView(
+                    content: const SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           // Guarantee
                           Text("Guarantee:",
                               style: TextStyle(

@@ -27,8 +27,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
     double responsiveWidth(double value) =>
         (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
+// base height
     double responsiveFont(double value) =>
         (value / 812.0) * screenHeight; // font scaling
 
@@ -90,7 +89,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                   ),
                   Row(
                     children: [
-                      _buildRow(icon: 'personal_info_email.png', label: 'Email'),
+                      _buildRow(
+                          icon: 'personal_info_email.png', label: 'Email'),
                       SizedBox(width: responsiveWidth(8)),
                       _buildData(data: profileModel.getOwnerEmail()),
                     ],
@@ -118,8 +118,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
     double responsiveWidth(double value) =>
         (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
+// base height
     double responsiveFont(double value) =>
         (value / 812.0) * screenHeight; // font scaling
 
@@ -150,8 +149,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
     double responsiveWidth(double value) =>
         (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
+
+// base height
     double responsiveFont(double value) =>
         (value / 812.0) * screenHeight; // font scaling
 
