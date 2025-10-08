@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
-import 'package:mana_mana_app/screens/Profile/View/personal_information.dart';
-import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
@@ -417,7 +413,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             onPressed: () {
                               launchUrl(Uri.parse(
                                   'https://www.manamanasuites.com/privacy-policy'));
-                              style:
                               ButtonStyle(
                                 backgroundColor:
                                     WidgetStateProperty.all(Colors.transparent),
@@ -445,6 +440,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                   FloatingActionButtonLocation.centerDocked,
               bottomNavigationBar: Container(
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: Colors.white.withOpacity(0),
                 ),
                 child: const BottomNavBar(
@@ -499,8 +495,7 @@ Widget _buildRow(BuildContext context, {required String label}) {
 
   double responsiveWidth(double value) =>
       (value / 375.0) * screenWidth; // base width
-  double responsiveHeight(double value) =>
-      (value / 812.0) * screenHeight; // base height
+
   double responsiveFont(double value) =>
       (value / 812.0) * screenHeight; // font scaling
 
@@ -531,8 +526,7 @@ Widget _buildData(BuildContext context, {required String data}) {
 
   double responsiveWidth(double value) =>
       (value / 375.0) * screenWidth; // base width
-  double responsiveHeight(double value) =>
-      (value / 812.0) * screenHeight; // base height
+// base height
   double responsiveFont(double value) =>
       (value / 812.0) * screenHeight; // font scaling
 
