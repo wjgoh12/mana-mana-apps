@@ -14,10 +14,12 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 class ChoosePropertyLocation extends StatefulWidget {
   final String selectedLocation;
   final String selectedUnitNo;
+  final double points;
   const ChoosePropertyLocation({
     Key? key,
     required this.selectedLocation,
     required this.selectedUnitNo,
+    required this.points,
   }) : super(key: key);
 
   @override
@@ -26,6 +28,7 @@ class ChoosePropertyLocation extends StatefulWidget {
 
 class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
   String? selectedState;
+  // ignore: constant_identifier_names
   static const String ALL_STATES = "All States";
 
   @override
@@ -69,9 +72,9 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
           List<dynamic> locationsToShow = [];
           if (selectedState == ALL_STATES) {
             locationsToShow = globalData.getAllLocationsFromAllStates()
-              ..sort((a, b) => (a.locationName ?? '')
+              ..sort((a, b) => (a.locationName)
                   .toLowerCase()
-                  .compareTo((b.locationName ?? '').toLowerCase()));
+                  .compareTo((b.locationName).toLowerCase()));
           } else if (selectedState != null) {
             locationsToShow = globalData.locationsByState[selectedState] ?? [];
           }
@@ -186,6 +189,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                         selectedLocation: widget.selectedLocation,
                         selectedUnitNo: widget.selectedUnitNo,
                         showStateName: selectedState == ALL_STATES,
+                        points: widget.points,
                       );
                     },
                   ),
@@ -214,6 +218,7 @@ class LocationCard extends StatefulWidget {
   final String selectedLocation;
   final String selectedUnitNo;
   final bool showStateName;
+  final double points;
 
   const LocationCard({
     Key? key,
@@ -222,6 +227,7 @@ class LocationCard extends StatefulWidget {
     required this.propertyState,
     required this.selectedLocation,
     required this.selectedUnitNo,
+    required this.points,
     this.showStateName = false,
   }) : super(key: key);
 
@@ -295,8 +301,21 @@ class _LocationCardState extends State<LocationCard>
                 onTap: () async {
                   final ownerVM = context.read<OwnerProfileVM>();
                   ownerVM.clearRoomTypesForNewLocation();
+
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) =>
+                        const Center(child: CircularProgressIndicator()),
+                  );
+
                   await ownerVM.fetchUserAvailablePoints();
+
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context); // Remove loading dialog
+
                   Navigator.push(
+                    // ignore: use_build_context_synchronously
                     context,
                     MaterialPageRoute(
                       builder: (_) => ChangeNotifierProvider.value(
@@ -306,6 +325,7 @@ class _LocationCardState extends State<LocationCard>
                           state: widget.propertyState ?? "Unknown State",
                           ownedLocation: widget.selectedLocation,
                           ownedUnitNo: widget.selectedUnitNo,
+                          points: widget.points,
                         ),
                       ),
                     ),

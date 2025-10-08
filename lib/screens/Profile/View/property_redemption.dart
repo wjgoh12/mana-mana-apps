@@ -76,7 +76,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     );
   }
 
-  // Get filtered bookings - REVERSED to show latest first
+  // Get filtered bookings - already sorted by date in ViewModel
   List<dynamic> _getFilteredBookings(OwnerProfileVM ownerVM) {
     List<dynamic> filteredList;
 
@@ -99,8 +99,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
       }).toList();
     }
 
-    // Reverse the list so latest bookings appear first
-    return filteredList.reversed.toList();
+    // No need to reverse since it's already sorted by date in ViewModel
+    return filteredList;
   }
 
   // Build booking card
@@ -497,6 +497,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                   selectedLocation:
                                                       unit.location,
                                                   selectedUnitNo: unit.unitNo,
+                                                  points: unit
+                                                      .redemptionBalancePoints,
                                                 ),
                                               ),
                                             ),

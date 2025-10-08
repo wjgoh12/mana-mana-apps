@@ -19,25 +19,28 @@ class SelectDateRoom extends StatefulWidget {
   final String ownedUnitNo;
   final String location;
   final String state;
+  final double points;
+
   const SelectDateRoom({
     Key? key,
     required this.ownedLocation,
     required this.ownedUnitNo,
     required this.location,
     required this.state,
+    required this.points,
   }) : super(key: key);
 
   static int getUserPointsBalance(OwnerProfileVM vm) {
     final points = vm.UserPointBalance.isNotEmpty
         ? vm.UserPointBalance.first.redemptionBalancePoints
         : 0;
-    final redemptionPoints = vm.UserPointBalance.isNotEmpty
-        ? vm.UserPointBalance.first.redemptionPoints
-        : 0;
+    // final redemptionPoints = vm.UserPointBalance.isNotEmpty
+    //     ? vm.UserPointBalance.first.redemptionPoints
+    //     : 0;
 
     final formatter = NumberFormat('#,###');
     final formattedPoints = formatter.format(points);
-    final formattedRedemptionPoints = formatter.format(redemptionPoints);
+    // final formattedRedemptionPoints = formatter.format(redemptionPoints);
     return formattedPoints.isNotEmpty
         ? int.parse(formattedPoints.replaceAll(',', ''))
         : 0;
@@ -84,27 +87,40 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     _focusedDay = DateTime.now().add(const Duration(days: 7));
     _selectedDay = null;
-    _fetchBlockedDates();
-
+    
+    // Initialize VM and load data
     _vm = context.read<OwnerProfileVM>();
+    _initializeData();
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _vm.ensureAllLocationDataLoaded();
+  Future<void> _initializeData() async {
+    // First load blocked dates
+    await _fetchBlockedDates();
 
-      await Future.wait([
-        _vm.fetchRedemptionBalancePoints(
-          location: widget.ownedLocation,
-          unitNo: widget.ownedUnitNo,
-        ),
-        _vm.fetchRoomTypes(
-          state: widget.state,
-          bookingLocationName: widget.location,
-          rooms: _selectedQuantity,
-          arrivalDate: _focusedDay,
-          departureDate: _focusedDay?.add(const Duration(days: 1)),
-        ),
-      ]);
+    // Then load initial room types with default dates
+    final defaultStart = DateTime.now().add(const Duration(days: 7));
+    final defaultEnd = defaultStart.add(const Duration(days: 1));
+
+    setState(() {
+      _rangeStart = defaultStart;
+      _rangeEnd = defaultEnd;
     });
+
+    // Load required data
+    await Future.wait([
+      _vm.ensureAllLocationDataLoaded(),
+      _vm.fetchRedemptionBalancePoints(
+        location: widget.ownedLocation,
+        unitNo: widget.ownedUnitNo,
+      ),
+      _vm.fetchRoomTypes(
+        state: widget.state,
+        bookingLocationName: widget.location,
+        rooms: _selectedQuantity,
+        arrivalDate: defaultStart,
+        departureDate: defaultEnd,
+      ),
+    ]);
   }
 
   String sanitizeRoomTypeName(String raw) {
@@ -213,13 +229,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     }
   }
 
-  // 🆕 Enhanced with loading state and tracking
+  // Enhanced room type fetching with immediate selection availability
   Future<void> _fetchRoomTypesAndMaintainSelection() async {
-    // Safety check: Only proceed if both dates are selected
-    if (_rangeStart == null || _rangeEnd == null) {
-      debugPrint("⚠️ Skipping room fetch: Both dates must be selected");
-      return;
-    }
+    // If no dates selected, use default range
+    final start = _rangeStart ?? DateTime.now().add(const Duration(days: 7));
+    final end = _rangeEnd ?? start.add(const Duration(days: 1));
 
     setState(() => _isLoadingRoomTypes = true);
 
@@ -228,21 +242,32 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         state: widget.state,
         bookingLocationName: widget.location,
         rooms: _selectedQuantity,
-        arrivalDate: _toDateOnly(_rangeStart!),
-        departureDate: _toDateOnly(_rangeEnd!),
+        arrivalDate: _toDateOnly(start),
+        departureDate: _toDateOnly(end),
       );
 
-      // 🆕 Update last fetched parameters
+      // Update tracking parameters
       setState(() {
-        _lastFetchedStart = _rangeStart;
-        _lastFetchedEnd = _rangeEnd;
+        _lastFetchedStart = start;
+        _lastFetchedEnd = end;
         _lastFetchedQuantity = _selectedQuantity;
         _hasPendingChanges = false;
+        
+        // If we don't have a selection and rooms are available, auto-select first affordable room
+        if (_selectedRoomId == null && _vm.roomTypes.isNotEmpty) {
+          final affordableRoom = _vm.roomTypes.firstWhere(
+            (room) => isRoomAffordable(room, end.difference(start).inDays, _selectedQuantity),
+            orElse: () => RoomType(roomTypeName: '', roomTypePoints: 0, pic: ''),
+          );
+          
+          if (affordableRoom.roomTypeName.isNotEmpty) {
+            _selectedRoom = affordableRoom;
+            _selectedRoomId = affordableRoom.roomTypeName;
+          }
+        } else if (_selectedRoomId != null) {
+          _restoreRoomSelection();
+        }
       });
-
-      if (_selectedRoomId != null) {
-        _restoreRoomSelection();
-      }
     } catch (e) {
       debugPrint("❌ Failed to fetch room types: $e");
       if (mounted) {
@@ -842,9 +867,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }
 
   Widget _buildPointsAndQuantity(OwnerProfileVM vm) {
-    final points = vm.UserPointBalance.isNotEmpty
-        ? vm.UserPointBalance.first.redemptionBalancePoints
-        : 0;
+    final points = widget.points;
 
     final formatter = NumberFormat('#,###');
     final formattedPoints = formatter.format(points);
@@ -1087,6 +1110,7 @@ class RoomTypeTile extends StatefulWidget {
   final bool isSelected;
   final VoidCallback? onTap;
   final bool enabled;
+  final Function(RoomType room)? onRoomSelected; // Added callback for room selection
 
   const RoomTypeTile({
     Key? key,
@@ -1095,6 +1119,7 @@ class RoomTypeTile extends StatefulWidget {
     this.isSelected = false,
     this.onTap,
     this.enabled = true,
+    this.onRoomSelected, // New parameter
   }) : super(key: key);
 
   @override

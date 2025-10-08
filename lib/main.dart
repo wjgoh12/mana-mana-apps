@@ -31,7 +31,8 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   // Create a global navigator key
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -43,10 +44,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    
+
     // Set the navigator key in AuthService
     AuthService.setNavigatorKey(MyApp.navigatorKey);
-    
+
     // Listen for app lifecycle changes
     _appLifecycleListener = AppLifecycleListener(
       onResume: _onAppResumed,
@@ -63,7 +64,7 @@ class _MyAppState extends State<MyApp> {
     print('🔄 App resumed - checking authentication status');
     final authService = AuthService();
     bool isLoggedIn = await authService.isLoggedIn();
-    
+
     if (!isLoggedIn) {
       print('🚪 Session expired while app was backgrounded');
       // Navigation will be handled by AuthService._handleSessionExpiry()

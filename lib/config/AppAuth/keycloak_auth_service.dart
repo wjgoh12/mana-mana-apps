@@ -15,15 +15,15 @@ class AuthService {
 
   Timer? _refreshTimer;
   bool _isRefreshing = false;
-  
+
   // Add a global navigation key reference
   static GlobalKey<NavigatorState>? _navigatorKey;
-  
+
   // Method to set the navigator key from main app
   static void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
     _navigatorKey = navigatorKey;
   }
-  
+
   // Method to handle session expiry globally
   void _handleSessionExpiry() {
     print('🚪 Session expired - navigating to login');
@@ -37,7 +37,8 @@ class AuthService {
 
   // Method to handle server authentication failures (401/403 responses)
   Future<void> handleServerAuthenticationFailure() async {
-    print('🚫 Server rejected authentication - clearing tokens and redirecting to login');
+    print(
+        '🚫 Server rejected authentication - clearing tokens and redirecting to login');
     await _removeAllAppData();
     _handleSessionExpiry();
   }
@@ -100,47 +101,47 @@ class AuthService {
   }
 
   Future<String?> getValidAccessToken() async {
-  String? accessToken = await getAccessToken();
-  String? refreshToken = await _secureStorage.read(key: 'refresh_token');
+    String? accessToken = await getAccessToken();
+    String? refreshToken = await _secureStorage.read(key: 'refresh_token');
 
-  if (accessToken == null || refreshToken == null) {
-    print('❌ Missing tokens - need to login');
-    return null;
-  }
+    if (accessToken == null || refreshToken == null) {
+      print('❌ Missing tokens - need to login');
+      return null;
+    }
 
-  // Check if refresh token is expired first
-  try {
-    if (JwtDecoder.isExpired(refreshToken)) {
-      print('❌ Refresh token expired - need to re-login');
+    // Check if refresh token is expired first
+    try {
+      if (JwtDecoder.isExpired(refreshToken)) {
+        print('❌ Refresh token expired - need to re-login');
+        await _removeAllAppData();
+        _handleSessionExpiry();
+        return null;
+      }
+    } catch (e) {
+      print('❌ Error checking refresh token: $e');
       await _removeAllAppData();
       _handleSessionExpiry();
       return null;
     }
-  } catch (e) {
-    print('❌ Error checking refresh token: $e');
-    await _removeAllAppData();
-    _handleSessionExpiry();
-    return null;
-  }
 
-  // Check access token
-  if (JwtDecoder.isExpired(accessToken) ||
-      JwtDecoder.getRemainingTime(accessToken).inSeconds <= 60) {
-    print('🔄 Access token expired/expiring, refreshing...');
-    bool refreshed = await refreshTokenFunction();
+    // Check access token
+    if (JwtDecoder.isExpired(accessToken) ||
+        JwtDecoder.getRemainingTime(accessToken).inSeconds <= 60) {
+      print('🔄 Access token expired/expiring, refreshing...');
+      bool refreshed = await refreshTokenFunction();
 
-    if (refreshed) {
-      accessToken = await getAccessToken();
-    } else {
-      print('❌ Token refresh failed - need to re-login');
-      await _removeAllAppData();
-      _handleSessionExpiry();
-      return null;
+      if (refreshed) {
+        accessToken = await getAccessToken();
+      } else {
+        print('❌ Token refresh failed - need to re-login');
+        await _removeAllAppData();
+        _handleSessionExpiry();
+        return null;
+      }
     }
-  }
 
-  return accessToken;
-}
+    return accessToken;
+  }
 
   Future<bool> isLoggedIn() async {
     try {
@@ -244,80 +245,81 @@ class AuthService {
   }
 
   Future<bool> refreshTokenFunction() async {
-  if (_isRefreshing) {
-    print('⏳ Already refreshing...');
-    return false;
-  }
-
-  _isRefreshing = true;
-
-  try {
-    final String? refreshToken =
-        await _secureStorage.read(key: 'refresh_token');
-
-    if (refreshToken == null) {
-      print('❌ No refresh token available.');
-      _isRefreshing = false;
+    if (_isRefreshing) {
+      print('⏳ Already refreshing...');
       return false;
     }
 
-    // Check refresh token expiry before using it
-    if (JwtDecoder.isExpired(refreshToken)) {
-      print('❌ Refresh token expired - clearing tokens');
-      await _removeAllAppData();
-      _handleSessionExpiry();
-      _isRefreshing = false;
-      return false;
-    }
+    _isRefreshing = true;
 
-    final Uri tokenEndpoint = Uri.parse(
-        '${EnvConfig.keycloakBaseUrl}/auth/realms/mana/protocol/openid-connect/token');
+    try {
+      final String? refreshToken =
+          await _secureStorage.read(key: 'refresh_token');
 
-    final response = await http.post(
-      tokenEndpoint,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {
-        'grant_type': 'refresh_token',
-        'client_id': EnvConfig.keycloakClientId,
-        'client_secret': EnvConfig.keycloakClientSecret,
-        'refresh_token': refreshToken,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> tokenData = json.decode(response.body);
-
-      // Store new tokens
-      await _secureStorage.write(
-          key: 'access_token', value: tokenData['access_token']);
-
-      if (tokenData['refresh_token'] != null) {
-        await _secureStorage.write(
-            key: 'refresh_token', value: tokenData['refresh_token']);
+      if (refreshToken == null) {
+        print('❌ No refresh token available.');
+        _isRefreshing = false;
+        return false;
       }
 
-      // Start new timer with the new token
-      _startTokenRefreshTimer(tokenData['access_token']);
-
-      print('✅ Token refreshed successfully');
-      _isRefreshing = false;
-      return true;
-    } else {
-      print('❌ Token refresh failed: ${response.statusCode} - ${response.body}');
-      
-      // If refresh fails, likely means refresh token is invalid/expired
-      if (response.statusCode == 400 || response.statusCode == 401) {
+      // Check refresh token expiry before using it
+      if (JwtDecoder.isExpired(refreshToken)) {
+        print('❌ Refresh token expired - clearing tokens');
         await _removeAllAppData();
         _handleSessionExpiry();
+        _isRefreshing = false;
+        return false;
       }
-      
+
+      final Uri tokenEndpoint = Uri.parse(
+          '${EnvConfig.keycloakBaseUrl}/auth/realms/mana/protocol/openid-connect/token');
+
+      final response = await http.post(
+        tokenEndpoint,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {
+          'grant_type': 'refresh_token',
+          'client_id': EnvConfig.keycloakClientId,
+          'client_secret': EnvConfig.keycloakClientSecret,
+          'refresh_token': refreshToken,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> tokenData = json.decode(response.body);
+
+        // Store new tokens
+        await _secureStorage.write(
+            key: 'access_token', value: tokenData['access_token']);
+
+        if (tokenData['refresh_token'] != null) {
+          await _secureStorage.write(
+              key: 'refresh_token', value: tokenData['refresh_token']);
+        }
+
+        // Start new timer with the new token
+        _startTokenRefreshTimer(tokenData['access_token']);
+
+        // print('✅ Token refreshed successfully');
+        _isRefreshing = false;
+        return true;
+      } else {
+        print(
+            '❌ Token refresh failed: ${response.statusCode} - ${response.body}');
+
+        // If refresh fails, likely means refresh token is invalid/expired
+        if (response.statusCode == 400 || response.statusCode == 401) {
+          await _removeAllAppData();
+          _handleSessionExpiry();
+        }
+
+        _isRefreshing = false;
+        return false;
+      }
+    } catch (e) {
+      print('❌ Token refresh error: $e');
       _isRefreshing = false;
       return false;
     }
-  } catch (e) {
-    print('❌ Token refresh error: $e');
-    _isRefreshing = false;
-    return false;
   }
-}
 }

@@ -132,14 +132,23 @@ class OwnerProfileVM extends ChangeNotifier {
         email: email,
       );
 
+      // Sort the booking history by creation date in descending order (latest request first)
       _bookingHistory = response;
-      // debugPrint("✅ Booking history length: ${_bookingHistory.length}");
+      _sortBookingsByCreationDate();
+
+      debugPrint(
+          "✅ Booking history sorted by request date: ${_bookingHistory.length} entries");
     } catch (e) {
       debugPrint('❌ Error fetching booking history: $e');
     } finally {
       _isLoadingBookingHistory = false;
       notifyListeners();
     }
+  }
+
+  // Helper method to sort bookings by creation date
+  void _sortBookingsByCreationDate() {
+    _bookingHistory.sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
   Future<void> fetchUserAvailablePoints() async {
@@ -455,36 +464,70 @@ class OwnerProfileVM extends ChangeNotifier {
     try {
       // Convert location code to full name for matching
       String fullLocationName = _getLocationName(ownerLocation);
-      
-      debugPrint("🔍 Looking for property state for: '$ownerLocation' -> '$fullLocationName'");
-      debugPrint("🔍 Available locations in state: ${_locationsInState.map((l) => l.locationName).toList()}");
-      
+
+      debugPrint(
+          "🔍 Looking for property state for: '$ownerLocation' -> '$fullLocationName'");
+      debugPrint(
+          "🔍 Available locations in state: ${_locationsInState.map((l) => l.locationName).toList()}");
+
       // First try exact match with full location name in current state list
-      PropertyState? found = _locationsInState.where(
-        (loc) => loc.locationName.toLowerCase() == fullLocationName.toLowerCase()
-      ).firstOrNull;
-      
+      PropertyState? found = _locationsInState
+          .where((loc) =>
+              loc.locationName.toLowerCase() == fullLocationName.toLowerCase())
+          .firstOrNull;
+
+      // If not found, try fuzzy matching in current state list
+      if (found == null) {
+        found = _locationsInState
+            .where((loc) =>
+                loc.locationName
+                    .toLowerCase()
+                    .contains(fullLocationName.toLowerCase()) ||
+                fullLocationName
+                    .toLowerCase()
+                    .contains(loc.locationName.toLowerCase()))
+            .firstOrNull;
+      }
+
       if (found != null) {
-        debugPrint("✅ Found exact match in current state: ${found.stateName}");
+        debugPrint("✅ Found match in current state: ${found.stateName}");
         return found;
       }
-      
+
       // If not found in current state list, check the global data manager
-      debugPrint("🔍 Searching in global data manager for location: $fullLocationName");
+      debugPrint(
+          "🔍 Searching in global data manager for location: $fullLocationName");
       final allLocations = _globalDataManager.getAllLocationsFromAllStates();
-      found = allLocations.where(
-        (loc) => loc.locationName.toLowerCase() == fullLocationName.toLowerCase()
-      ).firstOrNull;
-      
+
+      // Try exact match first
+      found = allLocations
+          .where((loc) =>
+              loc.locationName.toLowerCase() == fullLocationName.toLowerCase())
+          .firstOrNull;
+
+      // If not found, try fuzzy matching
+      if (found == null) {
+        found = allLocations
+            .where((loc) =>
+                loc.locationName
+                    .toLowerCase()
+                    .contains(fullLocationName.toLowerCase()) ||
+                fullLocationName
+                    .toLowerCase()
+                    .contains(loc.locationName.toLowerCase()))
+            .firstOrNull;
+      }
+
       if (found != null) {
-        debugPrint("✅ Found in global data: stateName='${found.stateName}', locationName='${found.locationName}'");
+        debugPrint(
+            "✅ Found in global data: stateName='${found.stateName}', locationName='${found.locationName}'");
         return found;
       }
-      
+
       debugPrint("❌ Location '$fullLocationName' not found anywhere");
-      debugPrint("❌ Available locations in global data: ${allLocations.map((l) => '${l.locationName}(${l.stateName})').toList()}");
+      debugPrint(
+          "❌ Available locations in global data: ${allLocations.map((l) => '${l.locationName}(${l.stateName})').toList()}");
       return null;
-      
     } catch (e) {
       debugPrint("❌ Error in findPropertyStateForOwner for $ownerLocation: $e");
       return null;
@@ -506,7 +549,15 @@ class OwnerProfileVM extends ChangeNotifier {
         return "MOSSAZ";
       case "PAXT":
         return "PAXTONZ";
+      case "22M":
+      case "22MAC":
+        return "22MACALISTERZ";
       default:
+        // Check if it's a partial match of 22MACALISTERZ
+        if (code.toUpperCase().startsWith("22") &&
+            code.toUpperCase().contains("M")) {
+          return "22MACALISTERZ";
+        }
         return code; // Return original code if no match found
     }
   }

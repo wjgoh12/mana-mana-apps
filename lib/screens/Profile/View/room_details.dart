@@ -112,9 +112,24 @@ class _RoomDetailsState extends State<RoomDetails> {
     return formatter.format(totalPoints());
   }
 
+  String sanitizeRoomTypeName(String raw) {
+    final s = raw.trim();
+    if (s.isEmpty) return s;
+
+    final firstToken = s.split(RegExp(r'\s+'))[0];
+
+    final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
+    if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 5) {
+      return s.substring(firstToken.length).trim();
+    }
+
+    return s;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
+    final displayRoom = sanitizeRoomTypeName(widget.room.roomTypeName);
 
     final propertyState =
         ownerVM.findPropertyStateForOwner(widget.ownerLocation);
@@ -198,7 +213,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                             fontSize: ResponsiveSize.text(15),
                             fontFamily: 'Outfit',
                             fontWeight: FontWeight.bold)),
-                    Text(widget.room.roomTypeName,
+                    Text(displayRoom,
                         style: TextStyle(
                             fontSize: ResponsiveSize.text(20),
                             fontFamily: 'Outfit',
