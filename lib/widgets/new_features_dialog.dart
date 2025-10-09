@@ -161,26 +161,26 @@ class NewFeaturesDialog extends StatelessWidget {
               // Action buttons
               Row(
                 children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: const BorderSide(color: Color(0xFF3E51FF)),
-                        ),
-                      ),
-                      child: Text(
-                        'Maybe Later',
-                        style: GoogleFonts.outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF3E51FF),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: TextButton(
+                  //     onPressed: () => Navigator.of(context).pop(),
+                  //     style: TextButton.styleFrom(
+                  //       padding: const EdgeInsets.symmetric(vertical: 12),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(12),
+                  //         side: const BorderSide(color: Color(0xFF3E51FF)),
+                  //       ),
+                  //     ),
+                  //     child: Text(
+                  //       'Maybe Later',
+                  //       style: GoogleFonts.outfit(
+                  //         fontSize: 14,
+                  //         fontWeight: FontWeight.w600,
+                  //         color: const Color(0xFF3E51FF),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
