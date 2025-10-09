@@ -45,6 +45,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(
           'Choose Property Location',
           style: TextStyle(fontSize: 20.fSize, fontWeight: FontWeight.bold),
@@ -341,9 +342,9 @@ class _LocationCardState extends State<LocationCard>
                             _decodedImage != null
                                 ? Image.memory(
                                     _decodedImage!,
-                                    fit: BoxFit.cover,
-                                    cacheHeight: 400, // Reduce memory footprint
-                                    cacheWidth: 400,
+                                    fit: BoxFit.contain,
+                                    // cacheHeight: 400, // Reduce memory footprint
+                                    // cacheWidth: 400,
                                     errorBuilder: (context, error, stackTrace) {
                                       debugPrint(
                                           "❌ Error displaying image for ${widget.locationName}: $error");

@@ -463,7 +463,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 const Padding(
                   padding: EdgeInsets.only(left: 18),
                   child: Text(
-                    '* The purple circle indicates the peak hour',
+                    '* The purple circle indicates the peak dates',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.purple,
