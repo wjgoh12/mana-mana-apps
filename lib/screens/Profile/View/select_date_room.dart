@@ -51,11 +51,6 @@ class SelectDateRoom extends StatefulWidget {
     return formatter.format(getUserPointsBalance(vm));
   }
 
-  static double calculateTotalPoints(
-      RoomType room, int quantity, int duration) {
-    return room.roomTypePoints * quantity * duration;
-  }
-
   @override
   _SelectDateRoomState createState() => _SelectDateRoomState();
 }
@@ -70,16 +65,17 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   List<CalendarBlockedDate> _blockedDates = [];
   bool _isLoadingBlockedDates = true;
   bool _isLoadingRoomTypes = false;
+  bool _hasPendingChanges = false;
+
+  // Track the last fetched parameters to detect staleness
+  DateTime? _lastFetchedStart;
+  DateTime? _lastFetchedEnd;
+  int? _lastFetchedQuantity;
 
   RoomType? _selectedRoom;
   String? _selectedRoomId;
   late OwnerProfileVM _vm;
-
-  // 🆕 Track the last fetched parameters to detect staleness
-  DateTime? _lastFetchedStart;
-  DateTime? _lastFetchedEnd;
-  int? _lastFetchedQuantity;
-  bool _hasPendingChanges = false;
+  Timer? _fetchDebounce;
 
   @override
   void initState() {
@@ -90,6 +86,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     // Initialize VM and load data
     _vm = context.read<OwnerProfileVM>();
+    _fetchDebounce = null;
     _initializeData();
   }
 
@@ -163,9 +160,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         _rangeEnd = null;
         _selectedDay = null;
         _selectedQuantity = 1;
-        _selectedRoom = null;
-        _selectedRoomId = null;
         _hasPendingChanges = false;
+        // Keep the room selection
       });
       return;
     }
@@ -202,15 +198,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       if (start != null && end == null) {
         _rangeStart = start;
         _rangeEnd = null;
-        _hasPendingChanges = true; // 🆕 Mark as pending
+        _hasPendingChanges = true;
       } else {
         _rangeStart = start;
         _rangeEnd = end;
-        _hasPendingChanges = true; // 🆕 Mark as pending
+        _hasPendingChanges = true;
+        // Don't clear room selection, it will be validated in _restoreRoomSelection
       }
-    });
-
-    // Only fetch if BOTH dates are selected
+    }); // Only fetch if BOTH dates are selected
     if (start != null && end != null) {
       _fetchDebounce?.cancel();
       _fetchDebounce = Timer(const Duration(milliseconds: 400), () {
@@ -243,24 +238,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         _lastFetchedEnd = end;
         _lastFetchedQuantity = _selectedQuantity;
         _hasPendingChanges = false;
-
-        // If we don't have a selection and rooms are available, auto-select first affordable room
-        if (_selectedRoomId == null && _vm.roomTypes.isNotEmpty) {
-          final affordableRoom = _vm.roomTypes.firstWhere(
-            (room) => isRoomAffordable(
-                room, end.difference(start).inDays, _selectedQuantity),
-            orElse: () =>
-                RoomType(roomTypeName: '', roomTypePoints: 0, pic: ''),
-          );
-
-          if (affordableRoom.roomTypeName.isNotEmpty) {
-            _selectedRoom = affordableRoom;
-            _selectedRoomId = affordableRoom.roomTypeName;
-          }
-        } else if (_selectedRoomId != null) {
-          _restoreRoomSelection();
-        }
       });
+
+      // Try to maintain the current room selection if exists
+      if (_selectedRoomId != null) {
+        _restoreRoomSelection();
+      }
     } catch (e) {
       debugPrint("❌ Failed to fetch room types: $e");
       if (mounted) {
@@ -281,51 +264,51 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   void _restoreRoomSelection() {
     if (_selectedRoomId == null) return;
 
+    // First find the room in current available rooms
     final matchingRoom = _vm.roomTypes.firstWhere(
       (room) => room.roomTypeName == _selectedRoomId,
       orElse: () => RoomType(roomTypeName: '', roomTypePoints: 0, pic: ''),
     );
 
-    if (matchingRoom.roomTypeName.isNotEmpty) {
-      final duration = (_rangeStart != null && _rangeEnd != null)
-          ? _rangeEnd!.difference(_rangeStart!).inDays
-          : 1;
-
-      final isAffordable = isRoomAffordable(
-        matchingRoom,
-        duration,
-        _selectedQuantity.toInt(),
-      );
-
-      if (isAffordable) {
-        setState(() {
-          _selectedRoom = matchingRoom;
-        });
-      } else {
-        setState(() {
-          _selectedRoom = null;
-          _selectedRoomId = null;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Previously selected room is no longer affordable with current quantity/dates. Please select again.',
-            ),
-            backgroundColor: Colors.orange,
-          ),
-        );
-      }
-    } else {
+    if (matchingRoom.roomTypeName.isEmpty) {
+      // Room is not available for these dates
       setState(() {
         _selectedRoom = null;
         _selectedRoomId = null;
       });
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text(
+      //       'Selected room is not available for these dates.',
+      //     ),
+      //     backgroundColor: Colors.orange,
+      //   ),
+      // );
+      return;
+    }
 
+    // Room is available, check if user has enough points
+    final isAffordable = isRoomAffordable(
+      matchingRoom,
+      1, // duration doesn't affect points
+      1, // quantity doesn't affect points
+    );
+
+    if (isAffordable) {
+      // Room is available and affordable, keep the selection
+      setState(() {
+        _selectedRoom = matchingRoom;
+      });
+    } else {
+      // Room is available but not affordable
+      setState(() {
+        _selectedRoom = null;
+        _selectedRoomId = null;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Previously selected room is no longer available. Please select again.',
+            'Insufficient points for the selected room.',
           ),
           backgroundColor: Colors.orange,
         ),
@@ -403,10 +386,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ? _vm.UserPointBalance.first.redemptionBalancePoints
         : 0;
 
-    // Always calculate total points based on duration and quantity
-    final totalPoints =
-        room.roomTypePoints * (duration == 0 ? 1 : duration) * quantity;
-    return totalPoints <= userPoints;
+    // Simply compare the room's points with user's points
+    // No multiplication by duration or quantity as points are fixed per room
+    return room.roomTypePoints <= userPoints;
   }
 
   // 🆕 Check if current selection matches last fetch
@@ -422,16 +404,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         _hasPendingChanges;
   }
 
-  Timer? _fetchDebounce;
-
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<OwnerProfileVM>();
 
-    final int totalPoints =
-        (_selectedRoom != null) ? _selectedRoom!.roomTypePoints.toInt() : 0;
-
-    final String formattedPoints = NumberFormat('#,###').format(totalPoints);
+    // No calculation needed, just use the room's points directly
+    final String formattedPoints = _selectedRoom != null
+        ? NumberFormat('#,###').format(_selectedRoom!.roomTypePoints)
+        : '0';
 
     // 🆕 Check if data is stale
     final bool dataIsStale = _isDataStale();
@@ -680,16 +660,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   itemBuilder: (context, index) {
                     final room = vm.roomTypes[index];
                     final displayName = sanitizeRoomTypeName(room.roomTypeName);
-                    final userPoints = vm.UserPointBalance.isNotEmpty
-                        ? vm.UserPointBalance.first.redemptionBalancePoints
-                        : 0;
-                    final bool hasRange =
-                        _rangeStart != null && _rangeEnd != null;
-                    final totalRoomPoints = hasRange
-                        ? room.roomTypePoints
-                        : room.roomTypePoints *
-                            (duration == 0 ? 1 : duration) *
-                            _selectedQuantity;
                     final start = _rangeStart ??
                         DateTime.now().add(const Duration(days: 7));
                     final end = _rangeEnd ?? start.add(const Duration(days: 1));
@@ -704,12 +674,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       endDate: end,
                       quantity: _selectedQuantity,
                       selectedRoomId: _selectedRoomId,
-                      checkAffordable: (room, duration, quantity) {
+                      checkAffordable: (room, duration) {
                         final userPoints = vm.UserPointBalance.isNotEmpty
                             ? vm.UserPointBalance.first.redemptionBalancePoints
                             : 0;
-                        final totalPoints =
-                            room.roomTypePoints * duration * quantity;
+                        final totalPoints = room.roomTypePoints;
                         return totalPoints <= userPoints;
                       },
                       onSelect: (selectedRoom) {
@@ -974,16 +943,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       return;
     }
 
-    // Double-check affordability before proceeding
-    final effectiveDuration = _rangeEnd!.difference(_rangeStart!).inDays;
-    if (!isRoomAffordable(
-      _selectedRoom!,
-      effectiveDuration,
-      _selectedQuantity,
-    )) {
+    // Simply check if user has enough points for the room
+    if (!isRoomAffordable(_selectedRoom!, 1, 1)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Selected room is not affordable with current points'),
+          content: Text('Insufficient points for this room.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -991,7 +955,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     }
 
     final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
-    final double userPointsBalance = ownerVM.UserPointBalance.isNotEmpty
+    final userPointsBalance = ownerVM.UserPointBalance.isNotEmpty
         ? ownerVM.UserPointBalance.first.redemptionBalancePoints
         : 0;
 
@@ -1028,8 +992,7 @@ class RoomTypeTile extends StatefulWidget {
   final int quantity;
   final String? selectedRoomId;
   final Function(RoomType? room)? onSelect;
-  final bool Function(RoomType room, int duration, int quantity)
-      checkAffordable;
+  final bool Function(RoomType room, int duration) checkAffordable;
 
   const RoomTypeTile({
     Key? key,
@@ -1112,11 +1075,7 @@ class _RoomTypeTileState extends State<RoomTypeTile>
 
     final bool isSelected = widget.room.roomTypeName == widget.selectedRoomId;
     final int duration = widget.endDate.difference(widget.startDate).inDays;
-    final bool canAfford = widget.checkAffordable(
-      widget.room,
-      duration,
-      widget.quantity,
-    );
+    final bool canAfford = widget.checkAffordable(widget.room, duration);
 
     return Card(
       margin: const EdgeInsets.all(8),
@@ -1132,7 +1091,7 @@ class _RoomTypeTileState extends State<RoomTypeTile>
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.room.roomTypePoints * duration * widget.quantity)}',
+                        'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.room.roomTypePoints)}',
                       ),
                     ),
                   ],
