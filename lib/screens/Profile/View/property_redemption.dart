@@ -401,11 +401,11 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               ),
             ),
             SizedBox(width: 10),
-            CircleAvatar(
-              radius: 20.fSize,
-              backgroundImage: const AssetImage('assets/images/mana2logo1.png'),
-              backgroundColor: Colors.transparent,
-            ),
+            // CircleAvatar(
+            //   radius: 20.fSize,
+            //   backgroundImage: const AssetImage('assets/images/mana2logo1.png'),
+            //   backgroundColor: Colors.transparent,
+            // ),
             Padding(
               padding: const EdgeInsets.only(left: 10, top: 10),
               child: GradientText1(
@@ -437,7 +437,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 width: ResponsiveSize.scaleWidth(70),
                 decoration: BoxDecoration(
                   border: Border.all(color: const Color(0xFF3E51FF)),
-                  color: const Color(0xFF3E51FF).withOpacity(0.2),
+                  color: const Color(0xFF3E51FF).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: const Padding(
