@@ -437,7 +437,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 width: ResponsiveSize.scaleWidth(70),
                 decoration: BoxDecoration(
                   border: Border.all(color: const Color(0xFF3E51FF)),
-                  color: const Color(0xFF3E51FF).withOpacity(0.3),
+                  color: const Color(0xFF3E51FF).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: const Padding(
@@ -566,12 +566,13 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                     fontSize:
                                                         ResponsiveSize.text(12),
                                                     fontFamily: 'outfit',
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                                 SizedBox(
                                                   width:
                                                       ResponsiveSize.scaleWidth(
-                                                          7),
+                                                          10),
                                                 ),
                                                 Text(
                                                   '${unit.redemptionBalancePoints.toInt()}/${unit.redemptionPoints.toInt()}',
@@ -619,10 +620,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                           decoration: BoxDecoration(
                                             color: const Color(0xFF3E51FF),
                                             borderRadius:
-                                                BorderRadius.circular(15),
+                                                BorderRadius.circular(5),
                                           ),
                                           child: const Padding(
-                                            padding: EdgeInsets.all(7),
+                                            padding: EdgeInsets.all(10),
                                             child: Text(
                                               "Book Now",
                                               style: TextStyle(
