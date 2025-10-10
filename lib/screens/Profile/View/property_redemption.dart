@@ -8,6 +8,7 @@ import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/services/booking_submission_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PropertyRedemption extends StatefulWidget {
   const PropertyRedemption({super.key});
@@ -381,11 +382,25 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
         backgroundColor: Colors.white,
         elevation: 0,
         leadingWidth: 13.width,
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                  size: 24,
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
             CircleAvatar(
               radius: 20.fSize,
               backgroundImage: const AssetImage('assets/images/mana2logo1.png'),
@@ -407,6 +422,38 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 ),
               ),
             ),
+            const Spacer(),
+            TextButton(
+              onPressed: () {
+                Uri url = Uri.parse(
+                    'https://www.manamanasuites.com/freestayredemption/');
+                launchUrl(url);
+              },
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(70, 35),
+              ),
+              child: Container(
+                width: ResponsiveSize.scaleWidth(70),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFF3E51FF)),
+                  color: const Color(0xFF3E51FF).withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(7),
+                  child: Center(
+                    child: Text(
+                      "FAQ",
+                      style: TextStyle(
+                        fontFamily: 'outfit',
+                        color: Color(0xFF3E51FF),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
