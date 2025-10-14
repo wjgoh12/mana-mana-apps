@@ -77,7 +77,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               fontSize: ResponsiveSize.text(16),
               fontWeight: FontWeight.bold,
               fontFamily: 'Outfit',
-              color: const Color(0xFF3E51FF),
+              // color: const Color(0xFF3E51FF),
             ),
           ),
 

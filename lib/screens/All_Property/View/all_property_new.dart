@@ -144,13 +144,16 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
             backgroundColor: Colors.white, // Replace with a valid Color
             appBar: propertyAppBar(context, () => Navigator.of(context).pop()),
             body: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image:
-                      AssetImage('assets/images/background_mana_property.webp'),
-                  fit: BoxFit.cover,
-                ),
+              decoration: BoxDecoration(
+                color: Colors.white,
               ),
+              // decoration: const BoxDecoration(
+              //   image: DecorationImage(
+              //     image:
+              //         AssetImage('assets/images/background_mana_property.webp'),
+              //     fit: BoxFit.cover,
+              //   ),
+              // ),
               child: SingleChildScrollView(
                 child: Column(
                   children: [

@@ -117,12 +117,21 @@ class _RoomDetailsState extends State<RoomDetails> {
     final propertyState =
         ownerVM.findPropertyStateForOwner(widget.ownerLocation);
     if (propertyState == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content:
-                Text("No property state found for ${widget.ownerLocation}")),
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    "No property state found for ${widget.ownerLocation}")),
+          );
+        }
+      });
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Text("Property state not found"),
+        ),
       );
-      return SizedBox();
     }
 
     final bookingRoom = BookingRoom(

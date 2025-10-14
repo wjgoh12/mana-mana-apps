@@ -500,6 +500,8 @@ class OwnerProfileVM extends ChangeNotifier {
   // Helper method to convert location code to full name
   String _getLocationName(String code) {
     switch (code.toUpperCase()) {
+      case "22M":
+        return "22MACALISTERZ";
       case "EXPR":
         return "EXPRESSIONZ";
       case "CEYL":
@@ -512,6 +514,8 @@ class OwnerProfileVM extends ChangeNotifier {
         return "MOSSAZ";
       case "PAXT":
         return "PAXTONZ";
+      case "STAL":
+        return "STALLIONZ";
       default:
         return code; // Return original code if no match found
     }
