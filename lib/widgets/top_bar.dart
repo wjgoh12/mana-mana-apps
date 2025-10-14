@@ -30,19 +30,28 @@ Widget topBar(context, function) {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 15, top: 10),
-              child: GradientText1(
-                text: 'Owner\'s Portal',
+              child: Text(
+                'Owner\'s Portal',
                 style: TextStyle(
+                  color: const Color(0xFF000241),
                   fontFamily: 'outfit',
                   fontSize: ResponsiveSize.text(25),
                   fontWeight: FontWeight.w700,
                 ),
-                gradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                ),
               ),
+              // GradientText1(
+              //   text: 'Owner\'s Portal',
+              //   style: TextStyle(
+              //     fontFamily: 'outfit',
+              //     fontSize: ResponsiveSize.text(25),
+              //     fontWeight: FontWeight.w700,
+              //   ),
+              //   gradient: const LinearGradient(
+              //     begin: Alignment.centerLeft,
+              //     end: Alignment.centerRight,
+              //     colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+              //   ),
+              // ),
             ),
           ],
         ),

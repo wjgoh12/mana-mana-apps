@@ -705,21 +705,30 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
             //   backgroundColor: Colors.transparent,
             // ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, top: 10),
-              child: GradientText1(
-                text: 'Free Stay Redemptions',
-                style: TextStyle(
-                  fontFamily: 'outfit',
-                  fontSize: 20.fSize,
-                  fontWeight: FontWeight.w800,
+                padding: const EdgeInsets.only(left: 10, top: 10),
+                child: Text(
+                  'Free Stay Redemptions',
+                  style: TextStyle(
+                    color: const Color(0xFF000241),
+                    fontFamily: 'outfit',
+                    fontSize: ResponsiveSize.text(18),
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
+                // GradientText1(
+                //   text: 'Free Stay Redemptions',
+                //   style: TextStyle(
+                //     fontFamily: 'outfit',
+                //     fontSize: 20.fSize,
+                //     fontWeight: FontWeight.w800,
+                //   ),
+                //   gradient: const LinearGradient(
+                //     begin: Alignment.centerLeft,
+                //     end: Alignment.centerRight,
+                //     colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                //   ),
+                // ),
                 ),
-                gradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                ),
-              ),
-            ),
             const Spacer(),
             TextButton(
               onPressed: () {

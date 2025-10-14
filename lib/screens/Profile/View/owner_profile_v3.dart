@@ -83,20 +83,29 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                       backgroundColor: Colors.transparent,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 10, top: 10),
-                      child: GradientText1(
-                          text: 'Profile',
+                        padding: const EdgeInsets.only(left: 10, top: 10),
+                        child: Text(
+                          'Profile',
                           style: TextStyle(
+                            color: const Color(0xFF000241),
                             fontFamily: 'outfit',
-                            fontSize: responsiveFont(20),
-                            fontWeight: FontWeight.w800,
+                            fontSize: ResponsiveSize.text(20),
+                            fontWeight: FontWeight.w700,
                           ),
-                          gradient: const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                          )),
-                    ),
+                        )
+                        // GradientText1(
+                        //     text: 'Profile',
+                        //     style: TextStyle(
+                        //       fontFamily: 'outfit',
+                        //       fontSize: responsiveFont(20),
+                        //       fontWeight: FontWeight.w800,
+                        //     ),
+                        //     gradient: const LinearGradient(
+                        //       begin: Alignment.centerLeft,
+                        //       end: Alignment.centerRight,
+                        //       colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                        //     )),
+                        ),
                   ],
                 ),
               ),
@@ -104,10 +113,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                 padding: EdgeInsets.only(bottom: responsiveHeight(100)),
                 child: Container(
                   decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                              'assets/images/background_mana_property.webp'),
-                          fit: BoxFit.cover)),
+                    color: Colors.white,
+                  ),
                   child: SingleChildScrollView(
                       child: Padding(
                     padding: EdgeInsets.all(responsiveHeight(10)),
@@ -433,155 +440,264 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   ),
                                 ],
                               ),
+                              SizedBox(height: 12.fSize),
+                              Row(
+                                children: [
+                                  SizedBox(width: ResponsiveSize.scaleWidth(9)),
+                                  CircleAvatar(
+                                    radius: ResponsiveSize.scaleWidth(25),
+                                    backgroundColor: const Color(0xFFF9F8FF),
+                                    child: Image.asset(
+                                        'assets/images/profile_card.png'),
+                                  ),
+                                  SizedBox(
+                                      width: ResponsiveSize.scaleWidth(15)),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Bank',
+                                            style: TextStyle(
+                                              fontFamily: 'outfit',
+                                              fontSize: ResponsiveSize.text(11),
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.grey.shade800,
+                                            )),
+                                        SizedBox(height: 4.fSize),
+                                        Text(
+                                          OwnerProfileVM().getBankInfo(),
+                                          maxLines: 6,
+                                          overflow: TextOverflow.visible,
+                                          softWrap: true,
+                                          style: TextStyle(
+                                            fontFamily: 'outfit',
+                                            fontSize: ResponsiveSize.text(12),
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                      width: ResponsiveSize.scaleWidth(10)),
+                                  CircleAvatar(
+                                    radius: ResponsiveSize.scaleWidth(25),
+                                    backgroundColor: const Color(0xFFF9F8FF),
+                                    child: Image.asset(
+                                      'assets/images/profile_card.png',
+                                    ),
+                                  ),
+                                  SizedBox(
+                                      width: ResponsiveSize.scaleWidth(15)),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Account No.',
+                                            style: TextStyle(
+                                              fontFamily: 'outfit',
+                                              fontSize: ResponsiveSize.text(11),
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.grey.shade800,
+                                            )),
+                                        SizedBox(height: 4.fSize),
+                                        Text(
+                                          OwnerProfileVM().getAccountNumber(),
+                                          maxLines: 6,
+                                          overflow: TextOverflow.visible,
+                                          softWrap: true,
+                                          style: TextStyle(
+                                            fontFamily: 'outfit',
+                                            fontSize: ResponsiveSize.text(12),
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         ),
 
                         SizedBox(height: 25.fSize),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12.fSize),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: const Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ]),
+                          child: Column(
+                            children: [
+                              SizedBox(height: ResponsiveSize.scaleHeight(10)),
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('Contact Us',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontFamily: 'outfit',
+                                          fontSize: ResponsiveSize.text(15),
+                                          fontWeight: FontWeight.bold,
+                                        )),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 12.fSize),
+                              InkWell(
+                                focusColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                //this widget responds to touch actions
+                                onTap: () {
+                                  //   Navigator.of(context).push(
+                                  //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
+                                  //   );
+                                  final Uri emailLaunchUri = Uri(
+                                    scheme: 'mailto',
+                                    path: 'admin@manamanasuites.com',
+                                  );
+                                  launchUrl(emailLaunchUri);
+                                },
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor:
+                                            const Color(0xFFE9F6FF),
+                                        child: Image.asset(
+                                          'assets/images/profile_email.png',
+                                          width: 42.fSize,
+                                          height: 42.fSize,
+                                        ),
+                                      ),
+                                      SizedBox(width: 20.fSize),
+                                      Text(
+                                        'Email',
+                                        style: TextStyle(
+                                          fontFamily: 'outfit',
+                                          fontSize: 16.fSize,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      const Icon(Icons.arrow_forward_ios,
+                                          size: 20, color: Colors.grey),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 12.fSize),
+                              InkWell(
+                                highlightColor: Colors.transparent,
+                                onTap: () {
+                                  launchUrl(Uri.parse('tel:+60327795035'));
+                                },
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor:
+                                            const Color(0xFFFBF6FE),
+                                        child: Image.asset(
+                                          'assets/images/profile_telephone.png',
+                                          width: 42.fSize,
+                                          height: 42.fSize,
+                                        ),
+                                      ),
+                                      SizedBox(width: 20.fSize),
+                                      Text(
+                                        'Telephone',
+                                        style: TextStyle(
+                                          fontFamily: 'outfit',
+                                          fontSize: 16.fSize,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      const Icon(Icons.arrow_forward_ios,
+                                          size: 20, color: Colors.grey),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 12.fSize),
+                              InkWell(
+                                highlightColor: Colors.transparent,
+                                onTap: () {
+                                  launchUrl(
+                                      Uri.parse('https://wa.me/60125626784'));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor:
+                                            const Color(0xFFE9FFEB),
+                                        child: Image.asset(
+                                          'assets/images/profile_whatsapp.png',
+                                          width: 42.fSize,
+                                          height: 42.fSize,
+                                        ),
+                                      ),
+                                      SizedBox(width: 20.fSize),
+                                      Text(
+                                        'Whatsapp',
+                                        style: TextStyle(
+                                          fontFamily: 'outfit',
+                                          fontSize: 16.fSize,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      const Icon(Icons.arrow_forward_ios,
+                                          size: 20, color: Colors.grey),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: ResponsiveSize.scaleHeight(15)),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 12.fSize),
                         Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Contact Us',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontSize: ResponsiveSize.text(15),
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12.fSize),
-
-                        InkWell(
-                          focusColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          //this widget responds to touch actions
-                          onTap: () {
-                            //   Navigator.of(context).push(
-                            //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
-                            //   );
-                            final Uri emailLaunchUri = Uri(
-                              scheme: 'mailto',
-                              path: 'admin@manamanasuites.com',
-                            );
-                            launchUrl(emailLaunchUri);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: const Color(0xFFE9F6FF),
-                                  child: Image.asset(
-                                    'assets/images/profile_email.png',
-                                    width: 42.fSize,
-                                    height: 42.fSize,
-                                  ),
-                                ),
-                                SizedBox(width: 20.fSize),
-                                Text(
-                                  'Email',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontSize: 16.fSize,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const Spacer(),
-                                const Icon(Icons.arrow_forward_ios,
-                                    size: 20, color: Colors.grey),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 12.fSize),
-
-                        InkWell(
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            launchUrl(Uri.parse('tel:+60327795035'));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: const Color(0xFFFBF6FE),
-                                  child: Image.asset(
-                                    'assets/images/profile_telephone.png',
-                                    width: 42.fSize,
-                                    height: 42.fSize,
-                                  ),
-                                ),
-                                SizedBox(width: 20.fSize),
-                                Text(
-                                  'Telephone',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontSize: 16.fSize,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const Spacer(),
-                                const Icon(Icons.arrow_forward_ios,
-                                    size: 20, color: Colors.grey),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 12.fSize),
-
-                        InkWell(
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            launchUrl(Uri.parse('https://wa.me/60125626784'));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: const Color(0xFFE9FFEB),
-                                  child: Image.asset(
-                                    'assets/images/profile_whatsapp.png',
-                                    width: 42.fSize,
-                                    height: 42.fSize,
-                                  ),
-                                ),
-                                SizedBox(width: 20.fSize),
-                                Text(
-                                  'Whatsapp',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontSize: 16.fSize,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const Spacer(),
-                                const Icon(Icons.arrow_forward_ios,
-                                    size: 20, color: Colors.grey),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 65.fSize),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             TextButton(
                               onPressed: _isLoggingOut ? null : _handleLogout,
                               style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                    const Color(0xFFF2F2F2)),
+                                backgroundColor:
+                                    WidgetStateProperty.all(Colors.white),
                                 shape: WidgetStatePropertyAll(
                                   RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: const BorderSide(
+                                        color: Color(0xFF000241), width: 2),
                                   ),
                                 ),
                               ),
@@ -594,7 +710,10 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                     )
                                   : const Text(
                                       'Logout',
-                                      style: TextStyle(fontFamily: 'outfit'),
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        color: Color(0xFF000241),
+                                      ),
                                     ),
                             ),
                           ],

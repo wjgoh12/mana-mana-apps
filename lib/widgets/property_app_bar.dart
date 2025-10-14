@@ -25,18 +25,28 @@ PreferredSizeWidget propertyAppBar(context, function) {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10, top: 10),
-              child: GradientText1(
-                  text: 'Property(s)',
-                  style: TextStyle(
-                    fontFamily: 'outfit',
-                    fontSize: ResponsiveSize.text(20),
-                    fontWeight: FontWeight.w800,
-                  ),
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                  )),
+              child: Text(
+                'Property(s)',
+                style: TextStyle(
+                  color: const Color(0xFF000241),
+                  fontFamily: 'outfit',
+                  fontSize: ResponsiveSize.text(20),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              // GradientText1(
+              //   text: 'Property(s)',
+              //   style: TextStyle(
+              //     fontFamily: 'outfit',
+              //     fontSize: ResponsiveSize.text(20),
+              //     fontWeight: FontWeight.w800,
+              //   ),
+              //   gradient: const LinearGradient(
+              //     begin: Alignment.centerLeft,
+              //     end: Alignment.centerRight,
+              //     colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+              //   ),
+              // ),
             ),
           ],
         ),

@@ -166,7 +166,8 @@ class UnitOverviewContainer extends StatelessWidget {
       String footer,
       String color,
       String fontColor,
-      Image icon, {
+      String circleColor,
+      Widget icon, {
       bool isCurrency = true,
       VoidCallback? onTap, // Add onTap parameter
     }) {
@@ -194,7 +195,7 @@ class UnitOverviewContainer extends StatelessWidget {
                         width: ResponsiveSize.scaleWidth(45),
                         height: ResponsiveSize.scaleWidth(45),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Color(int.parse(circleColor)),
                           borderRadius: BorderRadius.circular(50),
                         ),
                         child: Padding(
@@ -294,14 +295,15 @@ class UnitOverviewContainer extends StatelessWidget {
                 'Monthly Profit',
                 formattedMonthlyProfit,
                 '$shortMonth $year',
-                '0xFF5092FF',
                 '0xFFFFFFFF',
+                '0xFF000000',
+                '0xFF000241',
                 Image.asset(
                   'assets/images/wallet_property.png',
                   width: ResponsiveSize.scaleWidth(20),
-                  height: ResponsiveSize.scaleWidth(20),
+                  height: ResponsiveSize.scaleHeight(20),
                   fit: BoxFit.contain,
-                  // color: Color(int.parse('0xFFFFFFFF')),
+                  color: Color(int.parse('0xFFFFCF00')),
                 ),
               ),
               const SizedBox(width: 8),
@@ -309,13 +311,15 @@ class UnitOverviewContainer extends StatelessWidget {
                 'Net Profit After POB',
                 formattedNetProfit,
                 '$shortMonth $year',
-                '0xFF9EEAFF',
-                '0xFF000000',
+                '0xFF000241',
+                '0xFFFFFFFF',
+                '0xFFFFFFFF',
                 Image.asset(
                   'assets/images/property_net_profit.png',
                   width: ResponsiveSize.scaleWidth(20),
                   height: ResponsiveSize.scaleWidth(20),
                   fit: BoxFit.contain,
+                  color: Color(int.parse('0xFF000241')),
                 ),
               ),
             ],
@@ -328,18 +332,26 @@ class UnitOverviewContainer extends StatelessWidget {
                 '$year Accumulated Profit',
                 formattedNetProfit,
                 '$shortMonth $year',
-                '0xFFFFE7B8',
-                '0xFF000000',
+                '0xFF000241',
+                '0xFFFFFFFF',
+                '0xFFFFFFFF',
                 Image.asset(
                   'assets/images/property_accumulated.png',
+                  width: ResponsiveSize.scaleWidth(20),
+                  height: ResponsiveSize.scaleWidth(20),
+                  fit: BoxFit.contain,
+                  color: Color(int.parse('0xFF000241')),
                 ),
               ),
               const SizedBox(width: 8),
               buildCard(
                 'Group Occupancy', formattedOcc, '$shortMonth $year',
-                '0xFFDBC7FF', '0xFF000000',
+                '0xFFFFFFFF', '0xFF000000',
+                '0xFF000241',
                 Image.asset(
                   'assets/images/property_occupancy.png',
+                  width: ResponsiveSize.scaleWidth(20),
+                  color: Color(int.parse('0xFFFFCF00')),
                 ),
                 isCurrency: false,
                 // => showDialog(

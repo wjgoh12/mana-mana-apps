@@ -359,16 +359,16 @@ Widget _quickLinks(BuildContext context) {
                           ],
                         ),
                       ),
-                      Positioned(
-                        right: 0,
-                        bottom: 5,
-                        child: Image.asset(
-                          'assets/images/make_booking_deco.png',
-                          fit: BoxFit.cover,
-                          width: 24,
-                          height: 31,
-                        ),
-                      ),
+                      // Positioned(
+                      //   right: 0,
+                      //   bottom: 5,
+                      //   child: Image.asset(
+                      //     'assets/images/make_booking_deco.png',
+                      //     fit: BoxFit.cover,
+                      //     width: 24,
+                      //     height: 31,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -449,16 +449,16 @@ Widget _quickLinks(BuildContext context) {
                           ],
                         ),
                       ),
-                      Positioned(
-                        right: 0,
-                        bottom: 5,
-                        child: Image.asset(
-                          'assets/images/make_booking_deco.png',
-                          fit: BoxFit.cover,
-                          width: 24,
-                          height: 31,
-                        ),
-                      ),
+                      // Positioned(
+                      //   right: 0,
+                      //   bottom: 5,
+                      //   child: Image.asset(
+                      //     'assets/images/make_booking_deco.png',
+                      //     fit: BoxFit.cover,
+                      //     width: 24,
+                      //     height: 31,
+                      //   ),
+                      // ),
                       // position at the right corner
                     ],
                   ),
