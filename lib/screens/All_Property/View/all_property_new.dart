@@ -4,10 +4,8 @@ import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/enhanced_statement_dropdown.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/enhanced_statement_container.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/Profile/View/choose_property_location_book.dart';
 import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
 import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
-import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
@@ -143,73 +141,101 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
           }
 
           return Scaffold(
-            backgroundColor: const Color(0XFFFFFFFF),
+            backgroundColor: Colors.white, // Replace with a valid Color
             appBar: propertyAppBar(context, () => Navigator.of(context).pop()),
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: ResponsiveSize.scaleHeight(8),
-                  ),
-                  _unitDropDown(),
-                  // Display UnitOverviewContainer when a unit is selected
-                  Builder(
-                    builder: (context) {
-                      // print(
-                      //     '🔄 UnitOverviewContainer Builder triggered - selectedProperty: ${propertyModel.selectedProperty}, selectedUnitNo: ${propertyModel.selectedUnitNo}, selectedType: ${propertyModel.selectedType}');
-                      if (propertyModel.selectedProperty != null &&
-                          propertyModel.selectedUnitNo != null &&
-                          propertyModel.selectedType != null) {
-                        // print('✅ Showing UnitOverviewContainer');
-                        return const UnitOverviewContainer();
-                      }
-                      // print('❌ Hiding UnitOverviewContainer');
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                  SizedBox(
-                    height: ResponsiveSize.scaleHeight(15),
-                  ),
-                  _quickLinks(context),
-                  SizedBox(
-                    height: ResponsiveSize.scaleHeight(15),
-                  ),
-                  // Enhanced Statement Dropdown
-                  Builder(
-                    builder: (context) {
-                      // print(
-                      //     '🔄 Statement Dropdown Builder triggered - selectedProperty: ${propertyModel.selectedProperty}, selectedUnitNo: ${propertyModel.selectedUnitNo}, selectedType: ${propertyModel.selectedType}');
-                      if (propertyModel.selectedProperty != null &&
-                          propertyModel.selectedUnitNo != null &&
-                          propertyModel.selectedType != null) {
-                        // print('✅ Showing Statement Dropdown');
-                        return EnhancedStatementDropdown(
-                          onBack: () => Navigator.pop(context),
-                          yearOptions: propertyModel.yearItems,
-                          monthOptions: propertyModel.monthItems,
-                          model: propertyModel,
-                        );
-                      }
-                      // print('❌ Hiding Statement Dropdown');
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                  // Enhanced Statement Container
-                  Builder(
-                    builder: (context) {
-                      // print(
-                      //     '🔄 Statement Container Builder triggered - selectedProperty: ${propertyModel.selectedProperty}, selectedUnitNo: ${propertyModel.selectedUnitNo}, selectedType: ${propertyModel.selectedType}');
-                      if (propertyModel.selectedProperty != null &&
-                          propertyModel.selectedUnitNo != null &&
-                          propertyModel.selectedType != null) {
-                        // print('✅ Showing Statement Container');
-                        return EnhancedStatementContainer(model: propertyModel);
-                      }
-                      // print('❌ Hiding Statement Container');
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                ],
+            body: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image:
+                      AssetImage('assets/images/background_mana_property.webp'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: ResponsiveSize.scaleHeight(8),
+                    ),
+                    _unitDropDown(),
+                    // Display UnitOverviewContainer when a unit is selected
+                    Builder(
+                      builder: (context) {
+                        // print(
+                        //     '🔄 UnitOverviewContainer Builder triggered - selectedProperty: ${propertyModel.selectedProperty}, selectedUnitNo: ${propertyModel.selectedUnitNo}, selectedType: ${propertyModel.selectedType}');
+                        if (propertyModel.selectedProperty != null &&
+                            propertyModel.selectedUnitNo != null &&
+                            propertyModel.selectedType != null) {
+                          // print('✅ Showing UnitOverviewContainer');
+                          return const UnitOverviewContainer();
+                        }
+                        // print('❌ Hiding UnitOverviewContainer');
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                    SizedBox(
+                      height: ResponsiveSize.scaleHeight(15),
+                    ),
+                    _quickLinks(context),
+                    SizedBox(
+                      height: ResponsiveSize.scaleHeight(15),
+                    ),
+                    // Enhanced Statement Dropdown
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border:
+                              Border.all(color: Colors.grey.shade300, width: 1),
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: ResponsiveSize.scaleHeight(20),
+                            ),
+                            Builder(
+                              builder: (context) {
+                                // print(
+                                //     '🔄 Statement Dropdown Builder triggered - selectedProperty: ${propertyModel.selectedProperty}, selectedUnitNo: ${propertyModel.selectedUnitNo}, selectedType: ${propertyModel.selectedType}');
+                                if (propertyModel.selectedProperty != null &&
+                                    propertyModel.selectedUnitNo != null &&
+                                    propertyModel.selectedType != null) {
+                                  // print('✅ Showing Statement Dropdown');
+                                  return EnhancedStatementDropdown(
+                                    onBack: () => Navigator.pop(context),
+                                    yearOptions: propertyModel.yearItems,
+                                    monthOptions: propertyModel.monthItems,
+                                    model: propertyModel,
+                                  );
+                                }
+                                // print('❌ Hiding Statement Dropdown');
+                                return const SizedBox.shrink();
+                              },
+                            ),
+                            Builder(
+                              builder: (context) {
+                                // print(
+                                //     '🔄 Statement Container Builder triggered - selectedProperty: ${propertyModel.selectedProperty}, selectedUnitNo: ${propertyModel.selectedUnitNo}, selectedType: ${propertyModel.selectedType}');
+                                if (propertyModel.selectedProperty != null &&
+                                    propertyModel.selectedUnitNo != null &&
+                                    propertyModel.selectedType != null) {
+                                  // print('✅ Showing Statement Container');
+                                  return EnhancedStatementContainer(
+                                      model: propertyModel);
+                                }
+                                // print('❌ Hiding Statement Container');
+                                return const SizedBox.shrink();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Enhanced Statement Container
+                  ],
+                ),
               ),
             ),
             bottomNavigationBar: const BottomNavBar(currentIndex: 1),
@@ -261,17 +287,18 @@ Widget _quickLinks(BuildContext context) {
       SizedBox(height: ResponsiveSize.scaleHeight(10)),
       Padding(
         padding:
-            EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(20)),
+            EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(10)),
         child: Row(
           children: [
             //1
             Expanded(
               child: SizedBox(
-                height: ResponsiveSize.scaleWidth(120),
+                height: ResponsiveSize.scaleHeight(65),
+                width: ResponsiveSize.scaleWidth(190),
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color(0xFF12C9A2),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -281,127 +308,65 @@ Widget _quickLinks(BuildContext context) {
                       ),
                     ],
                   ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        PageRouteBuilder(
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  FinancialDetails(),
-                          transitionDuration: const Duration(milliseconds: 300),
-                          reverseTransitionDuration:
-                              const Duration(milliseconds: 300),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: animation,
-                              child: ScaleTransition(
-                                scale: Tween<double>(begin: 0.95, end: 1.0)
-                                    .animate(
-                                  CurvedAnimation(
-                                    parent: animation,
-                                    curve: Curves.easeInOut,
+                  child: Stack(
+                    children: [
+                      InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          // Create and initialize the VM
+                          final ownerVm = OwnerProfileVM();
+                          final globalData = Provider.of<GlobalDataManager>(
+                              context,
+                              listen: false);
+
+                          launchUrl(Uri.parse(
+                              'https://booking.manamanasuites.com/inst/#group?groupId=24567&promoCode=OWNERZB89A9'));
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(width: ResponsiveSize.scaleWidth(9)),
+                                CircleAvatar(
+                                  radius: ResponsiveSize.scaleWidth(20),
+                                  backgroundColor: Colors.white,
+                                  child: Image.asset(
+                                    'assets/images/Calendar_booking.png',
+                                    width: ResponsiveSize.scaleWidth(30),
+                                    height: ResponsiveSize.scaleWidth(30),
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
-                                child: child,
-                              ),
-                            );
-                          },
+                                SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                                Text(
+                                  'Make a Booking',
+                                  maxLines: 2,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(12),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Outfit',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                          ).createShader(
-                              Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                          child: Icon(
-                            Icons.wallet,
-                            size: ResponsiveSize.scaleWidth(40),
-                            color: Colors
-                                .white, // important! acts as a mask for the gradient
-                          ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 5,
+                        child: Image.asset(
+                          'assets/images/make_booking_deco.png',
+                          fit: BoxFit.cover,
+                          width: 24,
+                          height: 31,
                         ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Financial Details',
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(12),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            //2
-            Expanded(
-              child: SizedBox(
-                height: ResponsiveSize.scaleWidth(120),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
                       ),
                     ],
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      // Create and initialize the VM
-                      final ownerVm = OwnerProfileVM();
-                      final globalData = Provider.of<GlobalDataManager>(context,
-                          listen: false);
-
-                      launchUrl(Uri.parse(
-                          'https://booking.manamanasuites.com/inst/#group?groupId=24567&promoCode=OWNERZB89A9'));
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                          ).createShader(
-                              Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                          child: Icon(
-                            Icons.book,
-                            size: ResponsiveSize.scaleWidth(40),
-                            color: Colors
-                                .white, // important! acts as a mask for the gradient
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Make a Booking',
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(12),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
@@ -410,11 +375,12 @@ Widget _quickLinks(BuildContext context) {
             //3
             Expanded(
               child: SizedBox(
-                height: ResponsiveSize.scaleWidth(120),
+                height: ResponsiveSize.scaleHeight(65),
+                width: ResponsiveSize.scaleWidth(190),
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color(0xFF12C9A2),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -424,56 +390,74 @@ Widget _quickLinks(BuildContext context) {
                       ),
                     ],
                   ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      // Create and initialize the VM
-                      final vm = OwnerProfileVM();
-                      vm.fetchBookingHistory();
+                  child: Stack(
+                    children: [
+                      InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          // Create and initialize the VM
+                          final vm = OwnerProfileVM();
+                          vm.fetchBookingHistory();
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MultiProvider(
-                            providers: [
-                              ChangeNotifierProvider.value(value: vm),
-                            ],
-                            builder: (context, child) {
-                              return const PropertyRedemption();
-                            },
-                          ),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MultiProvider(
+                                providers: [
+                                  ChangeNotifierProvider.value(value: vm),
+                                ],
+                                builder: (context, child) {
+                                  return const PropertyRedemption();
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(width: ResponsiveSize.scaleWidth(9)),
+                                CircleAvatar(
+                                  radius: ResponsiveSize.scaleWidth(20),
+                                  backgroundColor: Colors.white,
+                                  child: Image.asset(
+                                    'assets/images/pillow_free_redemption.png',
+                                    width: ResponsiveSize.scaleWidth(25),
+                                    height: ResponsiveSize.scaleWidth(25),
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                                Text(
+                                  'Free Stay \nRedemption',
+                                  maxLines: 2,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(12),
+                                    fontFamily: 'Outfit',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                          ).createShader(
-                              Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                          child: Icon(
-                            Icons.hotel,
-                            size: ResponsiveSize.scaleWidth(40),
-                            color: Colors
-                                .white, // important! acts as a mask for the gradient
-                          ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 5,
+                        child: Image.asset(
+                          'assets/images/make_booking_deco.png',
+                          fit: BoxFit.cover,
+                          width: 24,
+                          height: 31,
                         ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Free Stay Redemption',
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(12),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      // position at the right corner
+                    ],
                   ),
                 ),
               ),
@@ -815,56 +799,108 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
 
     return Row(
       children: [
-        const SizedBox(width: 16),
+        // SizedBox(width: ResponsiveSize.scaleWidth(16)),
         // Label
-        Text(
-          'Unit:',
-          style: TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: ResponsiveSize.text(18),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(width: 8),
+        // Text(
+        //   'Unit:',
+        //   style: TextStyle(
+        //     fontFamily: 'Outfit',
+        //     fontSize: ResponsiveSize.text(18),
+        //     fontWeight: FontWeight.w500,
+        //   ),
+        // ),
+        // const SizedBox(width: 8),
 
         // Property dropdown
-        DropdownButtonHideUnderline(
-          child: DropdownButton2<String>(
-            value: selectedProperty,
-            style: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: ResponsiveSize.text(18),
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
-            ),
-            // icon: const Icon(Icons.keyboard_arrow_down, size: 18),
-            items: properties.map((property) {
-              return DropdownMenuItem(
-                value: property,
-                child: Text(
-                  property ?? '',
-                  style: TextStyle(
-                      fontFamily: 'Outfit', fontSize: ResponsiveSize.text(14)),
-                ),
-              );
-            }).toList(),
-            dropdownStyleData: const DropdownStyleData(
-              maxHeight: 200,
-              // width: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
-                ),
-                color: Colors.white,
+        Container(
+          width: ResponsiveSize.scaleWidth(160),
+          height: ResponsiveSize.scaleHeight(50),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(ResponsiveSize.scaleWidth(15)),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 5,
+                offset: const Offset(0, 3), // changes position of shadow
               ),
-              offset: Offset(0, 0),
-            ),
-            onChanged: (value) {
-              if (value != null) {
-                _handlePropertySelection(value, context);
-              }
-            },
+            ],
+          ),
+          child: Row(
+            children: [
+              SizedBox(width: ResponsiveSize.scaleWidth(8)),
+              Image.asset('assets/images/building.png',
+                  width: ResponsiveSize.scaleWidth(30),
+                  height: ResponsiveSize.scaleWidth(30)),
+              SizedBox(width: ResponsiveSize.scaleWidth(8)),
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    value: selectedProperty,
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: ResponsiveSize.text(18),
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                    iconStyleData: IconStyleData(
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      iconSize: ResponsiveSize.scaleWidth(20),
+                    ),
+                    items: properties.map((property) {
+                      return DropdownMenuItem(
+                        value: property,
+                        child: Text(
+                          property ?? '',
+                          style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: ResponsiveSize.text(12),
+                              fontWeight: FontWeight.bold),
+                        ),
+                      );
+                    }).toList(),
+                    dropdownStyleData: DropdownStyleData(
+                      maxHeight: 200,
+                      width: ResponsiveSize.scaleWidth(
+                          160), // Exact container width
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.zero,
+                          topRight: Radius.zero,
+                          bottomLeft:
+                              Radius.circular(ResponsiveSize.scaleWidth(15)),
+                          bottomRight:
+                              Radius.circular(ResponsiveSize.scaleWidth(15)),
+                        ),
+                        color: Colors.white,
+                        border: Border(
+                          left: BorderSide(color: Colors.grey.shade200),
+                          right: BorderSide(color: Colors.grey.shade200),
+                          bottom: BorderSide(color: Colors.grey.shade200),
+                          top: BorderSide
+                              .none, // No top border for seamless connection
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      offset: const Offset(-51, 8), // Perfect alignment
+                    ),
+                    onChanged: (value) {
+                      if (value != null) {
+                        _handlePropertySelection(value, context);
+                      }
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(width: ResponsiveSize.scaleWidth(8)),
+            ],
           ),
         ),
         // SizedBox(width: ResponsiveSize.scaleWidth(8)),
@@ -877,43 +913,97 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
         //   ),
         // ),
         // Unit dropdown
-        DropdownButtonHideUnderline(
-          child: DropdownButton2<String>(
-            value: selectedUnit,
-            style: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: ResponsiveSize.text(14),
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
-            ),
-            // icon: const Icon(Icons.keyboard_arrow_down, size: 18),
-            items: units.map((unit) {
-              return DropdownMenuItem(
-                value: unit,
-                child: Text(
-                  unit,
-                  style: TextStyle(
-                      fontFamily: 'Outfit', fontSize: ResponsiveSize.text(14)),
-                ),
-              );
-            }).toList(),
-            dropdownStyleData: DropdownStyleData(
-              maxHeight: 200,
-              width: ResponsiveSize.scaleWidth(120),
-              decoration: const BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
-                ),
-                color: Colors.white,
+        SizedBox(width: ResponsiveSize.scaleWidth(20)),
+        Container(
+          width: ResponsiveSize.scaleWidth(161),
+          height: ResponsiveSize.scaleHeight(50),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(ResponsiveSize.scaleWidth(15)),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.25),
+                blurRadius: 5,
+                offset: const Offset(0, 3), // changes position of shadow
               ),
-              offset: const Offset(0, 0),
-            ),
-            onChanged: (value) {
-              if (value != null) {
-                _handleUnitSelection(value, context);
-              }
-            },
+            ],
+          ),
+          child: Row(
+            children: [
+              SizedBox(width: ResponsiveSize.scaleWidth(8)),
+              Image.asset('assets/images/unit.png',
+                  width: ResponsiveSize.scaleWidth(30),
+                  height: ResponsiveSize.scaleWidth(30)),
+              SizedBox(width: ResponsiveSize.scaleWidth(8)),
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2<String>(
+                    value: selectedUnit,
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: ResponsiveSize.text(14),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    iconStyleData: IconStyleData(
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      iconSize: ResponsiveSize.scaleWidth(20),
+                    ),
+                    items: units.map((unit) {
+                      return DropdownMenuItem(
+                        value: unit,
+                        child: Text(
+                          unit,
+                          style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: ResponsiveSize.text(12)),
+                        ),
+                      );
+                    }).toList(),
+                    dropdownStyleData: DropdownStyleData(
+                      maxHeight: 200,
+                      width: ResponsiveSize.scaleWidth(
+                          161), // Exact container width
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius
+                              .zero, // No top border radius for seamless connection
+                          topRight: Radius
+                              .zero, // No top border radius for seamless connection
+                          bottomLeft:
+                              Radius.circular(ResponsiveSize.scaleWidth(15)),
+                          bottomRight:
+                              Radius.circular(ResponsiveSize.scaleWidth(15)),
+                        ),
+                        color: Colors.white,
+                        border: Border(
+                          left: BorderSide(color: Colors.grey.shade200),
+                          right: BorderSide(color: Colors.grey.shade200),
+                          bottom: BorderSide(color: Colors.grey.shade200),
+                          top: BorderSide
+                              .none, // No top border for seamless connection
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.25),
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      offset: const Offset(-51, 8), // Perfect alignment
+                    ),
+                    onChanged: (value) {
+                      if (value != null) {
+                        _handleUnitSelection(value, context);
+                      }
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(width: ResponsiveSize.scaleWidth(8)),
+            ],
           ),
         ),
         // Container(
@@ -947,7 +1037,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
         //     ),
         //   ),
         // ),
-        const SizedBox(width: 16),
+        // const SizedBox(width: 16),
       ],
     );
   }

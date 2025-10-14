@@ -7,10 +7,6 @@ PreferredSizeWidget propertyAppBar(context, function) {
   return PreferredSize(
     preferredSize: const Size.fromHeight(kToolbarHeight),
     child: Container(
-      decoration: BoxDecoration(
-        border:
-            Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1)),
-      ),
       child: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

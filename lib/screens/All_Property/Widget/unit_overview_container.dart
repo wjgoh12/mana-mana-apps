@@ -165,7 +165,8 @@ class UnitOverviewContainer extends StatelessWidget {
       String value,
       String footer,
       String color,
-      String fontColor, {
+      String fontColor,
+      Image icon, {
       bool isCurrency = true,
       VoidCallback? onTap, // Add onTap parameter
     }) {
@@ -182,58 +183,89 @@ class UnitOverviewContainer extends StatelessWidget {
             child: Container(
               height: ResponsiveSize.scaleHeight(90),
               padding: EdgeInsets.all(ResponsiveSize.scaleWidth(8.0)),
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontFamily: 'outfit',
-                      fontSize: ResponsiveSize.text(11),
-                      color: Color(int.parse(fontColor)),
-                    ),
+                  // Icon on the left
+                  Column(
+                    children: [
+                      SizedBox(height: ResponsiveSize.scaleHeight(8)),
+                      Container(
+                        width: ResponsiveSize.scaleWidth(45),
+                        height: ResponsiveSize.scaleWidth(45),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Padding(
+                          padding:
+                              EdgeInsets.all(ResponsiveSize.scaleWidth(10)),
+                          child: icon,
+                        ),
+                      ),
+                    ],
                   ),
-                  RichText(
-                    text: TextSpan(
+                  SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                  // Content on the right
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (isCurrency)
-                          WidgetSpan(
-                            alignment: PlaceholderAlignment.baseline,
-                            baseline: TextBaseline.alphabetic,
-                            child: Transform.translate(
-                              offset: const Offset(0, -4),
-                              child: Text(
-                                'RM',
+                        SizedBox(height: ResponsiveSize.scaleHeight(8)),
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontFamily: 'outfit',
+                            fontSize: ResponsiveSize.text(10),
+                            color: Color(int.parse(fontColor)),
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveSize.scaleHeight(8)),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              if (isCurrency)
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.baseline,
+                                  baseline: TextBaseline.alphabetic,
+                                  child: Transform.translate(
+                                    offset: const Offset(0, -4),
+                                    child: Text(
+                                      'RM',
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        fontSize: ResponsiveSize.text(10),
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(int.parse(fontColor)),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              TextSpan(
+                                text: value,
                                 style: TextStyle(
                                   fontFamily: 'outfit',
-                                  fontSize: ResponsiveSize.text(10),
+                                  fontSize: ResponsiveSize.text(15),
                                   fontWeight: FontWeight.bold,
                                   color: Color(int.parse(fontColor)),
                                 ),
                               ),
-                            ),
-                          ),
-                        TextSpan(
-                          text: value,
-                          style: TextStyle(
-                            fontFamily: 'outfit',
-                            fontSize: ResponsiveSize.text(15),
-                            fontWeight: FontWeight.bold,
-                            color: Color(int.parse(fontColor)),
+                            ],
                           ),
                         ),
+                        SizedBox(height: ResponsiveSize.scaleHeight(4)),
+                        // Text(
+                        //   footer,
+                        //   style: TextStyle(
+                        //     fontFamily: 'outfit',
+                        //     fontSize: ResponsiveSize.text(10),
+                        //     color: Color(int.parse(fontColor)),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
-                  SizedBox(height: ResponsiveSize.scaleHeight(4)),
-                  // Text(
-                  //   footer,
-                  //   style: TextStyle(
-                  //     fontFamily: 'outfit',
-                  //     fontSize: ResponsiveSize.text(10),
-                  //     color: Color(int.parse(fontColor)),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -264,6 +296,13 @@ class UnitOverviewContainer extends StatelessWidget {
                 '$shortMonth $year',
                 '0xFF5092FF',
                 '0xFFFFFFFF',
+                Image.asset(
+                  'assets/images/wallet_property.png',
+                  width: ResponsiveSize.scaleWidth(20),
+                  height: ResponsiveSize.scaleWidth(20),
+                  fit: BoxFit.contain,
+                  // color: Color(int.parse('0xFFFFFFFF')),
+                ),
               ),
               const SizedBox(width: 8),
               buildCard(
@@ -272,6 +311,12 @@ class UnitOverviewContainer extends StatelessWidget {
                 '$shortMonth $year',
                 '0xFF9EEAFF',
                 '0xFF000000',
+                Image.asset(
+                  'assets/images/property_net_profit.png',
+                  width: ResponsiveSize.scaleWidth(20),
+                  height: ResponsiveSize.scaleWidth(20),
+                  fit: BoxFit.contain,
+                ),
               ),
             ],
           ),
@@ -285,11 +330,17 @@ class UnitOverviewContainer extends StatelessWidget {
                 '$shortMonth $year',
                 '0xFFFFE7B8',
                 '0xFF000000',
+                Image.asset(
+                  'assets/images/property_accumulated.png',
+                ),
               ),
               const SizedBox(width: 8),
               buildCard(
                 'Group Occupancy', formattedOcc, '$shortMonth $year',
                 '0xFFDBC7FF', '0xFF000000',
+                Image.asset(
+                  'assets/images/property_occupancy.png',
+                ),
                 isCurrency: false,
                 // => showDialog(
                 //   context: context,

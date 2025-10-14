@@ -31,24 +31,37 @@ class StatementCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
-          onTap: onTap,
+          // onTap: onTap,
           child: Padding(
             padding: EdgeInsets.all(ResponsiveSize.scaleWidth(12)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Month header
-                Text(
-                  '$month Statement',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: ResponsiveSize.text(14),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '$month Statement',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: ResponsiveSize.text(14),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Text(
+                      statementAmount,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: ResponsiveSize.text(13),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: ResponsiveSize.scaleHeight(8)),
-                
+
                 // Statement details
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,65 +69,62 @@ class StatementCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Statement Date:',
-                          style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: ResponsiveSize.text(11),
-                            color: Colors.grey[600],
-                          ),
-                        ),
+                        // Text(
+                        //   'Statement Date:',
+                        //   style: TextStyle(
+                        //     fontFamily: 'Outfit',
+                        //     fontSize: ResponsiveSize.text(11),
+                        //     color: Colors.grey[600],
+                        //   ),
+                        // ),
                         SizedBox(height: ResponsiveSize.scaleHeight(2)),
-                        Text(
-                          statementDate,
-                          style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: ResponsiveSize.text(12),
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFFC9FFF3),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              statementDate,
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: ResponsiveSize.text(12),
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF04AA87),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Statement Amount:',
-                          style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: ResponsiveSize.text(11),
-                            color: Colors.grey[600],
-                          ),
+                    Container(
+                      height: ResponsiveSize.scaleHeight(32),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF12C9A2),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: TextButton(
+                        onPressed: onTap,
+                        child: Row(
+                          children: [
+                            Text(
+                              'Statement',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: ResponsiveSize.text(12),
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: ResponsiveSize.scaleWidth(4)),
+                            Image.asset(
+                              'assets/images/statement_download.png',
+                              width: ResponsiveSize.scaleWidth(16),
+                              height: ResponsiveSize.scaleHeight(16),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: ResponsiveSize.scaleHeight(2)),
-                        Text(
-                          statementAmount,
-                          style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: ResponsiveSize.text(12),
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF3E51FF),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                
-                SizedBox(height: ResponsiveSize.scaleHeight(8)),
-                
-                // Details link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Details >',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: ResponsiveSize.text(12),
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF3E51FF),
                       ),
                     ),
                   ],

@@ -18,7 +18,19 @@ allprojects {
         google()
         mavenCentral()
         maven { url 'https://developer.huawei.com/repo/' }
+        maven { url 'https://s01.oss.sonatype.org/content/groups/public' }
+        maven { url 'https://repo1.maven.org/maven2/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
     }
+}
+
+// Configure Flutter properties for plugins
+ext {
+    flutter = [
+        compileSdkVersion: 36,
+        minSdkVersion: 21,
+        targetSdkVersion: 35
+    ]
 }
 
 rootProject.buildDir = '../build'
