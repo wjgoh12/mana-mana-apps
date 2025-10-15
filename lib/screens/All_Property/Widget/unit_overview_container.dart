@@ -178,6 +178,10 @@ class UnitOverviewContainer extends StatelessWidget {
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
+              side: BorderSide(
+                color: Colors.grey.shade300,
+                width: 1,
+              ),
             ),
             elevation: 2,
             color: Color(int.parse(color)),
@@ -286,95 +290,110 @@ class UnitOverviewContainer extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          // The 2x2 grid of cards
+          Column(
             children: [
-              buildCard(
-                'Monthly Profit',
-                formattedMonthlyProfit,
-                '$shortMonth $year',
-                '0xFFFFFFFF',
-                '0xFF000000',
-                '0xFF000241',
-                Image.asset(
-                  'assets/images/wallet_property.png',
-                  width: ResponsiveSize.scaleWidth(20),
-                  height: ResponsiveSize.scaleHeight(20),
-                  fit: BoxFit.contain,
-                  color: Color(int.parse('0xFFFFCF00')),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buildCard(
+                    'Monthly Profit',
+                    formattedMonthlyProfit,
+                    '$shortMonth $year',
+                    '0xFFFFFFFF',
+                    '0xFF000000',
+                    '0xFF000241',
+                    Image.asset(
+                      'assets/images/wallet_property.png',
+                      width: ResponsiveSize.scaleWidth(20),
+                      height: ResponsiveSize.scaleHeight(20),
+                      fit: BoxFit.contain,
+                      color: Color(int.parse('0xFFFFCF00')),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  buildCard(
+                    'Net Profit After POB',
+                    formattedNetProfit,
+                    '$shortMonth $year',
+                    '0xFF000241',
+                    '0xFFFFFFFF',
+                    '0xFFFFFFFF',
+                    Image.asset(
+                      'assets/images/property_net_profit.png',
+                      width: ResponsiveSize.scaleWidth(20),
+                      height: ResponsiveSize.scaleWidth(20),
+                      fit: BoxFit.contain,
+                      color: Color(int.parse('0xFF000241')),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              buildCard(
-                'Net Profit After POB',
-                formattedNetProfit,
-                '$shortMonth $year',
-                '0xFF000241',
-                '0xFFFFFFFF',
-                '0xFFFFFFFF',
-                Image.asset(
-                  'assets/images/property_net_profit.png',
-                  width: ResponsiveSize.scaleWidth(20),
-                  height: ResponsiveSize.scaleWidth(20),
-                  fit: BoxFit.contain,
-                  color: Color(int.parse('0xFF000241')),
-                ),
+              SizedBox(height: ResponsiveSize.scaleHeight(8)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buildCard(
+                    '$year Accumulated Profit',
+                    formattedNetProfit,
+                    '$shortMonth $year',
+                    '0xFF000241',
+                    '0xFFFFFFFF',
+                    '0xFFFFFFFF',
+                    Image.asset(
+                      'assets/images/property_accumulated.png',
+                      width: ResponsiveSize.scaleWidth(20),
+                      height: ResponsiveSize.scaleWidth(20),
+                      fit: BoxFit.contain,
+                      color: Color(int.parse('0xFF000241')),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  buildCard(
+                    'Group Occupancy',
+                    formattedOcc,
+                    '$shortMonth $year',
+                    '0xFFFFFFFF',
+                    '0xFF000000',
+                    '0xFF000241',
+                    Image.asset(
+                      'assets/images/property_occupancy.png',
+                      width: ResponsiveSize.scaleWidth(20),
+                      color: Color(int.parse('0xFFFFCF00')),
+                    ),
+                    isCurrency: false,
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildCard(
-                '$year Accumulated Profit',
-                formattedNetProfit,
-                '$shortMonth $year',
-                '0xFF000241',
-                '0xFFFFFFFF',
-                '0xFFFFFFFF',
-                Image.asset(
-                  'assets/images/property_accumulated.png',
-                  width: ResponsiveSize.scaleWidth(20),
-                  height: ResponsiveSize.scaleWidth(20),
-                  fit: BoxFit.contain,
-                  color: Color(int.parse('0xFF000241')),
-                ),
+          // Circle in the center, overlaying the cards
+          Container(
+            width: ResponsiveSize.scaleWidth(20),
+            height: ResponsiveSize.scaleWidth(20),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: SweepGradient(
+                colors: [
+                  Color(int.parse('0xFFFFFFFF')),
+                  Color(int.parse('0xFF000241')),
+                  Color(int.parse('0xFFFFFFFF')),
+                  Color(int.parse('0xFF000241')),
+                ],
+                startAngle: 0.0,
+                endAngle: 3.14 * 2,
               ),
-              const SizedBox(width: 8),
-              buildCard(
-                'Group Occupancy', formattedOcc, '$shortMonth $year',
-                '0xFFFFFFFF', '0xFF000000',
-                '0xFF000241',
-                Image.asset(
-                  'assets/images/property_occupancy.png',
-                  width: ResponsiveSize.scaleWidth(20),
-                  color: Color(int.parse('0xFFFFCF00')),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
                 ),
-                isCurrency: false,
-                // => showDialog(
-                //   context: context,
-                //   barrierDismissible: false,
-                //   builder: (BuildContext context) => AlertDialog(
-                //     backgroundColor:
-                //         Colors.transparent, // Set transparent background
-                //     elevation: 0, // Remove dialog shadow
-                //     insetPadding: EdgeInsets.symmetric(
-                //       horizontal: ResponsiveSize.scaleWidth(20),
-                //       vertical: ResponsiveSize.scaleHeight(40),
-                //     ),
-                //     content: ChangeNotifierProvider.value(
-                //       value: dashboardModel,
-                //       child: OccupancyRateBox(
-                //         model: dashboardModel,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

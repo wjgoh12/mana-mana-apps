@@ -99,17 +99,45 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                 height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade500, width: 1),
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  // Removed border for seamless look
                 ),
               ),
               dropdownStyleData: DropdownStyleData(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.white,
+                maxHeight: 300, // Set max height to prevent overflow
+                isOverButton:
+                    false, // Display below the button instead of overlaying
+                scrollbarTheme: ScrollbarThemeData(
+                  radius: const Radius.circular(40),
+                  thickness: MaterialStateProperty.all(6),
+                  thumbVisibility: MaterialStateProperty.all(true),
                 ),
-                offset: const Offset(0, -5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.zero,
+                    topRight: Radius.zero,
+                    bottomLeft: Radius.circular(ResponsiveSize.scaleWidth(15)),
+                    bottomRight: Radius.circular(ResponsiveSize.scaleWidth(15)),
+                  ),
+                  border: Border(
+                    left: BorderSide(color: Colors.grey.shade500),
+                    right: BorderSide(color: Colors.grey.shade500),
+                    bottom: BorderSide(color: Colors.grey.shade500),
+                    top: BorderSide
+                        .none, // No top border for seamless connection
+                  ),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                offset: const Offset(0, 5),
               ),
               items: [
                 // Add "All" option
@@ -119,7 +147,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                     'All',
                     style: TextStyle(
                       fontFamily: 'Outfit',
-                      fontSize: ResponsiveSize.text(14),
+                      fontSize: ResponsiveSize.text(13),
                     ),
                   ),
                 ),
@@ -131,7 +159,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                       getMonthName(month),
                       style: TextStyle(
                         fontFamily: 'Outfit',
-                        fontSize: ResponsiveSize.text(14),
+                        fontSize: ResponsiveSize.text(13),
                       ),
                     ),
                   );
@@ -155,7 +183,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               hint: const Text('Year'),
               style: TextStyle(
                 fontFamily: 'Outfit',
-                fontSize: ResponsiveSize.text(13),
+                fontSize: ResponsiveSize.text(12),
                 color: Colors.black87,
               ),
               buttonStyleData: ButtonStyleData(
@@ -164,15 +192,41 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: Colors.grey.shade500, width: 1),
                 ),
               ),
               dropdownStyleData: DropdownStyleData(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.white,
+                maxHeight: 300,
+                isOverButton: false,
+                scrollbarTheme: ScrollbarThemeData(
+                  radius: const Radius.circular(40),
+                  thickness: MaterialStateProperty.all(6),
+                  thumbVisibility: MaterialStateProperty.all(true),
                 ),
-                offset: const Offset(0, -5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.zero,
+                    topRight: Radius.zero,
+                    bottomLeft: Radius.circular(ResponsiveSize.scaleWidth(15)),
+                    bottomRight: Radius.circular(ResponsiveSize.scaleWidth(15)),
+                  ),
+                  border: Border(
+                    left: BorderSide(color: Colors.grey.shade500),
+                    right: BorderSide(color: Colors.grey.shade500),
+                    bottom: BorderSide(color: Colors.grey.shade500),
+                    top: BorderSide
+                        .none, // No top border for seamless connection
+                  ),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                offset: const Offset(0, 7),
               ),
               items: widget.yearOptions.isEmpty
                   ? [
@@ -182,7 +236,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                           'No Data',
                           style: TextStyle(
                             fontFamily: 'Outfit',
-                            fontSize: ResponsiveSize.text(14),
+                            fontSize: ResponsiveSize.text(12),
                           ),
                         ),
                       ),
@@ -194,7 +248,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                           year,
                           style: TextStyle(
                             fontFamily: 'Outfit',
-                            fontSize: ResponsiveSize.text(14),
+                            fontSize: ResponsiveSize.text(12),
                           ),
                         ),
                       );

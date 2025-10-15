@@ -193,8 +193,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    Color(0XFFB82B7D),
-                    Color(0xFF3E51FF),
+                    Color(0XFF000241),
+                    Color(0xFF00047B),
                   ],
                   begin: Alignment.bottomLeft,
                   end: Alignment.topRight,
@@ -224,16 +224,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
                               icon,
                               width: 24.fSize,
                               height: 24.fSize,
-                              color: Colors.white,
+                              color: Color(0xFFFFCF00),
                             )
                           : ShaderMask(
                               shaderCallback: (bounds) => const LinearGradient(
-                                colors: [
-                                  Color(0XFFB82B7D),
-                                  Color(0xFF3E51FF),
-                                ],
-                                begin: Alignment.bottomLeft,
-                                end: Alignment.topRight,
+                                colors: [Colors.black, Colors.black],
                               ).createShader(bounds),
                               blendMode: BlendMode.srcIn,
                               child: Image.asset(
@@ -253,7 +248,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   duration: const Duration(milliseconds: 200),
                   style: TextStyle(
                     color: isSelected
-                        ? const Color(0xFFFFFFFF)
+                        ? const Color(0xFFFFCF00)
                         : Colors.transparent,
                     fontSize: 10.fSize,
                     fontWeight:
@@ -267,13 +262,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                           maxLines: 1,
                         )
                       : ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            colors: [
-                              Color(0XFFB82B7D),
-                              Color(0xFF3E51FF),
-                            ],
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
+                          shaderCallback: (bounds) => LinearGradient(
+                            colors: [Colors.black, Colors.black],
                           ).createShader(bounds),
                           child: Text(
                             label,

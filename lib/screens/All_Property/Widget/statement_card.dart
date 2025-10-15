@@ -80,7 +80,7 @@ class StatementCard extends StatelessWidget {
                         SizedBox(height: ResponsiveSize.scaleHeight(2)),
                         Container(
                           decoration: BoxDecoration(
-                            color: Color(0xFFC9FFF3),
+                            color: Color(0xFFFFCF00),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Padding(
@@ -91,7 +91,7 @@ class StatementCard extends StatelessWidget {
                                 fontFamily: 'Outfit',
                                 fontSize: ResponsiveSize.text(12),
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xFF04AA87),
+                                color: Color(0xFF000241),
                               ),
                             ),
                           ),
@@ -101,7 +101,7 @@ class StatementCard extends StatelessWidget {
                     Container(
                       height: ResponsiveSize.scaleHeight(32),
                       decoration: BoxDecoration(
-                        color: Color(0xFF12C9A2),
+                        color: Color(0xFF000241),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: TextButton(

@@ -139,14 +139,10 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               Row(
                                 children: [
                                   SizedBox(width: 15.fSize),
-                                  CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: const Color(0xFFF5F5FF),
-                                    child: Image.asset(
-                                      'assets/images/Group.png',
-                                      width: 42.fSize,
-                                      height: 42.fSize,
-                                    ),
+                                  Image.asset(
+                                    'assets/images/profile_icon.png',
+                                    width: ResponsiveSize.scaleWidth(50),
+                                    height: ResponsiveSize.scaleHeight(50),
                                   ),
                                   SizedBox(width: 10.fSize),
                                   Column(
@@ -156,7 +152,17 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                       Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
+                                          Text(
+                                            'Property Owner',
+                                            style: TextStyle(
+                                                fontFamily: 'outfit',
+                                                fontSize:
+                                                    ResponsiveSize.text(14),
+                                                fontWeight: FontWeight.w300),
+                                          ),
                                           model.users.isNotEmpty
                                               ? Text(
                                                   model.users.first
@@ -171,8 +177,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                       ..shader =
                                                           const LinearGradient(
                                                         colors: [
-                                                          Color(0xFFB82B7D),
-                                                          Color(0xFF3E51FF)
+                                                          Color(0xFF000241),
+                                                          Color(0xFF0A009C),
                                                         ],
                                                         begin: Alignment
                                                             .bottomLeft,
@@ -189,14 +195,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                       TextOverflow.ellipsis,
                                                 )
                                               : const Text('Loading...'),
-                                          Text(
-                                            'Property Owner',
-                                            style: TextStyle(
-                                                fontFamily: 'outfit',
-                                                fontSize:
-                                                    ResponsiveSize.text(14),
-                                                fontWeight: FontWeight.w300),
-                                          ),
                                         ],
                                       ),
                                     ],
@@ -522,7 +520,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                     ),
                                   ),
                                 ],
-                              )
+                              ),
+                              SizedBox(height: ResponsiveSize.scaleHeight(20)),
                             ],
                           ),
                         ),
@@ -725,50 +724,76 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            TextButton(
-                              onPressed: () {
-                                launchUrl(Uri.parse(
-                                    'https://www.manamanasuites.com/terms-conditions'));
+                            Container(
+                              width: ResponsiveSize.scaleWidth(130),
+                              height: ResponsiveSize.scaleHeight(35),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: const Color(0xFF3E51FF)),
+                                color:
+                                    const Color(0xFF3E51FF).withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Container(
+                                child: TextButton(
+                                  onPressed: () {
+                                    launchUrl(Uri.parse(
+                                        'https://www.manamanasuites.com/terms-conditions'));
 
-                                ButtonStyle(
-                                  backgroundColor: WidgetStateProperty.all(
-                                      Colors.transparent),
-                                  overlayColor: WidgetStateProperty.all(
-                                      Colors.transparent),
-                                  foregroundColor: WidgetStateProperty.all(
-                                      Colors.transparent),
-                                  shadowColor: WidgetStateProperty.all(
-                                      Colors.transparent),
-                                );
-                              },
-                              child: Text(
-                                'Terms and Conditions',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 14.fSize,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF3E51FF),
+                                    ButtonStyle(
+                                      backgroundColor: WidgetStateProperty.all(
+                                          Colors.transparent),
+                                      overlayColor: WidgetStateProperty.all(
+                                          Colors.transparent),
+                                      foregroundColor: WidgetStateProperty.all(
+                                          Colors.transparent),
+                                      shadowColor: WidgetStateProperty.all(
+                                          Colors.transparent),
+                                    );
+                                  },
+                                  child: Text(
+                                    'Terms and Conditions',
+                                    style: TextStyle(
+                                      fontFamily: 'outfit',
+                                      fontSize: ResponsiveSize.text(10),
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF3E51FF),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                launchUrl(Uri.parse(
-                                    'https://www.manamanasuites.com/privacy-policy'));
-                                ButtonStyle(
-                                  backgroundColor: WidgetStateProperty.all(
-                                      Colors.transparent),
-                                  overlayColor: WidgetStateProperty.all(
-                                      Colors.transparent),
-                                );
-                              },
-                              child: Text(
-                                'Privacy Policy',
-                                style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 14.fSize,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF3E51FF),
+                            SizedBox(width: ResponsiveSize.scaleWidth(15)),
+                            Container(
+                              width: ResponsiveSize.scaleWidth(130),
+                              height: ResponsiveSize.scaleHeight(35),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: const Color(0xFF3E51FF)),
+                                color:
+                                    const Color(0xFF3E51FF).withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  launchUrl(Uri.parse(
+                                      'https://www.manamanasuites.com/privacy-policy'));
+                                  ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all(
+                                        Colors.transparent),
+                                    overlayColor: WidgetStateProperty.all(
+                                        Colors.transparent),
+                                  );
+                                },
+                                child: Text(
+                                  'Privacy Policy',
+                                  style: TextStyle(
+                                    fontFamily: 'outfit',
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF3E51FF),
+                                  ),
                                 ),
                               ),
                             ),

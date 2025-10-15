@@ -43,7 +43,7 @@ class RedemptionRepository {
       data: {"email": email},
     );
 
-    debugPrint("🔍 Raw API Response: $res");
+    // debugPrint("🔍 Raw API Response: $res");
 
     if (res == null) {
       debugPrint("⚠️ API returned null");
@@ -108,11 +108,16 @@ class RedemptionRepository {
     }
 
     // Convert each item into BookingHistory
-    return listData
+    final bookings = listData
         .asMap()
         .entries
         .map((entry) => BookingHistory.fromJson(entry.value))
         .toList();
+
+    // ✅ Sort by creation date descending (newest first)
+    bookings.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    return bookings;
   }
 
   // Cache to avoid redundant API calls

@@ -9,9 +9,17 @@ class UserRepository {
     return await _apiService.post(ApiEndpoint.ownerUserData).then(
       (res) {
         try {
-          return [User.fromJson(res)];
+          if (res == null) {
+            print("⚠️ API returned null for ownerUserData");
+            return [];
+          }
+          print("✅ API call succeeded, parsing user data...");
+          final user = User.fromJson(res);
+          print("✅ Successfully parsed user: ${user.email}");
+          return [user];
         } catch (e) {
-          // print("Error parsing user data: $e");
+          print("❌ Error parsing user data: $e");
+          print("❌ Raw response that failed to parse: $res");
           return [];
         }
       },

@@ -151,8 +151,9 @@ class NewDashboardV3 extends StatelessWidget {
                                         shaderCallback: (bounds) =>
                                             const LinearGradient(
                                           colors: [
-                                            Color(0xFFB82B7D),
-                                            Color.fromRGBO(62, 81, 255, 1)
+                                            Color(0xFF3E30FF),
+                                            Color(0xFF000D9C),
+                                            Color(0XFFFFCF00),
                                           ],
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,

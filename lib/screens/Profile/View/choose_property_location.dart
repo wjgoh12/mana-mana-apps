@@ -152,7 +152,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: ResponsiveSize.scaleWidth(200),
+                    width: ResponsiveSize.scaleWidth(300),
                     padding: const EdgeInsets.only(left: 16, top: 16),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2<String>(
@@ -184,16 +184,29 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                         buttonStyleData: ButtonStyleData(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey.shade400),
+                            border: Border.all(color: Colors.grey.shade500),
                             color: Colors.white,
                           ),
                         ),
                         dropdownStyleData: DropdownStyleData(
                           maxHeight: 300,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.zero,
+                              topRight: Radius.zero,
+                              bottomLeft: Radius.circular(
+                                  ResponsiveSize.scaleWidth(15)),
+                              bottomRight: Radius.circular(
+                                  ResponsiveSize.scaleWidth(15)),
+                            ),
                             color: Colors.white,
-                            border: Border.all(color: Colors.grey.shade300),
+                            border: Border(
+                              left: BorderSide(color: Colors.grey.shade500),
+                              right: BorderSide(color: Colors.grey.shade500),
+                              bottom: BorderSide(color: Colors.grey.shade500),
+                              top: BorderSide
+                                  .none, // No top border for seamless connection
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -202,6 +215,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                               ),
                             ],
                           ),
+                          offset: const Offset(0, 10),
                         ),
                       ),
                     ),
@@ -338,124 +352,96 @@ class _LocationCardState extends State<LocationCard>
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.fSize),
+    return InkWell(
+      onTap: () async {
+        final ownerVM = context.read<OwnerProfileVM>();
+        ownerVM.clearRoomTypesForNewLocation();
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const Center(child: CircularProgressIndicator()),
+        );
+
+        await ownerVM.fetchUserAvailablePoints();
+
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context); // Remove loading dialog
+
+        Navigator.push(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider.value(
+              value: ownerVM,
+              child: SelectDateRoom(
+                location: widget.locationName ?? "Unknown Location",
+                state: widget.propertyState ?? "Unknown State",
+                ownedLocation: widget.selectedLocation,
+                ownedUnitNo: widget.selectedUnitNo,
+                points: widget.points,
               ),
-              child: InkWell(
-                onTap: () async {
-                  final ownerVM = context.read<OwnerProfileVM>();
-                  ownerVM.clearRoomTypesForNewLocation();
-
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (_) =>
-                        const Center(child: CircularProgressIndicator()),
-                  );
-
-                  await ownerVM.fetchUserAvailablePoints();
-
-                  // ignore: use_build_context_synchronously
-                  Navigator.pop(context); // Remove loading dialog
-
-                  Navigator.push(
-                    // ignore: use_build_context_synchronously
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChangeNotifierProvider.value(
-                        value: ownerVM,
-                        child: SelectDateRoom(
-                          location: widget.locationName ?? "Unknown Location",
-                          state: widget.propertyState ?? "Unknown State",
-                          ownedLocation: widget.selectedLocation,
-                          ownedUnitNo: widget.selectedUnitNo,
-                          points: widget.points,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.fSize),
-                  child: _isDecoded
-                      ? Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            // Background image with caching
-                            _decodedImage != null
-                                ? Image.memory(
-                                    _decodedImage!,
-                                    fit: BoxFit.contain,
-                                    // cacheHeight: 400, // Reduce memory footprint
-                                    // cacheWidth: 400,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      debugPrint(
-                                          "❌ Error displaying image for ${widget.locationName}: $error");
-                                      return _buildPlaceholder();
-                                    },
-                                  )
-                                : _buildPlaceholder(),
-                            // Overlay with state name
-                            if (widget.showStateName)
-                              Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.transparent,
-                                      Colors.black.withOpacity(0.7),
-                                    ],
-                                    stops: const [0.6, 1.0],
-                                  ),
-                                ),
-                                alignment: Alignment.bottomLeft,
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  widget.propertyState ?? "Unknown State",
-                                  style: TextStyle(
-                                    fontSize: 12.fSize,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                    fontFamily: 'Outfit',
-                                    shadows: [
-                                      Shadow(
-                                        offset: const Offset(1, 1),
-                                        blurRadius: 2,
-                                        color: Colors.black.withOpacity(0.8),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
+            ),
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.fSize),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              spreadRadius: 1,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              height: ResponsiveSize.scaleHeight(195),
+              width: double.infinity,
+              child: _isDecoded
+                  ? _decodedImage != null
+                      ? Image.memory(
+                          _decodedImage!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            debugPrint(
+                                "❌ Error displaying image for ${widget.locationName}: $error");
+                            return _buildPlaceholder();
+                          },
                         )
-                      : const Center(child: CircularProgressIndicator()),
+                      : _buildPlaceholder()
+                  : const Center(child: CircularProgressIndicator()),
+            ),
+            Text(
+              widget.locationName ?? "Unknown Location",
+              style: TextStyle(
+                fontSize: ResponsiveSize.text(13),
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Outfit',
+                color: Colors.black,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (widget.showStateName) ...[
+              SizedBox(height: 4.fSize),
+              Text(
+                widget.propertyState ?? "Unknown State",
+                style: TextStyle(
+                  fontSize: ResponsiveSize.text(11),
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Outfit',
+                  color: Colors.black,
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            widget.locationName ?? "Unknown Location",
-            style: TextStyle(
-              fontSize: 16.fSize,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Outfit',
-              color: const Color(0xFF3E51FF),
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+            ],
+          ],
+        ),
       ),
     );
   }

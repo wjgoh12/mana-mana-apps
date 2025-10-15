@@ -206,11 +206,12 @@ class OverviewCard extends StatelessWidget {
                                     top: 10,
                                     child: CircleAvatar(
                                       radius: 20.fSize,
-                                      backgroundColor: Colors.white,
+                                      backgroundColor: Color(0xFF000241),
                                       child: Image.asset(
                                         'assets/images/OverviewProperty.png',
-                                        width: 18.fSize,
-                                        height: 22.fSize,
+                                        width: ResponsiveSize.scaleWidth(18),
+                                        height: ResponsiveSize.scaleHeight(20),
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),

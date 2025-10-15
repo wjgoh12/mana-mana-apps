@@ -9,7 +9,6 @@ import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
-import 'package:mana_mana_app/services/booking_submission_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PropertyRedemption extends StatefulWidget {
@@ -27,7 +26,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
   String _getPropertyImageByLocation(String locationName) {
     final globalData = Provider.of<GlobalDataManager>(context, listen: false);
 
-    print('🔍 Searching for location: $locationName');
+    // print('🔍 Searching for location: $locationName');
 
     // Clean the booking location name (remove special characters, whitespace, newlines, make uppercase)
     final cleanBookingLocation = locationName
@@ -36,7 +35,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
             RegExp(r'\s+'), '') // Remove all whitespace including newlines
         .replaceAll(RegExp(r'[^A-Z0-9]'), ''); // Remove special characters
 
-    print('🔍 Cleaned booking location: $cleanBookingLocation');
+    // print('🔍 Cleaned booking location: $cleanBookingLocation');
 
     // Search through all states and locations to find matching location
     for (var state in globalData.locationsByState.keys) {
@@ -49,14 +48,14 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 RegExp(r'\s+'), '') // Remove all whitespace including newlines
             .replaceAll(RegExp(r'[^A-Z0-9]'), ''); // Remove special characters
 
-        print(
-            '🔍 Comparing "$cleanBookingLocation" with "$cleanGlobalLocation"');
+        // print(
+        //     '🔍 Comparing "$cleanBookingLocation" with "$cleanGlobalLocation"');
 
         // Check if cleaned names match or if the booking location starts with the global location prefix
         if (cleanGlobalLocation.startsWith(cleanBookingLocation) ||
             cleanBookingLocation.startsWith(cleanGlobalLocation) ||
             cleanGlobalLocation.contains(cleanBookingLocation)) {
-          print('✅ Match found: ${location.locationName}');
+          // print('✅ Match found: ${location.locationName}');
           return location.pic.isNotEmpty
               ? location.pic
               : 'assets/images/booking_confirmed.png';
@@ -158,8 +157,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     );
   }
 
-  // Get filtered bookings - sorted by submission time (latest first)
-  Future<List<dynamic>> _getFilteredBookings(OwnerProfileVM ownerVM) async {
+  // Get filtered bookings - sorted by creation time (latest first)
+  List<dynamic> _getFilteredBookings(OwnerProfileVM ownerVM) {
     List<dynamic> filteredList;
 
     if (selectedFilter == 'All') {
@@ -181,30 +180,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
       }).toList();
     }
 
-    // Get submission times for all bookings
-    Map<String, DateTime> submissionTimes = {};
-    for (var booking in filteredList) {
-      final submissionTime =
-          await BookingSubmissionService.getSubmissionTime(booking);
-      if (submissionTime != null) {
-        submissionTimes[booking.storageKey] = submissionTime;
-      }
-    }
-
-    // Sort by submission time if available, otherwise by createdAt
-    filteredList.sort((a, b) {
-      final timeA = submissionTimes[a.storageKey];
-      final timeB = submissionTimes[b.storageKey];
-
-      if (timeA != null && timeB != null) {
-        return timeB.compareTo(timeA);
-      }
-      if (timeA != null) return -1;
-      if (timeB != null) return 1;
-
-      return b.createdAt.compareTo(a.createdAt);
-    });
-
+    // ✅ No need to sort here - repository already sorts by createdAt descending
+    // The bookings from ownerVM.bookingHistory are already sorted newest-first
     return filteredList;
   }
 
@@ -988,19 +965,12 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     ),
                   ],
                 ),
-                child: FutureBuilder<List<dynamic>>(
-                  // Key forces rebuild when filter changes or data refreshes
-                  key: ValueKey(
-                      '${selectedFilter}_${ownerVM.bookingHistory.length}_${DateTime.now().millisecondsSinceEpoch ~/ 1000}'),
-                  future: _getFilteredBookings(ownerVM),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+                child: Builder(
+                  builder: (context) {
+                    // Get filtered bookings directly (no async needed)
+                    final filteredBookings = _getFilteredBookings(ownerVM);
 
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    if (filteredBookings.isEmpty) {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -1027,9 +997,12 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                       onRefresh: _loadBookingData,
                       color: const Color(0xFF3E51FF),
                       child: ListView(
+                        // Key forces rebuild when filter changes or data refreshes
+                        key: ValueKey(
+                            '${selectedFilter}_${ownerVM.bookingHistory.length}'),
                         padding: const EdgeInsets.all(16),
                         physics: const AlwaysScrollableScrollPhysics(),
-                        children: _buildGroupedBookings(snapshot.data!),
+                        children: _buildGroupedBookings(filteredBookings),
                       ),
                     );
                   },

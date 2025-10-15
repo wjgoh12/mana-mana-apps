@@ -9,6 +9,7 @@ class BookingHistory {
   final int pointUsed;
   final String status;
   final DateTime createdAt; // Added creation date
+  final String? bookingId; // Unique booking ID from API
 
   BookingHistory({
     required this.location,
@@ -19,9 +20,9 @@ class BookingHistory {
     required this.departureDate,
     required this.pointUsed,
     required this.status,
-    DateTime? createdAt, // Optional in constructor but will be initialized
-  }) : createdAt = createdAt ??
-            DateTime.now(); // Default to current time if not provided
+    this.bookingId, // Optional booking ID
+  }) : createdAt = DateTime
+            .now(); // Not used for sorting anymore, just for compatibility
 
   // Convert to Map for storage
   Map<String, dynamic> toJson() {
@@ -35,13 +36,24 @@ class BookingHistory {
       'pointUsed': pointUsed,
       'status': status,
       'createdAt': createdAt.toIso8601String(),
+      if (bookingId != null) 'bookingId': bookingId,
     };
+  }
+
+  // Generate a unique key for this booking based on immutable fields
+  String get stableIdentifier {
+    // Use immutable booking details (not status or createdAt)
+    // This creates a unique ID that won't change when status updates
+    return '${location}_${unitNo}_${bookingLocation}_${typeRoom}_${arrivalDate.toIso8601String()}_${departureDate.toIso8601String()}_$pointUsed';
   }
 
   // Generate a unique key for this booking
   String get storageKey {
-    // Combine relevant fields to create a unique identifier
-    return 'booking_${location}_${unitNo}_${arrivalDate.toIso8601String()}_${createdAt.millisecondsSinceEpoch}';
+    // Use bookingId if available, otherwise use stable identifier
+    if (bookingId != null && bookingId!.isNotEmpty) {
+      return 'booking_$bookingId';
+    }
+    return 'booking_$stableIdentifier';
   }
 
   factory BookingHistory.fromJson(Map<String, dynamic> json) {
@@ -54,9 +66,7 @@ class BookingHistory {
       departureDate: DateTime.parse(json['departureDate']),
       pointUsed: json['pointUsed'] ?? 0,
       status: json['status'] ?? '',
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
+      bookingId: json['bookingId']?.toString() ?? json['id']?.toString(),
     );
   }
 }

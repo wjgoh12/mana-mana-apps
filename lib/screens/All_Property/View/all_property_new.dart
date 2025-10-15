@@ -301,7 +301,7 @@ Widget _quickLinks(BuildContext context) {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF12C9A2),
+                    color: Color(0xFF000241),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -383,7 +383,7 @@ Widget _quickLinks(BuildContext context) {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF12C9A2),
+                    color: Color(0xFF000241),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -783,9 +783,9 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
         .where((unit) => unit.location == selectedProperty)
         .toList();
 
-    print('📊 All units for $selectedProperty:');
+    // print('📊 All units for $selectedProperty:');
     for (var unit in allUnitsForProperty) {
-      print('   - Unit: ${unit.unitno}, Type: ${unit.type}');
+      // print('   - Unit: ${unit.unitno}, Type: ${unit.type}');
     }
 
     // Create a map to store unique unit numbers with their types
