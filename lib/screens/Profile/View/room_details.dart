@@ -44,10 +44,31 @@ class _RoomDetailsState extends State<RoomDetails> {
   bool _isChecked = false;
   bool _highlightCheckBox = false;
   bool _isSubmitting = false;
+  Uint8List? _decodedImage; // Cache the decoded image
 
   // TODO: Replace with your actual admin email
   // ignore: constant_identifier_names
   static const String ADMIN_EMAIL = 'admin@example.com';
+
+  @override
+  void initState() {
+    super.initState();
+    // Decode the image once during initialization
+    _decodeImageAsync();
+  }
+
+  Future<void> _decodeImageAsync() async {
+    try {
+      final decoded = base64Decode(widget.room.pic);
+      if (mounted) {
+        setState(() {
+          _decodedImage = decoded;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error decoding image: $e');
+    }
+  }
 
   // Send email notification to admin (via backend API)
   Future<void> sendEmailNotificationToAdmin({
@@ -141,6 +162,14 @@ class _RoomDetailsState extends State<RoomDetails> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('Confirmation of Booking',
+            style: TextStyle(
+                fontFamily: 'Outfit',
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF010367))),
+        backgroundColor: Colors.white,
+      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 25.0),
         child: SingleChildScrollView(
@@ -151,39 +180,23 @@ class _RoomDetailsState extends State<RoomDetails> {
               SizedBox(
                 width: double.infinity,
                 height: 200,
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0),
-                      ),
-                      child: Image.memory(
-                        base64Decode(widget.room.pic),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      ),
-                    ),
-                    Positioned(
-                      top: 16,
-                      left: 16,
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 30,
-                          shadows: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              blurRadius: 10,
-                              offset: Offset(0, 1),
-                            ),
-                          ],
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10.0),
+                    topRight: Radius.circular(10.0),
+                  ),
+                  child: _decodedImage != null
+                      ? Image.memory(
+                          _decodedImage!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        )
+                      : Container(
+                          color: Colors.grey[300],
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
 
@@ -580,7 +593,7 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
         Container(
           margin: const EdgeInsets.only(top: 8),
           decoration: BoxDecoration(
-            color: Colors.grey.shade50,
+            color: Color(0xFFFFCF00),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.grey.shade300),
           ),
@@ -599,22 +612,18 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
                     children: [
                       Icon(
                         isExpanded ? Icons.expand_less : Icons.expand_more,
-                        color: const Color(0xFF3E51FF),
+                        color: const Color(0xFF010367),
                       ),
                       const SizedBox(width: 8),
-                      GradientText1(
-                        text: isExpanded
+                      Text(
+                        isExpanded
                             ? 'Hide Terms & Conditions'
                             : 'View Terms & Conditions',
                         style: TextStyle(
                           fontSize: ResponsiveSize.text(13),
                           fontFamily: 'Outfit',
                           fontWeight: FontWeight.w700,
-                        ),
-                        gradient: const LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                          color: Color(0xFF010367),
                         ),
                       ),
                     ],
@@ -625,11 +634,12 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
               // Expandable content
               if (isExpanded)
                 Container(
+                  color: Colors.white,
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Divider(height: 1),
+                      // const Divider(height: 1),
                       const SizedBox(height: 12),
                       Text(
                         'Terms & Conditions',
@@ -732,7 +742,7 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
               style: TextStyle(
                 fontSize: ResponsiveSize.text(11),
                 fontFamily: 'Outfit',
-                color: Colors.grey.shade700,
+                color: Colors.black,
                 height: 1.4,
               ),
               textAlign: TextAlign.justify,

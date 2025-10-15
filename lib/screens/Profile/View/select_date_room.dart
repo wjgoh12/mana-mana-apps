@@ -440,13 +440,26 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 3),
-                const Padding(
-                  padding: EdgeInsets.only(left: 18),
-                  child: Text(
-                    '* The purple circle indicates the peak dates',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.purple,
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF010367),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 18),
+                          child: Text(
+                            '* The yellow circle indicates the peak dates',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFFFFCF00),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -537,8 +550,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         if (_isGreyDay(day)) {
                           return Container(
                             margin: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.purple.withOpacity(0.2),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFFCF00),
                               shape: BoxShape.circle,
                             ),
                             child: Center(
@@ -568,7 +581,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     calendarStyle: CalendarStyle(
                       outsideDaysVisible: false,
                       selectedDecoration: const BoxDecoration(
-                        color: Color(0xFF3E51FF),
+                        color: Color(0xFF010367),
                         shape: BoxShape.circle,
                       ),
                       todayDecoration: BoxDecoration(
@@ -576,11 +589,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         shape: BoxShape.circle,
                       ),
                       rangeStartDecoration: BoxDecoration(
-                        color: const Color(0xFF3E51FF).withOpacity(1),
+                        color: const Color(0xFF010367).withOpacity(1),
                         shape: BoxShape.circle,
                       ),
                       rangeEndDecoration: BoxDecoration(
-                        color: const Color(0xFF3E51FF).withOpacity(1),
+                        color: const Color(0xFF010367).withOpacity(1),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -591,7 +604,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 const SizedBox(height: 10),
                 // Check-in / Check-out Cards
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveSize.scaleWidth(18)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -601,10 +615,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: ResponsiveSize.scaleHeight(10)),
                 // Points Balance
                 Padding(
-                  padding: const EdgeInsets.all(18),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveSize.scaleWidth(18),
+                      vertical: ResponsiveSize.scaleHeight(5)),
                   child: _buildPointsAndQuantity(vm),
                 ),
 
@@ -739,7 +755,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         fontSize: ResponsiveSize.text(16),
                         fontFamily: 'outfit',
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF3E51FF),
+                        color: const Color(0xFF010367),
                       ),
                     ),
                   ),
@@ -758,7 +774,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         backgroundColor: MaterialStateProperty.all(
                           dataIsStale
                               ? Colors.grey.shade300
-                              : const Color(0xFF3E51FF),
+                              : const Color(0xFF010367),
                         ),
                         fixedSize:
                             MaterialStateProperty.all(const Size(300, 40)),
@@ -813,10 +829,15 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   }
 
   Widget _buildDateCard(String title, DateTime? date) {
-    return SizedBox(
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
       width: 160,
       child: Card(
         color: Colors.white,
+        shadowColor: Colors.transparent,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -829,7 +850,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     : '-',
                 style: const TextStyle(
                   fontSize: 14,
-                  color: Color(0xFF3E51FF),
+                  color: Color(0xFF010367),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -849,15 +870,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 236, 247, 255),
+        // color: const Color.fromARGB(255, 236, 247, 255),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -872,7 +887,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
           Text(
             formattedPoints,
             style: TextStyle(
-              color: const Color(0xFF3E51FF),
+              color: const Color(0xFF010367),
               fontSize: ResponsiveSize.text(15),
               fontWeight: FontWeight.bold,
             ),
