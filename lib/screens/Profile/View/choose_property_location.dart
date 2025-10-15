@@ -30,14 +30,72 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
   String? selectedState;
   // ignore: constant_identifier_names
   static const String ALL_STATES = "All States";
+  bool _isLoadingData = true;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final globalData = context.read<GlobalDataManager>();
-      globalData.fetchRedemptionStatesAndLocations();
-    });
+    _loadDataInBackground();
+  }
+
+  Future<void> _loadDataInBackground() async {
+    final globalData = context.read<GlobalDataManager>();
+
+    debugPrint('📍 Location screen: Starting data load...');
+
+    try {
+      // Check if states are already loaded (from dashboard preload)
+      if (globalData.availableStates.isEmpty) {
+        debugPrint('🔄 Loading states...');
+        await globalData.fetchRedemptionStatesAndLocations();
+      } else {
+        debugPrint(
+            '✅ States already loaded: ${globalData.availableStates.length}');
+      }
+
+      // Check if any locations are already cached
+      final cachedLocations = globalData.getAllLocationsFromAllStates();
+      if (cachedLocations.isNotEmpty) {
+        debugPrint('✅ Using ${cachedLocations.length} cached locations');
+        if (mounted) {
+          setState(() => _isLoadingData = false);
+        }
+        return;
+      }
+
+      // Load locations for all states with a timeout
+      debugPrint('🔄 Loading locations for all states...');
+
+      final loadFuture = Future.wait(
+        globalData.availableStates.map(
+          (state) => globalData.preloadLocationsForState(state),
+        ),
+      );
+
+      // Wait max 3 seconds for locations to load
+      await loadFuture.timeout(
+        const Duration(seconds: 3),
+        onTimeout: () {
+          debugPrint('⚠️ Location load timeout - displaying partial data');
+          return <void>[];
+        },
+      );
+
+      final totalLocations = globalData.getAllLocationsFromAllStates().length;
+      debugPrint('✅ Loaded $totalLocations locations');
+
+      if (mounted) {
+        setState(() => _isLoadingData = false);
+      }
+    } catch (e) {
+      debugPrint('❌ Error loading location data: $e');
+      if (mounted) {
+        setState(() => _isLoadingData = false);
+      }
+    } finally {
+      // Always clear loading flag
+      globalData.clearLocationLoadingFlag();
+    }
   }
 
   @override
@@ -60,6 +118,13 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
       ),
       body: Consumer<GlobalDataManager>(
         builder: (context, globalData, child) {
+          // Show loading indicator while data is being fetched
+          if (_isLoadingData) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
           List<String> dropdownOptions = [];
           if (globalData.availableStates.isNotEmpty) {
             dropdownOptions = [ALL_STATES, ...globalData.availableStates];
@@ -83,88 +148,73 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (globalData.isLoadingStates)
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: CircularProgressIndicator(),
-                  ),
-                )
-              else if (dropdownOptions.isEmpty)
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text("No states found"),
-                  ),
-                )
-              else
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: ResponsiveSize.scaleWidth(200),
-                      padding: const EdgeInsets.only(left: 16, top: 16),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: const Text("Select State"),
-                          items: dropdownOptions
-                              .map(
-                                (state) => DropdownMenuItem<String>(
-                                  value: state,
-                                  child: Text(
-                                    state,
-                                    style: TextStyle(
-                                      fontSize: 20.fSize,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                      fontFamily: 'outfit',
-                                    ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: ResponsiveSize.scaleWidth(200),
+                    padding: const EdgeInsets.only(left: 16, top: 16),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: const Text("Select State"),
+                        items: dropdownOptions
+                            .map(
+                              (state) => DropdownMenuItem<String>(
+                                value: state,
+                                child: Text(
+                                  state,
+                                  style: TextStyle(
+                                    fontSize: 20.fSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontFamily: 'outfit',
                                   ),
                                 ),
-                              )
-                              .toList(),
-                          value: selectedState,
-                          onChanged: (String? value) {
-                            if (value != null) {
-                              setState(() => selectedState = value);
-                              _handleStateSelection(globalData, value);
-                            }
-                          },
-                          buttonStyleData: ButtonStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.grey.shade400),
-                              color: Colors.white,
-                            ),
+                              ),
+                            )
+                            .toList(),
+                        value: selectedState,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() => selectedState = value);
+                            _handleStateSelection(globalData, value);
+                          }
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade400),
+                            color: Colors.white,
                           ),
-                          dropdownStyleData: DropdownStyleData(
-                            maxHeight: 300,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.white,
-                              border: Border.all(color: Colors.grey.shade300),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 300,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey.shade300),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
-              if (globalData.isLoadingLocations)
+              if (locationsToShow.isEmpty)
                 const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: Text("No locations available for this state"),
+                  ),
                 )
-              else if (locationsToShow.isEmpty)
-                const Expanded(child: Center(child: Text("No locations found")))
               else
                 Expanded(
                   child: GridView.builder(

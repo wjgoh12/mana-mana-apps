@@ -67,6 +67,12 @@ class GlobalDataManager extends ChangeNotifier {
   bool get isLoadingLocations => _isLoadingLocations;
   String? get selectedState => _selectedState;
 
+  // Method to clear location loading flag after preload completes
+  void clearLocationLoadingFlag() {
+    _isLoadingLocations = false;
+    notifyListeners();
+  }
+
   String get userNameAccount =>
       _users.isNotEmpty ? _users.first.ownerFullName ?? '-' : '-';
 
@@ -110,12 +116,9 @@ class GlobalDataManager extends ChangeNotifier {
     try {
       // Fetch all core data
       await _fetchAllData();
-      await fetchRedemptionStatesAndLocations();
 
-      // Preload locations for all states
-      if (_availableStates.isNotEmpty) {
-        await _preloadAllLocationsForAllStates();
-      }
+      // Don't fetch states/locations during initialization
+      // They will be loaded when user navigates to location selection screen
 
       _isInitialized = true;
       _lastFetchTime = DateTime.now();
@@ -124,20 +127,6 @@ class GlobalDataManager extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
-    }
-
-    await fetchRedemptionStatesAndLocations();
-
-    // Preload locations for all states
-    if (_availableStates.isNotEmpty) {
-      await Future.wait(
-        _availableStates.map((state) => preloadLocationsForState(state)),
-      );
-
-      // Auto-select the first state if none is selected
-      if (_selectedState == null) {
-        _selectedState = _availableStates.first;
-      }
     }
   }
 
@@ -197,31 +186,36 @@ class GlobalDataManager extends ChangeNotifier {
 
   Future<void> _fetchPropertyOccupancy() async {
     try {
-      Map<String, dynamic> occupancyData = {};
-
       Set<String> locations = _propertyContractType
           .map((property) => property['location'] as String)
           .toSet();
 
-      for (String location in locations) {
-        try {
-          final unitForLocation = _propertyContractType
-              .firstWhere((property) => property['location'] == location);
+      // Fetch all occupancy data in parallel instead of sequentially
+      final occupancyResults = await Future.wait(
+        locations.map((location) async {
+          try {
+            final unitForLocation = _propertyContractType
+                .firstWhere((property) => property['location'] == location);
 
-          final occupancy = await _propertyRepository.getPropertyOccupancy(
-            location: location,
-            unitNo: unitForLocation['unitNo'],
-          );
+            final occupancy = await _propertyRepository.getPropertyOccupancy(
+              location: location,
+              unitNo: unitForLocation['unitNo'],
+            );
 
-          if (occupancy.containsKey('amount')) {
-            occupancyData[location] = occupancy;
+            if (occupancy.containsKey('amount')) {
+              return MapEntry(location, occupancy);
+            }
+          } catch (e) {
+            print('Error fetching occupancy for $location: $e');
           }
-        } catch (e) {
-          print('Error fetching occupancy for $location: $e');
-        }
-      }
+          return null;
+        }),
+      );
 
-      _propertyOccupancy = occupancyData;
+      // Convert results to map, filtering out nulls
+      _propertyOccupancy = Map.fromEntries(
+        occupancyResults.whereType<MapEntry<String, dynamic>>(),
+      );
     } catch (e) {
       print('Error loading property occupancy: $e');
       _propertyOccupancy = {};
@@ -353,13 +347,30 @@ class GlobalDataManager extends ChangeNotifier {
 
   // Modify the existing fetchRedemptionStatesAndLocations method
   Future<void> fetchRedemptionStatesAndLocations() async {
-    if (_availableStates.isNotEmpty && !_isLoadingStates) return;
+    // ✅ Return early if already loaded OR currently loading
+    if ((_availableStates.isNotEmpty || _isLoadingStates)) {
+      debugPrint("⏭️ States already loaded or loading, skipping fetch");
+      return;
+    }
 
     _isLoadingStates = true;
     notifyListeners();
 
     try {
+      debugPrint("🔄 GlobalDataManager: Fetching states from repository...");
       _availableStates = await _redemptionRepository.getAvailableStates();
+      debugPrint("✅ GlobalDataManager: Got ${_availableStates.length} states");
+
+      // Also populate locationsByState from repository cache
+      for (final state in _availableStates) {
+        final locations =
+            await _redemptionRepository.getAllLocationsByState(state);
+        if (locations.isNotEmpty) {
+          _locationsByState[state] = locations;
+        }
+      }
+      debugPrint(
+          "✅ GlobalDataManager: Populated locations for ${_locationsByState.keys.length} states");
     } catch (e) {
       debugPrint("❌ Error fetching redemption states: $e");
       _availableStates = [];
@@ -588,6 +599,12 @@ class GlobalDataManager extends ChangeNotifier {
   Future<void> preloadLocationsForState(String state) async {
     if (_filteredLocationCache.containsKey(state)) return;
 
+    // Set loading flag when preloading starts
+    if (!_isLoadingLocations) {
+      _isLoadingLocations = true;
+      notifyListeners();
+    }
+
     try {
       final locations =
           await _redemptionRepository.getAllLocationsByState(state);
@@ -610,11 +627,12 @@ class GlobalDataManager extends ChangeNotifier {
 
   void clearLocationCache() {
     // Clear state and location related data
-    availableStates.clear();
-    locationsByState.clear();
+    _availableStates.clear();
+    _locationsByState.clear();
+    _filteredLocationCache.clear();
 
     // Reset any selected state if you have one
-    // selectedState = null; // uncomment if you have this variable
+    _selectedState = null;
     debugPrint("✅ Location cache cleared in GlobalDataManager");
     notifyListeners();
   }
@@ -639,12 +657,14 @@ class GlobalDataManager extends ChangeNotifier {
   // Optional: Complete reset method
   void resetAllData() {
     // Complete reset of all cached data
-    users.clear();
-    ownerUnits.clear();
-    availableStates.clear();
-    locationsByState.clear();
+    _users.clear();
+    _ownerUnits.clear();
+    _availableStates.clear();
+    _locationsByState.clear();
+    _filteredLocationCache.clear();
 
     // Reset any other state variables you have
+    _selectedState = null;
 
     debugPrint("✅ All data reset in GlobalDataManager");
     notifyListeners();
@@ -689,36 +709,6 @@ class GlobalDataManager extends ChangeNotifier {
     } finally {
       _isLoadingLocations = false;
       notifyListeners();
-    }
-  }
-
-  // Add this method to GlobalDataManager
-  Future<void> _preloadAllLocationsForAllStates() async {
-    try {
-      debugPrint(
-          "🔄 Preloading locations for all ${_availableStates.length} states...");
-
-      // Fetch locations for all states in parallel
-      await Future.wait(
-        _availableStates.map((state) async {
-          try {
-            if (!_locationsByState.containsKey(state)) {
-              final locations =
-                  await _redemptionRepository.getAllLocationsByState(state);
-              _locationsByState[state] = locations.cast<PropertyState>();
-              debugPrint(
-                  "✅ Preloaded ${locations.length} locations for $state");
-            }
-          } catch (e) {
-            debugPrint("❌ Error preloading locations for state $state: $e");
-            _locationsByState[state] = [];
-          }
-        }),
-      );
-
-      debugPrint("✅ Completed preloading all locations");
-    } catch (e) {
-      debugPrint("❌ Error in preloading all locations: $e");
     }
   }
 }

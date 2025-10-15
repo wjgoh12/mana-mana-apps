@@ -115,7 +115,38 @@ class RedemptionRepository {
         .toList();
   }
 
+  // Cache to avoid redundant API calls
+  Map<String, List<PropertyState>>? _stateLocationsCache;
+  DateTime? _cacheTime;
+
+  // Cache expiry: 5 minutes
+  bool get _isCacheValid {
+    if (_cacheTime == null || _stateLocationsCache == null) return false;
+    return DateTime.now().difference(_cacheTime!) < const Duration(minutes: 5);
+  }
+
   Future<List<String>> getAvailableStates() async {
+    try {
+      // ✅ Use cached data if available
+      if (_isCacheValid && _stateLocationsCache != null) {
+        debugPrint(
+            "✅ Using cached states: ${_stateLocationsCache!.keys.length}");
+        return _stateLocationsCache!.keys.toList();
+      }
+
+      debugPrint("🔄 Fetching all states and locations in one go...");
+
+      // ✅ Fetch all locations for all states and cache them
+      await _fetchAndCacheAllLocations();
+
+      return _stateLocationsCache?.keys.toList() ?? [];
+    } catch (e) {
+      debugPrint("❌ Error fetching available states: $e");
+      return [];
+    }
+  }
+
+  Future<void> _fetchAndCacheAllLocations() async {
     const allStates = [
       "Johor",
       "Kedah",
@@ -135,78 +166,76 @@ class RedemptionRepository {
       "Labuan",
     ];
 
-    try {
-      // Create a list of futures for parallel execution
-      final futures = allStates.map((state) => _checkStateAvailability(state));
+    _stateLocationsCache = {};
 
-      // Execute all requests in parallel
-      final results = await Future.wait(futures);
+    // Fetch all states in parallel
+    final futures = allStates.map((state) => _fetchLocationsForState(state));
+    await Future.wait(futures);
 
-      // Filter out states that have locations
-      final availableStates = <String>[];
-      for (var i = 0; i < allStates.length; i++) {
-        if (results[i]) {
-          availableStates.add(allStates[i]);
-        }
-      }
-
-      return availableStates;
-    } catch (e) {
-      debugPrint("❌ Error fetching available states: $e");
-      return [];
-    }
+    _cacheTime = DateTime.now();
+    debugPrint(
+        "✅ Cached ${_stateLocationsCache!.keys.length} states with locations");
   }
 
-  Future<bool> _checkStateAvailability(String state) async {
+  Future<void> _fetchLocationsForState(String state) async {
     try {
       final res = await _apiService.get(
         '${ApiEndpoint.getAllState}?state=${Uri.encodeQueryComponent(state)}',
       );
 
-      if (res == null) return false;
+      if (res == null) return;
 
-      final data = (res is Map && res['data'] is List)
-          ? res['data'] as List
-          : (res is List ? res : null);
-
-      return data != null && data.isNotEmpty;
-    } catch (e) {
-      debugPrint("⚠️ Error checking state $state: $e");
-      return false;
-    }
-  }
-
-  Future<List<PropertyState>> getAllLocationsByState(String state) async {
-    try {
-      // Get all locations in a single call
-      final res = await _apiService.get(
-        '${ApiEndpoint.getAllState}?state=${Uri.encodeQueryComponent(state)}',
-      );
-
-      if (res == null) return [];
-
-      // Handle both List and Map response formats
       final List<dynamic> data;
       if (res is Map && res['data'] is List) {
         data = res['data'] as List;
       } else if (res is List) {
         data = res;
       } else {
-        throw Exception("Unexpected response format");
+        return;
       }
 
-      // Filter locations for the specific state and convert to Propertystate objects
-      return data
+      final locations = data
           .where((item) =>
               item is Map &&
               item['stateName']?.toString().toLowerCase() ==
                   state.toLowerCase())
           .map((item) => PropertyState.fromJson(item))
           .toList();
+
+      // Only cache states that have locations
+      if (locations.isNotEmpty) {
+        _stateLocationsCache![state] = locations;
+      }
+    } catch (e) {
+      debugPrint("⚠️ Error fetching locations for $state: $e");
+    }
+  }
+
+  Future<List<PropertyState>> getAllLocationsByState(String state) async {
+    try {
+      // ✅ Check cache first
+      if (_isCacheValid && _stateLocationsCache != null) {
+        final cached = _stateLocationsCache![state];
+        if (cached != null) {
+          debugPrint("✅ Using cached locations for $state: ${cached.length}");
+          return cached;
+        }
+      }
+
+      // ✅ If not cached, fetch and cache
+      await _fetchLocationsForState(state);
+      return _stateLocationsCache?[state] ?? [];
     } catch (e) {
       debugPrint("❌ Error in getAllLocationsByState for $state: $e");
       rethrow;
     }
+  }
+
+  // Method to clear cache if needed
+  void clearLocationCache() {
+    _stateLocationsCache = null;
+    _cacheTime = null;
+    debugPrint("🗑️ Location cache cleared");
   }
 
   Future<List<CalendarBlockedDate>> getCalendarBlockedDates() async {

@@ -96,6 +96,9 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       // Set loading flags based on data availability
       contractTypeLoaded = _globalDataManager.propertyContractType.isNotEmpty;
       occupancyRateLoaded = _globalDataManager.propertyOccupancy.isNotEmpty;
+
+      // Preload location data in background after dashboard loads
+      _preloadLocationDataInBackground();
     } catch (e) {
       print('Error fetching dashboard data: $e');
       contractTypeLoaded = false;
@@ -103,6 +106,39 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     } finally {
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // Preload location data in background after dashboard is ready
+  void _preloadLocationDataInBackground() async {
+    try {
+      print('🔄 Starting background preload of location data...');
+
+      // Fetch available states
+      await _globalDataManager.fetchRedemptionStatesAndLocations();
+      print('✅ States loaded: ${_globalDataManager.availableStates.length}');
+
+      // Then preload all locations for all states in parallel
+      if (_globalDataManager.availableStates.isNotEmpty) {
+        print('🔄 Preloading locations for all states...');
+        await Future.wait(
+          _globalDataManager.availableStates.map(
+            (state) => _globalDataManager.preloadLocationsForState(state),
+          ),
+        );
+
+        // Clear the loading flag after all states are done
+        _globalDataManager.clearLocationLoadingFlag();
+
+        int totalLocations =
+            _globalDataManager.getAllLocationsFromAllStates().length;
+        print(
+            '✅ Location data preloaded successfully. Total locations: $totalLocations');
+      }
+    } catch (e) {
+      print('❌ Error preloading location data: $e');
+      // Make sure to clear loading flag even on error
+      _globalDataManager.clearLocationLoadingFlag();
     }
   }
 
@@ -114,10 +150,8 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     if (!isLoading &&
         !_hasShownNewFeaturesDialog &&
         !_userHasExploredFeatures) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showNewFeaturesDialog(context);
-        _hasShownNewFeaturesDialog = true;
-      });
+      _showNewFeaturesDialog(context);
+      _hasShownNewFeaturesDialog = true;
     }
   }
 
@@ -481,55 +515,55 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   }
 
   PageRouteBuilder _createRoute(Widget page,
-        {String transitionType = 'slide'}) {
-      return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => page,
-        transitionDuration: const Duration(milliseconds: 300),
-        reverseTransitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          switch (transitionType) {
-            case 'fade':
-              return FadeTransition(opacity: animation, child: child);
+      {String transitionType = 'slide'}) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionDuration: const Duration(milliseconds: 300),
+      reverseTransitionDuration: const Duration(milliseconds: 300),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        switch (transitionType) {
+          case 'fade':
+            return FadeTransition(opacity: animation, child: child);
 
-            case 'scale':
-              return ScaleTransition(
-                scale: Tween<double>(begin: 0.95, end: 1.0).animate(
-                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-                ),
-                child: child,
-              );
+          case 'scale':
+            return ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+              ),
+              child: child,
+            );
 
-            case 'slideUp':
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0.0, 1.0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                    parent: animation, curve: Curves.easeInOut)),
-                child: child,
-              );
+          case 'slideUp':
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.0, 1.0),
+                end: Offset.zero,
+              ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              child: child,
+            );
 
-            case 'slideLeft':
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(-1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                    parent: animation, curve: Curves.easeInOut)),
-                child: child,
-              );
+          case 'slideLeft':
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(-1.0, 0.0),
+                end: Offset.zero,
+              ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              child: child,
+            );
 
-            default: // 'slide' - slide from right
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                    parent: animation, curve: Curves.easeInOut)),
-                child: child,
-              );
-          }
-        },
-      );
-    }
+          default: // 'slide' - slide from right
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+              child: child,
+            );
+        }
+      },
+    );
+  }
 }

@@ -40,7 +40,10 @@ class NewDashboardV3 extends StatelessWidget {
       child: Consumer<NewDashboardVM_v3>(
         builder: (context, model, child) {
           // Call dialog check from ViewModel after loading is complete
-          model.checkAndShowNewFeaturesDialog(context);
+          // Use post frame callback to prevent calling during build
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            model.checkAndShowNewFeaturesDialog(context);
+          });
 
           final ScrollController propertyScrollController = ScrollController();
           final ScrollController newsletterScrollController =
