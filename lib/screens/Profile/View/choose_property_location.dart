@@ -104,9 +104,36 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
-          'Choose Property Location',
-          style: TextStyle(fontSize: 20.fSize, fontWeight: FontWeight.bold),
+        elevation: 0,
+        leadingWidth: 13.width,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                  size: 24,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Choose Property Location',
+              style: TextStyle(
+                color: const Color(0xFF000241),
+                fontFamily: 'outfit',
+                fontSize: ResponsiveSize.text(18),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(

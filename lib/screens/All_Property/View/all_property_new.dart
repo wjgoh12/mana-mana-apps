@@ -656,17 +656,16 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
     final propertyModel = Provider.of<PropertyDetailVM>(context, listen: false);
 
     if (firstUnitData != null && firstUnit != null) {
+      // Update the selection BEFORE updating type/unit
+      propertyModel.updateSelection(value, firstUnit);
+
       // Update the PropertyDetailVM with the correct unit type and unit number
       propertyModel.updateSelectedTypeUnit(
           firstUnitData.type?.toString() ?? '', firstUnit);
-
-      // Also update the selection
-      propertyModel.updateSelection(value, firstUnit);
     }
 
-    if (model.locationByMonth.isNotEmpty) {
-      propertyModel.fetchData(model.locationByMonth);
-    }
+    // Don't call fetchData here - data is already loaded globally
+    // Calling fetchData resets property to locationByMonth[0]['location']
   }
 
   void _handleUnitSelection(String? value, BuildContext context) {
@@ -708,17 +707,16 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
     if (selectedUnitData != null) {
       // Update the PropertyDetailVM with the correct unit type and unit number
       // print('🔄 Calling updateSelectedTypeUnit...');
+
+      // Also update the selection BEFORE updating type/unit
+      propertyModel.updateSelection(selectedProperty!, value);
+
       propertyModel.updateSelectedTypeUnit(
           selectedUnitData.type?.toString() ?? '', value);
-
-      // Also update the selection
-      propertyModel.updateSelection(selectedProperty!, value);
     }
 
-    if (dashboardModel.locationByMonth.isNotEmpty) {
-      // print('📡 Calling fetchData...');
-      propertyModel.fetchData(dashboardModel.locationByMonth);
-    }
+    // Don't call fetchData here - data is already loaded globally
+    // Calling fetchData resets property to locationByMonth[0]['location']
   }
 
   @override

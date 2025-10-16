@@ -180,7 +180,7 @@ class OverviewCard extends StatelessWidget {
                   child: Column(
                     children: [
                       // 1st - Updated to show total properties count
-                      Card(
+                      Container(
                         margin: EdgeInsets.only(bottom: responsiveHeight(5)),
                         child: Container(
                           width: double.infinity, // fill column width
@@ -191,8 +191,9 @@ class OverviewCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                             image: const DecorationImage(
                               image: AssetImage(
-                                  'assets/images/overviewContainer1.png'),
-                              fit: BoxFit.cover,
+                                  'assets/images/dashboardcardview1.png'),
+                              fit: BoxFit.fill, // Changed from cover to fill
+                              alignment: Alignment.center,
                             ),
                           ),
                           child: Column(
@@ -234,7 +235,7 @@ class OverviewCard extends StatelessWidget {
                                                   fontSize:
                                                       ResponsiveSize.text(50),
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
+                                                  color: Color(0xFF000241),
                                                 ),
                                               );
                                             }
@@ -245,7 +246,7 @@ class OverviewCard extends StatelessWidget {
                                                   fontSize:
                                                       ResponsiveSize.text(50),
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
+                                                  color: Color(0xFF000241),
                                                 ),
                                               );
                                             }
@@ -257,7 +258,7 @@ class OverviewCard extends StatelessWidget {
                                                 fontSize:
                                                     ResponsiveSize.text(50),
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                                color: Color(0xFF000241),
                                               ),
                                             );
                                           },
@@ -290,7 +291,7 @@ class OverviewCard extends StatelessWidget {
                                             'Total Properties',
                                             style: TextStyle(
                                               fontFamily: 'outfit',
-                                              color: Colors.white,
+                                              color: Color(0xFF000241),
                                               fontWeight: FontWeight.w300,
                                             ),
                                           ),
@@ -304,7 +305,7 @@ class OverviewCard extends StatelessWidget {
                                                 'Managed:', // Show managed units count
                                                 style: TextStyle(
                                                   fontFamily: 'outfit',
-                                                  color: Colors.white,
+                                                  color: Color(0xFF000241),
                                                   fontSize:
                                                       ResponsiveSize.text(14),
                                                   fontWeight: FontWeight.bold,
@@ -326,7 +327,8 @@ class OverviewCard extends StatelessWidget {
                                                                   .text(14),
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Colors.white,
+                                                          color:
+                                                              Color(0xFF000241),
                                                         ),
                                                       );
                                                     }
@@ -339,7 +341,8 @@ class OverviewCard extends StatelessWidget {
                                                                   .text(14),
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Colors.white,
+                                                          color:
+                                                              Color(0xFF000241),
                                                         ),
                                                       );
                                                     }
@@ -353,7 +356,8 @@ class OverviewCard extends StatelessWidget {
                                                                 14),
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colors.white,
+                                                        color:
+                                                            Color(0xFF000241),
                                                       ),
                                                     );
                                                   })
@@ -384,7 +388,7 @@ class OverviewCard extends StatelessWidget {
                       // 3rd - Monthly Profit Card (unchanged)
                       Card(
                         margin: EdgeInsets.only(bottom: responsiveHeight(5)),
-                        color: const Color(0xFF9EEAFF),
+                        color: const Color(0xFF000241),
                         child: SizedBox(
                           width: double.infinity,
                           height: cardHeightSmall,
@@ -394,9 +398,10 @@ class OverviewCard extends StatelessWidget {
                                 padding: const EdgeInsets.only(left: 10),
                                 child: CircleAvatar(
                                   radius: 23.fSize,
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: Color(0xFFFFCF00),
                                   child: Image.asset(
                                     'assets/images/OverviewMonthlyProfit.png',
+                                    color: Color(0xFF000241),
                                     width: 30.fSize,
                                     height: 28.fSize,
                                   ),
@@ -415,6 +420,7 @@ class OverviewCard extends StatelessWidget {
                                         fontSize: ResponsiveSize.text(10),
                                         fontFamily: 'outfit',
                                         fontWeight: FontWeight.normal,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
@@ -468,7 +474,7 @@ class OverviewCard extends StatelessWidget {
                                                         fontFamily: 'outfit',
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colors.black,
+                                                        color: Colors.white,
                                                       ),
                                                     ),
                                                   ),
@@ -480,7 +486,7 @@ class OverviewCard extends StatelessWidget {
                                                         ResponsiveSize.text(15),
                                                     fontFamily: 'outfit',
                                                     fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
+                                                    color: Colors.white,
                                                   ),
                                                 ),
                                               ],
@@ -523,32 +529,29 @@ class OverviewCard extends StatelessWidget {
                       ),
 
                       // 4th - Accumulated Profit Card (unchanged)
-                      Card(
-                        margin: EdgeInsets.zero,
-                        color: const Color(0xFFDBC7FF),
-                        child: Container(
-                          width: double.infinity,
-                          height: cardHeightLarge,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            image: const DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/overviewContainer4.png'),
-                              fit: BoxFit.cover,
-                            ),
+                      Container(
+                        width: double.infinity,
+                        height: cardHeightLarge,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: const DecorationImage(
+                            image: AssetImage(
+                                'assets/images/dashboardcardview2.png'),
+                            fit: BoxFit.fill, // Changed from fitWidth to fill
+                            alignment: Alignment.center,
                           ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                RevenueContainer(
-                                  title:
-                                      '${model.revenueLastestYear} Accumulated Profit​',
-                                  icon: Icons.home_outlined,
-                                  overallRevenue: false,
-                                  model: model,
-                                ),
-                              ],
-                            ),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              RevenueContainer(
+                                title:
+                                    '${model.revenueLastestYear} Accumulated Profit​',
+                                icon: Icons.home_outlined,
+                                overallRevenue: false,
+                                model: model,
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -607,9 +610,10 @@ class RevenueContainer extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 20.fSize,
-                          backgroundColor: Colors.white,
+                          backgroundColor: Color(0xFFFFCF00),
                           child: Image.asset(
                             'assets/images/OverviewAccumulatedProfit.png',
+                            color: Color(0xFF000241),
                             width: 26.fSize,
                             height: 24.fSize,
                           ),
@@ -634,6 +638,7 @@ class RevenueContainer extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'outfit',
             fontSize: ResponsiveSize.text(9),
+            color: Colors.white,
           ),
         ),
         const Spacer(),
@@ -709,7 +714,7 @@ class RevenueContainer extends StatelessWidget {
                       fontSize: ResponsiveSize.text(11),
                       fontFamily: 'outfit',
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -730,6 +735,7 @@ class RevenueContainer extends StatelessWidget {
                   fontFamily: 'outfit',
                   fontWeight: FontWeight.bold,
                   fontSize: ResponsiveSize.text(15),
+                  color: Colors.white,
                 ),
               );
             }

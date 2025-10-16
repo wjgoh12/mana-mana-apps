@@ -7,12 +7,11 @@ import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/screens/Profile/View/room_details.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
+import 'package:mana_mana_app/screens/Profile/Widget/roomtype_card.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
-import 'dart:convert';
-import 'dart:typed_data';
 
 class SelectDateRoom extends StatefulWidget {
   final String ownedLocation;
@@ -420,7 +419,34 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Select Date and Room'),
+          automaticallyImplyLeading: false,
+          title: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black,
+                    size: 24,
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Select Date and Room',
+                style: TextStyle(
+                  color: const Color(0xFF000241),
+                  fontFamily: 'outfit',
+                  fontSize: ResponsiveSize.text(18),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
           backgroundColor: Colors.white,
         ),
         body: const Center(child: CircularProgressIndicator()),
@@ -430,7 +456,34 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Select Date and Room'),
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                  size: 24,
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
+            Text(
+              'Select Date and Room',
+              style: TextStyle(
+                color: const Color(0xFF000241),
+                fontFamily: 'outfit',
+                fontSize: ResponsiveSize.text(18),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Colors.white,
       ),
       body: Stack(
@@ -655,7 +708,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       ),
                     ),
                   ),
-
+                SizedBox(height: ResponsiveSize.scaleHeight(26)),
                 const Padding(
                   padding: EdgeInsets.only(left: 18, bottom: 8),
                   child: Text(
@@ -670,7 +723,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 1,
-                    mainAxisExtent: 200,
+                    mainAxisExtent: 350,
                   ),
                   itemCount: vm.roomTypes.length,
                   itemBuilder: (context, index) {
@@ -680,16 +733,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         DateTime.now().add(const Duration(days: 7));
                     final end = _rangeEnd ?? start.add(const Duration(days: 1));
 
-                    return RoomTypeTile(
+                    return RoomtypeCard(
                       key: ValueKey(displayName),
-                      room: room,
+                      roomType: room,
                       displayName: displayName,
                       isSelected: displayName == (_selectedRoomId ?? ''),
                       enabled: true,
                       startDate: start,
                       endDate: end,
-                      quantity: _selectedQuantity,
-                      selectedRoomId: _selectedRoomId,
                       checkAffordable: (room, duration) {
                         final userPoints = vm.UserPointBalance.isNotEmpty
                             ? vm.UserPointBalance.first.redemptionBalancePoints
@@ -989,222 +1040,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             ownerUnitNo: widget.ownedUnitNo,
             bookingLocationName: widget.location,
           ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Small tile widget that decodes base64 once and preserves state.
-/// Use ValueKey(displayName) when instantiating so Flutter keeps the state.
-class RoomTypeTile extends StatefulWidget {
-  final RoomType room;
-  final String displayName;
-  final bool isSelected;
-  final bool enabled;
-  final DateTime startDate;
-  final DateTime endDate;
-  final int quantity;
-  final String? selectedRoomId;
-  final Function(RoomType? room)? onSelect;
-  final bool Function(RoomType room, int duration) checkAffordable;
-
-  const RoomTypeTile({
-    Key? key,
-    required this.room,
-    required this.displayName,
-    this.isSelected = false,
-    this.enabled = true,
-    required this.startDate,
-    required this.endDate,
-    required this.quantity,
-    this.selectedRoomId,
-    this.onSelect,
-    required this.checkAffordable,
-  }) : super(key: key);
-
-  @override
-  State<RoomTypeTile> createState() => _RoomTypeTileState();
-}
-
-class _RoomTypeTileState extends State<RoomTypeTile>
-    with AutomaticKeepAliveClientMixin {
-  Uint8List? _bytes;
-  bool _decoding = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _decodeOnce();
-  }
-
-  Future<void> _decodeOnce() async {
-    if (_bytes != null || _decoding) return;
-    _decoding = true;
-
-    try {
-      if (widget.room.pic.isEmpty) {
-        _bytes = null;
-      } else if (widget.room.pic.startsWith('data:image')) {
-        // data URI: parse
-        final data = Uri.parse(widget.room.pic).data;
-        _bytes = data?.contentAsBytes();
-      } else {
-        _bytes = base64Decode(widget.room.pic);
-      }
-    } catch (e) {
-      // decoding failed -> leave _bytes null
-      _bytes = null;
-    } finally {
-      if (mounted) {
-        _decoding = false;
-        setState(() {});
-      }
-    }
-  }
-
-  @override
-  bool get wantKeepAlive => true; // keep decoded bytes alive
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context); // for AutomaticKeepAliveClientMixin
-
-    // Use the cached _bytes (or placeholder)
-    final imageWidget = _bytes != null
-        ? Image.memory(
-            _bytes!,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 180,
-          )
-        : Container(
-            width: double.infinity,
-            height: 180,
-            color: Colors.grey[300],
-            child: const Center(
-              child:
-                  Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
-            ),
-          );
-
-    final bool isSelected = widget.room.roomTypeName == widget.selectedRoomId;
-    final int duration = widget.endDate.difference(widget.startDate).inDays;
-    final bool canAfford = widget.checkAffordable(widget.room, duration);
-
-    return Card(
-      margin: const EdgeInsets.all(8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: () {
-          if (!canAfford) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(Icons.error_outline, color: Colors.white),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.room.roomTypePoints)}',
-                      ),
-                    ),
-                  ],
-                ),
-                backgroundColor: Colors.red,
-                duration: const Duration(seconds: 2),
-              ),
-            );
-            return;
-          }
-
-          if (!widget.enabled) return;
-
-          if (isSelected) {
-            widget.onSelect?.call(null);
-          } else {
-            widget.onSelect?.call(widget.room);
-          }
-        },
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: SizedBox(
-                width: double.infinity,
-                height: 180,
-                child: imageWidget,
-              ),
-            ),
-            // Unaffordable overlay
-            if (!canAfford)
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            // selection overlay
-            AnimatedOpacity(
-              duration: const Duration(milliseconds: 180),
-              opacity: widget.isSelected ? 0.55 : 0.0,
-              child: Container(
-                width: double.infinity,
-                height: 180,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            // bottom gradient + name + points
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.transparent, Colors.black54],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.displayName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      '${NumberFormat("#,###").format(widget.room.roomTypePoints)} points',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // disabled overlay when not affordable
-            if (!widget.enabled)
-              Positioned.fill(
-                child: Container(
-                  color: Colors.white.withOpacity(0.6),
-                ),
-              ),
-          ],
         ),
       ),
     );

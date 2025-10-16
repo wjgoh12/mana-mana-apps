@@ -218,11 +218,13 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 children: [
                                   SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                   CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: const Color(0xFFF9F8FF),
+                                    radius: ResponsiveSize.scaleWidth(20),
+                                    backgroundColor: const Color(0xFF010367),
                                     child: Image.asset(
                                       'assets/images/ic_icon.png',
                                       width: ResponsiveSize.scaleWidth(25),
+                                      color: const Color(0xFFFFFFFFFF),
+                                      height: ResponsiveSize.scaleHeight(25),
                                     ),
                                   ),
                                   SizedBox(
@@ -254,11 +256,12 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 children: [
                                   SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                   CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: const Color(0xFFF9F8FF),
+                                    radius: ResponsiveSize.scaleWidth(20),
+                                    backgroundColor: const Color(0xFF010367),
                                     child: Image.asset(
                                       'assets/images/profile_personal_email.png',
                                       width: ResponsiveSize.scaleWidth(25),
+                                      color: Color(0xFFFFFFFFFF),
                                     ),
                                   ),
                                   SizedBox(
@@ -309,7 +312,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                         ),
                                         SizedBox(
                                             width:
-                                                ResponsiveSize.scaleWidth(10)),
+                                                ResponsiveSize.scaleWidth(15)),
                                         Expanded(
                                           flex: 3,
                                           child: Row(
@@ -317,12 +320,21 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                 MainAxisAlignment.start,
                                             children: [
                                               CircleAvatar(
-                                                child: Image.asset(
-                                                    'assets/images/profile_phone.png'),
-                                                radius: 30,
+                                                radius:
+                                                    ResponsiveSize.scaleWidth(
+                                                        20),
                                                 backgroundColor:
-                                                    const Color(0xFFF9F8FF),
+                                                    const Color(0xFF010367),
+                                                child: Image.asset(
+                                                  'assets/images/profile_phone.png',
+                                                  color:
+                                                      const Color(0xFFFFFFFFFF),
+                                                ),
                                               ),
+                                              SizedBox(
+                                                  width:
+                                                      ResponsiveSize.scaleWidth(
+                                                          10)),
                                               Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -381,9 +393,11 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                   CircleAvatar(
                                     child: Image.asset(
-                                        'assets/images/profile_address.png'),
-                                    radius: 30,
-                                    backgroundColor: const Color(0xFFF9F8FF),
+                                      'assets/images/profile_address.png',
+                                      color: const Color(0xFFFFFFFF),
+                                    ),
+                                    radius: ResponsiveSize.scaleWidth(20),
+                                    backgroundColor: const Color(0xFF010367),
                                   ),
                                   SizedBox(
                                       width: ResponsiveSize.scaleWidth(10)),
@@ -443,10 +457,11 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 children: [
                                   SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                   CircleAvatar(
-                                    radius: ResponsiveSize.scaleWidth(25),
-                                    backgroundColor: const Color(0xFFF9F8FF),
+                                    radius: ResponsiveSize.scaleWidth(20),
+                                    backgroundColor: const Color(0xFF010367),
                                     child: Image.asset(
-                                        'assets/images/profile_card.png'),
+                                        'assets/images/profile_card.png',
+                                        color: const Color(0xFFFFFFFF)),
                                   ),
                                   SizedBox(
                                       width: ResponsiveSize.scaleWidth(15)),
@@ -482,10 +497,11 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   SizedBox(
                                       width: ResponsiveSize.scaleWidth(10)),
                                   CircleAvatar(
-                                    radius: ResponsiveSize.scaleWidth(25),
-                                    backgroundColor: const Color(0xFFF9F8FF),
+                                    radius: ResponsiveSize.scaleWidth(20),
+                                    backgroundColor: const Color(0xFF010367),
                                     child: Image.asset(
                                       'assets/images/profile_card.png',
+                                      color: const Color(0xFFFFFFFF),
                                     ),
                                   ),
                                   SizedBox(

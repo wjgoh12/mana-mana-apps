@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
-import 'package:mana_mana_app/widgets/gradient_text.dart';
+import 'package:mana_mana_app/screens/Profile/Widget/roomtype_card.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
 
@@ -44,7 +43,6 @@ class _RoomDetailsState extends State<RoomDetails> {
   bool _isChecked = false;
   bool _highlightCheckBox = false;
   bool _isSubmitting = false;
-  Uint8List? _decodedImage; // Cache the decoded image
 
   // TODO: Replace with your actual admin email
   // ignore: constant_identifier_names
@@ -53,21 +51,6 @@ class _RoomDetailsState extends State<RoomDetails> {
   @override
   void initState() {
     super.initState();
-    // Decode the image once during initialization
-    _decodeImageAsync();
-  }
-
-  Future<void> _decodeImageAsync() async {
-    try {
-      final decoded = base64Decode(widget.room.pic);
-      if (mounted) {
-        setState(() {
-          _decodedImage = decoded;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error decoding image: $e');
-    }
   }
 
   // Send email notification to admin (via backend API)
@@ -133,7 +116,6 @@ class _RoomDetailsState extends State<RoomDetails> {
   @override
   Widget build(BuildContext context) {
     final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
-    final displayRoom = sanitizeRoomTypeName(widget.room.roomTypeName);
 
     final propertyState =
         ownerVM.findPropertyStateForOwner(widget.ownerLocation);
@@ -163,12 +145,34 @@ class _RoomDetailsState extends State<RoomDetails> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Confirmation of Booking',
-            style: TextStyle(
-                fontFamily: 'Outfit',
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF010367))),
         backgroundColor: Colors.white,
+        elevation: 0,
+        leadingWidth: ResponsiveSize.scaleWidth(13),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                  size: 24,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Text('Confirmation of Booking',
+                style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF010367))),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 25.0),
@@ -176,35 +180,26 @@ class _RoomDetailsState extends State<RoomDetails> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Image banner with back arrow
-              SizedBox(
-                width: double.infinity,
-                height: 200,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10.0),
-                    topRight: Radius.circular(10.0),
-                  ),
-                  child: _decodedImage != null
-                      ? Image.memory(
-                          _decodedImage!,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        )
-                      : Container(
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                ),
+              /// Use RoomtypeCard widget directly
+              RoomtypeCard(
+                roomType: widget.room,
+                displayName: sanitizeRoomTypeName(widget.room.roomTypeName),
+                isSelected: false, // No selection in details page
+                enabled:
+                    true, // Set to true to avoid white overlay (non-interactive because onSelect is null)
+                startDate: widget.checkIn ?? DateTime.now(),
+                endDate: widget.checkOut ?? DateTime.now(),
+                onSelect: null, // No selection callback = not interactive
+                checkAffordable: (room, duration) =>
+                    true, // Always affordable in details view
               ),
 
               const SizedBox(height: 16.0),
 
               /// Room details card
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.scaleWidth(10)),
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
@@ -213,39 +208,58 @@ class _RoomDetailsState extends State<RoomDetails> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Room Type',
-                        style: TextStyle(
-                            fontSize: ResponsiveSize.text(15),
-                            fontFamily: 'Outfit',
-                            fontWeight: FontWeight.bold)),
-                    Text(displayRoom,
-                        style: TextStyle(
-                            fontSize: ResponsiveSize.text(20),
-                            fontFamily: 'Outfit',
-                            color: Color(0xFF3E51FF),
-                            fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 20),
+                    // Text('Room Type',
+                    //     style: TextStyle(
+                    //         fontSize: ResponsiveSize.text(15),
+                    //         fontFamily: 'Outfit',
+                    //         fontWeight: FontWeight.bold)),
+                    // Text(displayRoom,
+                    //     style: TextStyle(
+                    //         fontSize: ResponsiveSize.text(20),
+                    //         fontFamily: 'Outfit',
+                    //         color: Color(0xFF3E51FF),
+                    //         fontWeight: FontWeight.bold)),
+                    // const SizedBox(height: 20),
 
                     /// Check-in / Check-out row
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildDateCard('Check-In', widget.checkIn),
-                        SizedBox(width: ResponsiveSize.scaleWidth(2)),
+                        // SizedBox(width: ResponsiveSize.scaleWidth(2)),
                         _buildDateCard('Check-Out', widget.checkOut),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.scaleHeight(10)),
 
                     /// No. of Rooms & Total Points
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildInfoColumn('No. of Rooms', '${widget.quantity}'),
-                        _buildInfoColumn(
-                            'Total Points Redeemed', formattedTotalPoints(),
-                            crossEnd: true),
-                      ],
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(color: Colors.grey.shade300),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            blurRadius: 5,
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(ResponsiveSize.scaleWidth(10)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildInfoRow('No. of Rooms', '${widget.quantity}'),
+                            _buildInfoRow(
+                              'Total Points Redeemed',
+                              formattedTotalPoints(),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 20),
 
@@ -499,27 +513,37 @@ class _RoomDetailsState extends State<RoomDetails> {
   }
 
   Widget _buildDateCard(String title, DateTime? date) {
-    return Card(
-      color: Colors.white,
-      child: Container(
-        width: ResponsiveSize.scaleWidth(150),
-        height: ResponsiveSize.scaleHeight(60),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Container(
+      width: ResponsiveSize.scaleWidth(175),
+      height: ResponsiveSize.scaleHeight(50),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 5,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(3)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title,
                 style: TextStyle(
-                    fontSize: ResponsiveSize.text(11),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Outfit')),
+                    fontSize: ResponsiveSize.text(11), fontFamily: 'Outfit')),
             Text(
               date != null ? DateFormat('EEE, MMM d, yyyy').format(date) : '-',
               style: TextStyle(
-                  fontSize: ResponsiveSize.text(12),
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Outfit',
-                  color: Color(0xFF3E51FF)),
+                fontSize: ResponsiveSize.text(12),
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Outfit',
+              ),
             ),
           ],
         ),
@@ -527,22 +551,20 @@ class _RoomDetailsState extends State<RoomDetails> {
     );
   }
 
-  Widget _buildInfoColumn(String title, String value, {bool crossEnd = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment:
-            crossEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+  Widget _buildInfoRow(String title, String value) {
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title,
               style: TextStyle(
                   fontSize: ResponsiveSize.text(11), fontFamily: 'Outfit')),
           Text(value,
               style: TextStyle(
-                  fontSize: ResponsiveSize.text(16),
+                  fontSize: ResponsiveSize.text(13),
                   fontFamily: 'Outfit',
-                  color: Color(0xFF3E51FF),
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -688,32 +710,49 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
             ],
           ),
         ),
+        const SizedBox(height: 8),
         // Checkbox row
-        Row(
-          children: [
-            Checkbox(
-              value: isChecked,
-              side: BorderSide(
-                color: widget.highlight ? Colors.red : Colors.grey,
-                width: 2,
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: Colors.grey.shade300),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 5,
+                offset: const Offset(0, 3), // changes position of shadow
               ),
-              onChanged: (value) {
-                setState(() {
-                  isChecked = value ?? false;
-                });
-                widget.onChecked(isChecked);
-              },
-            ),
-            Expanded(
-              child: Text(
-                'I have read and agree to the T&C',
-                style: TextStyle(
-                  fontSize: ResponsiveSize.text(13),
-                  fontFamily: 'Outfit',
+            ],
+          ),
+          child: Row(
+            children: [
+              Checkbox(
+                value: isChecked,
+                checkColor: Colors.white, // color of the tick mark
+                activeColor: const Color(0xFFF48D47B),
+                side: BorderSide(
+                  color: widget.highlight ? Colors.red : Colors.grey,
+                  width: 2,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    isChecked = value ?? false;
+                  });
+                  widget.onChecked(isChecked);
+                },
+              ),
+              Expanded(
+                child: Text(
+                  'I have read and agree to the T&C',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.text(13),
+                    fontFamily: 'Outfit',
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

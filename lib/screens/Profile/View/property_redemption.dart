@@ -5,7 +5,6 @@ import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:intl/intl.dart';
-import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
@@ -20,13 +19,19 @@ class PropertyRedemption extends StatefulWidget {
 
 class _PropertyRedemptionState extends State<PropertyRedemption> {
   String selectedFilter = 'All'; // Filter state
-  bool _isRefreshing = false;
+  bool _isLoadingLocations = true; // Track location loading state
 
-  // Helper method to get property image by location name
+  // ✅ Add image cache to avoid repeated lookups
+  final Map<String, String> _imageCache = {};
+
+  // Helper method to get property image by location name - OPTIMIZED
   String _getPropertyImageByLocation(String locationName) {
-    final globalData = Provider.of<GlobalDataManager>(context, listen: false);
+    // ✅ Check cache first
+    if (_imageCache.containsKey(locationName)) {
+      return _imageCache[locationName]!;
+    }
 
-    // print('🔍 Searching for location: $locationName');
+    final globalData = Provider.of<GlobalDataManager>(context, listen: false);
 
     // Clean the booking location name (remove special characters, whitespace, newlines, make uppercase)
     final cleanBookingLocation = locationName
@@ -34,8 +39,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
         .replaceAll(
             RegExp(r'\s+'), '') // Remove all whitespace including newlines
         .replaceAll(RegExp(r'[^A-Z0-9]'), ''); // Remove special characters
-
-    // print('🔍 Cleaned booking location: $cleanBookingLocation');
 
     // Search through all states and locations to find matching location
     for (var state in globalData.locationsByState.keys) {
@@ -48,27 +51,25 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 RegExp(r'\s+'), '') // Remove all whitespace including newlines
             .replaceAll(RegExp(r'[^A-Z0-9]'), ''); // Remove special characters
 
-        // print(
-        //     '🔍 Comparing "$cleanBookingLocation" with "$cleanGlobalLocation"');
-
         // Check if cleaned names match or if the booking location starts with the global location prefix
         if (cleanGlobalLocation.startsWith(cleanBookingLocation) ||
             cleanBookingLocation.startsWith(cleanGlobalLocation) ||
             cleanGlobalLocation.contains(cleanBookingLocation)) {
-          // print('✅ Match found: ${location.locationName}');
-          return location.pic.isNotEmpty
+          final imageUrl = location.pic.isNotEmpty
               ? location.pic
               : 'assets/images/booking_confirmed.png';
+
+          // ✅ Cache the result
+          _imageCache[locationName] = imageUrl;
+          return imageUrl;
         }
       }
     }
 
-    print('❌ Location \'$locationName\' not found anywhere');
-    print(
-        '❌ Available locations in global data: ${globalData.locationsByState.values.expand((locations) => locations.map((l) => l.locationName)).toList()}');
-
     // Fallback to default image if location not found
-    return 'assets/images/booking_confirmed.png';
+    const defaultImage = 'assets/images/booking_confirmed.png';
+    _imageCache[locationName] = defaultImage;
+    return defaultImage;
   }
 
   // Helper method to remove prefix uppercase letters
@@ -90,36 +91,61 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
-      ownerVM.clearSelectionCache();
-
-      final globalData = Provider.of<GlobalDataManager>(context, listen: false);
-      globalData.clearLocationCache();
-    });
-
-    _loadBookingData();
+    _initializeData();
   }
 
-  // Method to load/refresh booking data
-  Future<void> _loadBookingData() async {
-    if (!mounted) return;
+  // Initialize all required data - OPTIMIZED VERSION
+  Future<void> _initializeData() async {
+    final globalData = Provider.of<GlobalDataManager>(context, listen: false);
 
+    // ✅ DON'T clear caches - use existing data if available
+    // ownerVM.clearSelectionCache(); // Removed
+    // globalData.clearLocationCache(); // Removed
+
+    // ✅ Load booking data and locations in PARALLEL
     setState(() {
-      _isRefreshing = true;
+      _isLoadingLocations = true;
     });
 
     try {
-      final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
-      await ownerVM.fetchData();
-      await ownerVM.fetchUserAvailablePoints();
-      await ownerVM.fetchBookingHistory();
-    } finally {
+      // Run all data fetching operations in parallel
+      await Future.wait([
+        // Load booking-related data
+        _loadBookingData(),
+        // Load locations in background (for confirmation dialog images)
+        globalData.fetchRedemptionStatesAndLocations(),
+      ]);
+
       if (mounted) {
         setState(() {
-          _isRefreshing = false;
+          _isLoadingLocations = false;
         });
       }
+    } catch (e) {
+      debugPrint('❌ Error initializing data: $e');
+      if (mounted) {
+        setState(() {
+          _isLoadingLocations = false;
+        });
+      }
+    }
+  }
+
+  // Method to load/refresh booking data - OPTIMIZED VERSION
+  Future<void> _loadBookingData() async {
+    if (!mounted) return;
+
+    try {
+      final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
+
+      // ✅ Run all fetches in PARALLEL instead of sequential
+      await Future.wait([
+        ownerVM.fetchData(),
+        ownerVM.fetchUserAvailablePoints(),
+        ownerVM.fetchBookingHistory(),
+      ]);
+    } catch (e) {
+      debugPrint('❌ Error loading booking data: $e');
     }
   }
 
@@ -140,7 +166,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               fontFamily: 'outfit',
               fontSize: ResponsiveSize.text(14),
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? const Color(0xFF8B5CF6) : Colors.grey,
+              color: isSelected ? const Color(0xFF010367) : Colors.grey,
             ),
           ),
           const SizedBox(height: 4),
@@ -148,7 +174,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
             height: 3,
             width: 60,
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF8B5CF6) : Colors.transparent,
+              color: isSelected ? const Color(0xFF010367) : Colors.transparent,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -270,7 +296,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                             child: Container(
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.3),
+                                color: Colors.black.withOpacity(0.4),
                               ),
                               child: Column(
                                 children: [
@@ -642,8 +668,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
 
   @override
   Widget build(BuildContext context) {
-    final globalData = GlobalDataManager();
-    globalData.initializeData();
+    // ✅ Remove unnecessary GlobalDataManager initialization here
     final ownerVM = Provider.of<OwnerProfileVM>(context);
     final sortedUnits = [
       ...ownerVM.unitAvailablePoints,
@@ -720,8 +745,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               child: Container(
                 width: ResponsiveSize.scaleWidth(70),
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF3E51FF)),
-                  color: const Color(0xFF3E51FF).withOpacity(0.15),
+                  color: const Color(0xFF010367),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: const Padding(
@@ -731,7 +755,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                       "FAQ",
                       style: TextStyle(
                         fontFamily: 'outfit',
-                        color: Color(0xFF3E51FF),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -748,6 +772,18 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // SizedBox(height: ResponsiveSize.scaleHeight(10)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Redemption List',
+                style: TextStyle(
+                  fontFamily: 'outfit',
+                  fontSize: ResponsiveSize.text(18),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -805,24 +841,16 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          GradientText1(
-                                            text:
-                                                '${unit.location} - ${unit.unitNo}',
+                                          Text(
+                                            '${unit.location} - ${unit.unitNo}',
                                             style: TextStyle(
-                                                fontFamily: 'outfit',
-                                                fontSize:
-                                                    ResponsiveSize.text(15),
-                                                fontWeight: FontWeight.w700,
-                                                fontFamilyFallback: const [
-                                                  'outfit'
-                                                ]),
-                                            gradient: const LinearGradient(
-                                              begin: Alignment.centerLeft,
-                                              end: Alignment.centerRight,
-                                              colors: [
-                                                Color(0xFFB82B7D),
-                                                Color(0xFF3E51FF)
+                                              fontFamily: 'outfit',
+                                              fontSize: ResponsiveSize.text(15),
+                                              fontWeight: FontWeight.w700,
+                                              fontFamilyFallback: const [
+                                                'outfit'
                                               ],
+                                              color: const Color(0xFF000241),
                                             ),
                                           ),
                                           SizedBox(
@@ -837,8 +865,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                   ResponsiveSize.scaleHeight(6),
                                             ),
                                             decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                  97, 204, 248, 255),
+                                              color: const Color(0xFFFFCF00),
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
@@ -874,6 +901,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                       ),
                                       TextButton(
                                         onPressed: () {
+                                          final globalData =
+                                              Provider.of<GlobalDataManager>(
+                                                  context,
+                                                  listen: false);
                                           ownerVM.UserPointBalance.clear();
                                           Navigator.push(
                                             context,
@@ -902,7 +933,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                         ),
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF3E51FF),
+                                            color: const Color(0xFF010367),
                                             borderRadius:
                                                 BorderRadius.circular(5),
                                           ),
@@ -967,6 +998,25 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 ),
                 child: Builder(
                   builder: (context) {
+                    // Show loading indicator while locations are being loaded
+                    if (_isLoadingLocations) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              color: const Color(0xFF3E51FF),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Loading property locations...",
+                              style: TextStyle(fontFamily: 'outfit'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
                     // Get filtered bookings directly (no async needed)
                     final filteredBookings = _getFilteredBookings(ownerVM);
 
