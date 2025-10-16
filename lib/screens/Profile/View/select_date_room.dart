@@ -6,7 +6,6 @@ import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/screens/Profile/View/room_details.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
-import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/roomtype_card.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -407,7 +406,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   Widget build(BuildContext context) {
     final vm = context.watch<OwnerProfileVM>();
 
-    // No calculation needed, just use the room's points directly
+    // Calculate total points: room points × quantity
     final String formattedPoints = _selectedRoom != null
         ? NumberFormat('#,###').format(_selectedRoom!.roomTypePoints)
         : '0';
@@ -717,14 +716,10 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   ),
                 ),
 
-                // Room Types Grid
-                GridView.builder(
+                // Room Types List
+                ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    mainAxisExtent: 350,
-                  ),
                   itemCount: vm.roomTypes.length,
                   itemBuilder: (context, index) {
                     final room = vm.roomTypes[index];
@@ -741,11 +736,13 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       enabled: true,
                       startDate: start,
                       endDate: end,
+                      quantity: _selectedQuantity,
                       checkAffordable: (room, duration) {
                         final userPoints = vm.UserPointBalance.isNotEmpty
                             ? vm.UserPointBalance.first.redemptionBalancePoints
                             : 0;
-                        final totalPoints = room.roomTypePoints;
+                        final totalPoints =
+                            room.roomTypePoints * _selectedQuantity;
                         return totalPoints <= userPoints;
                       },
                       onSelect: (selectedRoom) {
@@ -756,43 +753,27 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                               : null;
                         });
                       },
+                      onQuantityChanged: (val) {
+                        setState(() {
+                          _selectedQuantity = val;
+                          _hasPendingChanges = true;
+                        });
+
+                        // Only fetch if both dates are selected
+                        if (_rangeStart != null && _rangeEnd != null) {
+                          _fetchDebounce?.cancel();
+                          _fetchDebounce = Timer(
+                            const Duration(milliseconds: 500),
+                            () {
+                              if (mounted && _selectedQuantity == val) {
+                                _fetchRoomTypesAndMaintainSelection();
+                              }
+                            },
+                          );
+                        }
+                      },
                     );
                   },
-                ),
-
-                // Quantity Controller
-                Column(
-                  children: [
-                    Text(
-                      'Number of Rooms',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8),
-                    Center(
-                      child: QuantityController(
-                        onChanged: (val) {
-                          setState(() {
-                            _selectedQuantity = val;
-                            _hasPendingChanges = true; // 🆕 Mark as pending
-                          });
-
-                          // Only fetch if both dates are selected
-                          if (_rangeStart != null && _rangeEnd != null) {
-                            _fetchDebounce?.cancel();
-                            _fetchDebounce = Timer(
-                              const Duration(milliseconds: 500),
-                              () {
-                                if (mounted && _selectedQuantity == val) {
-                                  _fetchRoomTypesAndMaintainSelection();
-                                }
-                              },
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  ],
                 ),
 
                 const SizedBox(height: 10),

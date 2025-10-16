@@ -430,7 +430,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                             TextButton(
                                               style: TextButton.styleFrom(
                                                 backgroundColor:
-                                                    Color(0xFF3E51FF),
+                                                    Color(0xFF000241),
                                               ),
                                               onPressed: () {
                                                 Navigator.pop(context);
@@ -479,7 +479,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 }
                               },
                         style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFF3E51FF),
+                          backgroundColor: const Color(0xFF000241),
                           fixedSize: const Size(300, 40),
                         ),
                         child: _isSubmitting

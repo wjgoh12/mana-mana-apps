@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/roomType.dart';
+import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class RoomtypeCard extends StatefulWidget {
@@ -13,7 +14,9 @@ class RoomtypeCard extends StatefulWidget {
   final bool enabled;
   final DateTime startDate;
   final DateTime endDate;
+  final int quantity;
   final Function(RoomType? room)? onSelect;
+  final Function(int quantity)? onQuantityChanged;
   final bool Function(RoomType room, int duration) checkAffordable;
 
   const RoomtypeCard({
@@ -24,7 +27,9 @@ class RoomtypeCard extends StatefulWidget {
     this.enabled = true,
     required this.startDate,
     required this.endDate,
+    this.quantity = 1,
     this.onSelect,
+    this.onQuantityChanged,
     required this.checkAffordable,
   });
 
@@ -98,7 +103,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
 
     return Container(
       margin: const EdgeInsets.all(8),
-      height: 320,
+      height: widget.isSelected ? 380 : 320,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -110,189 +115,203 @@ class _RoomtypeCardState extends State<RoomtypeCard>
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          InkWell(
-            onTap: () {
-              if (!canAfford) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      children: [
-                        const Icon(Icons.error_outline, color: Colors.white),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.roomType.roomTypePoints)}',
-                          ),
-                        ),
-                      ],
-                    ),
-                    backgroundColor: Colors.red,
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-                return;
-              }
-
-              if (!widget.enabled) return;
-
-              if (widget.isSelected) {
-                widget.onSelect?.call(null);
-              } else {
-                widget.onSelect?.call(widget.roomType);
-              }
-            },
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 180,
-                    child: imageWidget,
-                  ),
-                ),
-                // Unaffordable overlay
-                if (!canAfford)
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                // selection overlay
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 180),
-                  opacity: widget.isSelected ? 0.55 : 0.0,
-                  child: Container(
-                    width: double.infinity,
-                    height: 180,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                // bottom gradient + name + points
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 50,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.65),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          widget.displayName,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: ResponsiveSize.text(12),
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          '${NumberFormat("#,###").format(widget.roomType.roomTypePoints)} points',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ResponsiveSize.text(12),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // disabled overlay when not affordable
-                if (!widget.enabled)
-                  Positioned.fill(
-                    child: Container(
-                      color: Colors.white.withOpacity(0.6),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          // Room Info Section - Enhanced
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: () {
+            if (!canAfford) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
                     children: [
-                      Text(
-                        'Room Info',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.text(11),
-                          fontFamily: 'Outfit',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '1 King Bed',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.text(11),
-                          fontFamily: 'Outfit',
-                          color: Colors.grey[600],
+                      const Icon(Icons.error_outline, color: Colors.white),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.roomType.roomTypePoints)}',
                         ),
                       ),
                     ],
                   ),
+                  backgroundColor: Colors.red,
+                  duration: const Duration(seconds: 2),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'No of Guests',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(11),
-                        fontFamily: 'Outfit',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[800],
+              );
+              return;
+            }
+
+            if (!widget.enabled) return;
+
+            if (widget.isSelected) {
+              widget.onSelect?.call(null);
+            } else {
+              widget.onSelect?.call(widget.roomType);
+            }
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              // Image Stack Section
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 180,
+                      child: imageWidget,
+                    ),
+                  ),
+                  // Unaffordable overlay
+                  if (!canAfford)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.5),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '2 Adults, 1 Child',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(11),
-                        fontFamily: 'Outfit',
-                        color: Colors.grey[600],
+                  // selection overlay
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 180),
+                    opacity: widget.isSelected ? 0.55 : 0.0,
+                    child: Container(
+                      width: double.infinity,
+                      height: 180,
+                      decoration: const BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
                       ),
+                    ),
+                  ),
+                  // bottom gradient + name + points
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.65),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.displayName,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: ResponsiveSize.text(12),
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            '${NumberFormat("#,###").format(widget.roomType.roomTypePoints)} points',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: ResponsiveSize.text(12),
+                              fontFamily: 'Outfit',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // disabled overlay when not affordable
+                  if (!widget.enabled)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.6),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+
+              // Room Info Section
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Room Info',
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.text(11),
+                              fontFamily: 'Outfit',
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '1 King Bed',
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.text(11),
+                              fontFamily: 'Outfit',
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'No of Guests',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.text(11),
+                            fontFamily: 'Outfit',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '2 Adults, 1 Child',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.text(11),
+                            fontFamily: 'Outfit',
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: ResponsiveSize.scaleHeight(5),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+              ),
+
+              // Amenities Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Amenities Available',
@@ -302,39 +321,69 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.bathtub_outlined,
+                          size: ResponsiveSize.scaleHeight(16),
+                        ),
+                        SizedBox(width: ResponsiveSize.scaleWidth(6)),
+                        Text(
+                          'Bathtub',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.text(11),
+                            fontFamily: 'Outfit',
+                          ),
+                        ),
+                        SizedBox(width: ResponsiveSize.scaleWidth(25)),
+                        Icon(
+                          Icons.local_laundry_service_outlined,
+                          size: ResponsiveSize.scaleHeight(16),
+                        ),
+                        SizedBox(width: ResponsiveSize.scaleWidth(6)),
+                        Text(
+                          'Washing Machine',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.text(11),
+                            fontFamily: 'Outfit',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    if (widget.isSelected == true)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Number of Rooms:',
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.text(11),
+                                  fontFamily: 'Outfit',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            QuantityController(
+                              initialValue: widget.quantity,
+                              onChanged: (val) {
+                                widget.onQuantityChanged?.call(val);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.bathtub_outlined,
-                      size: ResponsiveSize.scaleHeight(16),
-                    ),
-                    SizedBox(width: ResponsiveSize.scaleWidth(6)),
-                    Text(
-                      'Bathtub',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(11),
-                        fontFamily: 'Outfit',
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveSize.scaleWidth(25)),
-                    Icon(Icons.local_laundry_service_outlined,
-                        size: ResponsiveSize.scaleHeight(16)),
-                    SizedBox(width: ResponsiveSize.scaleWidth(6)),
-                    Text(
-                      'Washing Machine',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(11),
-                        fontFamily: 'Outfit',
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
