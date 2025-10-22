@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
 import 'package:mana_mana_app/model/bookingRoom.dart';
@@ -11,7 +8,6 @@ import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
-import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 
@@ -103,6 +99,9 @@ class OwnerProfileVM extends ChangeNotifier {
     // Use global data manager instead of making individual API calls
     await _globalDataManager.initializeData();
     _users = await _userRepository.getUsers();
+
+    // After loading users, evaluate roles
+    await checkRole();
 
     notifyListeners();
   }
@@ -355,6 +354,12 @@ class OwnerProfileVM extends ChangeNotifier {
   // Cache for room types
   Map<String, List<RoomType>> _roomTypeCache = {};
 
+  // Role-based flags
+  bool _canSwitchUser = false;
+
+  /// Whether the current user is allowed to see the "Switch User" button
+  bool get canSwitchUser => _canSwitchUser;
+
   String _getRoomTypeCacheKey(
     String state,
     String location,
@@ -593,6 +598,38 @@ class OwnerProfileVM extends ChangeNotifier {
   void clearRoomTypesForNewLocation() {
     _roomTypes.clear();
     _roomTypeCache.clear();
+    notifyListeners();
+  }
+
+  Future<void> checkRole() async {
+    try {
+      // Determine the source of users - prefer global manager's users
+      final currentUsers = _globalDataManager.users.isNotEmpty
+          ? _globalDataManager.users
+          : _users;
+
+      if (currentUsers.isEmpty) {
+        _canSwitchUser = false;
+        notifyListeners();
+        return;
+      }
+
+      final roleString = currentUsers.first.role ?? '';
+
+      // roles field may be a comma separated string like "ADMIN,MOBILE-ADMIN"
+      final roles = roleString
+          .split(',')
+          .map((s) => s.trim().toUpperCase())
+          .where((s) => s.isNotEmpty)
+          .toList();
+
+      _canSwitchUser =
+          roles.contains('ADMIN') || roles.contains('MOBILE-ADMIN');
+    } catch (e) {
+      debugPrint('❌ Error checking role: $e');
+      _canSwitchUser = false;
+    }
+
     notifyListeners();
   }
 }

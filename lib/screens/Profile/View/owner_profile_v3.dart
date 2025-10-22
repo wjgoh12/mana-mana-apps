@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
-import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 // ignore: depend_on_referenced_packages
@@ -22,7 +21,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
   @override
   void initState() {
     super.initState();
-    model.fetchData();
+    model.fetchData().then((_) => model.checkRole());
   }
 
   Future<void> _handleLogout() async {
@@ -48,9 +47,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
 
   @override
   Widget build(BuildContext context) {
-    final OwnerProfileVM model = OwnerProfileVM();
-    model.fetchData();
-
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -241,10 +237,18 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             fontWeight: FontWeight.w400),
                                       ),
                                       SizedBox(width: responsiveWidth(8)),
-                                      model.users.isNotEmpty
-                                          ? _buildData(context,
-                                              data: '000000-00-0000')
-                                          : const Text('Loading...'),
+                    model.users.isNotEmpty
+                      ? Text(
+                        '000000-00-0000',
+                        maxLines: 6,
+                        overflow: TextOverflow.visible,
+                        softWrap: true,
+                        style: TextStyle(
+                          fontFamily: 'outfit',
+                          fontSize: ResponsiveSize.text(12),
+                          fontWeight: FontWeight.w400),
+                      )
+                      : const Text('Loading...'),
                                     ],
                                   ),
                                 ],
@@ -481,7 +485,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             )),
                                         SizedBox(height: 4.fSize),
                                         Text(
-                                          OwnerProfileVM().getBankInfo(),
+                                          model.getBankInfo(),
                                           maxLines: 6,
                                           overflow: TextOverflow.visible,
                                           softWrap: true,
@@ -522,7 +526,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             )),
                                         SizedBox(height: 4.fSize),
                                         Text(
-                                          OwnerProfileVM().getAccountNumber(),
+                                          model.getAccountNumber(),
                                           maxLines: 6,
                                           overflow: TextOverflow.visible,
                                           softWrap: true,
@@ -703,12 +707,42 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            // If the user can switch, show Switch User button
+                            if (model.canSwitchUser) ...[
+                              TextButton(
+                                onPressed: () {
+                                  // TODO: implement actual switch user action
+                                  debugPrint('Switch User pressed');
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.white),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      side: const BorderSide(
+                                          color: Color(0xFF000241), width: 2),
+                                    ),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Switch User',
+                                  style: TextStyle(
+                                    fontFamily: 'outfit',
+                                    color: Color(0xFF000241),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: ResponsiveSize.scaleWidth(12)),
+                            ],
+
+                            // Logout button
                             TextButton(
                               onPressed: _isLoggingOut ? null : _handleLogout,
                               style: ButtonStyle(
                                 backgroundColor:
-                                    WidgetStateProperty.all(Colors.white),
-                                shape: WidgetStatePropertyAll(
+                                    MaterialStateProperty.all(Colors.white),
+                                shape: MaterialStateProperty.all(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     side: const BorderSide(
@@ -873,58 +907,4 @@ Widget buildInfoInRow(String info) {
   );
 }
 
-Widget _buildRow(BuildContext context, {required String label}) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final screenHeight = MediaQuery.of(context).size.height;
-
-  double responsiveWidth(double value) =>
-      (value / 375.0) * screenWidth; // base width
-
-  double responsiveFont(double value) =>
-      (value / 812.0) * screenHeight; // font scaling
-
-  return SizedBox(
-    width: responsiveWidth(140),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //Image.asset('assets/images/$icon'),
-          SizedBox(width: responsiveWidth(10)),
-          Text(
-            label,
-            style:
-                TextStyle(fontFamily: 'outfit', fontSize: responsiveFont(13)),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _buildData(BuildContext context, {required String data}) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final screenHeight = MediaQuery.of(context).size.height;
-
-  double responsiveWidth(double value) =>
-      (value / 375.0) * screenWidth; // base width
-// base height
-  double responsiveFont(double value) =>
-      (value / 812.0) * screenHeight; // font scaling
-
-  return SizedBox(
-    width: responsiveWidth(190),
-    child: Text(
-      data,
-      maxLines: 6,
-      overflow: TextOverflow.visible,
-      softWrap: true,
-      style: TextStyle(
-          fontFamily: 'outfit',
-          fontSize: responsiveFont(12),
-          fontWeight: FontWeight.w400),
-    ),
-  );
-}
+// Note: helper widgets removed because they're unused in this view.

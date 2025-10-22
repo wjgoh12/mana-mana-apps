@@ -31,4 +31,9 @@ class ApiEndpoint {
       '/mobile/enqs/redemption/getBookingHistory';
   static const String getAllRedemptionRate =
       '/mobile/enqs/getAllRedemptionRate';
+
+  //admin access
+  static const String validateUser = '/mobile/dash/admin/valid-user';
+  static const String confirmUser = '/mobile/dash/admin/switch-user';
+  static const String cancelSwitchUser = '/mobile/dash/admin/stop-impersonate';
 }
