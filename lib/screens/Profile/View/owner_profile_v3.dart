@@ -462,6 +462,28 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 ],
                               ),
                               SizedBox(height: 25.fSize),
+
+                              SizedBox(height: ResponsiveSize.scaleHeight(20)),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveSize.scaleHeight(20)),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12.fSize),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: const Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ]),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Row(
                                 children: [
                                   Padding(
@@ -477,92 +499,15 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 12.fSize),
-                              Row(
-                                children: [
-                                  SizedBox(width: ResponsiveSize.scaleWidth(9)),
-                                  CircleAvatar(
-                                    radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF606060),
-                                    child: Image.asset(
-                                        'assets/images/profile_card.png',
-                                        color: const Color(0xFFFFFFFF)),
-                                  ),
-                                  SizedBox(
-                                      width: ResponsiveSize.scaleWidth(15)),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Bank',
-                                            style: TextStyle(
-                                              fontFamily: 'outfit',
-                                              fontSize: ResponsiveSize.text(11),
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.grey.shade800,
-                                            )),
-                                        SizedBox(height: 4.fSize),
-                                        Text(
-                                          model.getBankInfo(),
-                                          maxLines: 6,
-                                          overflow: TextOverflow.visible,
-                                          softWrap: true,
-                                          style: TextStyle(
-                                            fontFamily: 'outfit',
-                                            fontSize: ResponsiveSize.text(12),
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: ResponsiveSize.scaleWidth(10)),
-                                  CircleAvatar(
-                                    radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF606060),
-                                    child: Image.asset(
-                                      'assets/images/profile_card.png',
-                                      color: const Color(0xFFFFFFFF),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: ResponsiveSize.scaleWidth(15)),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Account No.',
-                                            style: TextStyle(
-                                              fontFamily: 'outfit',
-                                              fontSize: ResponsiveSize.text(11),
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.grey.shade800,
-                                            )),
-                                        SizedBox(height: 4.fSize),
-                                        Text(
-                                          model.getAccountNumber(),
-                                          maxLines: 6,
-                                          overflow: TextOverflow.visible,
-                                          softWrap: true,
-                                          style: TextStyle(
-                                            fontFamily: 'outfit',
-                                            fontSize: ResponsiveSize.text(12),
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+
+                              // Financial details content (building + unit + bank/account)
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: ResponsiveSize.scaleWidth(9.0),
+                                    vertical: 8.fSize),
+                                child: buildFinancialDetails(model),
                               ),
-                              SizedBox(height: ResponsiveSize.scaleHeight(20)),
+                              SizedBox(height: 12.fSize),
                             ],
                           ),
                         ),
@@ -619,7 +564,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   child: Row(
                                     children: [
                                       CircleAvatar(
-                                        radius: 25,
+                                        radius: ResponsiveSize.scaleWidth(20),
                                         backgroundColor:
                                             const Color(0xFFFFCF00),
                                         child: Image.asset(
@@ -657,7 +602,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   child: Row(
                                     children: [
                                       CircleAvatar(
-                                        radius: 25,
+                                        radius: ResponsiveSize.scaleWidth(20),
                                         backgroundColor:
                                             const Color(0xFFFFCF00),
                                         child: Image.asset(
@@ -697,16 +642,16 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   child: Row(
                                     children: [
                                       CircleAvatar(
-                                        radius: 25,
+                                        radius: ResponsiveSize.scaleWidth(20),
                                         backgroundColor:
-                                            const Color(0xFF42C18B),
+                                            const Color(0xFFFFCF00),
                                         child: Image.asset(
                                             'assets/images/profile_whatsapp.png',
                                             width:
                                                 ResponsiveSize.scaleWidth(20),
                                             height:
                                                 ResponsiveSize.scaleHeight(20),
-                                            color: Color(0xFFE4FFE6)),
+                                            color: Color(0xFF606060)),
                                       ),
                                       SizedBox(width: 20.fSize),
                                       Text(
@@ -1142,5 +1087,181 @@ Widget buildInfoInRow(String info) {
         ),
       ],
     ),
+  );
+}
+
+Widget buildFinancialDetails(OwnerProfileVM model) {
+  // Group ownerUnits by building/location
+  final Map<String, List<dynamic>> grouped = {};
+  for (final unit in model.ownerUnits) {
+    final key = (unit.location ?? 'Unknown').toString().trim();
+    grouped.putIfAbsent(key, () => []).add(unit);
+  }
+
+  if (grouped.isEmpty) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('No financial details available',
+            style: TextStyle(
+              fontFamily: 'outfit',
+              fontSize: ResponsiveSize.text(12),
+              color: Colors.grey.shade700,
+            )),
+      ],
+    );
+  }
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      for (final entry in grouped.entries) ...[
+        // Building title
+        Text(
+          entry.key,
+          style: TextStyle(
+            fontFamily: 'outfit',
+            fontSize: ResponsiveSize.text(14),
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: 6.fSize),
+
+        // Units for this building
+        Column(
+          children: entry.value.map((unit) {
+            final bank = (unit?.bank as String?) ?? model.getBankInfo();
+            final account =
+                (unit?.accountnumber as String?) ?? model.getAccountNumber();
+            final unitNo = (unit?.unitno as String?) ?? '-';
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Unit No.',
+                            style: TextStyle(
+                              fontFamily: 'outfit',
+                              fontSize: ResponsiveSize.text(12),
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          Text(
+                            ' $unitNo',
+                            style: TextStyle(
+                              fontFamily: 'outfit',
+                              fontSize: ResponsiveSize.text(12),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: ResponsiveSize.scaleHeight(10)),
+                      Row(
+                        children: [
+                          SizedBox(width: ResponsiveSize.scaleWidth(9)),
+                          CircleAvatar(
+                            radius: ResponsiveSize.scaleWidth(20),
+                            backgroundColor: const Color(0xFF606060),
+                            child: Image.asset('assets/images/profile_card.png',
+                                color: const Color(0xFFFFCF00)),
+                          ),
+                          SizedBox(width: ResponsiveSize.scaleWidth(15)),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Bank',
+                                    style: TextStyle(
+                                      fontFamily: 'outfit',
+                                      fontSize: ResponsiveSize.text(11),
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.grey.shade800,
+                                    )),
+                                SizedBox(height: 4.fSize),
+                                Text(
+                                  bank,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                    fontFamily: 'outfit',
+                                    fontSize: ResponsiveSize.text(12),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: ResponsiveSize.scaleWidth(10)),
+                          CircleAvatar(
+                            radius: ResponsiveSize.scaleWidth(20),
+                            backgroundColor: const Color(0xFF606060),
+                            child: Image.asset(
+                              'assets/images/profile_card.png',
+                              color: const Color(0xFFFFCF00),
+                            ),
+                          ),
+                          SizedBox(width: ResponsiveSize.scaleWidth(15)),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Account No.',
+                                    style: TextStyle(
+                                      fontFamily: 'outfit',
+                                      fontSize: ResponsiveSize.text(11),
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.grey.shade800,
+                                    )),
+                                SizedBox(height: 4.fSize),
+                                Text(
+                                  account,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                    fontFamily: 'outfit',
+                                    fontSize: ResponsiveSize.text(12),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        SizedBox(height: 12.fSize),
+      ],
+    ],
   );
 }

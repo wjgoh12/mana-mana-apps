@@ -145,6 +145,11 @@ class GlobalDataManager extends ChangeNotifier {
     }
   }
 
+  String? get activeUserEmail {
+    return _impersonatedEmail ??
+        (_users.isNotEmpty ? _users.first.email : null);
+  }
+
   Future<void> _fetchAllData() async {
     debugPrint('🔄 _fetchAllData start; impersonatedEmail=$_impersonatedEmail');
 

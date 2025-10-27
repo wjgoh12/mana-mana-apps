@@ -95,7 +95,7 @@ class NewDashboardV3 extends StatelessWidget {
                             ? Text(
                                 'Dashboard',
                                 style: TextStyle(
-                                  fontSize: 18.fSize,
+                                  fontSize: ResponsiveSize.text(20),
                                   fontFamily: 'Open Sans',
                                   fontWeight: FontWeight.w800,
                                   color: Colors.black,
@@ -238,6 +238,7 @@ class NewDashboardV3 extends StatelessWidget {
 
                             // SizedBox(height: 2.height),
                             ProfitBox(),
+                            SizedBox(height: isMobile ? 16.height : 24.height),
 
                             // Properties section
                             // Container(

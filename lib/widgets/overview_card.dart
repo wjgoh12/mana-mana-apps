@@ -201,13 +201,13 @@ class OverviewCard extends StatelessWidget {
                                     left: 10,
                                     top: 10,
                                     child: CircleAvatar(
-                                      radius: 20.fSize,
+                                      radius: ResponsiveSize.scaleWidth(20),
                                       backgroundColor: Color(0xFF606060),
                                       child: Image.asset(
                                         'assets/images/OverviewProperty.png',
-                                        width: ResponsiveSize.scaleWidth(18),
-                                        height: ResponsiveSize.scaleHeight(20),
-                                        color: Colors.white,
+                                        width: ResponsiveSize.scaleWidth(24),
+                                        height: ResponsiveSize.scaleHeight(24),
+                                        color: Color(0xFFFFCF00),
                                       ),
                                     ),
                                   ),
@@ -394,13 +394,13 @@ class OverviewCard extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(left: 10),
                                 child: CircleAvatar(
-                                  radius: 23.fSize,
+                                  radius: ResponsiveSize.scaleWidth(20),
                                   backgroundColor: Color(0xFFFFCF00),
                                   child: Image.asset(
                                     'assets/images/OverviewMonthlyProfit.png',
                                     color: Color(0xFF606060),
-                                    width: 30.fSize,
-                                    height: 28.fSize,
+                                    width: ResponsiveSize.scaleWidth(28),
+                                    height: ResponsiveSize.scaleHeight(24),
                                   ),
                                 ),
                               ),
@@ -601,13 +601,13 @@ class RevenueContainer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         CircleAvatar(
-                          radius: 20.fSize,
+                          radius: ResponsiveSize.scaleWidth(20),
                           backgroundColor: Color(0xFFFFCF00),
                           child: Image.asset(
                             'assets/images/OverviewAccumulatedProfit.png',
                             color: Color(0xFF606060),
-                            width: 26.fSize,
-                            height: 24.fSize,
+                            width: ResponsiveSize.scaleWidth(24),
+                            height: ResponsiveSize.scaleHeight(24),
                           ),
                         ),
                       ],
