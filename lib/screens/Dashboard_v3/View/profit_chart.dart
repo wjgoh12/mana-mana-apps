@@ -88,7 +88,7 @@ class ProfitChart extends StatelessWidget {
         lineBarsData: [
           LineChartBarData(
             isCurved: !isSingleDataPoint,
-            color: const Color(0XFF2900B7),
+            color: const Color(0XFFFFCF00),
             barWidth: 5,
             isStrokeCapRound: true,
             dotData: FlDotData(
@@ -97,14 +97,14 @@ class ProfitChart extends StatelessWidget {
                 if (isSingleDataPoint) {
                   return FlDotCirclePainter(
                     radius: 8,
-                    color: const Color(0XFF2900B7),
+                    color: const Color(0XFFFFCF00),
                     strokeWidth: 3,
                     strokeColor: Colors.white,
                   );
                 }
                 return FlDotCirclePainter(
                   radius: 4,
-                  color: const Color(0XFF2900B7),
+                  color: const Color(0XFFFFCF60),
                   strokeWidth: 2,
                   strokeColor: Colors.white,
                 );
@@ -114,8 +114,8 @@ class ProfitChart extends StatelessWidget {
               show: isSingleDataPoint,
               gradient: LinearGradient(
                 colors: [
-                  const Color(0XFF2900B7).withOpacity(0.3),
-                  const Color(0XFF2900B7).withOpacity(0.05),
+                  const Color(0XFFFFCF00).withOpacity(0.3),
+                  const Color(0XFFFFCF00).withOpacity(0.05),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -136,7 +136,7 @@ class ProfitChart extends StatelessWidget {
                 horizontalLines: [
                   HorizontalLine(
                     y: spots.first.y,
-                    color: const Color(0XFF2900B7).withOpacity(0.2),
+                    color: const Color(0XFFFFCF60).withOpacity(0.2),
                     strokeWidth: 1,
                     dashArray: [5, 5],
                   ),
@@ -163,11 +163,11 @@ class ProfitChart extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0XFF2900B7),
+                        color: const Color(0XFFFFCF00),
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0XFF2900B7).withOpacity(0.3),
+                            color: const Color(0XFFFFCF00).withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -483,7 +483,7 @@ class ProfitChart extends StatelessWidget {
   LineTouchData get lineTouchData => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
-          getTooltipColor: (spot) => Colors.blueGrey.withOpacity(1),
+          getTooltipColor: (spot) => Color(0xFF606060).withOpacity(0.8),
           tooltipRoundedRadius: 8,
           tooltipPadding: const EdgeInsets.all(8),
           getTooltipItems: (spots) {

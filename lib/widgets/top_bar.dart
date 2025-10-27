@@ -33,7 +33,7 @@ Widget topBar(context, function) {
               child: Text(
                 'Owner\'s Portal',
                 style: TextStyle(
-                  color: const Color(0xFF000241),
+                  color: const Color(0xFF606060),
                   fontFamily: 'outfit',
                   fontSize: ResponsiveSize.text(25),
                   fontWeight: FontWeight.w700,

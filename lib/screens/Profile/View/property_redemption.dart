@@ -549,6 +549,12 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
       child: Container(
         margin: EdgeInsets.only(bottom: ResponsiveSize.scaleHeight(12)),
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFF000241).withOpacity(0.15),
+              blurRadius: 10,
+            )
+          ],
           color: Colors.white,
           border: Border.all(color: Colors.grey.shade200),
           borderRadius: BorderRadius.circular(12),
@@ -556,16 +562,19 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: ResponsiveSize.scaleHeight(60),
-                width: ResponsiveSize.scaleWidth(60),
+                height: ResponsiveSize.scaleHeight(37),
+                width: ResponsiveSize.scaleWidth(33),
                 decoration: BoxDecoration(
-                  color: Colors.lightBlue.shade100,
+                  color: Color(0xFFFFF2B9),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child:
-                    const Icon(Icons.hotel, color: Colors.blueAccent, size: 30),
+                child: Icon(Icons.hotel,
+                    color: Color(0xFFFFCF00),
+                    size: ResponsiveSize.scaleWidth(16)),
               ),
               SizedBox(width: ResponsiveSize.scaleWidth(16)),
               Expanded(
@@ -579,7 +588,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                           child: Text(
                             _sanitizeRoomTypeName(booking.typeRoom),
                             style: TextStyle(
-                              fontSize: ResponsiveSize.text(14),
+                              fontSize: ResponsiveSize.text(11),
                               fontFamily: 'outfit',
                               fontWeight: FontWeight.bold,
                             ),
@@ -594,17 +603,21 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: booking.status == 'Confirmed'
-                                ? Colors.green
+                                ? Color(0xFFDCFCE7)
                                 : booking.status == 'Pending'
-                                    ? Colors.orange
-                                    : Colors.red,
+                                    ? Color(0xFFFFF696)
+                                    : Color(0xFFFEE2E1),
                           ),
                           child: Text(
                             booking.status,
                             style: TextStyle(
                               fontSize: ResponsiveSize.text(10),
                               fontFamily: 'outfit',
-                              color: Colors.white,
+                              color: booking.status == 'Confirmed'
+                                  ? Color(0xFF2A7446)
+                                  : booking.status == 'Pending'
+                                      ? Color(0xFF926021)
+                                      : Color(0xFFA63636),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -615,19 +628,39 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     Text(
                       booking.bookingLocation,
                       style: TextStyle(
-                        fontSize: ResponsiveSize.text(12),
+                        fontSize: ResponsiveSize.text(10),
                         fontFamily: 'outfit',
                         color: Colors.grey.shade600,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      'Stay Period: ${DateFormat('dd MMM yyyy').format(booking.arrivalDate)} to ${DateFormat('dd MMM yyyy').format(booking.departureDate)}',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(11),
-                        fontFamily: 'outfit',
-                        color: Colors.grey.shade600,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Dates: ${DateFormat('yyyy-MM-dd').format(booking.arrivalDate)} to ${DateFormat('yyyy-MM-dd').format(booking.departureDate)}',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.text(11),
+                            fontFamily: 'outfit',
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.star,
+                                size: 16, color: Colors.purple.shade400),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${booking.pointUsed}',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(10),
+                                fontFamily: 'outfit',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
                     // Text(
@@ -639,23 +672,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     //     fontStyle: FontStyle.italic,
                     //   ),
                     // ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Spacer(),
-                        Icon(Icons.star,
-                            size: 16, color: Colors.purple.shade400),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${booking.pointUsed}',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(13),
-                            fontFamily: 'outfit',
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
+                    // const SizedBox(height: 4),
                   ],
                 ),
               ),
@@ -711,7 +728,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 child: Text(
                   'Free Stay Redemptions',
                   style: TextStyle(
-                    color: const Color(0xFF000241),
+                    color: const Color(0xFF606060),
                     fontFamily: 'outfit',
                     fontSize: ResponsiveSize.text(18),
                     fontWeight: FontWeight.w700,
@@ -745,7 +762,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               child: Container(
                 width: ResponsiveSize.scaleWidth(70),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF010367),
+                  color: const Color(0xFF606060),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: const Padding(
@@ -820,8 +837,9 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 8,
+                                      color:
+                                          Color(0xFF000241).withOpacity(0.15),
+                                      blurRadius: 10,
                                       offset: const Offset(0, 0),
                                     ),
                                   ],
@@ -850,7 +868,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                               fontFamilyFallback: const [
                                                 'outfit'
                                               ],
-                                              color: const Color(0xFF000241),
+                                              color: const Color(0xFF606060),
                                             ),
                                           ),
                                           SizedBox(
@@ -933,7 +951,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                         ),
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF010367),
+                                            color: const Color(0xFF606060),
                                             borderRadius:
                                                 BorderRadius.circular(5),
                                           ),

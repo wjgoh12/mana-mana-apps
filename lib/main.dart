@@ -14,7 +14,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => NewDashboardVM(), // Remove ..fetchData()
+          create: (context) => NewDashboardVM(),
         ),
         ChangeNotifierProvider(create: (context) => GlobalDataManager()),
       ],

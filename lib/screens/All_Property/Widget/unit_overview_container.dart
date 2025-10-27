@@ -95,9 +95,9 @@ class UnitOverviewContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.25),
+              blurRadius: 4,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -218,12 +218,15 @@ class UnitOverviewContainer extends StatelessWidget {
                       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(height: ResponsiveSize.scaleHeight(8)),
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontFamily: 'outfit',
-                            fontSize: ResponsiveSize.text(10),
-                            color: Color(int.parse(fontColor)),
+                        Container(
+                          height: ResponsiveSize.scaleHeight(25),
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              fontFamily: 'outfit',
+                              fontSize: ResponsiveSize.text(10),
+                              color: Color(int.parse(fontColor)),
+                            ),
                           ),
                         ),
                         SizedBox(height: ResponsiveSize.scaleHeight(8)),
@@ -304,8 +307,8 @@ class UnitOverviewContainer extends StatelessWidget {
                     formattedMonthlyProfit,
                     '$shortMonth $year',
                     '0xFFFFFFFF',
-                    '0xFF000000',
-                    '0xFF000241',
+                    '0xFF606060',
+                    '0xFF606060',
                     Image.asset(
                       'assets/images/wallet_property.png',
                       width: ResponsiveSize.scaleWidth(20),
@@ -319,15 +322,15 @@ class UnitOverviewContainer extends StatelessWidget {
                     'Net Profit After POB',
                     formattedNetProfit,
                     '$shortMonth $year',
-                    '0xFF000241',
                     '0xFFFFFFFF',
-                    '0xFFFFFFFF',
+                    '0xFF606060',
+                    '0xFF606060',
                     Image.asset(
                       'assets/images/property_net_profit.png',
                       width: ResponsiveSize.scaleWidth(20),
                       height: ResponsiveSize.scaleWidth(20),
                       fit: BoxFit.contain,
-                      color: Color(int.parse('0xFF000241')),
+                      color: Color(int.parse('0xFFFFCF00')),
                     ),
                   ),
                 ],
@@ -340,15 +343,15 @@ class UnitOverviewContainer extends StatelessWidget {
                     '$year Accumulated Profit',
                     formattedNetProfit,
                     '$shortMonth $year',
-                    '0xFF000241',
                     '0xFFFFFFFF',
-                    '0xFFFFFFFF',
+                    '0xFF606060',
+                    '0xFF606060',
                     Image.asset(
                       'assets/images/property_accumulated.png',
                       width: ResponsiveSize.scaleWidth(20),
                       height: ResponsiveSize.scaleWidth(20),
                       fit: BoxFit.contain,
-                      color: Color(int.parse('0xFF000241')),
+                      color: Color(int.parse('0xFFFFCF00')),
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -358,7 +361,7 @@ class UnitOverviewContainer extends StatelessWidget {
                     '$shortMonth $year',
                     '0xFFFFFFFF',
                     '0xFF000000',
-                    '0xFF000241',
+                    '0xFF606060',
                     Image.asset(
                       'assets/images/property_occupancy.png',
                       width: ResponsiveSize.scaleWidth(20),
@@ -370,31 +373,31 @@ class UnitOverviewContainer extends StatelessWidget {
               ),
             ],
           ),
-          // Circle in the center, overlaying the cards
-          Container(
-            width: ResponsiveSize.scaleWidth(20),
-            height: ResponsiveSize.scaleWidth(20),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: SweepGradient(
-                colors: [
-                  Color(int.parse('0xFFFFFFFF')),
-                  Color(int.parse('0xFF000241')),
-                  Color(int.parse('0xFFFFFFFF')),
-                  Color(int.parse('0xFF000241')),
-                ],
-                startAngle: 0.0,
-                endAngle: 3.14 * 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-          ),
+          // // Circle in the center, overlaying the cards
+          // Container(
+          //   width: ResponsiveSize.scaleWidth(20),
+          //   height: ResponsiveSize.scaleWidth(20),
+          //   decoration: BoxDecoration(
+          //     shape: BoxShape.circle,
+          //     gradient: SweepGradient(
+          //       colors: [
+          //         Color(int.parse('0xFFFFFFFF')),
+          //         Color(int.parse('0xFF606060')),
+          //         Color(int.parse('0xFFFFFFFF')),
+          //         Color(int.parse('0xFF606060')),
+          //       ],
+          //       startAngle: 0.0,
+          //       endAngle: 3.14 * 2,
+          //     ),
+          //     boxShadow: [
+          //       BoxShadow(
+          //         color: Colors.black.withOpacity(0.2),
+          //         blurRadius: 4,
+          //         offset: const Offset(0, 2),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

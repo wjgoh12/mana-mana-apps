@@ -9,15 +9,48 @@ import 'package:mana_mana_app/provider/api_service.dart';
 
 class PropertyListRepository {
   final ApiService _apiService = ApiService();
+  Future<List<OwnerPropertyList>> getOwnerUnit({String? email}) async {
+    // If an email is provided, pass it to the API so the backend can
+    // return owner units for that email (useful for impersonation flows).
+    final Map<String, dynamic>? data =
+        (email != null && email.isNotEmpty) ? {'email': email} : null;
 
-  Future<List<OwnerPropertyList>> getOwnerUnit() async {
-    return await _apiService.post(ApiEndpoint.ownerUnit).then((res) {
+    debugPrint('🏢 getOwnerUnit called with email: $email, data: $data');
+
+    return await _apiService
+        .post(ApiEndpoint.ownerUnit, data: data)
+        .then((res) {
+      debugPrint('🏢 getOwnerUnit response received: ${res?.length} items');
       List<dynamic> value = res ?? [];
       List<OwnerPropertyList> _ = [];
       for (int i = 0; i < value.length; i++) {
         _.add(OwnerPropertyList.fromJson(value[i], i, _apiService.baseUrl));
       }
       _.sort((a, b) => a.lseqid.compareTo(b.lseqid));
+      debugPrint('🏢 getOwnerUnit returning ${_.length} sorted units');
+      return _;
+    });
+  }
+
+  Future<List<OwnerPropertyList>> getSwitchedOwnerUnit({String? email}) async {
+    // If an email is provided, pass it to the API so the backend can
+    // return owner units for that email (useful for impersonation flows).
+    final Map<String, dynamic>? data =
+        (email != null && email.isNotEmpty) ? {'email': email} : null;
+
+    debugPrint('🏢 getOwnerUnit called with email: $email, data: $data');
+
+    return await _apiService
+        .post(ApiEndpoint.ownerUnit, data: data)
+        .then((res) {
+      debugPrint('🏢 getOwnerUnit response received: ${res?.length} items');
+      List<dynamic> value = res ?? [];
+      List<OwnerPropertyList> _ = [];
+      for (int i = 0; i < value.length; i++) {
+        _.add(OwnerPropertyList.fromJson(value[i], i, _apiService.baseUrl));
+      }
+      _.sort((a, b) => a.lseqid.compareTo(b.lseqid));
+      debugPrint('🏢 getOwnerUnit returning ${_.length} sorted units');
       return _;
     });
   }

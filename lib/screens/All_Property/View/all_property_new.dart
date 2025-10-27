@@ -301,7 +301,7 @@ Widget _quickLinks(BuildContext context) {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF000241),
+                    color: Color(0xFFFFFFFF),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -334,11 +334,11 @@ Widget _quickLinks(BuildContext context) {
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                 CircleAvatar(
                                   radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: Color(0xFF606060),
                                   child: Image.asset(
                                     'assets/images/Calendar_booking.png',
-                                    width: ResponsiveSize.scaleWidth(30),
-                                    height: ResponsiveSize.scaleWidth(30),
+                                    width: ResponsiveSize.scaleWidth(20),
+                                    height: ResponsiveSize.scaleWidth(20),
                                     fit: BoxFit.contain,
                                   ),
                                 ),
@@ -349,7 +349,7 @@ Widget _quickLinks(BuildContext context) {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: ResponsiveSize.text(12),
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontWeight: FontWeight.w700,
                                     fontFamily: 'Outfit',
                                   ),
@@ -383,7 +383,7 @@ Widget _quickLinks(BuildContext context) {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF000241),
+                    color: Color(0xFFFFFFFF),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -424,7 +424,7 @@ Widget _quickLinks(BuildContext context) {
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                 CircleAvatar(
                                   radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: Color(0XFF606060),
                                   child: Image.asset(
                                     'assets/images/pillow_free_redemption.png',
                                     width: ResponsiveSize.scaleWidth(25),
@@ -441,7 +441,7 @@ Widget _quickLinks(BuildContext context) {
                                     fontSize: ResponsiveSize.text(12),
                                     fontFamily: 'Outfit',
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ],
@@ -831,9 +831,12 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
           child: Row(
             children: [
               SizedBox(width: ResponsiveSize.scaleWidth(8)),
-              Image.asset('assets/images/building.png',
-                  width: ResponsiveSize.scaleWidth(30),
-                  height: ResponsiveSize.scaleWidth(30)),
+              CircleAvatar(
+                backgroundColor: Color(0xFF606060),
+                child: Image.asset('assets/images/building.png',
+                    width: ResponsiveSize.scaleWidth(20),
+                    height: ResponsiveSize.scaleWidth(20)),
+              ),
               SizedBox(width: ResponsiveSize.scaleWidth(8)),
               Expanded(
                 child: DropdownButtonHideUnderline(
@@ -933,9 +936,12 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
           child: Row(
             children: [
               SizedBox(width: ResponsiveSize.scaleWidth(8)),
-              Image.asset('assets/images/unit.png',
-                  width: ResponsiveSize.scaleWidth(30),
-                  height: ResponsiveSize.scaleWidth(30)),
+              CircleAvatar(
+                backgroundColor: Color(0xFF606060),
+                child: Image.asset('assets/images/unit.png',
+                    width: ResponsiveSize.scaleWidth(20),
+                    height: ResponsiveSize.scaleWidth(20)),
+              ),
               SizedBox(width: ResponsiveSize.scaleWidth(8)),
               Expanded(
                 child: DropdownButtonHideUnderline(

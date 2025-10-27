@@ -137,24 +137,27 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: LayoutBuilder(builder: (context, constraints) {
-        const itemCount = 4;
+        const itemCount = 3;
         final totalWidth = constraints.maxWidth;
         final itemWidth = totalWidth / itemCount;
         final indicatorSize = 70.fSize;
 
         return Container(
-          height: 80,
-          width: 320.fSize,
-          margin: EdgeInsets.all(16.fSize),
+          height: 70,
+          width: constraints.maxWidth *
+              0.78, // Use 80% of available width for responsive narrowing
+
+          //use margins to adjust the width
+          margin:
+              EdgeInsets.symmetric(horizontal: 85.fSize, vertical: 20.fSize),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                spreadRadius: 2,
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                color: Colors.grey.withOpacity(0.4),
+                blurRadius: 4,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -191,14 +194,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         decoration: isSelected
             ? const BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0XFF000241),
-                    Color(0xFF00047B),
-                  ],
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                ),
+                color: Color(0xFF606060),
               )
             : null,
         child: Container(

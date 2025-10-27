@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
@@ -83,7 +84,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         child: Text(
                           'Profile',
                           style: TextStyle(
-                            color: const Color(0xFF000241),
+                            color: const Color(0xFF606060),
                             fontFamily: 'outfit',
                             fontSize: ResponsiveSize.text(20),
                             fontWeight: FontWeight.w700,
@@ -102,6 +103,40 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         //       colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
                         //     )),
                         ),
+                    Spacer(),
+                    // Logout button
+                    TextButton(
+                      onPressed: _isLoggingOut ? null : _handleLogout,
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                color: Color(0xFF606060), width: 2),
+                          ),
+                        ),
+                      ),
+                      child: _isLoggingOut
+                          ? SizedBox(
+                              width: ResponsiveSize.scaleWidth(16),
+                              height: ResponsiveSize.scaleHeight(16),
+                              child: const CircularProgressIndicator(
+                                  strokeWidth: 2),
+                            )
+                          : Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: ResponsiveSize.scaleWidth(10)),
+                              child: const Text(
+                                'Logout',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  color: Color(0xFF606060),
+                                ),
+                              ),
+                            ),
+                    ),
                   ],
                 ),
               ),
@@ -165,27 +200,12 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                           .ownerFullName ??
                                                       '',
                                                   style: TextStyle(
-                                                    fontFamily: 'outfit',
-                                                    fontSize:
-                                                        responsiveFont(20),
-                                                    fontWeight: FontWeight.bold,
-                                                    foreground: Paint()
-                                                      ..shader =
-                                                          const LinearGradient(
-                                                        colors: [
-                                                          Color(0xFF000241),
-                                                          Color(0xFF0A009C),
-                                                        ],
-                                                        begin: Alignment
-                                                            .bottomLeft,
-                                                        end: Alignment.topRight,
-                                                      ).createShader(const Rect
-                                                              .fromLTWH(
-                                                              0.0,
-                                                              0.0,
-                                                              300.0,
-                                                              100.0)),
-                                                  ),
+                                                      fontFamily: 'outfit',
+                                                      fontSize:
+                                                          responsiveFont(20),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Color(0xFF606060)),
                                                   maxLines: 2,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -215,7 +235,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                   CircleAvatar(
                                     radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF010367),
+                                    backgroundColor: const Color(0xFF606060),
                                     child: Image.asset(
                                       'assets/images/ic_icon.png',
                                       width: ResponsiveSize.scaleWidth(25),
@@ -237,18 +257,19 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             fontWeight: FontWeight.w400),
                                       ),
                                       SizedBox(width: responsiveWidth(8)),
-                    model.users.isNotEmpty
-                      ? Text(
-                        '000000-00-0000',
-                        maxLines: 6,
-                        overflow: TextOverflow.visible,
-                        softWrap: true,
-                        style: TextStyle(
-                          fontFamily: 'outfit',
-                          fontSize: ResponsiveSize.text(12),
-                          fontWeight: FontWeight.w400),
-                      )
-                      : const Text('Loading...'),
+                                      model.users.isNotEmpty
+                                          ? Text(
+                                              '000000-00-0000',
+                                              maxLines: 6,
+                                              overflow: TextOverflow.visible,
+                                              softWrap: true,
+                                              style: TextStyle(
+                                                  fontFamily: 'outfit',
+                                                  fontSize:
+                                                      ResponsiveSize.text(12),
+                                                  fontWeight: FontWeight.w400),
+                                            )
+                                          : const Text('Loading...'),
                                     ],
                                   ),
                                 ],
@@ -261,7 +282,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                   CircleAvatar(
                                     radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF010367),
+                                    backgroundColor: const Color(0xFF606060),
                                     child: Image.asset(
                                       'assets/images/profile_personal_email.png',
                                       width: ResponsiveSize.scaleWidth(25),
@@ -328,7 +349,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                     ResponsiveSize.scaleWidth(
                                                         20),
                                                 backgroundColor:
-                                                    const Color(0xFF010367),
+                                                    const Color(0xFF606060),
                                                 child: Image.asset(
                                                   'assets/images/profile_phone.png',
                                                   color:
@@ -401,7 +422,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                       color: const Color(0xFFFFFFFF),
                                     ),
                                     radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF010367),
+                                    backgroundColor: const Color(0xFF606060),
                                   ),
                                   SizedBox(
                                       width: ResponsiveSize.scaleWidth(10)),
@@ -462,7 +483,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                   CircleAvatar(
                                     radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF010367),
+                                    backgroundColor: const Color(0xFF606060),
                                     child: Image.asset(
                                         'assets/images/profile_card.png',
                                         color: const Color(0xFFFFFFFF)),
@@ -502,7 +523,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                       width: ResponsiveSize.scaleWidth(10)),
                                   CircleAvatar(
                                     radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF010367),
+                                    backgroundColor: const Color(0xFF606060),
                                     child: Image.asset(
                                       'assets/images/profile_card.png',
                                       color: const Color(0xFFFFFFFF),
@@ -600,12 +621,13 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                       CircleAvatar(
                                         radius: 25,
                                         backgroundColor:
-                                            const Color(0xFFE9F6FF),
+                                            const Color(0xFFFFCF00),
                                         child: Image.asset(
-                                          'assets/images/profile_email.png',
-                                          width: 42.fSize,
-                                          height: 42.fSize,
-                                        ),
+                                            'assets/images/profile_email.png',
+                                            width:
+                                                ResponsiveSize.scaleWidth(20),
+                                            height:
+                                                ResponsiveSize.scaleHeight(20)),
                                       ),
                                       SizedBox(width: 20.fSize),
                                       Text(
@@ -637,11 +659,13 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                       CircleAvatar(
                                         radius: 25,
                                         backgroundColor:
-                                            const Color(0xFFFBF6FE),
+                                            const Color(0xFFFFCF00),
                                         child: Image.asset(
                                           'assets/images/profile_telephone.png',
-                                          width: 42.fSize,
-                                          height: 42.fSize,
+                                          width: ResponsiveSize.scaleWidth(20),
+                                          height:
+                                              ResponsiveSize.scaleHeight(20),
+                                          color: Color(0xFF606060),
                                         ),
                                       ),
                                       SizedBox(width: 20.fSize),
@@ -675,12 +699,14 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                       CircleAvatar(
                                         radius: 25,
                                         backgroundColor:
-                                            const Color(0xFFE9FFEB),
+                                            const Color(0xFF42C18B),
                                         child: Image.asset(
-                                          'assets/images/profile_whatsapp.png',
-                                          width: 42.fSize,
-                                          height: 42.fSize,
-                                        ),
+                                            'assets/images/profile_whatsapp.png',
+                                            width:
+                                                ResponsiveSize.scaleWidth(20),
+                                            height:
+                                                ResponsiveSize.scaleHeight(20),
+                                            color: Color(0xFFE4FFE6)),
                                       ),
                                       SizedBox(width: 20.fSize),
                                       Text(
@@ -712,6 +738,250 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               TextButton(
                                 onPressed: () {
                                   // TODO: implement actual switch user action
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      // Use StatefulBuilder to manage dialog-local state
+                                      return StatefulBuilder(
+                                        builder: (context, setState) {
+                                          final TextEditingController
+                                              _emailController =
+                                              TextEditingController();
+                                          bool _isProcessing = false;
+                                          String? _validationMessage;
+
+                                          // Wrap in WillPopScope so we can dispose controller when dialog closes
+                                          return Dialog(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12)),
+                                              padding: const EdgeInsets.all(16),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const Text(
+                                                    'Switch User',
+                                                    style: TextStyle(
+                                                        fontFamily: 'outfit',
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  SizedBox(height: 12.fSize),
+                                                  TextField(
+                                                    controller:
+                                                        _emailController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      labelText:
+                                                          'Enter User Email',
+                                                      labelStyle:
+                                                          const TextStyle(
+                                                        fontFamily: 'outfit',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 12),
+                                                  if (_validationMessage !=
+                                                      null)
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              bottom: 8.0),
+                                                      child: Text(
+                                                        _validationMessage!,
+                                                        style: const TextStyle(
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      TextButton(
+                                                        style: ButtonStyle(
+                                                          backgroundColor:
+                                                              MaterialStateProperty
+                                                                  .all(Colors
+                                                                      .white),
+                                                        ),
+                                                        onPressed: () async {
+                                                          // Cancel impersonation on server
+                                                          await model
+                                                              .cancelUser();
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: Text('Cancel',
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    'Outfit')),
+                                                      ),
+                                                      SizedBox(width: 8),
+                                                      ElevatedButton(
+                                                        onPressed: () async {
+                                                          final email =
+                                                              _emailController
+                                                                  .text
+                                                                  .trim();
+                                                          if (email.isEmpty) {
+                                                            setState(() {
+                                                              _validationMessage =
+                                                                  'Please enter an email.';
+                                                            });
+                                                            return;
+                                                          }
+
+                                                          // First validate the requested email with server.
+                                                          final validateRes =
+                                                              await model
+                                                                  .validateSwitchUser(
+                                                                      email);
+
+                                                          if (validateRes[
+                                                                  'success'] ==
+                                                              false) {
+                                                            setState(() {
+                                                              _validationMessage =
+                                                                  validateRes['body']
+                                                                          ?.toString() ??
+                                                                      'Email is not allowed to be switched.';
+                                                            });
+                                                            return;
+                                                          }
+
+                                                          // Ask user to confirm before switching. The
+                                                          // confirmation dialog performs the switch and
+                                                          // shows loading while the operation runs. It
+                                                          // returns true on success.
+                                                          final doSwitch =
+                                                              await showDialog<
+                                                                  bool>(
+                                                            context: context,
+                                                            builder: (ctx) =>
+                                                                StatefulBuilder(
+                                                              builder: (ctx,
+                                                                  setStateDialog) {
+                                                                bool isLoading =
+                                                                    false;
+                                                                String?
+                                                                    dialogError;
+
+                                                                return AlertDialog(
+                                                                  title: const Text(
+                                                                      'Confirm Switch',
+                                                                      style: TextStyle(
+                                                                          fontFamily:
+                                                                              'Outfit')),
+                                                                  content:
+                                                                      Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                      Text(
+                                                                          'Are you sure you want to switch to "${email}"?',
+                                                                          style:
+                                                                              const TextStyle(fontFamily: 'Outfit')),
+                                                                      if (dialogError !=
+                                                                          null)
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              top: 8.0),
+                                                                          child: Text(
+                                                                              dialogError,
+                                                                              style: const TextStyle(color: Colors.red)),
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed: isLoading
+                                                                          ? null
+                                                                          : () =>
+                                                                              Navigator.of(ctx).pop(false),
+                                                                      child: const Text(
+                                                                          'No',
+                                                                          style:
+                                                                              TextStyle(fontFamily: 'Outfit')),
+                                                                    ),
+                                                                    TextButton(
+                                                                      onPressed: isLoading
+                                                                          ? null
+                                                                          : () async {
+                                                                              setStateDialog(() {
+                                                                                isLoading = true;
+                                                                                dialogError = null;
+                                                                              });
+
+                                                                              // Start a temporary, client-side impersonation
+                                                                              // that clears the current account data immediately
+                                                                              // and loads the requested email in the background.
+                                                                              await model.startTemporaryImpersonation(email);
+
+                                                                              if (!mounted)
+                                                                                return;
+
+                                                                              // Close dialog on success (background load in progress)
+                                                                              Navigator.of(ctx).pop(true);
+                                                                            },
+                                                                      child: isLoading
+                                                                          ? SizedBox(
+                                                                              width: 20,
+                                                                              height: 20,
+                                                                              child: const CircularProgressIndicator(strokeWidth: 2))
+                                                                          : const Text('Yes', style: TextStyle(fontFamily: 'Outfit')),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            ),
+                                                          );
+
+                                                          if (doSwitch != true)
+                                                            return;
+
+                                                          // Switch succeeded inside the confirmation dialog.
+                                                          // Close the Switch User dialog and navigate to
+                                                          // the refreshed dashboard.
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          // ignore: use_build_context_synchronously
+                                                          Navigator.of(context)
+                                                              .pushAndRemoveUntil(
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (_) =>
+                                                                              const NewDashboardV3()),
+                                                                  (route) =>
+                                                                      false);
+                                                        },
+                                                        child: _isProcessing
+                                                            ? CircularProgressIndicator(
+                                                                strokeWidth: 2)
+                                                            : Text('Confirm',
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        'Outfit')),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+
                                   debugPrint('Switch User pressed');
                                 },
                                 style: ButtonStyle(
@@ -721,7 +991,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       side: const BorderSide(
-                                          color: Color(0xFF000241), width: 2),
+                                          color: Color(0xFF606060), width: 2),
                                     ),
                                   ),
                                 ),
@@ -729,42 +999,12 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   'Switch User',
                                   style: TextStyle(
                                     fontFamily: 'outfit',
-                                    color: Color(0xFF000241),
+                                    color: Color(0xFF606060),
                                   ),
                                 ),
                               ),
                               SizedBox(width: ResponsiveSize.scaleWidth(12)),
                             ],
-
-                            // Logout button
-                            TextButton(
-                              onPressed: _isLoggingOut ? null : _handleLogout,
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.white),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    side: const BorderSide(
-                                        color: Color(0xFF000241), width: 2),
-                                  ),
-                                ),
-                              ),
-                              child: _isLoggingOut
-                                  ? const SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2),
-                                    )
-                                  : const Text(
-                                      'Logout',
-                                      style: TextStyle(
-                                        fontFamily: 'outfit',
-                                        color: Color(0xFF000241),
-                                      ),
-                                    ),
-                            ),
                           ],
                         ),
                         SizedBox(height: 35.fSize),
@@ -781,8 +1021,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               decoration: BoxDecoration(
                                 border:
                                     Border.all(color: const Color(0xFF3E51FF)),
-                                color:
-                                    const Color(0xFF3E51FF).withOpacity(0.15),
+                                color: const Color(0xFF606060),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Container(
@@ -806,9 +1045,9 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                     'Terms and Conditions',
                                     style: TextStyle(
                                       fontFamily: 'outfit',
-                                      fontSize: ResponsiveSize.text(10),
+                                      fontSize: ResponsiveSize.text(9),
                                       fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF3E51FF),
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -821,8 +1060,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               decoration: BoxDecoration(
                                 border:
                                     Border.all(color: const Color(0xFF3E51FF)),
-                                color:
-                                    const Color(0xFF3E51FF).withOpacity(0.15),
+                                color: const Color(0xFF606060),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: TextButton(
@@ -842,7 +1080,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                     fontFamily: 'outfit',
                                     fontSize: ResponsiveSize.text(11),
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF3E51FF),
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
@@ -906,5 +1144,3 @@ Widget buildInfoInRow(String info) {
     ),
   );
 }
-
-// Note: helper widgets removed because they're unused in this view.

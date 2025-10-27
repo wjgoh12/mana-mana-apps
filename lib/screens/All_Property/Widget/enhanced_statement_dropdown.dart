@@ -93,7 +93,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               style: TextStyle(
                 fontFamily: 'Outfit',
                 fontSize: ResponsiveSize.text(13),
-                color: Colors.black87,
+                color: Color(0xFF606060),
               ),
               buttonStyleData: ButtonStyleData(
                 height: 40,
@@ -137,7 +137,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                     ),
                   ],
                 ),
-                offset: const Offset(0, 5),
+                offset: const Offset(0, 6),
               ),
               items: [
                 // Add "All" option
@@ -184,7 +184,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               style: TextStyle(
                 fontFamily: 'Outfit',
                 fontSize: ResponsiveSize.text(12),
-                color: Colors.black87,
+                color: Color(0xFF606060),
               ),
               buttonStyleData: ButtonStyleData(
                 height: 40,

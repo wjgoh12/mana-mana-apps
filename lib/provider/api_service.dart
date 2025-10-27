@@ -48,8 +48,10 @@ class ApiService {
     try {
       return json.decode(response.body);
     } catch (e) {
-      debugPrint("❌ JSON decode error: $e");
-      return null;
+      // If the response isn't JSON (plain text like "Now viewing as: ..."),
+      // return the raw body so callers can parse or inspect it.
+      debugPrint("❌ JSON decode error (returning raw body): $e");
+      return response.body;
     }
   }
 
@@ -117,8 +119,9 @@ class ApiService {
     try {
       return json.decode(response.body);
     } catch (e) {
-      // debugPrint("❌ JSON decode error: $e");
-      return null;
+      // If not JSON, return raw body so higher-level code can handle text
+      debugPrint("❌ JSON decode error (returning raw body): $e");
+      return response.body;
     }
   }
 

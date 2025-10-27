@@ -438,7 +438,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               Text(
                 'Select Date and Room',
                 style: TextStyle(
-                  color: const Color(0xFF000241),
+                  color: const Color(0xFF606060),
                   fontFamily: 'outfit',
                   fontSize: ResponsiveSize.text(18),
                   fontWeight: FontWeight.w700,
@@ -475,7 +475,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             Text(
               'Select Date and Room',
               style: TextStyle(
-                color: const Color(0xFF000241),
+                color: const Color(0xFF606060),
                 fontFamily: 'outfit',
                 fontSize: ResponsiveSize.text(18),
                 fontWeight: FontWeight.w700,
@@ -494,7 +494,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 const SizedBox(height: 3),
                 Container(
                   decoration: const BoxDecoration(
-                    color: Color(0xFF010367),
+                    color: Color(0xFF606060),
                   ),
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -504,7 +504,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         Padding(
                           padding: EdgeInsets.only(left: 18),
                           child: Text(
-                            '* The yellow circle indicates the peak dates',
+                            '* The yellow icon indicates the peak dates',
                             style: TextStyle(
                               fontSize: 14,
                               color: Color(0xFFFFCF00),
@@ -633,7 +633,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     calendarStyle: CalendarStyle(
                       outsideDaysVisible: false,
                       selectedDecoration: const BoxDecoration(
-                        color: Color(0xFF010367),
+                        color: Color(0xFF606060),
                         shape: BoxShape.circle,
                       ),
                       todayDecoration: BoxDecoration(
@@ -641,13 +641,15 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         shape: BoxShape.circle,
                       ),
                       rangeStartDecoration: BoxDecoration(
-                        color: const Color(0xFF010367).withOpacity(1),
-                        shape: BoxShape.circle,
+                        color: const Color(0xFF606060).withOpacity(1),
+                        shape: BoxShape.rectangle,
                       ),
                       rangeEndDecoration: BoxDecoration(
-                        color: const Color(0xFF010367).withOpacity(1),
-                        shape: BoxShape.circle,
+                        color: const Color(0xFF606060).withOpacity(1),
+                        shape: BoxShape.rectangle,
                       ),
+                      rangeHighlightColor:
+                          const Color(0xFF606060).withOpacity(0.2),
                     ),
                     onPageChanged: (focusedDay) => _focusedDay = focusedDay,
                   ),
@@ -787,7 +789,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         fontSize: ResponsiveSize.text(16),
                         fontFamily: 'outfit',
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF010367),
+                        color: const Color(0xFF606060),
                       ),
                     ),
                   ),
@@ -806,7 +808,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         backgroundColor: MaterialStateProperty.all(
                           dataIsStale
                               ? Colors.grey.shade300
-                              : const Color(0xFF010367),
+                              : const Color(0xFF606060),
                         ),
                         fixedSize:
                             MaterialStateProperty.all(const Size(300, 40)),
@@ -882,7 +884,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     : '-',
                 style: const TextStyle(
                   fontSize: 14,
-                  color: Color(0xFF010367),
+                  color: Color(0xFF606060),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -919,7 +921,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
           Text(
             formattedPoints,
             style: TextStyle(
-              color: const Color(0xFF010367),
+              color: const Color(0xFF606060),
               fontSize: ResponsiveSize.text(15),
               fontWeight: FontWeight.bold,
             ),

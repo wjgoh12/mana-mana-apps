@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/occupancy_rate.dart';
@@ -7,6 +9,8 @@ import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 
 class GlobalDataManager extends ChangeNotifier {
   static final GlobalDataManager _instance = GlobalDataManager._internal();
@@ -35,6 +39,16 @@ class GlobalDataManager extends ChangeNotifier {
   List<String> _availableStates = [];
   Map<String, List<PropertyState>> _locationsByState = {};
   List<OccupancyRate> _occupancyRateHistory = [];
+  // Keep snapshot of admin/original state before impersonation
+  List<User> _originalUsersBackup = [];
+  List<OwnerPropertyList> _originalOwnerUnits = [];
+  bool _isImpersonating = false;
+
+  // Variable to store the original user before impersonation
+  User? _originalUser;
+
+  // Impersonation state: when set, user data will be fetched by this email
+  String? _impersonatedEmail;
 
   // Add new state properties
   bool _isLoadingStates = false;
@@ -66,6 +80,7 @@ class GlobalDataManager extends ChangeNotifier {
   bool get isLoadingStates => _isLoadingStates;
   bool get isLoadingLocations => _isLoadingLocations;
   String? get selectedState => _selectedState;
+  String? get impersonatedEmail => _impersonatedEmail;
 
   // Method to clear location loading flag after preload completes
   void clearLocationLoadingFlag() {
@@ -131,27 +146,59 @@ class GlobalDataManager extends ChangeNotifier {
   }
 
   Future<void> _fetchAllData() async {
-    // Fetch users
-    _users = await _userRepository.getUsers();
+    debugPrint('🔄 _fetchAllData start; impersonatedEmail=$_impersonatedEmail');
 
-    // Fetch owner units
-    _ownerUnits = await _propertyRepository.getOwnerUnit();
+    // STEP 1️⃣ — Handle User Data
+    if (_impersonatedEmail != null && _impersonatedEmail!.isNotEmpty) {
+      // Try to fetch the real user profile for the impersonated email.
+      // If backend returns a matching user, use it. Otherwise fall back to
+      // the normal (admin) user to avoid mixing data.
+      try {
+        final switched =
+            await _userRepository.getSwitchedUser(_impersonatedEmail!);
+        if (switched.isNotEmpty &&
+            (switched.first.email ?? '').toLowerCase() ==
+                _impersonatedEmail!.toLowerCase()) {
+          _users = [switched.first];
+          debugPrint(
+              '✅ Impersonation: backend returned full profile for $_impersonatedEmail');
+        } else {
+          debugPrint(
+              '⚠️ Backend did not return impersonated profile for $_impersonatedEmail; falling back to admin user.');
+          _users = await _userRepository.getUsers();
+        }
+      } catch (e) {
+        debugPrint('⚠️ Error fetching impersonated user: $e');
+        _users = await _userRepository.getUsers();
+      }
+    } else {
+      // No impersonation → normal flow
+      _users = await _userRepository.getUsers();
+    }
 
-    // Fetch unit by month data
+    debugPrint(
+        '👤 Active user: ${_users.isNotEmpty ? _users.first.email : 'none'}');
+
+    // STEP 2️⃣ — Fetch everything else using that impersonated email
+    final targetEmail =
+        _impersonatedEmail?.isNotEmpty == true ? _impersonatedEmail : null;
+
+    _ownerUnits = await _propertyRepository.getOwnerUnit(email: targetEmail);
+    debugPrint('🏢 ownerUnits count=${_ownerUnits.length}');
+
     _unitByMonth = await _propertyRepository.getUnitByMonth();
-
-    // Fetch revenue dashboard
     _revenueDashboard = await _propertyRepository.revenueByYear();
-
-    // Fetch total by month
     _totalByMonth = await _propertyRepository.totalByMonth();
-
-    // Fetch location by month
     _locationByMonth = await _propertyRepository.locationByMonth();
 
-    // Fetch property contract type
+    if (targetEmail != null) {
+      _users = await _userRepository.getSwitchedUser(targetEmail);
+    } else {
+      _users = await _userRepository.getUsers();
+    }
+
     try {
-      final email = _users.isNotEmpty ? _users.first.email ?? '' : '';
+      final email = targetEmail ?? '';
       final contractResponse =
           await _propertyRepository.getPropertyContractType(email: email);
       _propertyContractType = List<Map<String, dynamic>>.from(contractResponse);
@@ -159,29 +206,29 @@ class GlobalDataManager extends ChangeNotifier {
       print('Error fetching property contract type: $e');
       _propertyContractType = [];
     }
+
     await _fetchPropertyOccupancy();
     await _fetchInitialOccupancyHistory();
 
-    // Enrich locationByMonth with owner data
+    // Add owners info to locationByMonth
     for (var location in _locationByMonth) {
       List<Map<String, dynamic>> ownersForLocation = _propertyContractType
-          .where((property) => property['location'] == location['location'])
+          .where((p) => p['location'] == location['location'])
           .toList();
 
-      location['owners'] = ownersForLocation.map((property) {
+      location['owners'] = ownersForLocation.map((p) {
         return {
-          'ownerName': property['ownerName'],
-          'coOwnerName': property['coOwnerName'],
-          'unitNo': property['unitNo'],
-          'contractType': property['contractType'],
-          'endDate': property['endDate'],
-          'startDate': property['startDate'],
+          'ownerName': p['ownerName'],
+          'coOwnerName': p['coOwnerName'],
+          'unitNo': p['unitNo'],
+          'contractType': p['contractType'],
+          'endDate': p['endDate'],
+          'startDate': p['startDate'],
         };
       }).toList();
     }
 
-    // Fetch property occupancy for each location
-    await _fetchPropertyOccupancy();
+    debugPrint('✅ _fetchAllData finished for $targetEmail');
   }
 
   Future<void> _fetchPropertyOccupancy() async {
@@ -225,6 +272,54 @@ class GlobalDataManager extends ChangeNotifier {
   // Refresh data
   Future<void> refreshData() async {
     await initializeData(forceRefresh: true);
+  }
+
+  /// Create a lightweight snapshot of current key data so impersonation can be reverted.
+  Map<String, dynamic> createSnapshot() {
+    return {
+      'users': _users
+          .map((u) => {
+                'email': u.email,
+                'firstName': u.firstName,
+                'lastName': u.lastName,
+                'token': u.token,
+                'role': u.role,
+                'ownerEmail': u.ownerEmail,
+                'ownerFullName': u.ownerFullName,
+                'ownerContact': u.ownerContact,
+                'ownerAddress': u.ownerAddress,
+              })
+          .toList(),
+      'impersonatedEmail': _impersonatedEmail,
+      // Note: ownerUnits and other large structures are intentionally omitted
+      // to keep the snapshot small. They will be re-fetched when restoring.
+    };
+  }
+
+  /// Restore a snapshot created by [createSnapshot]. This will overwrite in-memory users and impersonation flag.
+  void restoreSnapshot(Map<String, dynamic> snapshot) {
+    try {
+      final usersList = snapshot['users'] as List<dynamic>? ?? [];
+      _users = usersList.map((m) {
+        final mm = Map<String, dynamic>.from(m as Map);
+        return User.fromJson(mm);
+      }).toList();
+
+      _impersonatedEmail = snapshot['impersonatedEmail'] as String?;
+      // Re-fetch other cached data when needed by callers
+      notifyListeners();
+    } catch (e) {
+      debugPrint('❌ Failed to restore snapshot: $e');
+    }
+  }
+
+  /// Apply an impersonated user object so the UI shows the impersonated account immediately.
+  void applyImpersonatedUser(User u) {
+    _users = [u];
+    _impersonatedEmail = u.email;
+    // Clear caches that are specific to a user so re-fetch will use the impersonated email
+    resetAllData();
+    notifyListeners();
   }
 
   // Helper methods for accessing specific data
@@ -446,6 +541,13 @@ class GlobalDataManager extends ChangeNotifier {
     await initializeData(forceRefresh: true);
   }
 
+  /// Set or clear impersonation target email.
+  /// When set, subsequent initializeData will fetch user data for this email.
+  void setImpersonatedEmail(String? email) {
+    _impersonatedEmail = email;
+    debugPrint('🔐 GlobalDataManager.setImpersonatedEmail -> $email');
+  }
+
   Future<void> _fetchInitialOccupancyHistory() async {
     try {
       if (_ownerUnits.isNotEmpty) {
@@ -639,34 +741,42 @@ class GlobalDataManager extends ChangeNotifier {
 
   // Clear selection cache method
   void clearSelectionCache() {
-    // Clear any selection-related cached data
-    // Reset any selection state variables you might have
-
     debugPrint("✅ Selection cache cleared in GlobalDataManager");
     notifyListeners();
   }
 
   // Clear previous selections method
   void clearPreviousSelections() {
-    // Clear any previous selection data that might interfere with new selections
-
     debugPrint("✅ Previous selections cleared in GlobalDataManager");
     notifyListeners();
   }
 
   // Optional: Complete reset method
   void resetAllData() {
-    // Complete reset of all cached data
+    // Clear all cached data (same as clearAllData but without resetting _isInitialized)
     _users.clear();
     _ownerUnits.clear();
+    _unitByMonth.clear();
+    _revenueDashboard.clear();
+    _totalByMonth.clear();
+    _locationByMonth.clear();
+    _propertyContractType.clear();
+    _propertyOccupancy.clear();
+    _occupancyRateHistory.clear();
+
     _availableStates.clear();
     _locationsByState.clear();
     _filteredLocationCache.clear();
-
-    // Reset any other state variables you have
     _selectedState = null;
 
     debugPrint("✅ All data reset in GlobalDataManager");
+    notifyListeners();
+  }
+
+  void setUsers(List<User> users) {
+    _users = List<User>.from(users);
+    debugPrint(
+        '🔐 GlobalDataManager.setUsers -> first=${_users.isNotEmpty ? _users.first.email : 'none'} count=${_users.length}');
     notifyListeners();
   }
   // Add these methods to GlobalDataManager class
@@ -710,5 +820,158 @@ class GlobalDataManager extends ChangeNotifier {
       _isLoadingLocations = false;
       notifyListeners();
     }
+  }
+
+  void resetAndReinitialize(String switchUserEmail) async {
+    debugPrint('🔄 Resetting and reinitializing GlobalDataManager...');
+    resetAllData();
+    setImpersonatedEmail(switchUserEmail);
+    await initializeData(forceRefresh: true);
+    debugPrint('✅ GlobalDataManager refreshed for $switchUserEmail');
+  }
+
+  /// Apply full impersonation data supplied by the caller.
+  /// This allows the app to show complete user and owner-unit data without
+  /// depending on backend responses. Useful for local fixtures or testing.
+  void applyImpersonationData(
+      {required User user,
+      List<OwnerPropertyList>? ownerUnits,
+      bool notify = true}) {
+    _impersonatedEmail = user.email;
+    _users = [user];
+    _ownerUnits = ownerUnits ?? [];
+    if (notify) notifyListeners();
+    debugPrint(
+        '🔧 GlobalDataManager.applyImpersonationData applied for ${user.email}');
+  }
+
+  /// Try to load impersonation data from an asset JSON file.
+  /// Expected asset structure (example):
+  /// {
+  ///   "user": { ... },
+  ///   "ownerUnits": [ { ... }, ... ]
+  /// }
+  /// Returns true if file was found and applied, false otherwise.
+  Future<bool> loadImpersonationFromAsset(String assetPath) async {
+    try {
+      final jsonStr = await rootBundle.loadString(assetPath);
+      final Map<String, dynamic> data = json.decode(jsonStr);
+
+      // Parse user
+      User user;
+      if (data.containsKey('user') && data['user'] is Map<String, dynamic>) {
+        user = User.fromJson(Map<String, dynamic>.from(data['user']));
+      } else {
+        debugPrint('⚠️ impersonation asset missing `user` object');
+        return false;
+      }
+
+      // Parse ownerUnits if provided
+      List<OwnerPropertyList> ownerUnits = [];
+      if (data.containsKey('ownerUnits') && data['ownerUnits'] is List) {
+        final list = List<dynamic>.from(data['ownerUnits']);
+        for (var item in list) {
+          if (item is Map<String, dynamic>) {
+            ownerUnits.add(OwnerPropertyList.fromJson(item, 0, ''));
+          }
+        }
+      }
+
+      // Apply parsed data
+      applyImpersonationData(user: user, ownerUnits: ownerUnits);
+      debugPrint('✅ Loaded impersonation asset: $assetPath');
+      return true;
+    } catch (e) {
+      debugPrint('⚠️ Failed to load impersonation asset $assetPath: $e');
+      return false;
+    }
+  }
+
+  Future<void> impersonateUser(String email) async {
+    debugPrint('🧑‍💼 Starting impersonation for $email');
+
+    if (_isImpersonating) {
+      final current = _impersonatedEmail ?? '<unknown>';
+      if (current.toLowerCase() == email.toLowerCase()) {
+        debugPrint('⚠️ Already impersonating $email.');
+        return;
+      }
+
+      debugPrint(
+          '🔁 Updating impersonation from $current to $email (keeping original backup)');
+
+      // Update target and clear caches so UI shows loading for new target.
+      _impersonatedEmail = email;
+      _users = [];
+      _ownerUnits = [];
+      _unitByMonth = [];
+      _revenueDashboard = [];
+      _totalByMonth = [];
+      _locationByMonth = [];
+      _propertyContractType = [];
+      _propertyOccupancy = {};
+      _occupancyRateHistory = [];
+
+      debugPrint(
+          '🔄 Cleared local user data and starting background load for $email');
+
+      unawaited(_fetchAllData());
+      notifyListeners();
+      return;
+    }
+    final userExists = await _userRepository.userExists(email);
+    if (!userExists) {
+      debugPrint('❌ User $email does not exist');
+      throw Exception('User not found: $email');
+    }
+
+    // Not currently impersonating — create backups and start impersonation.
+    _originalUsersBackup = List<User>.from(_users);
+    _originalOwnerUnits = List<OwnerPropertyList>.from(_ownerUnits);
+    _originalUser = _users.isNotEmpty ? _users.first : null;
+    _isImpersonating = true;
+
+    // Set impersonated email and clear caches
+    _impersonatedEmail = email;
+    _users = [];
+    _ownerUnits = [];
+    _unitByMonth = [];
+    _revenueDashboard = [];
+    _totalByMonth = [];
+    _locationByMonth = [];
+    _propertyContractType = [];
+    _propertyOccupancy = {};
+    _occupancyRateHistory = [];
+
+    debugPrint(
+        '🔄 Cleared local user data and starting background load for $email');
+
+    // Start fetching impersonated data in background. When it completes the
+    // UI will be updated via notifyListeners called by the fetch routines.
+    unawaited(_fetchAllData());
+
+    notifyListeners();
+  }
+
+  Future<void> revertImpersonation() async {
+    if (!_isImpersonating) {
+      debugPrint('⚠️ Not currently impersonating anyone.');
+      return;
+    }
+
+    debugPrint('↩️ Reverting impersonation to original user...');
+
+    // Restore backups
+    _users = List<User>.from(_originalUsersBackup);
+    _ownerUnits = List<OwnerPropertyList>.from(_originalOwnerUnits);
+    _impersonatedEmail = null;
+    _isImpersonating = false;
+
+    // Optionally refresh all data from backend again
+    unawaited(_fetchAllData());
+
+    notifyListeners();
+
+    debugPrint('✅ Impersonation reverted successfully.');
   }
 }

@@ -147,33 +147,21 @@ class NewDashboardV3 extends StatelessWidget {
                                   // Gradient title
                                   Row(
                                     children: [
-                                      ShaderMask(
-                                        shaderCallback: (bounds) =>
-                                            const LinearGradient(
-                                          colors: [
-                                            Color(0xFF3E30FF),
-                                            Color(0xFF000D9C),
-                                            Color(0XFFFFCF00),
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ).createShader(bounds),
-                                        child: Text(
-                                          'Simple, Timeless \nAssets Management',
-                                          style: GoogleFonts.outfit(
-                                            fontSize: responsiveFont(28),
-                                            fontWeight: FontWeight.w700,
-                                            color: const Color(0xFFFFFFFF),
-                                          ),
-                                        ).animate(
-                                          onPlay: (controller) {
-                                            if (isRefreshing.value) {
-                                              controller.repeat();
-                                            } else {
-                                              controller.stop();
-                                            }
-                                          },
+                                      Text(
+                                        'Simple, Timeless \nAssets Management',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: responsiveFont(28),
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFF606060),
                                         ),
+                                      ).animate(
+                                        onPlay: (controller) {
+                                          if (isRefreshing.value) {
+                                            controller.repeat();
+                                          } else {
+                                            controller.stop();
+                                          }
+                                        },
                                       ),
                                     ],
                                   ),
