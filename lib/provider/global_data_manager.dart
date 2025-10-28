@@ -49,6 +49,11 @@ class GlobalDataManager extends ChangeNotifier {
 
   // Impersonation state: when set, user data will be fetched by this email
   String? _impersonatedEmail;
+  // In-memory impersonation token override (do NOT persist)
+  String? _impersonationAccessToken;
+  DateTime? _impersonationTokenExpiry;
+  // Optional explicit owner override used for client-side displays/logging
+  String? _impersonationOwnerOverride;
 
   // Add new state properties
   bool _isLoadingStates = false;
@@ -81,6 +86,28 @@ class GlobalDataManager extends ChangeNotifier {
   bool get isLoadingLocations => _isLoadingLocations;
   String? get selectedState => _selectedState;
   String? get impersonatedEmail => _impersonatedEmail;
+
+  /// Returns a token that should be used for API calls when impersonating.
+  /// This token is stored only in memory and must never be persisted to disk.
+  String? get impersonationAccessToken => _impersonationAccessToken;
+
+  /// Optional expiry for the in-memory impersonation token.
+  DateTime? get impersonationTokenExpiry => _impersonationTokenExpiry;
+
+  /// Optional explicit owner/email override used for UI/logging when no
+  /// server-provided token exists.
+  String? get impersonationOwnerOverride => _impersonationOwnerOverride;
+  // Public getter to indicate if we are currently in impersonation mode
+  bool get isImpersonating => _isImpersonating;
+
+  /// Returns true if a token-based impersonation override is active.
+  bool get isTokenImpersonating {
+    if (_impersonationAccessToken == null) return false;
+    if (_impersonationTokenExpiry != null) {
+      return _impersonationTokenExpiry!.isAfter(DateTime.now());
+    }
+    return true;
+  }
 
   // Method to clear location loading flag after preload completes
   void clearLocationLoadingFlag() {
@@ -324,6 +351,43 @@ class GlobalDataManager extends ChangeNotifier {
     _impersonatedEmail = u.email;
     // Clear caches that are specific to a user so re-fetch will use the impersonated email
     resetAllData();
+    notifyListeners();
+  }
+
+  /// Apply an in-memory impersonation token. This token is only kept in RAM
+  /// and will be used by AuthService (if wired) for subsequent API calls.
+  /// Do NOT persist this token to disk.
+  void applyImpersonationToken(String token,
+      {DateTime? expiry, String? owner}) {
+    _impersonationAccessToken = token;
+    _impersonationTokenExpiry = expiry;
+    if (owner != null && owner.isNotEmpty) {
+      _impersonationOwnerOverride = owner;
+    }
+    _isImpersonating = true;
+    notifyListeners();
+  }
+
+  /// Apply a client-side owner/email override (no token). This will influence
+  /// UI and logging but will not change the Authorization header unless a
+  /// token is also provided.
+  void applyImpersonationOwnerOverride(String ownerEmail) {
+    _impersonationOwnerOverride = ownerEmail;
+    _impersonatedEmail = ownerEmail;
+    _isImpersonating = true;
+    notifyListeners();
+  }
+
+  /// Clear any in-memory impersonation state (token and owner overrides).
+  /// This will also clear `impersonatedEmail` and reset impersonation mode.
+  void clearImpersonation() {
+    _impersonationAccessToken = null;
+    _impersonationTokenExpiry = null;
+    _impersonationOwnerOverride = null;
+    _impersonatedEmail = null;
+    _isImpersonating = false;
+    // Optionally restore backups if available; callers can also call
+    // restoreSnapshot when needed.
     notifyListeners();
   }
 

@@ -650,12 +650,6 @@ class OwnerProfileVM extends ChangeNotifier {
   /// profile and owner-units. Returns null on success or an error message.
   Future<String?> switchUserAndReload(String email) async {
     try {
-      // Step 1: validate (best-effort)
-      final validateRes = await _userRepository.validateSwitchUser(email);
-      if (validateRes['success'] == false || validateRes['statusCode'] == 403) {
-        return validateRes['body']?.toString() ?? 'Validation failed';
-      }
-
       // Step 2: confirm switch on server
       final confirmRes = await _userRepository.confirmSwitchUser(email);
       if (confirmRes['success'] == false ||
@@ -683,8 +677,20 @@ class OwnerProfileVM extends ChangeNotifier {
       final returnedEmail = (switched.first.email ?? '').toLowerCase();
       if (returnedEmail != targetEmail.toLowerCase()) {
         debugPrint(
-            '⚠️ Backend returned $returnedEmail instead of $targetEmail; aborting switch to avoid mixed data.');
-        return 'Server did not return full profile for $targetEmail; switch not applied.';
+            '⚠️ Backend returned $returnedEmail instead of $targetEmail; cannot apply server-driven impersonation without mixing admin metadata.');
+
+        // Start a safe, explicit temporary "view-only" impersonation so QA
+        // can inspect the target account UI even when the backend doesn't
+        // return a full impersonated profile. This does NOT swap tokens.
+        try {
+          await startTemporaryImpersonation(targetEmail);
+          debugPrint(
+              '⏭️ Started temporary view-only impersonation for $targetEmail');
+          return 'Started temporary view-only impersonation for $targetEmail (server did not return full profile).';
+        } catch (e) {
+          debugPrint('❌ Failed to start temporary impersonation: $e');
+          return 'Server did not return full profile for $targetEmail; switch not applied.';
+        }
       }
 
       // Step 4: fetch owner units for that email
@@ -700,7 +706,10 @@ class OwnerProfileVM extends ChangeNotifier {
       // Apply impersonation data into GlobalDataManager so UI shows full
       // switched user's profile (does not swap tokens).
       _globalDataManager.applyImpersonationData(
-          user: switched.first, ownerUnits: ownerUnits, notify: true);
+          user: switched.first,
+          ownerUnits: ownerUnits,
+          notify: true // ← Make sure this is true
+          );
       _globalDataManager.setImpersonatedEmail(targetEmail);
 
       debugPrint('✅ switchUserAndReload completed for $targetEmail');
@@ -738,8 +747,8 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
 //cancel user/stop impersonate user
-  Future<void> cancelUser() async {
-    await _userRepository.cancelSwitchUser();
+  Future<void> cancelUser(String email) async {
+    await _userRepository.cancelSwitchUser(email);
 
     debugPrint("Cancel user operation executed.");
     return;

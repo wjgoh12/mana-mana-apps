@@ -32,37 +32,34 @@ class User {
   });
 
   User.fromJson(Map<String, dynamic> json) {
-    email = json['email'];
-
-    // Handle roles - can be either a List or a String
-    if (json['roles'] != null) {
-      if (json['roles'] is List) {
-        // UAT returns roles as a List, join them into a string
-        role = (json['roles'] as List).join(',');
-      } else {
-        // Production might return as a String
-        role = json['roles'];
-      }
-    }
-
-    token = json['token'];
-    firstName = json['firstName'];
-    lastName = json['lastName'];
-
-    // Handle both UAT (flat structure) and Production (nested ownersinfo)
+    // ✅ CRITICAL FIX: Check for ownersinfo FIRST
     if (json.containsKey('ownersinfo') && json['ownersinfo'] != null) {
-      // Production format with nested ownersinfo
-      ownerEmail = json['ownersinfo']['email'];
-      ownerAltEmail = json['ownersinfo']['altEmail'];
-      ownerFullName = json['ownersinfo']['fullName'];
-      ownerNationality = json['ownersinfo']['nationality'];
-      ownerRefType = json['ownersinfo']['refType'];
-      ownerRefNo = json['ownersinfo']['refNo'];
-      ownerContact = json['ownersinfo']['contact'];
-      ownerAltContact = json['ownersinfo']['altContact'];
-      ownerAddress = json['ownersinfo']['address'];
+      // Production format with nested ownersinfo (impersonated user)
+      final ownersinfo = json['ownersinfo'] as Map<String, dynamic>;
+
+      // Use impersonated user's data for EVERYTHING
+      email = ownersinfo['email'];
+      ownerEmail = ownersinfo['email'];
+      ownerAltEmail = ownersinfo['altEmail'];
+      ownerFullName = ownersinfo['fullName'];
+      ownerNationality = ownersinfo['nationality'];
+      ownerRefType = ownersinfo['refType'];
+      ownerRefNo = ownersinfo['refNo'];
+      ownerContact = ownersinfo['contact'];
+      ownerAltContact = ownersinfo['altContact'];
+      ownerAddress = ownersinfo['address'];
+
+      // ✅ IMPORTANT: Split fullName into firstName/lastName for display
+      final nameParts = (ownerFullName ?? '').split(' ');
+      if (nameParts.isNotEmpty) {
+        firstName = nameParts.first;
+        lastName = nameParts.skip(1).join(' ');
+      }
     } else {
-      // UAT format - flat structure, use top-level fields
+      // UAT format - flat structure (no impersonation)
+      email = json['email'];
+      firstName = json['firstName'];
+      lastName = json['lastName'];
       ownerEmail = json['email'];
       ownerAltEmail = null;
       ownerFullName =
@@ -74,6 +71,17 @@ class User {
       ownerAltContact = null;
       ownerAddress = null;
     }
+
+    // Handle roles - can be either a List or a String
+    if (json['roles'] != null) {
+      if (json['roles'] is List) {
+        role = (json['roles'] as List).join(',');
+      } else {
+        role = json['roles'];
+      }
+    }
+
+    token = json['token'];
   }
 
   Object? toJson() {}

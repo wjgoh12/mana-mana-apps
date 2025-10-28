@@ -2,6 +2,8 @@
 // FILE: user_repo.dart
 // ============================================
 
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:flutter/foundation.dart';
@@ -24,54 +26,52 @@ class UserRepository {
 
     return await _apiService
         .post(ApiEndpoint.ownerUserData, data: payload)
-        .then(
-      (res) {
-        try {
-          if (res == null) {
-            print("⚠️ API returned null for ownerUserData");
-            return [];
-          }
-          debugPrint(
-              "✅ API call succeeded for ownerUserData; raw response: $res");
-
-          // Support both Map and List responses — prefer first item if List
-          Map<String, dynamic> userMap;
-          if (res is List && res.isNotEmpty) {
-            userMap = Map<String, dynamic>.from(res.first as Map);
-          } else if (res is Map<String, dynamic>) {
-            userMap = res;
-          } else {
-            debugPrint(
-                '❌ Unexpected response type for ownerUserData: ${res.runtimeType}');
-            return [];
-          }
-
-          final user = User.fromJson(userMap);
-
-          // If impersonation is active on the client, but the backend
-          // still returned the admin account, synthesize the impersonated
-          // email onto the parsed user so callers see the intended email.
-          final g = GlobalDataManager();
-          if (g.impersonatedEmail != null && g.impersonatedEmail!.isNotEmpty) {
-            final got = (user.email ?? '').toLowerCase();
-            final want = g.impersonatedEmail!.toLowerCase();
-            if (got != want) {
-              debugPrint(
-                  '🔧 WORKAROUND: backend returned $got — applying impersonation fallback to $want');
-              user.email = g.impersonatedEmail;
-              user.ownerEmail = g.impersonatedEmail;
-            }
-          }
-
-          debugPrint("✅ Successfully parsed user: ${user.email}");
-          return [user];
-        } catch (e) {
-          print("❌ Error parsing user data: $e");
-          print("❌ Raw response that failed to parse: $res");
+        .then((res) {
+      try {
+        if (res == null) {
+          print("⚠️ API returned null for ownerUserData");
           return [];
         }
-      },
-    );
+        debugPrint(
+            "✅ API call succeeded for ownerUserData; \nraw response: $res");
+
+        // Support both Map and List responses — prefer first item if List
+        Map<String, dynamic> userMap;
+        if (res is List && res.isNotEmpty) {
+          userMap = Map<String, dynamic>.from(res.first as Map);
+        } else if (res is Map<String, dynamic>) {
+          userMap = res;
+        } else {
+          debugPrint(
+              '❌ Unexpected response type for ownerUserData: ${res.runtimeType}');
+          return [];
+        }
+
+        final user = User.fromJson(userMap);
+
+        // Diagnostic: log both userId and email reported by server (if present)
+        try {
+          final serverUserId = userMap['userId']?.toString();
+          final serverEmail = userMap['email']?.toString();
+          final token = userMap['token']?.toString();
+          debugPrint(
+              '🔎 ownerUserData parsed: userId=$serverUserId, email=$serverEmail, token_present=${token != null}');
+        } catch (_) {}
+
+        // IMPORTANT: Do NOT synthesize or overwrite server-returned user fields
+        // with the client-side requested impersonation email. If the backend
+        // does not return the impersonated profile, the client must treat
+        // that as the server truth and either fall back to admin or show
+        // a clear "view-only" mode. We therefore avoid forcing the email.
+
+        debugPrint("✅ Successfully parsed user: ${user.email}");
+        return [user];
+      } catch (e) {
+        print("❌ Error parsing user data: $e");
+        print("❌ Raw response that failed to parse: $res");
+        return [];
+      }
+    });
   }
 
   /// Validate switch user request before confirming
@@ -113,11 +113,12 @@ class UserRepository {
   /// Handles both JSON and plain text backend responses
   Future<Map<String, dynamic>> confirmSwitchUser(String switchUserEmail) async {
     try {
-      final response = await _apiService.post(
-        ApiEndpoint.confirmUser,
-        data: {'switchUserEmail': switchUserEmail},
-        // autoLogoutOnAuthFailure: false,
-      );
+      final response = await _apiService.post(ApiEndpoint.confirmUser, data: {
+        "switchUserEmail": switchUserEmail, // e.g. hslean1996@hotmail.com
+      }
+
+          // autoLogoutOnAuthFailure: false,
+          );
 
       debugPrint('🔁 confirmSwitchUser response: $response');
 
@@ -163,6 +164,26 @@ class UserRepository {
           parsedEmail = null;
         }
 
+        // If the backend only returns a plain-text confirmation but includes
+        // the target email, apply a client-side impersonation owner override
+        // so the UI and ApiService headers/bodies will use the requested
+        // impersonated email. This does NOT replace tokens; it only changes
+        // in-memory state and triggers a background fetch via impersonateUser.
+        try {
+          if (parsedEmail != null && parsedEmail.isNotEmpty) {
+            debugPrint(
+                '🔁 confirmSwitchUser: applying client-side impersonation for $parsedEmail');
+            final g = GlobalDataManager();
+            // Use the safer impersonateUser flow which clears caches and
+            // fetches the impersonated data in background. Schedule it
+            // without awaiting so we return immediately to the caller.
+            Future.microtask(() => g.impersonateUser(parsedEmail!));
+          }
+        } catch (e) {
+          debugPrint(
+              '⚠️ Failed to apply client-side impersonation override: $e');
+        }
+
         return {
           'statusCode': success ? 200 : 500,
           'body': response,
@@ -183,10 +204,11 @@ class UserRepository {
     }
   }
 
-  Future<void> cancelSwitchUser() async {
-    final response = await _apiService.post(
-      ApiEndpoint.cancelSwitchUser,
-    );
+  Future<void> cancelSwitchUser(String email) async {
+    final response =
+        await _apiService.post(ApiEndpoint.cancelSwitchUser, data: {
+      "switchUserEmail": email,
+    });
     return response;
   }
 
@@ -294,13 +316,57 @@ class UserRepository {
   }
 
   Future<List<User>> getSwitchedUser(String email) async {
-    // If impersonation is active, include the impersonated email in the request
-    final g = GlobalDataManager();
-    final Map<String, dynamic> payload = {'email': email};
-    print('email: $email');
+    // Try multiple possible parameter names — some backends expect a different
+    // key for the target email. Probe several common keys and log the raw
+    // response for each attempt to help backend teams diagnose which payload
+    // shape they expect.
+    final possiblePayloads = [
+      {'email': email},
+      {'switchUserEmail': email},
+      {'userEmail': email},
+      {'ownerEmail': email},
+    ];
 
-    final res = await _apiService
-        .post(ApiEndpoint.ownerUserData, data: {'email': email});
+    debugPrint('🔁 getSwitchedUser: probing payloads for email: $email');
+
+    dynamic res;
+    for (final payload in possiblePayloads) {
+      try {
+        debugPrint('🔁 Trying payload: $payload');
+        final attempt = await _apiService.post(
+          ApiEndpoint.ownerUserData,
+          data: payload,
+        );
+
+        debugPrint('🔁 Raw response for payload $payload: $attempt');
+
+        if (attempt != null) {
+          res = attempt;
+          break;
+        }
+      } catch (e) {
+        debugPrint('⚠️ getSwitchedUser attempt failed for $payload: $e');
+        // continue to next payload
+      }
+    }
+
+    // If we still have no response, try one final time with empty body to let
+    // the backend derive target from headers/session.
+    if (res == null) {
+      try {
+        debugPrint('🔁 No payloads succeeded; trying empty body');
+        final attempt = await _apiService.post(
+          ApiEndpoint.ownerUserData,
+        );
+        debugPrint('🔁 Raw response for empty payload: $attempt');
+        if (attempt != null) {
+          res = attempt;
+        }
+      } catch (e) {
+        debugPrint('⚠️ Final empty-body attempt failed: $e');
+      }
+    }
+
     try {
       if (res == null) {
         print("⚠️ other user API returned null for ownerUserData");
@@ -323,17 +389,38 @@ class UserRepository {
 
       final user = User.fromJson(userMap);
 
-      final g = GlobalDataManager();
-      if (g.impersonatedEmail != null && g.impersonatedEmail!.isNotEmpty) {
-        final got = (user.email ?? '').toLowerCase();
-        final want = g.impersonatedEmail!.toLowerCase();
-        if (got != want) {
-          debugPrint(
-              '🔧 WORKAROUND: backend returned $got — applying impersonation fallback to $want');
-          user.email = g.impersonatedEmail;
-          user.ownerEmail = g.impersonatedEmail;
+      // Log diagnostic info so backend team can see where fields disagree
+      try {
+        final serverUserId = userMap['userId']?.toString();
+        final serverEmail = userMap['email']?.toString();
+        final token = userMap['token']?.toString();
+        debugPrint(
+            '🔎 getSwitchedUser parsed: userId=$serverUserId, email=$serverEmail, token_present=${token != null}');
+
+        // If token present, attempt to decode payload.sub to verify identity
+        if (token != null && token.isNotEmpty) {
+          try {
+            final parts = token.split('.');
+            if (parts.length >= 2) {
+              final normalized = base64Url.normalize(parts[1]);
+              final decoded = utf8.decode(base64Url.decode(normalized));
+              debugPrint('🔐 token payload: $decoded');
+              try {
+                final Map<String, dynamic> payloadJson =
+                    Map<String, dynamic>.from(json.decode(decoded));
+                debugPrint(
+                    '🔐 token.sub: ${payloadJson['sub']}, token.email?: ${payloadJson['email'] ?? ''}');
+              } catch (_) {}
+            }
+          } catch (e) {
+            debugPrint('⚠️ Failed to decode token payload: $e');
+          }
         }
-      }
+      } catch (_) {}
+
+      // Do not overwrite server response. If server did not honor impersonation
+      // (i.e., userId or other identifier still points to admin), the app must
+      // not synthesize a new identity locally.
 
       debugPrint("Successfully parsed switched user: ${user.ownerEmail}");
       return [user];

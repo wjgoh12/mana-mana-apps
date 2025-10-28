@@ -8,13 +8,13 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  initApp('prod');
+  initApp('dev');
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => NewDashboardVM(), // Remove ..fetchData()
+          create: (context) => NewDashboardVM(),
         ),
         ChangeNotifierProvider(create: (context) => GlobalDataManager()),
       ],

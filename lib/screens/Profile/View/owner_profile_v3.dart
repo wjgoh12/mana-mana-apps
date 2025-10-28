@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -18,6 +19,7 @@ class OwnerProfile_v3 extends StatefulWidget {
 class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
   final OwnerProfileVM model = OwnerProfileVM();
   bool _isLoggingOut = false;
+  bool _isReverting = false;
 
   @override
   void initState() {
@@ -104,6 +106,60 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         //     )),
                         ),
                     Spacer(),
+                    // Revert impersonation button (visible only when impersonating)
+                    if (GlobalDataManager().isImpersonating) ...[
+                      TextButton(
+                        onPressed: _isReverting
+                            ? null
+                            : () async {
+                                setState(() {
+                                  _isReverting = true;
+                                });
+                                try {
+                                  await model.revertTemporaryImpersonation();
+                                } catch (e) {
+                                  debugPrint('Revert failed: $e');
+                                } finally {
+                                  if (mounted) {
+                                    setState(() {
+                                      _isReverting = false;
+                                    });
+                                  }
+                                }
+                              },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: const BorderSide(
+                                  color: Color(0xFF606060), width: 2),
+                            ),
+                          ),
+                        ),
+                        child: _isReverting
+                            ? SizedBox(
+                                width: ResponsiveSize.scaleWidth(16),
+                                height: ResponsiveSize.scaleHeight(16),
+                                child: const CircularProgressIndicator(
+                                    strokeWidth: 2),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: ResponsiveSize.scaleWidth(8)),
+                                child: const Text(
+                                  'Revert',
+                                  style: TextStyle(
+                                    fontFamily: 'outfit',
+                                    color: Color(0xFF606060),
+                                  ),
+                                ),
+                              ),
+                      ),
+                      SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                    ],
+
                     // Logout button
                     TextButton(
                       onPressed: _isLoggingOut ? null : _handleLogout,
@@ -759,7 +815,9 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                         onPressed: () async {
                                                           // Cancel impersonation on server
                                                           await model
-                                                              .cancelUser();
+                                                              .cancelUser(_emailController
+                                                                  .text
+                                                                  .trim());
                                                           Navigator.of(context)
                                                               .pop();
                                                         },
@@ -869,7 +927,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                                               // Start a temporary, client-side impersonation
                                                                               // that clears the current account data immediately
                                                                               // and loads the requested email in the background.
-                                                                              await model.startTemporaryImpersonation(email);
+                                                                              await model.switchUserAndReload(email);
 
                                                                               if (!mounted)
                                                                                 return;

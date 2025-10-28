@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:mana_mana_app/splashscreen.dart';
 import '../env_config.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
@@ -74,6 +75,23 @@ class AuthService {
   }
 
   Future<bool> checkToken() async {
+    final g = GlobalDataManager();
+
+    // If impersonation is active (view-only or token-based), do not attempt
+    // to refresh the stored admin token. Treat the presence of an access
+    // token as sufficient so the UI and ApiService can continue sending
+    // requests with the current Authorization header or X-Impersonate header.
+    if (g.isImpersonating) {
+      String? accessToken = await getAccessToken();
+      if (accessToken == null) {
+        print(
+            '⚠️ No access token found while impersonating - user needs to login');
+        return false;
+      }
+      print('🔁 Impersonation active - skipping token refresh checks');
+      return true;
+    }
+
     String? accessToken = await getAccessToken();
     if (accessToken == null) {
       print('⚠️ No access token found - user needs to login');
@@ -101,15 +119,51 @@ class AuthService {
   }
 
   Future<String?> getValidAccessToken() async {
+    final g = GlobalDataManager();
+
+    try {
+      // ✅ 1. Use in-memory impersonation token first (admin switch mode)
+      if (g.impersonationAccessToken != null &&
+          g.impersonationAccessToken!.isNotEmpty) {
+        final expiry = g.impersonationTokenExpiry;
+        if (expiry == null || expiry.isAfter(DateTime.now())) {
+          print('🔁 Using in-memory impersonation token for API calls');
+          return g.impersonationAccessToken;
+        } else {
+          // Token expired; clear impersonation state
+          g.clearImpersonation();
+        }
+      }
+    } catch (e) {
+      debugPrint('⚠️ Error checking in-memory impersonation token: $e');
+    }
+
+    // ✅ 2. View-only impersonation (no dedicated token)
+    if (g.isImpersonating &&
+        (g.impersonationAccessToken == null ||
+            g.impersonationAccessToken!.isEmpty)) {
+      String? accessTokenViewOnly = await getAccessToken();
+      if (accessTokenViewOnly == null) return null;
+      print(
+          '🔁 View-only impersonation active - returning stored token (no refresh)');
+      return accessTokenViewOnly;
+    }
+
+    // ✅ 3. Normal (non-impersonation) mode
     String? accessToken = await getAccessToken();
     String? refreshToken = await _secureStorage.read(key: 'refresh_token');
 
     if (accessToken == null || refreshToken == null) {
-      // print('❌ Missing tokens - need to login');
-      return null;
+      return null; // missing tokens
     }
 
-    // Check if refresh token is expired first
+    // ❌ 4. Skip refresh completely if impersonating (safety net)
+    if (g.isImpersonating) {
+      print('🚫 Skipping token refresh while impersonating');
+      return accessToken;
+    }
+
+    // ✅ 5. Check refresh token expiry
     try {
       if (JwtDecoder.isExpired(refreshToken)) {
         print('❌ Refresh token expired - need to re-login');
@@ -124,7 +178,7 @@ class AuthService {
       return null;
     }
 
-    // Check access token
+    // ✅ 6. Refresh access token if expiring soon (normal user only)
     if (JwtDecoder.isExpired(accessToken) ||
         JwtDecoder.getRemainingTime(accessToken).inSeconds <= 60) {
       print('🔄 Access token expired/expiring, refreshing...');
@@ -220,6 +274,18 @@ class AuthService {
 
   Future<void> _startTokenRefreshTimer(String accessToken) async {
     _refreshTimer?.cancel();
+
+    // If impersonation is active (view-only or token-based), do not schedule
+    // periodic refreshes for the stored admin token. Token lifecycle for an
+    // impersonation token (if used) is managed separately and should not be
+    // mixed with normal refresh timers.
+    try {
+      final g = GlobalDataManager();
+      if (g.isImpersonating) {
+        debugPrint('🔁 Impersonation active - skipping refresh timer setup');
+        return;
+      }
+    } catch (_) {}
 
     try {
       DateTime expiryDate = JwtDecoder.getExpirationDate(accessToken);

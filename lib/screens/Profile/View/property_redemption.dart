@@ -814,7 +814,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: SizedBox(
-                  height: ResponsiveSize.scaleHeight(350),
+                  height: ResponsiveSize.scaleHeight(330),
                   child: ownerVM.unitAvailablePoints.isEmpty
                       ? const Center(
                           child: Text(
@@ -975,7 +975,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                           ),
                         )),
             ),
-            SizedBox(height: ResponsiveSize.scaleHeight(15)),
+            SizedBox(height: ResponsiveSize.scaleHeight(5)),
             Center(
               child: Text(
                 'Booking History',
