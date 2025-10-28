@@ -7,6 +7,7 @@ import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/roomtype_card.dart';
+import 'package:mana_mana_app/screens/Profile/Widget/roomtype_card_detail.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
 
@@ -40,6 +41,7 @@ class RoomDetails extends StatefulWidget {
 
 class _RoomDetailsState extends State<RoomDetails> {
   final TextEditingController _guestNameController = TextEditingController();
+  final TextEditingController _remarkController = TextEditingController();
   bool _isChecked = false;
   bool _highlightCheckBox = false;
   bool _isSubmitting = false;
@@ -181,7 +183,7 @@ class _RoomDetailsState extends State<RoomDetails> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// Use RoomtypeCard widget directly
-              RoomtypeCard(
+              RoomtypeCardDetail(
                 roomType: widget.room,
                 displayName: sanitizeRoomTypeName(widget.room.roomTypeName),
                 isSelected: false, // No selection in details page
@@ -264,13 +266,81 @@ class _RoomDetailsState extends State<RoomDetails> {
                     const SizedBox(height: 20),
 
                     /// Guest name input
+                    Row(
+                      children: [
+                        Text(
+                          'Guest Name',
+                          style: TextStyle(
+                              fontSize: ResponsiveSize.text(13),
+                              fontFamily: 'Outfit',
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          ' *',
+                          style: TextStyle(
+                              fontSize: ResponsiveSize.text(13),
+                              color: Colors.red,
+                              fontFamily: 'Outfit',
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
                     TextField(
                       controller: _guestNameController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
-                        hintText: 'Guest Name',
+                        label: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Enter Guest Name',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(14),
+                                fontFamily: 'Outfit',
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  'Compulsory',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(12),
+                                    // color: Colors.red,
+                                    fontFamily: 'Outfit',
+                                  ),
+                                ),
+                                Text('*',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.text(12),
+                                      color: Colors.red,
+                                      fontFamily: 'Outfit',
+                                    )),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+                    Text('Remarks',
+                        style: TextStyle(
+                            fontSize: ResponsiveSize.text(13),
+                            fontFamily: 'Outfit',
+                            fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+
+                    TextField(
+                      controller: _remarkController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        hintText: 'Enter Remarks',
                         hintStyle: TextStyle(
                             fontSize: ResponsiveSize.text(14),
                             fontFamily: 'Outfit'),
@@ -479,7 +549,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 }
                               },
                         style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFF000241),
+                          backgroundColor: const Color(0xFF606060),
                           fixedSize: const Size(300, 40),
                         ),
                         child: _isSubmitting
@@ -495,9 +565,9 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 'Submit',
                                 style: TextStyle(
                                     fontFamily: 'Outfit',
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w700,
                                     color: Colors.white,
-                                    fontSize: ResponsiveSize.text(17)),
+                                    fontSize: ResponsiveSize.text(12)),
                               ),
                       ),
                     ),

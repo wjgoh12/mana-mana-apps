@@ -77,21 +77,25 @@ class ApiService {
       debugPrint(
           '🔐 ApiService.post using owner override for logs: $tokenOwner');
     }
-    if (g.impersonatedEmail != null && g.impersonatedEmail!.isNotEmpty) {
-      extraHeaders['X-Impersonate-Email'] = g.impersonatedEmail!;
-      debugPrint(
-        '🔐 ApiService.post adding impersonation header: ${g.impersonatedEmail}',
-      );
-    }
 
     // If caller didn't supply data, and impersonation is active, send the
     // impersonated email as the request body so backend endpoints that
     // default to current user will use the impersonated account.
     dynamic sendData = data;
-    if ((data == null || data.isEmpty) &&
+    if ((sendData == null || (sendData is Map && sendData.isEmpty)) &&
         g.impersonatedEmail != null &&
         g.impersonatedEmail!.isNotEmpty) {
+      // Send a minimal body containing the impersonated email. Some
+      // backend endpoints only look at the POST body for the target user.
       sendData = {'email': g.impersonatedEmail};
+    }
+
+    // Include impersonation header when active so server can detect it
+    if (g.impersonatedEmail != null && g.impersonatedEmail!.isNotEmpty) {
+      extraHeaders['X-Impersonate-Email'] = g.impersonatedEmail!;
+      debugPrint(
+        '🔐 ApiService.post adding impersonation header: ${g.impersonatedEmail}',
+      );
     }
 
     // Log outgoing request (mask auth token) when impersonation active to
@@ -205,7 +209,7 @@ class ApiService {
     // If no data provided, attach impersonatedEmail as body so endpoints
     // that expect the user's email will receive the impersonated one.
     dynamic sendBytesData = data;
-    if ((data == null || data.isEmpty) &&
+    if ((sendBytesData == null || (sendBytesData is Map && sendBytesData.isEmpty)) &&
         gBytes.impersonatedEmail != null &&
         gBytes.impersonatedEmail!.isNotEmpty) {
       sendBytesData = {'email': gBytes.impersonatedEmail};
@@ -232,7 +236,7 @@ class ApiService {
         'Content-Type': 'application/json',
         ...extraHeadersBytes,
       },
-      body: json.encode(sendBytesData),
+      body: json.encode(sendBytesData ?? {}),
     );
 
     if (response.body.toString().contains("Incorrect result size")) {
@@ -296,26 +300,26 @@ class ApiService {
 
     // Default empty POST bodies to include impersonated email when active
     dynamic sendJson = data;
-    if ((data == null || data.isEmpty) &&
+    if ((sendJson == null || (sendJson is Map && sendJson.isEmpty)) &&
         gg.impersonatedEmail != null &&
         gg.impersonatedEmail!.isNotEmpty) {
       sendJson = {'email': gg.impersonatedEmail};
     }
 
-    try {
-      final logHeaders = Map<String, String>.from({
-        ...{
-          ...extra,
-        }
-      });
-      if (logHeaders.containsKey('Authorization')) {
-        logHeaders['Authorization'] = 'Bearer <masked>';
-      }
-      debugPrint('➡️ ApiService.postJson -> $baseUrl$url');
-      debugPrint('   🔑 Token owner: ${tokenOwner ?? "unknown"}');
-      debugPrint('   📤 Headers (masked): $logHeaders');
-      debugPrint('   📋 Body: ${json.encode(sendJson ?? {})}');
-    } catch (_) {}
+    // try {
+    //   final logHeaders = Map<String, String>.from({
+    //     ...{
+    //       ...extra,
+    //     }
+    //   });
+    //   if (logHeaders.containsKey('Authorization')) {
+    //     logHeaders['Authorization'] = 'Bearer <masked>';
+    //   }
+    //   debugPrint('➡️ ApiService.postJson -> $baseUrl$url');
+    //   debugPrint('   🔑 Token owner: ${tokenOwner ?? "unknown"}');
+    //   debugPrint('   📤 Headers (masked): $logHeaders');
+    //   debugPrint('   📋 Body: ${json.encode(sendJson ?? {})}');
+    // } catch (_) {}
 
     final response = await http.post(
       Uri.parse('$baseUrl$url'),

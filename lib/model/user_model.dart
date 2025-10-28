@@ -84,5 +84,22 @@ class User {
     token = json['token'];
   }
 
-  Object? toJson() {}
+  Map<String, dynamic> toJson() {
+    return {
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'token': token,
+      'roles': role,
+      'ownerEmail': ownerEmail,
+      'ownerAltEmail': ownerAltEmail,
+      'ownerFullName': ownerFullName,
+      'ownerNationality': ownerNationality,
+      'ownerRefType': ownerRefType,
+      'ownerRefNo': ownerRefNo,
+      'ownerContact': ownerContact,
+      'ownerAltContact': ownerAltContact,
+      'ownerAddress': ownerAddress,
+    };
+  }
 }

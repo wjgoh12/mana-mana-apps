@@ -7,7 +7,7 @@ import 'package:mana_mana_app/model/roomType.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
-class RoomtypeCard extends StatefulWidget {
+class RoomtypeCardDetail extends StatefulWidget {
   final RoomType roomType;
   final String displayName;
   final bool isSelected;
@@ -20,7 +20,7 @@ class RoomtypeCard extends StatefulWidget {
   final Function(int quantity)? onQuantityChanged;
   final bool Function(RoomType room, int duration) checkAffordable;
 
-  const RoomtypeCard({
+  const RoomtypeCardDetail({
     super.key,
     required this.roomType,
     required this.displayName,
@@ -36,10 +36,10 @@ class RoomtypeCard extends StatefulWidget {
   });
 
   @override
-  State<RoomtypeCard> createState() => _RoomtypeCardState();
+  State<RoomtypeCardDetail> createState() => _RoomtypeCardDetailState();
 }
 
-class _RoomtypeCardState extends State<RoomtypeCard>
+class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
     with AutomaticKeepAliveClientMixin {
   Uint8List? _bytes;
   bool _decoding = false;
@@ -54,7 +54,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
   }
 
   @override
-  void didUpdateWidget(covariant RoomtypeCard oldWidget) {
+  void didUpdateWidget(covariant RoomtypeCardDetail oldWidget) {
     super.didUpdateWidget(oldWidget);
     // If the parent controls selection (multiSelectable==false), reflect
     // updates from parent. If multiSelectable is true, keep local state.

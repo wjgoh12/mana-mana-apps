@@ -18,6 +18,9 @@ class SelectDateRoom extends StatefulWidget {
   final String location;
   final String state;
   final double points;
+  // Optional: control the border width of the range start / end decorations
+  final double rangeStartBorderWidth;
+  final double rangeEndBorderWidth;
 
   const SelectDateRoom({
     Key? key,
@@ -26,6 +29,8 @@ class SelectDateRoom extends StatefulWidget {
     required this.location,
     required this.state,
     required this.points,
+    this.rangeStartBorderWidth = 1.0,
+    this.rangeEndBorderWidth = 1.0,
   }) : super(key: key);
 
   static int getUserPointsBalance(OwnerProfileVM vm) {
@@ -115,8 +120,15 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     final firstToken = s.split(RegExp(r'\s+'))[0];
 
+    // If the first token starts with a digit (eg. "22M" building code), strip it
+    if (RegExp(r'^\d').hasMatch(firstToken)) {
+      return s.substring(firstToken.length).trim();
+    }
+
     final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
-    if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 5) {
+    // Only strip very short all-caps tokens (likely codes/abbreviations).
+    // Keep longer words (e.g., 'RUBY', 'CORAL') which are meaningful descriptors.
+    if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 3) {
       return s.substring(firstToken.length).trim();
     }
 
@@ -598,10 +610,64 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         }
                         return null;
                       },
+                      // Custom smaller widgets for range start / end so we can scale them down
+                      rangeStartBuilder: (context, day, focusedDay) {
+                        final size = ResponsiveSize.scaleWidth(28);
+                        // Center the marker so it lines up vertically with other day widgets
+                        return Center(
+                          child: SizedBox(
+                            width: size,
+                            height: size,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF606060),
+                                borderRadius: BorderRadius.circular(5),
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${day.day}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      rangeHighlightBuilder: (context, day, isWithinRange) {},
+                      rangeEndBuilder: (context, day, focusedDay) {
+                        final size = ResponsiveSize.scaleWidth(28);
+                        return Center(
+                          child: SizedBox(
+                            width: size,
+                            height: size,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF606060),
+                                borderRadius: BorderRadius.circular(5),
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${day.day}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                       defaultBuilder: (context, day, focusedDay) {
                         if (_isGreyDay(day)) {
                           return Container(
                             margin: const EdgeInsets.all(4),
+                            width: ResponsiveSize.scaleWidth(30),
                             decoration: const BoxDecoration(
                               color: Color(0xFFFFCF00),
                               shape: BoxShape.circle,
@@ -640,16 +706,30 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         color: Theme.of(context).primaryColor.withOpacity(1),
                         shape: BoxShape.circle,
                       ),
+                      // Keep the start/end CELL decorations transparent so the
+                      // custom small markers from the builders appear above the
+                      // band. The within-range cells will show a full-height
+                      // light-gray band (the "bridge").
                       rangeStartDecoration: BoxDecoration(
-                        color: const Color(0xFF606060).withOpacity(1),
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(5),
                         shape: BoxShape.rectangle,
                       ),
                       rangeEndDecoration: BoxDecoration(
-                        color: const Color(0xFF606060).withOpacity(1),
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(5),
                         shape: BoxShape.rectangle,
                       ),
-                      rangeHighlightColor:
-                          const Color(0xFF606060).withOpacity(0.2),
+                      // Full-height light gray band that visually connects
+                      // the start and end markers.
+                      withinRangeDecoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      // Deprecated / extra highlight color kept in sync with
+                      // withinRangeDecoration for compatibility.
+                      rangeHighlightColor: Colors.grey.shade300,
                     ),
                     onPageChanged: (focusedDay) => _focusedDay = focusedDay,
                   ),
@@ -781,15 +861,59 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 const SizedBox(height: 10),
                 // Total Points
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18),
-                  child: Center(
-                    child: Text(
-                      'Total: $formattedPoints points',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(16),
-                        fontFamily: 'outfit',
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF606060),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      // color: Color.fromARGB(255, 236, 247, 255),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Number of Rooms Selected: ',
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.text(10),
+                              fontFamily: 'outfit',
+                              fontWeight: FontWeight.w400,
+                              // color: const Color(0xFF606060),
+                            ),
+                          ),
+                          Text('$_selectedQuantity',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(12),
+                                fontFamily: 'outfit',
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              )),
+                          Spacer(),
+                          Text(
+                            'Total: ',
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.text(12),
+                              fontFamily: 'outfit',
+                              fontWeight: FontWeight.w400,
+                              // color: const Color(0xFF606060),
+                            ),
+                          ),
+                          Text('$formattedPoints points',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(12),
+                                fontFamily: 'outfit',
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              )),
+                        ],
                       ),
                     ),
                   ),
