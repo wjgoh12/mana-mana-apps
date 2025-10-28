@@ -858,12 +858,16 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   },
                 ),
 
-                const SizedBox(height: 10),
+                // const SizedBox(height: 5),
                 // Total Points
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.scaleWidth(8),
+                    vertical: ResponsiveSize.scaleHeight(1),
+                  ),
                   child: Container(
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       // color: Color.fromARGB(255, 236, 247, 255),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.grey.shade300),
@@ -877,11 +881,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       ],
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(ResponsiveSize.scaleWidth(12)),
                       child: Row(
                         children: [
                           Text(
-                            'Number of Rooms Selected: ',
+                            'Number of Rooms Selected:  ',
                             style: TextStyle(
                               fontSize: ResponsiveSize.text(10),
                               fontFamily: 'outfit',
@@ -906,13 +910,15 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                               // color: const Color(0xFF606060),
                             ),
                           ),
-                          Text('$formattedPoints points',
-                              style: TextStyle(
-                                fontSize: ResponsiveSize.text(12),
-                                fontFamily: 'outfit',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              )),
+                          Text(
+                            '$formattedPoints points',
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.text(12),
+                              fontFamily: 'outfit',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
                         ],
                       ),
                     ),

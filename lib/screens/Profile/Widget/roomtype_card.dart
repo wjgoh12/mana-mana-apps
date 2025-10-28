@@ -419,30 +419,36 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                     ),
                     const SizedBox(height: 12),
                     if (displayedSelected)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                'Number of Rooms:',
-                                style: TextStyle(
-                                  fontSize: ResponsiveSize.text(11),
-                                  fontFamily: 'Outfit',
-                                  fontWeight: FontWeight.w600,
+                      Column(
+                        children: [
+                          Divider(height: 1, color: Colors.grey[300]),
+                          const SizedBox(height: 12),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    'Number of Rooms:',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.text(11),
+                                      fontFamily: 'Outfit',
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 8),
+                                QuantityController(
+                                  initialValue: widget.quantity,
+                                  onChanged: (val) {
+                                    widget.onQuantityChanged?.call(val);
+                                  },
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            QuantityController(
-                              initialValue: widget.quantity,
-                              onChanged: (val) {
-                                widget.onQuantityChanged?.call(val);
-                              },
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                   ],
                 ),
