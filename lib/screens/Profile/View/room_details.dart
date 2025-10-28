@@ -500,7 +500,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                             TextButton(
                                               style: TextButton.styleFrom(
                                                 backgroundColor:
-                                                    Color(0xFF000241),
+                                                    Color(0xFF606060),
                                               ),
                                               onPressed: () {
                                                 Navigator.pop(context);
@@ -510,10 +510,12 @@ class _RoomDetailsState extends State<RoomDetails> {
                                                 Navigator.pop(context);
                                               },
                                               child: const Center(
-                                                child: Text('OK',
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontFamily: 'Outfit')),
+                                                child: Text(
+                                                  'OK',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'Outfit'),
+                                                ),
                                               ),
                                             ),
                                           ],

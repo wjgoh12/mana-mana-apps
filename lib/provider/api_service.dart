@@ -32,14 +32,14 @@ class ApiService {
     try {
       if (token != null) {
         final prefix = token.substring(0, min(10, token.length));
-        debugPrint('🔐 ApiService.post using token prefix: $prefix');
+        // debugPrint('🔐 ApiService.post using token prefix: $prefix');
 
         // Try to decode token to see which user it belongs to (for debugging)
         try {
           final decodedPayload = _decodeTokenPayload(token);
           if (decodedPayload != null) {
-            debugPrint(
-                '🔐 ApiService.post decoded token payload: $decodedPayload');
+            // debugPrint(
+            //     '🔐 ApiService.post decoded token payload: $decodedPayload');
             try {
               final Map<String, dynamic> payloadJson =
                   Map<String, dynamic>.from(json.decode(decodedPayload));
@@ -48,7 +48,7 @@ class ApiService {
                   payloadJson['sub'] ??
                   payloadJson['userId'] ??
                   'unknown';
-              debugPrint('🔐 Token belongs to: $tokenOwner');
+              // debugPrint('🔐 Token belongs to: $tokenOwner');
             } catch (e) {
               debugPrint('🔐 Could not parse decoded token payload JSON: $e');
             }
@@ -57,7 +57,7 @@ class ApiService {
           debugPrint('🔐 Could not decode token payload: $e');
         }
       } else {
-        debugPrint('🔐 ApiService.post no token available');
+        // debugPrint('🔐 ApiService.post no token available');
       }
     } catch (_) {}
 
@@ -109,10 +109,10 @@ class ApiService {
       // if (logHeaders.containsKey('Authorization')) {
       //   logHeaders['Authorization'] = 'Bearer <masked>'; // never log full token
       // }
-      debugPrint('➡️ ApiService.post -> $baseUrl$url');
-      debugPrint('   🔑 Token owner: ${tokenOwner ?? "unknown"}');
+      // debugPrint('➡️ ApiService.post -> $baseUrl$url');
+      // debugPrint('   🔑 Token owner: ${tokenOwner ?? "unknown"}');
       // debugPrint('   📤 Headers (masked): $logHeaders');
-      debugPrint('   📋 Body: ${json.encode(sendData ?? {})}');
+      // debugPrint('   📋 Body: ${json.encode(sendData ?? {})}');
     } catch (_) {}
 
     final response = await http.post(
@@ -195,21 +195,22 @@ class ApiService {
     if (gBytes.impersonationOwnerOverride != null &&
         gBytes.impersonationOwnerOverride!.isNotEmpty) {
       tokenOwner = gBytes.impersonationOwnerOverride;
-      debugPrint(
-          '🔐 ApiService.postWithBytes using owner override for logs: $tokenOwner');
+      // debugPrint(
+      //     '🔐 ApiService.postWithBytes using owner override for logs: $tokenOwner');
     }
     if (gBytes.impersonatedEmail != null &&
         gBytes.impersonatedEmail!.isNotEmpty) {
       extraHeadersBytes['X-Impersonate-Email'] = gBytes.impersonatedEmail!;
-      debugPrint(
-        '🔐 ApiService.postWithBytes adding impersonation header: ${gBytes.impersonatedEmail}',
-      );
+      // debugPrint(
+      //   '🔐 ApiService.postWithBytes adding impersonation header: ${gBytes.impersonatedEmail}',
+      // );
     }
 
     // If no data provided, attach impersonatedEmail as body so endpoints
     // that expect the user's email will receive the impersonated one.
     dynamic sendBytesData = data;
-    if ((sendBytesData == null || (sendBytesData is Map && sendBytesData.isEmpty)) &&
+    if ((sendBytesData == null ||
+            (sendBytesData is Map && sendBytesData.isEmpty)) &&
         gBytes.impersonatedEmail != null &&
         gBytes.impersonatedEmail!.isNotEmpty) {
       sendBytesData = {'email': gBytes.impersonatedEmail};
@@ -224,9 +225,9 @@ class ApiService {
       if (logHeaders.containsKey('Authorization')) {
         logHeaders['Authorization'] = 'Bearer <masked>';
       }
-      debugPrint('➡️ ApiService.postWithBytes -> $baseUrl$url');
-      debugPrint('   Headers (masked): $logHeaders');
-      debugPrint('   Body: ${json.encode(sendBytesData ?? {})}');
+      // debugPrint('➡️ ApiService.postWithBytes -> $baseUrl$url');
+      // debugPrint('   Headers (masked): $logHeaders');
+      // debugPrint('   Body: ${json.encode(sendBytesData ?? {})}');
     } catch (_) {}
 
     final response = await http.post(
@@ -253,11 +254,11 @@ class ApiService {
     try {
       if (token != null) {
         final prefix = token.substring(0, min(10, token.length));
-        debugPrint('🔐 ApiService.postJson using token prefix: $prefix');
+        // debugPrint('🔐 ApiService.postJson using token prefix: $prefix');
         final decodedPayload = _decodeTokenPayload(token);
         if (decodedPayload != null) {
-          debugPrint(
-              '🔐 ApiService.postJson decoded token payload: $decodedPayload');
+          // debugPrint(
+          //     '🔐 ApiService.postJson decoded token payload: $decodedPayload');
           try {
             final Map<String, dynamic> payloadJson =
                 Map<String, dynamic>.from(json.decode(decodedPayload));
@@ -408,9 +409,9 @@ class ApiService {
         if (logHeaders.containsKey('Authorization')) {
           logHeaders['Authorization'] = 'Bearer <masked>';
         }
-        debugPrint('➡️ ApiService.get -> $url');
-        debugPrint('   🔑 Token owner: ${tokenOwner ?? "unknown"}');
-        debugPrint('   📤 Headers (masked): $logHeaders');
+        // debugPrint('➡️ ApiService.get -> $url');
+        // debugPrint('   🔑 Token owner: ${tokenOwner ?? "unknown"}');
+        // debugPrint('   📤 Headers (masked): $logHeaders');
       } catch (_) {}
 
       final response = await http.get(

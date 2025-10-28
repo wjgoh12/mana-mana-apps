@@ -637,7 +637,77 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                           ),
                         );
                       },
-                      rangeHighlightBuilder: (context, day, isWithinRange) {},
+                      rangeHighlightBuilder: (context, day, isWithinRange) {
+                        if (!isWithinRange) return null;
+
+                        final bandHeight = ResponsiveSize.scaleHeight(14);
+                        final bandColor = Colors.grey.shade300;
+
+                        // Single-day range: small centered connector under the
+                        // marker so start/end markers remain visible.
+                        if (_rangeStart != null &&
+                            _rangeEnd != null &&
+                            isSameDay(day, _rangeStart!) &&
+                            isSameDay(day, _rangeEnd!)) {
+                          return Center(
+                            child: Container(
+                              width: ResponsiveSize.scaleWidth(28),
+                              height: bandHeight,
+                              decoration: BoxDecoration(
+                                color: bandColor,
+                                // borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          );
+                        }
+
+                        // Start cell: connector anchored to the right so it begins
+                        // immediately after the start marker.
+                        if (_rangeStart != null &&
+                            isSameDay(day, _rangeStart!)) {
+                          return Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                              width: ResponsiveSize.scaleWidth(20),
+                              height: bandHeight,
+                              decoration: BoxDecoration(
+                                color: bandColor,
+                                // borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          );
+                        }
+
+                        // End cell: connector anchored to the left so it ends
+                        // immediately before the end marker.
+                        if (_rangeEnd != null && isSameDay(day, _rangeEnd!)) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              width: ResponsiveSize.scaleWidth(20),
+                              height: bandHeight,
+                              decoration: BoxDecoration(
+                                color: bandColor,
+                                // borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          );
+                        }
+
+                        // Intermediate days: full-width thin band between anchors.
+                        return Center(
+                          child: Container(
+                            width: double.infinity,
+                            height: bandHeight,
+                            margin: EdgeInsets.zero,
+                            decoration: BoxDecoration(
+                              color: bandColor,
+                              // borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                        );
+                      },
+
                       rangeEndBuilder: (context, day, focusedDay) {
                         final size = ResponsiveSize.scaleWidth(28);
                         return Center(
@@ -710,22 +780,22 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       // custom small markers from the builders appear above the
                       // band. The within-range cells will show a full-height
                       // light-gray band (the "bridge").
-                      rangeStartDecoration: BoxDecoration(
+                      rangeStartDecoration: const BoxDecoration(
                         color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(5),
                         shape: BoxShape.rectangle,
                       ),
-                      rangeEndDecoration: BoxDecoration(
+                      rangeEndDecoration: const BoxDecoration(
                         color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(5),
                         shape: BoxShape.rectangle,
                       ),
-                      // Full-height light gray band that visually connects
-                      // the start and end markers.
-                      withinRangeDecoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                      // We render a thin connector via rangeHighlightBuilder.
+                      // Keep the default within-range cell decoration transparent
+                      // so it doesn't paint a full-height band behind our thin
+                      // connector. Avoid borderRadius here to prevent animation
+                      // tween conflicts with circular selected decorations.
+                      withinRangeDecoration: const BoxDecoration(
+                        color: Colors.transparent,
                         shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(5),
                       ),
                       // Deprecated / extra highlight color kept in sync with
                       // withinRangeDecoration for compatibility.
@@ -862,14 +932,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 // Total Points
                 Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveSize.scaleWidth(8),
+                    horizontal: ResponsiveSize.scaleWidth(15),
                     vertical: ResponsiveSize.scaleHeight(1),
                   ),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       // color: Color.fromARGB(255, 236, 247, 255),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Colors.grey.shade300),
                       boxShadow: [
                         BoxShadow(
@@ -935,6 +1005,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                           ? null
                           : _onNextPressed, // 🆕 Disable if stale
                       style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
                         backgroundColor: MaterialStateProperty.all(
                           dataIsStale
                               ? Colors.grey.shade300
@@ -953,6 +1029,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       ),
                     ),
                   ),
+                ),
+                SizedBox(
+                  height: ResponsiveSize.scaleHeight(20),
                 ),
               ],
             ),

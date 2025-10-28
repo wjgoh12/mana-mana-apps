@@ -942,7 +942,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                     width: ResponsiveSize.scaleWidth(20),
                     height: ResponsiveSize.scaleWidth(20)),
               ),
-              SizedBox(width: ResponsiveSize.scaleWidth(8)),
+              SizedBox(width: ResponsiveSize.scaleWidth(6)),
               Expanded(
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<String>(
@@ -1009,7 +1009,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                   ),
                 ),
               ),
-              SizedBox(width: ResponsiveSize.scaleWidth(8)),
+              SizedBox(width: ResponsiveSize.scaleWidth(4)),
             ],
           ),
         ),

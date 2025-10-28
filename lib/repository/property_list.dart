@@ -20,14 +20,14 @@ class PropertyListRepository {
     return await _apiService
         .post(ApiEndpoint.ownerUnit, data: data)
         .then((res) {
-      debugPrint('🏢 getOwnerUnit response received: ${res?.length} items');
+      // debugPrint('🏢 getOwnerUnit response received: ${res?.length} items');
       List<dynamic> value = res ?? [];
       List<OwnerPropertyList> _ = [];
       for (int i = 0; i < value.length; i++) {
         _.add(OwnerPropertyList.fromJson(value[i], i, _apiService.baseUrl));
       }
       _.sort((a, b) => a.lseqid.compareTo(b.lseqid));
-      debugPrint('🏢 getOwnerUnit returning ${_.length} sorted units');
+      // debugPrint('🏢 getOwnerUnit returning ${_.length} sorted units');
       return _;
     });
   }
@@ -43,14 +43,14 @@ class PropertyListRepository {
     return await _apiService
         .post(ApiEndpoint.ownerUnit, data: data)
         .then((res) {
-      debugPrint('🏢 getOwnerUnit response received: ${res?.length} items');
+      // debugPrint('🏢 getOwnerUnit response received: ${res?.length} items');
       List<dynamic> value = res ?? [];
       List<OwnerPropertyList> _ = [];
       for (int i = 0; i < value.length; i++) {
         _.add(OwnerPropertyList.fromJson(value[i], i, _apiService.baseUrl));
       }
       _.sort((a, b) => a.lseqid.compareTo(b.lseqid));
-      debugPrint('🏢 getOwnerUnit returning ${_.length} sorted units');
+      // debugPrint('🏢 getOwnerUnit returning ${_.length} sorted units');
       return _;
     });
   }

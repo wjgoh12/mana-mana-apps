@@ -121,7 +121,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
 
     return Container(
       margin: const EdgeInsets.all(8),
-      height: displayedSelected ? 380 : 320,
+      constraints: BoxConstraints(minHeight: displayedSelected ? 380 : 320),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -180,7 +180,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
             }
           },
           child: Column(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Image Stack Section
               Stack(
@@ -300,6 +300,51 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                       ),
                     ),
                 ],
+              ),
+
+              // Horizontal thumbnails row (uses decoded _bytes if available)
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: ResponsiveSize.scaleHeight(8)),
+                child: SizedBox(
+                  height: ResponsiveSize.scaleHeight(60),
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: 5,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveSize.scaleWidth(12)),
+                    separatorBuilder: (_, __) =>
+                        SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                    itemBuilder: (context, index) {
+                      if (_bytes != null) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.memory(
+                            _bytes!,
+                            width: ResponsiveSize.scaleWidth(100),
+                            height: ResponsiveSize.scaleHeight(60),
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      }
+
+                      return Container(
+                        width: ResponsiveSize.scaleWidth(100),
+                        height: ResponsiveSize.scaleHeight(60),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: Colors.grey.shade500,
+                          size: ResponsiveSize.scaleHeight(28),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
 
               // Room Info Section
