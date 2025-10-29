@@ -633,6 +633,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       'Amenities Available',
@@ -643,34 +644,73 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.bathtub_outlined,
-                          size: ResponsiveSize.scaleHeight(16),
-                        ),
-                        SizedBox(width: ResponsiveSize.scaleWidth(6)),
-                        Text(
-                          'Bathtub',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(11),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                        SizedBox(width: ResponsiveSize.scaleWidth(25)),
-                        Icon(
-                          Icons.local_laundry_service_outlined,
-                          size: ResponsiveSize.scaleHeight(16),
-                        ),
-                        SizedBox(width: ResponsiveSize.scaleWidth(6)),
-                        Text(
-                          'Washing Machine',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(11),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                      ],
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Wrap(
+                        spacing: ResponsiveSize.scaleWidth(12),
+                        runSpacing: ResponsiveSize.scaleHeight(6),
+                        children: [
+                          if (widget.roomType.b1Bathtub ||
+                              widget.roomType.b2Bathtub)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  'assets/images/bathtub.png',
+                                  height: ResponsiveSize.scaleHeight(16),
+                                  width: ResponsiveSize.scaleWidth(16),
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(6)),
+                                Text(
+                                  'Bathtub',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                          if (widget.roomType.b1WashingMachine ||
+                              widget.roomType.b2WashingMachine)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  'assets/images/washing_machine.png',
+                                  height: ResponsiveSize.scaleHeight(16),
+                                  width: ResponsiveSize.scaleWidth(16),
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(6)),
+                                Text(
+                                  'Washing Machine',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                          // Fallback if no amenity:
+                          if (!(widget.roomType.b1Bathtub ||
+                              widget.roomType.b2Bathtub ||
+                              widget.roomType.b1WashingMachine ||
+                              widget.roomType.b2WashingMachine))
+                            Text(
+                              'None',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(11),
+                                fontFamily: 'Outfit',
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 12),
                     if (displayedSelected)
