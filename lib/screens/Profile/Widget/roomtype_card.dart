@@ -88,6 +88,125 @@ class _RoomtypeCardState extends State<RoomtypeCard>
     }
   }
 
+  Future<void> _showImageGallery(int initialIndex) async {
+    if (!mounted) return;
+    int selected = initialIndex;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: StatefulBuilder(builder: (context, setStateDialog) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[850],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Large preview
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: _bytes != null
+                        ? Image.memory(
+                            _bytes!,
+                            width: double.infinity,
+                            height: ResponsiveSize.scaleHeight(260),
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            width: double.infinity,
+                            height: ResponsiveSize.scaleHeight(260),
+                            color: Colors.grey[700],
+                            child: Icon(
+                              Icons.image_not_supported,
+                              color: Colors.grey[300],
+                              size: ResponsiveSize.scaleHeight(48),
+                            ),
+                          ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Thumbnails
+                  SizedBox(
+                    height: ResponsiveSize.scaleHeight(60),
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 5,
+                      separatorBuilder: (_, __) =>
+                          SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                      itemBuilder: (context, idx) {
+                        final isSel = idx == selected;
+                        return GestureDetector(
+                          onTap: () {
+                            setStateDialog(() => selected = idx);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: isSel
+                                  ? Border.all(
+                                      color: const Color(0xFFFFCF00), width: 2)
+                                  : null,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: _bytes != null
+                                  ? Image.memory(
+                                      _bytes!,
+                                      width: ResponsiveSize.scaleWidth(80),
+                                      height: ResponsiveSize.scaleHeight(60),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      width: ResponsiveSize.scaleWidth(80),
+                                      height: ResponsiveSize.scaleHeight(60),
+                                      color: Colors.grey[700],
+                                      child: Icon(
+                                        Icons.image_outlined,
+                                        color: Colors.grey[400],
+                                        size: ResponsiveSize.scaleHeight(28),
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Close button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        child: Text('Close'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        );
+      },
+    );
+  }
+
   @override
   bool get wantKeepAlive => true; // keep decoded bytes alive
 
@@ -317,30 +436,31 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                     separatorBuilder: (_, __) =>
                         SizedBox(width: ResponsiveSize.scaleWidth(8)),
                     itemBuilder: (context, index) {
-                      if (_bytes != null) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.memory(
-                            _bytes!,
-                            width: ResponsiveSize.scaleWidth(100),
-                            height: ResponsiveSize.scaleHeight(60),
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      }
-
-                      return Container(
-                        width: ResponsiveSize.scaleWidth(100),
-                        height: ResponsiveSize.scaleHeight(60),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: Colors.grey.shade500,
-                          size: ResponsiveSize.scaleHeight(28),
-                        ),
+                      return GestureDetector(
+                        onTap: () => _showImageGallery(index),
+                        child: _bytes != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.memory(
+                                  _bytes!,
+                                  width: ResponsiveSize.scaleWidth(100),
+                                  height: ResponsiveSize.scaleHeight(60),
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Container(
+                                width: ResponsiveSize.scaleWidth(100),
+                                height: ResponsiveSize.scaleHeight(60),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.image_outlined,
+                                  color: Colors.grey.shade500,
+                                  size: ResponsiveSize.scaleHeight(28),
+                                ),
+                              ),
                       );
                     },
                   ),
