@@ -7,7 +7,7 @@ import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/model/propertyState.dart';
 import 'package:mana_mana_app/model/redemptionBalancePoints.dart';
-import 'package:mana_mana_app/model/roomType.dart';
+import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
@@ -374,6 +374,7 @@ class RedemptionRepository {
     required int quantity,
     required double points,
     required String guestName,
+    String remark = '',
   }) async {
     // debugPrint("🔎 point.location raw: '${point.location}'");
     // debugPrint(
@@ -406,6 +407,7 @@ class RedemptionRepository {
       "rooms": quantity.toString(), // ✅ cast to string
       "totalRate": points.toInt().toString(), // ✅ cast to string
       "guestName": guestName.trim(),
+      "remark": remark.trim(),
     };
 
     // debugPrint("📤 Request body for booking: $body");

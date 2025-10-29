@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi' hide Size;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +10,7 @@ import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/roomtype_card.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:mana_mana_app/model/roomType.dart';
+import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class SelectDateRoom extends StatefulWidget {
@@ -112,6 +113,15 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         departureDate: DateTime.now().add(const Duration(days: 8)),
       ),
     ]);
+  }
+
+  int getNumBedroomsFromRoomTypeName(String roomTypeName) {
+    final regex = RegExp(r'(\d+)', caseSensitive: false);
+    final match = regex.firstMatch(roomTypeName);
+    if (match != null && match.groupCount >= 1) {
+      return int.parse(match.group(1) ?? '1');
+    }
+    return 1; // Default to 1 bedroom if not specified
   }
 
   String sanitizeRoomTypeName(String raw) {
@@ -277,7 +287,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     // First find the room in current available rooms
     final matchingRoom = _vm.roomTypes.firstWhere(
       (room) => room.roomTypeName == _selectedRoomId,
-      orElse: () => RoomType(roomTypeName: '', roomTypePoints: 0, pic: ''),
+      orElse: () => RoomType(
+          roomTypeName: '', roomTypePoints: 0, pic: '', numberOfPax: 1),
     );
 
     if (matchingRoom.roomTypeName.isEmpty) {
@@ -876,6 +887,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   itemBuilder: (context, index) {
                     final room = vm.roomTypes[index];
                     final displayName = sanitizeRoomTypeName(room.roomTypeName);
+                    final numberOfPax = room.numberOfPax;
+                    final numBedRooms =
+                        getNumBedroomsFromRoomTypeName(displayName);
                     final start = _rangeStart ??
                         DateTime.now().add(const Duration(days: 7));
                     final end = _rangeEnd ?? start.add(const Duration(days: 1));
@@ -889,6 +903,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       startDate: start,
                       endDate: end,
                       quantity: _selectedQuantity,
+                      numberofPax: numberOfPax,
+                      numBedrooms: numBedRooms,
                       checkAffordable: (room, duration) {
                         final userPoints = vm.UserPointBalance.isNotEmpty
                             ? vm.UserPointBalance.first.redemptionBalancePoints
@@ -1016,8 +1032,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                               ? Colors.grey.shade300
                               : const Color(0xFF606060),
                         ),
-                        fixedSize:
-                            MaterialStateProperty.all(const Size(300, 40)),
+                        fixedSize: MaterialStateProperty.all(Size(300, 40)),
                       ),
                       child: Text(
                         dataIsStale ? 'Updating Prices...' : 'Next',

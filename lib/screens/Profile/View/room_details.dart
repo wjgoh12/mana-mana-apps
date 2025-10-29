@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/bookingRoom.dart';
-import 'package:mana_mana_app/model/roomType.dart';
+import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/roomtype_card.dart';
@@ -450,6 +450,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                       points: totalPoints(),
                                       guestName:
                                           _guestNameController.text.trim(),
+                                      remark: _remarkController.text.trim(),
                                     );
 
                                     if (result != null) {

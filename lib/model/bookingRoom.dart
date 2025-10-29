@@ -1,4 +1,4 @@
-import 'package:mana_mana_app/model/roomType.dart';
+import 'package:mana_mana_app/model/roomtype.dart';
 
 class BookingRoom {
   final RoomType roomType;

@@ -4,7 +4,7 @@ import 'package:mana_mana_app/model/bookingHistory.dart';
 import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/model/propertyState.dart';
-import 'package:mana_mana_app/model/roomType.dart';
+import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
@@ -439,6 +439,7 @@ class OwnerProfileVM extends ChangeNotifier {
     required int quantity,
     required double points,
     required String guestName,
+    String remark = '',
   }) async {
     try {
       return await _ownerBookingRepository.submitBooking(
@@ -450,6 +451,7 @@ class OwnerProfileVM extends ChangeNotifier {
         quantity: quantity,
         points: points, //required points
         guestName: guestName,
+        remark: remark,
       );
     } catch (e, st) {
       debugPrint("❌ Booking submission failed: $e\n$st");

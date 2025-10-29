@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mana_mana_app/model/roomType.dart';
+import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 

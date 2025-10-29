@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mana_mana_app/model/roomType.dart';
+import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
@@ -16,6 +16,11 @@ class RoomtypeCard extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
   final int quantity;
+  final int numberofPax;
+  final int numBedrooms;
+  final String bedRoom1;
+  final String bedRoom2;
+
   final Function(RoomType? room)? onSelect;
   final Function(int quantity)? onQuantityChanged;
   final bool Function(RoomType room, int duration) checkAffordable;
@@ -29,6 +34,10 @@ class RoomtypeCard extends StatefulWidget {
     required this.startDate,
     required this.endDate,
     this.quantity = 1,
+    this.numberofPax = 1,
+    this.numBedrooms = 1,
+    this.bedRoom1 = '',
+    this.bedRoom2 = '',
     this.onSelect,
     this.onQuantityChanged,
     this.multiSelectable = false,
@@ -78,7 +87,6 @@ class _RoomtypeCardState extends State<RoomtypeCard>
         _bytes = base64Decode(widget.roomType.pic);
       }
     } catch (e) {
-      // decoding failed -> leave _bytes null
       _bytes = null;
     } finally {
       if (mounted) {
@@ -476,8 +484,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                   children: [
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Room Info',
@@ -489,14 +497,96 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            '1 King Bed',
-                            style: TextStyle(
-                              fontSize: ResponsiveSize.text(11),
-                              fontFamily: 'Outfit',
-                              color: Colors.grey[600],
+                          if (widget.roomType.numBedrooms == 1)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Image.asset('assets/images/bed_img.png',
+                                        height: ResponsiveSize.scaleHeight(14),
+                                        width: ResponsiveSize.scaleWidth(14)),
+                                    SizedBox(
+                                        width: ResponsiveSize.scaleWidth(4)),
+                                    Text(
+                                      '${widget.roomType.bedRoom1}${widget.roomType.bedRoom2} bed',
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.text(11),
+                                        fontFamily: 'Outfit',
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  ' ${widget.roomType.numBedrooms} room',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                          if (widget.roomType.numBedrooms == 2)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Image.asset('assets/images/bed_img.png',
+                                        height: ResponsiveSize.scaleHeight(14),
+                                        width: ResponsiveSize.scaleWidth(14)),
+                                    SizedBox(
+                                        width: ResponsiveSize.scaleWidth(4)),
+                                    Text(
+                                      '${widget.roomType.bedRoom1} bed',
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.text(11),
+                                        fontFamily: 'Outfit',
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Image.asset('assets/images/bed_img.png',
+                                        height: ResponsiveSize.scaleHeight(14),
+                                        width: ResponsiveSize.scaleWidth(14)),
+                                    SizedBox(
+                                        width: ResponsiveSize.scaleWidth(4)),
+                                    Text(
+                                      '${widget.roomType.bedRoom2} bed',
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.text(11),
+                                        fontFamily: 'Outfit',
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  '${widget.roomType.numBedrooms} rooms',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          if (widget.roomType.numBedrooms == 0)
+                            Text(
+                              'Null',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(11),
+                                fontFamily: 'Outfit',
+                                color: Colors.grey[600],
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -523,7 +613,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             ),
                             SizedBox(width: ResponsiveSize.scaleWidth(6)),
                             Text(
-                              '2',
+                              widget.numberofPax.toString(),
                               style: TextStyle(
                                 fontSize: ResponsiveSize.text(11),
                                 fontFamily: 'Outfit',
