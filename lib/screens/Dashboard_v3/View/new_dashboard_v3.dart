@@ -344,7 +344,7 @@ class NewDashboardV3 extends StatelessWidget {
                 ignoringSemantics: false,
                 absorbing: model.isLoading, // Disable bottom nav when loading
                 child: Opacity(
-                  opacity: model.isLoading ? 0.3 : 1.0, // Dim when loading
+                  opacity: model.isLoading ? 0.3 : 1.0,
                   child: const BottomNavBar(currentIndex: 0),
                 ),
               ),
@@ -359,7 +359,7 @@ class NewDashboardV3 extends StatelessWidget {
   double _getExpandedHeight(BuildContext context) {
     // Only need height for status bar + top bar since other content is in body
     final statusBarHeight = MediaQuery.of(context).padding.top;
-    final topBarHeight = 60.0; // Approximate height of topBar
+    const topBarHeight = 60.0; // Approximate height of topBar
 
     return statusBarHeight + topBarHeight;
   }
