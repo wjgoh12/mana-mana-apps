@@ -1,5 +1,9 @@
 class RoomType {
   final String pic;
+  final String pic2;
+  final String pic3;
+  final String pic4;
+  final String pic5;
   final String roomTypeName;
   final double roomTypePoints;
   final int numberOfPax;
@@ -13,6 +17,10 @@ class RoomType {
 
   RoomType({
     required this.pic,
+    required this.pic2,
+    required this.pic3,
+    required this.pic4,
+    required this.pic5,
     required this.roomTypeName,
     required this.roomTypePoints,
     required this.numberOfPax,
@@ -27,7 +35,11 @@ class RoomType {
 
   factory RoomType.fromJson(Map<String, dynamic> json) {
     return RoomType(
-      pic: json['pic'] ?? '', // fallback to empty string if null
+      pic: json['pic'] ?? '',
+      pic2: json['pic2'] ?? '',
+      pic3: json['pic3'] ?? '',
+      pic4: json['pic4'] ?? '',
+      pic5: json['pic5'] ?? '',
       roomTypeName: json['roomTypeName'] ?? '',
       roomTypePoints: _parseToDouble(json['roomTypePoints']),
       numberOfPax: json['numGuestPax'] ?? 0,
@@ -54,6 +66,10 @@ class RoomType {
   Map<String, dynamic> toJson() {
     return {
       "pic": pic,
+      "pic2": pic2,
+      "pic3": pic3,
+      "pic4": pic4,
+      "pic5": pic5,
       "roomTypeName": roomTypeName,
       "roomTypePoints": roomTypePoints,
       "numGuestPax": numberOfPax,

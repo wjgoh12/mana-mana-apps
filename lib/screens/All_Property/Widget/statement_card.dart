@@ -34,12 +34,11 @@ class StatementCard extends StatelessWidget {
           // onTap: onTap,
           child: Padding(
             padding: EdgeInsets.all(ResponsiveSize.scaleWidth(12)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Month header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '$month Statement',
@@ -50,6 +49,7 @@ class StatementCard extends StatelessWidget {
                         color: Color(0xFF606060),
                       ),
                     ),
+                    SizedBox(height: ResponsiveSize.scaleHeight(2)),
                     Text(
                       statementAmount,
                       style: TextStyle(
@@ -60,74 +60,34 @@ class StatementCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: ResponsiveSize.scaleHeight(8)),
-
-                // Statement details
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                Container(
+                  height: ResponsiveSize.scaleHeight(32),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF606060),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: TextButton(
+                    onPressed: onTap,
+                    child: Row(
                       children: [
-                        // Text(
-                        //   'Statement Date:',
-                        //   style: TextStyle(
-                        //     fontFamily: 'Outfit',
-                        //     fontSize: ResponsiveSize.text(11),
-                        //     color: Colors.grey[600],
-                        //   ),
-                        // ),
-                        SizedBox(height: ResponsiveSize.scaleHeight(2)),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFFFFCF00),
-                            borderRadius: BorderRadius.circular(20),
+                        Text(
+                          'Statement',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: ResponsiveSize.text(12),
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              statementDate,
-                              style: TextStyle(
-                                fontFamily: 'Outfit',
-                                fontSize: ResponsiveSize.text(12),
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF606060),
-                              ),
-                            ),
-                          ),
+                        ),
+                        SizedBox(width: ResponsiveSize.scaleWidth(4)),
+                        Image.asset(
+                          'assets/images/statement_download.png',
+                          width: ResponsiveSize.scaleWidth(16),
+                          height: ResponsiveSize.scaleHeight(16),
                         ),
                       ],
                     ),
-                    Container(
-                      height: ResponsiveSize.scaleHeight(32),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF606060),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: TextButton(
-                        onPressed: onTap,
-                        child: Row(
-                          children: [
-                            Text(
-                              'Statement',
-                              style: TextStyle(
-                                fontFamily: 'Outfit',
-                                fontSize: ResponsiveSize.text(12),
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(width: ResponsiveSize.scaleWidth(4)),
-                            Image.asset(
-                              'assets/images/statement_download.png',
-                              width: ResponsiveSize.scaleWidth(16),
-                              height: ResponsiveSize.scaleHeight(16),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),

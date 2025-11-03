@@ -35,7 +35,11 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
   @override
   void initState() {
     super.initState();
-    _loadDataInBackground();
+    // Defer data loading until after first frame to avoid calling setState
+    // during the initial build cycle which can trigger Flutter warnings.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadDataInBackground();
+    });
   }
 
   Future<void> _loadDataInBackground() async {
@@ -157,8 +161,12 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
             dropdownOptions = [ALL_STATES, ...globalData.availableStates];
 
             if (selectedState == null) {
+              // Set initial selectedState synchronously but defer expensive
+              // fetch work to after build to avoid setState during build.
               selectedState = ALL_STATES;
-              _handleStateSelection(globalData, ALL_STATES);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _handleStateSelection(globalData, ALL_STATES);
+              });
             }
           }
 

@@ -288,7 +288,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     final matchingRoom = _vm.roomTypes.firstWhere(
       (room) => room.roomTypeName == _selectedRoomId,
       orElse: () => RoomType(
-          roomTypeName: '', roomTypePoints: 0, pic: '', numberOfPax: 1),
+          roomTypeName: '',
+          roomTypePoints: 0,
+          pic: '',
+          pic2: '',
+          pic3: '',
+          pic4: '',
+          pic5: '',
+          numberOfPax: 1),
     );
 
     if (matchingRoom.roomTypeName.isEmpty) {

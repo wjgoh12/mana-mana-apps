@@ -50,7 +50,8 @@ class RoomtypeCard extends StatefulWidget {
 
 class _RoomtypeCardState extends State<RoomtypeCard>
     with AutomaticKeepAliveClientMixin {
-  Uint8List? _bytes;
+  // Hold up to 5 decoded images (nullable entries for missing/bad images).
+  List<Uint8List?> _images = [];
   bool _decoding = false;
   // Local selection state used when multiSelectable == true
   bool _localSelected = false;
@@ -70,24 +71,51 @@ class _RoomtypeCardState extends State<RoomtypeCard>
     if (!widget.multiSelectable && oldWidget.isSelected != widget.isSelected) {
       _localSelected = widget.isSelected;
     }
+    // If the underlying RoomType changed, clear and re-decode images so
+    // the thumbnails and gallery update accordingly.
+    if (oldWidget.roomType.pic != widget.roomType.pic ||
+        oldWidget.roomType.pic2 != widget.roomType.pic2 ||
+        oldWidget.roomType.pic3 != widget.roomType.pic3 ||
+        oldWidget.roomType.pic4 != widget.roomType.pic4 ||
+        oldWidget.roomType.pic5 != widget.roomType.pic5) {
+      _images = [];
+      _decodeOnce();
+    }
   }
 
   Future<void> _decodeOnce() async {
-    if (_bytes != null || _decoding) return;
+    // If we've already attempted to decode (images list filled), skip.
+    if (_images.isNotEmpty || _decoding) return;
     _decoding = true;
 
     try {
-      if (widget.roomType.pic.isEmpty) {
-        _bytes = null;
-      } else if (widget.roomType.pic.startsWith('data:image')) {
-        // data URI: parse
-        final data = Uri.parse(widget.roomType.pic).data;
-        _bytes = data?.contentAsBytes();
-      } else {
-        _bytes = base64Decode(widget.roomType.pic);
+      final pics = [
+        widget.roomType.pic,
+        widget.roomType.pic2,
+        widget.roomType.pic3,
+        widget.roomType.pic4,
+        widget.roomType.pic5,
+      ];
+
+      _images = <Uint8List?>[];
+      for (final p in pics) {
+        if (p.isEmpty) {
+          _images.add(null);
+          continue;
+        }
+
+        try {
+          if (p.startsWith('data:image')) {
+            final data = Uri.parse(p).data;
+            _images.add(data?.contentAsBytes());
+          } else {
+            _images.add(base64Decode(p));
+          }
+        } catch (e) {
+          // If one image fails to decode, add null and continue with others
+          _images.add(null);
+        }
       }
-    } catch (e) {
-      _bytes = null;
     } finally {
       if (mounted) {
         _decoding = false;
@@ -98,7 +126,10 @@ class _RoomtypeCardState extends State<RoomtypeCard>
 
   Future<void> _showImageGallery(int initialIndex) async {
     if (!mounted) return;
-    int selected = initialIndex;
+    // Always start the gallery focused on the first image (index 0).
+    // This ignores the passed-in initialIndex so the dialog consistently
+    // points to the first image when opened.
+    int selected = 0;
 
     await showDialog(
       context: context,
@@ -120,23 +151,28 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                   // Large preview
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: _bytes != null
-                        ? Image.memory(
-                            _bytes!,
-                            width: double.infinity,
-                            height: ResponsiveSize.scaleHeight(260),
-                            fit: BoxFit.cover,
-                          )
-                        : Container(
-                            width: double.infinity,
-                            height: ResponsiveSize.scaleHeight(260),
-                            color: Colors.grey[700],
-                            child: Icon(
-                              Icons.image_not_supported,
-                              color: Colors.grey[300],
-                              size: ResponsiveSize.scaleHeight(48),
-                            ),
-                          ),
+                    child: Builder(builder: (_) {
+                      // Guard against selected being out of range
+                      final Uint8List? selectedImage =
+                          (selected >= 0 && selected < _images.length)
+                              ? _images[selected]
+                              : null;
+
+                      if (selectedImage != null) {
+                        return Image.memory(
+                          selectedImage,
+                          width: double.infinity,
+                          height: ResponsiveSize.scaleHeight(260),
+                          fit: BoxFit.cover,
+                        );
+                      }
+
+                      // No image for this slot: render nothing (empty box)
+                      return SizedBox(
+                        width: double.infinity,
+                        height: ResponsiveSize.scaleHeight(260),
+                      );
+                    }),
                   ),
                   const SizedBox(height: 12),
 
@@ -145,11 +181,26 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                     height: ResponsiveSize.scaleHeight(60),
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
-                      itemCount: 5,
+                      // If we decoded images, iterate over that length; otherwise
+                      // show zero items (no thumbnails).
+                      itemCount: _images.isNotEmpty ? _images.length : 0,
                       separatorBuilder: (_, __) =>
                           SizedBox(width: ResponsiveSize.scaleWidth(8)),
                       itemBuilder: (context, idx) {
                         final isSel = idx == selected;
+                        final Uint8List? bytes =
+                            (idx < _images.length) ? _images[idx] : null;
+
+                        // If this particular image is missing, render an empty
+                        // box (blank) so the layout stays consistent without
+                        // forcing a null image use.
+                        if (bytes == null) {
+                          return SizedBox(
+                            width: ResponsiveSize.scaleWidth(80),
+                            height: ResponsiveSize.scaleHeight(60),
+                          );
+                        }
+
                         return GestureDetector(
                           onTap: () {
                             setStateDialog(() => selected = idx);
@@ -164,23 +215,12 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(6),
-                              child: _bytes != null
-                                  ? Image.memory(
-                                      _bytes!,
-                                      width: ResponsiveSize.scaleWidth(80),
-                                      height: ResponsiveSize.scaleHeight(60),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Container(
-                                      width: ResponsiveSize.scaleWidth(80),
-                                      height: ResponsiveSize.scaleHeight(60),
-                                      color: Colors.grey[700],
-                                      child: Icon(
-                                        Icons.image_outlined,
-                                        color: Colors.grey[400],
-                                        size: ResponsiveSize.scaleHeight(28),
-                                      ),
-                                    ),
+                              child: Image.memory(
+                                bytes,
+                                width: ResponsiveSize.scaleWidth(80),
+                                height: ResponsiveSize.scaleHeight(60),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         );
@@ -222,22 +262,22 @@ class _RoomtypeCardState extends State<RoomtypeCard>
   Widget build(BuildContext context) {
     super.build(context); // for AutomaticKeepAliveClientMixin
 
-    // Use the cached _bytes (or placeholder)
-    final imageWidget = _bytes != null
+    // Use the first available decoded image (if any), otherwise show placeholder
+    final Uint8List? firstImage =
+        _images.firstWhere((i) => i != null, orElse: () => null);
+
+    final imageWidget = firstImage != null
         ? Image.memory(
-            _bytes!,
+            firstImage,
             fit: BoxFit.cover,
             width: double.infinity,
             height: 180,
           )
-        : Container(
+        // No image: render nothing (empty box) so the UI doesn't show a
+        // placeholder icon.
+        : SizedBox(
             width: double.infinity,
             height: 180,
-            color: Colors.grey[300],
-            child: const Center(
-              child:
-                  Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
-            ),
           );
 
     final int duration = widget.endDate.difference(widget.startDate).inDays;
@@ -429,7 +469,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                 ],
               ),
 
-              // Horizontal thumbnails row (uses decoded _bytes if available)
+              // Horizontal thumbnails row (uses decoded images if available)
               Padding(
                 padding: EdgeInsets.symmetric(
                     vertical: ResponsiveSize.scaleHeight(8)),
@@ -437,37 +477,35 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                   height: ResponsiveSize.scaleHeight(60),
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: 5,
+                    shrinkWrap: false,
+                    // Use the number of decoded images; if none decoded, show
+                    // zero thumbnails (nothing).
+                    itemCount: _images.isNotEmpty ? _images.length : 0,
                     padding: EdgeInsets.symmetric(
                         horizontal: ResponsiveSize.scaleWidth(12)),
                     separatorBuilder: (_, __) =>
                         SizedBox(width: ResponsiveSize.scaleWidth(8)),
                     itemBuilder: (context, index) {
+                      final Uint8List? bytes =
+                          (_images.isNotEmpty && index < _images.length)
+                              ? _images[index]
+                              : null;
                       return GestureDetector(
                         onTap: () => _showImageGallery(index),
-                        child: _bytes != null
+                        child: bytes != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Image.memory(
-                                  _bytes!,
+                                  bytes,
                                   width: ResponsiveSize.scaleWidth(100),
                                   height: ResponsiveSize.scaleHeight(60),
                                   fit: BoxFit.cover,
                                 ),
                               )
-                            : Container(
-                                width: ResponsiveSize.scaleWidth(100),
+                            // No thumbnail: keep the slot empty (blank)
+                            : SizedBox(
+                                width: ResponsiveSize.scaleWidth(0),
                                 height: ResponsiveSize.scaleHeight(60),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  Icons.image_outlined,
-                                  color: Colors.grey.shade500,
-                                  size: ResponsiveSize.scaleHeight(28),
-                                ),
                               ),
                       );
                     },
