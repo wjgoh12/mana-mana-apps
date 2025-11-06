@@ -613,7 +613,7 @@ class _RoomDetailsState extends State<RoomDetails> {
             Text(
               date != null ? DateFormat('EEE, MMM d, yyyy').format(date) : '-',
               style: TextStyle(
-                fontSize: ResponsiveSize.text(12),
+                fontSize: ResponsiveSize.text(10.5),
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Outfit',
               ),

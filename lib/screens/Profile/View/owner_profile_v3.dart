@@ -27,6 +27,20 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
     model.fetchData().then((_) => model.checkRole());
   }
 
+  /// Format identification number: if 12 digits, format as xxxxxx-xx-xxxx
+  String _formatIdentificationNumber(String idNumber) {
+    // Remove any existing dashes or spaces
+    final cleanId = idNumber.replaceAll(RegExp(r'[-\s]'), '');
+
+    // Check if it's exactly 12 digits
+    if (cleanId.length == 12 && RegExp(r'^\d{12}$').hasMatch(cleanId)) {
+      return '${cleanId.substring(0, 6)}-${cleanId.substring(6, 8)}-${cleanId.substring(8, 12)}';
+    }
+
+    // Return original if not 12 digits
+    return idNumber;
+  }
+
   Future<void> _handleRevert() async {
     if (_isReverting) return; // prevent duplicate presses
 
@@ -345,6 +359,19 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                       SizedBox(width: responsiveWidth(8)),
                                       model.users.isNotEmpty
                                           ? Text(
+                                              _formatIdentificationNumber(model
+                                                      .users.first.ownerRefNo ??
+                                                  ''),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.visible,
+                                              softWrap: true,
+                                              style: TextStyle(
+                                                  fontFamily: 'outfit',
+                                                  fontSize:
+                                                      ResponsiveSize.text(12),
+                                                  fontWeight: FontWeight.w400),
+                                            )
+                                          : Text(
                                               '000000-00-0000',
                                               maxLines: 6,
                                               overflow: TextOverflow.visible,
@@ -354,8 +381,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                   fontSize:
                                                       ResponsiveSize.text(12),
                                                   fontWeight: FontWeight.w400),
-                                            )
-                                          : const Text('Loading...'),
+                                            ),
                                     ],
                                   ),
                                 ],
@@ -854,11 +880,11 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                                       .white),
                                                         ),
                                                         onPressed: () async {
-                  
                                                           Navigator.of(context)
                                                               .pop();
                                                         },
-                                                        child: const Text('Cancel',
+                                                        child: const Text(
+                                                            'Cancel',
                                                             style: TextStyle(
                                                                 fontFamily:
                                                                     'Outfit')),
@@ -883,7 +909,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                               await model
                                                                   .validateSwitchUser(
                                                                       email);
-                                                          
 
                                                           // Check for success response with "Now valid viewing as:" message
                                                           bool isValidUser =

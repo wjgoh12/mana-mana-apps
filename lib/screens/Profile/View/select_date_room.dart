@@ -1114,7 +1114,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     ? DateFormat('EEE, MMM d, yyyy').format(date)
                     : '-',
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 13,
                   color: Color(0xFF606060),
                   fontWeight: FontWeight.bold,
                 ),

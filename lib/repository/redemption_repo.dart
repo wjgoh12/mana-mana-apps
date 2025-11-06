@@ -134,15 +134,26 @@ class RedemptionRepository {
     try {
       // ✅ Use cached data if available
       if (_isCacheValid && _stateLocationsCache != null) {
-        debugPrint(
-            "✅ Using cached states: ${_stateLocationsCache!.keys.length}");
-        return _stateLocationsCache!.keys.toList();
+        final cachedCount = _stateLocationsCache!.keys.length;
+        debugPrint("✅ Using cached states: $cachedCount");
+
+        // If cache is empty, force a refresh
+        if (cachedCount == 0) {
+          debugPrint("⚠️ Cached states is 0, forcing fresh fetch...");
+          _cacheTime = null; // Invalidate cache
+          _stateLocationsCache = null;
+        } else {
+          return _stateLocationsCache!.keys.toList();
+        }
       }
 
       debugPrint("🔄 Fetching all states and locations in one go...");
 
       // ✅ Fetch all locations for all states and cache them
       await _fetchAndCacheAllLocations();
+
+      final resultCount = _stateLocationsCache?.keys.length ?? 0;
+      debugPrint("✅ Fetch complete. Total states with locations: $resultCount");
 
       return _stateLocationsCache?.keys.toList() ?? [];
     } catch (e) {
@@ -184,18 +195,37 @@ class RedemptionRepository {
 
   Future<void> _fetchLocationsForState(String state) async {
     try {
+      final url =
+          '${ApiEndpoint.getAllState}?state=${Uri.encodeQueryComponent(state)}';
+      debugPrint('🔎 Fetching locations for state: $state -> $url');
       final res = await _apiService.get(
-        '${ApiEndpoint.getAllState}?state=${Uri.encodeQueryComponent(state)}',
+        url,
       );
 
-      if (res == null) return;
+      if (res == null) {
+        debugPrint('🔍 Response for $state: (null) - API returned null');
+        return;
+      }
+
+      debugPrint('🔍 Response for $state: ${res.runtimeType}');
+      
+      // Log first 500 chars of response for debugging
+      final resStr = res.toString();
+      if (resStr.length > 500) {
+        debugPrint('   Data preview: ${resStr.substring(0, 500)}...');
+      } else {
+        debugPrint('   Data: $resStr');
+      }
 
       final List<dynamic> data;
       if (res is Map && res['data'] is List) {
         data = res['data'] as List;
+        debugPrint('   Extracted ${data.length} items from Map.data');
       } else if (res is List) {
         data = res;
+        debugPrint('   Response is List with ${data.length} items');
       } else {
+        debugPrint('   ⚠️ Unexpected response type, cannot extract data');
         return;
       }
 
@@ -206,10 +236,13 @@ class RedemptionRepository {
                   state.toLowerCase())
           .map((item) => PropertyState.fromJson(item))
           .toList();
-
       // Only cache states that have locations
+      debugPrint('➡️ Found ${locations.length} locations for $state');
       if (locations.isNotEmpty) {
         _stateLocationsCache![state] = locations;
+      } else {
+        // keep debug visibility when a state has no locations
+        debugPrint('ℹ️ No locations for state $state, skipping cache entry.');
       }
     } catch (e) {
       debugPrint("⚠️ Error fetching locations for $state: $e");
