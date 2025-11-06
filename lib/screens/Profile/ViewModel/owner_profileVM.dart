@@ -628,7 +628,7 @@ class OwnerProfileVM extends ChangeNotifier {
           .toList();
 
       _canSwitchUser =
-          roles.contains('ADMIN') || roles.contains('MOBILE-ADMIN');
+          roles.contains('MOBILE-ADMIN');
     } catch (e) {
       debugPrint('❌ Error checking role: $e');
       _canSwitchUser = false;
@@ -653,68 +653,17 @@ class OwnerProfileVM extends ChangeNotifier {
   Future<String?> switchUserAndReload(String email) async {
     try {
       // Step 2: confirm switch on server
-      final confirmRes = await _userRepository.confirmSwitchUser(email);
-      if (confirmRes['success'] == false ||
-          (confirmRes.containsKey('statusCode') &&
-              confirmRes['statusCode'] != 200)) {
-        return confirmRes['body']?.toString() ?? 'Confirm failed';
-      }
+      await _userRepository.confirmSwitchUser(email).then((confirmRes) async {
+        debugPrint('✅ confirmSwitchUser response: $confirmRes');
+        
+        // Set the switch user flag
+        _globalDataManager.isSwitchUser = true;
+        
+        await _globalDataManager.initializeData(forceRefresh: true);
+        return;
+      });
 
-      // Determine target email (server may echo impersonatedEmail)
-      String targetEmail = email;
-      if (confirmRes['impersonatedEmail'] != null &&
-          confirmRes['impersonatedEmail'].toString().isNotEmpty) {
-        targetEmail = confirmRes['impersonatedEmail'].toString();
-      }
-
-      // Step 3: fetch switched user's profile using dedicated method
-      final switched = await _userRepository.getSwitchedUser(targetEmail);
-      if (switched.isEmpty) {
-        return 'Failed to fetch switched user profile for $targetEmail';
-      }
-
-      // If backend did not return the impersonated user's profile (for
-      // example it returned the admin account), avoid applying the switch
-      // — this prevents mixing admin metadata with another user's owner/units.
-      final returnedEmail = (switched.first.email ?? '').toLowerCase();
-      if (returnedEmail != targetEmail.toLowerCase()) {
-        debugPrint(
-            '⚠️ Backend returned $returnedEmail instead of $targetEmail; cannot apply server-driven impersonation without mixing admin metadata.');
-
-        // Start a safe, explicit temporary "view-only" impersonation so QA
-        // can inspect the target account UI even when the backend doesn't
-        // return a full impersonated profile. This does NOT swap tokens.
-        try {
-          await startTemporaryImpersonation(targetEmail);
-          debugPrint(
-              '⏭️ Started temporary view-only impersonation for $targetEmail');
-          return 'Started temporary view-only impersonation for $targetEmail (server did not return full profile).';
-        } catch (e) {
-          debugPrint('❌ Failed to start temporary impersonation: $e');
-          return 'Server did not return full profile for $targetEmail; switch not applied.';
-        }
-      }
-
-      // Step 4: fetch owner units for that email
-      List<OwnerPropertyList> ownerUnits = [];
-      try {
-        ownerUnits =
-            await _propertyRepository.getSwitchedOwnerUnit(email: targetEmail);
-      } catch (e) {
-        debugPrint('⚠️ Failed to fetch ownerUnits for $targetEmail: $e');
-        ownerUnits = [];
-      }
-
-      // Apply impersonation data into GlobalDataManager so UI shows full
-      // switched user's profile (does not swap tokens).
-      _globalDataManager.applyImpersonationData(
-          user: switched.first,
-          ownerUnits: ownerUnits,
-          notify: true // ← Make sure this is true
-          );
-      _globalDataManager.setImpersonatedEmail(targetEmail);
-
-      debugPrint('✅ switchUserAndReload completed for $targetEmail');
+      debugPrint('✅ switchUserAndReload completed for $email');
       notifyListeners();
       return null;
     } catch (e, st) {
@@ -723,37 +672,18 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
-  /// Start a temporary, client-side impersonation that clears current
-  /// user-specific data immediately and loads data for [email] in the
-  /// background. This does not require the backend to return a full
-  /// impersonated profile — it simply gives QA a clean slate for viewing.
-  Future<void> startTemporaryImpersonation(String email) async {
-    try {
-      debugPrint('OwnerProfileVM: starting temporary impersonation for $email');
-      await _globalDataManager.impersonateUser(email);
-      notifyListeners();
-    } catch (e) {
-      debugPrint('❌ startTemporaryImpersonation failed: $e');
-    }
-  }
-
-  /// Revert a temporary impersonation and restore backed-up admin data.
-  Future<void> revertTemporaryImpersonation() async {
-    try {
-      debugPrint('OwnerProfileVM: reverting temporary impersonation');
-      await _globalDataManager.revertImpersonation();
-      notifyListeners();
-    } catch (e) {
-      debugPrint('❌ revertTemporaryImpersonation failed: $e');
-    }
-  }
-
 //cancel user/stop impersonate user
   Future<void> cancelUser(String email) async {
     await _userRepository.cancelSwitchUser(email);
+    
+    // Clear the switch user flag
+    _globalDataManager.isSwitchUser = false;
+    
+    // Refresh data to load original user
+    await _globalDataManager.initializeData(forceRefresh: true);
 
-    debugPrint("Cancel user operation executed.");
-    return;
+    debugPrint("Cancel user operation executed and data refreshed.");
+    notifyListeners();
   }
 
 //load impersonated user data

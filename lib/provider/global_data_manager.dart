@@ -39,26 +39,12 @@ class GlobalDataManager extends ChangeNotifier {
   List<String> _availableStates = [];
   Map<String, List<PropertyState>> _locationsByState = {};
   List<OccupancyRate> _occupancyRateHistory = [];
-  // Keep snapshot of admin/original state before impersonation
-  List<User> _originalUsersBackup = [];
-  List<OwnerPropertyList> _originalOwnerUnits = [];
-  bool _isImpersonating = false;
-
-  // Variable to store the original user before impersonation
-  User? _originalUser;
-
-  // Impersonation state: when set, user data will be fetched by this email
-  String? _impersonatedEmail;
-  // In-memory impersonation token override (do NOT persist)
-  String? _impersonationAccessToken;
-  DateTime? _impersonationTokenExpiry;
-  // Optional explicit owner override used for client-side displays/logging
-  String? _impersonationOwnerOverride;
 
   // Add new state properties
   bool _isLoadingStates = false;
   bool _isLoadingLocations = false;
   String? _selectedState;
+  bool isSwitchUser = false;
 
   // Add cache for filtered locations
   Map<String, List<PropertyState>> _filteredLocationCache = {};
@@ -85,29 +71,6 @@ class GlobalDataManager extends ChangeNotifier {
   bool get isLoadingStates => _isLoadingStates;
   bool get isLoadingLocations => _isLoadingLocations;
   String? get selectedState => _selectedState;
-  String? get impersonatedEmail => _impersonatedEmail;
-
-  /// Returns a token that should be used for API calls when impersonating.
-  /// This token is stored only in memory and must never be persisted to disk.
-  String? get impersonationAccessToken => _impersonationAccessToken;
-
-  /// Optional expiry for the in-memory impersonation token.
-  DateTime? get impersonationTokenExpiry => _impersonationTokenExpiry;
-
-  /// Optional explicit owner/email override used for UI/logging when no
-  /// server-provided token exists.
-  String? get impersonationOwnerOverride => _impersonationOwnerOverride;
-  // Public getter to indicate if we are currently in impersonation mode
-  bool get isImpersonating => _isImpersonating;
-
-  /// Returns true if a token-based impersonation override is active.
-  bool get isTokenImpersonating {
-    if (_impersonationAccessToken == null) return false;
-    if (_impersonationTokenExpiry != null) {
-      return _impersonationTokenExpiry!.isAfter(DateTime.now());
-    }
-    return true;
-  }
 
   // Method to clear location loading flag after preload completes
   void clearLocationLoadingFlag() {
@@ -156,6 +119,7 @@ class GlobalDataManager extends ChangeNotifier {
     notifyListeners();
 
     try {
+      
       // Fetch all core data
       await _fetchAllData();
 
@@ -172,65 +136,16 @@ class GlobalDataManager extends ChangeNotifier {
     }
   }
 
-  String? get activeUserEmail {
-    return _impersonatedEmail ??
-        (_users.isNotEmpty ? _users.first.email : null);
-  }
-
   Future<void> _fetchAllData() async {
-    debugPrint('🔄 _fetchAllData start; impersonatedEmail=$_impersonatedEmail');
-
-    // STEP 1️⃣ — Handle User Data
-    if (_impersonatedEmail != null && _impersonatedEmail!.isNotEmpty) {
-      // Try to fetch the real user profile for the impersonated email.
-      // If backend returns a matching user, use it. Otherwise fall back to
-      // the normal (admin) user to avoid mixing data.
-      try {
-        final switched =
-            await _userRepository.getSwitchedUser(_impersonatedEmail!);
-        if (switched.isNotEmpty &&
-            (switched.first.email ?? '').toLowerCase() ==
-                _impersonatedEmail!.toLowerCase()) {
-          _users = [switched.first];
-          debugPrint(
-              '✅ Impersonation: backend returned full profile for $_impersonatedEmail');
-        } else {
-          debugPrint(
-              '⚠️ Backend did not return impersonated profile for $_impersonatedEmail; falling back to admin user.');
-          _users = await _userRepository.getUsers();
-        }
-      } catch (e) {
-        debugPrint('⚠️ Error fetching impersonated user: $e');
-        _users = await _userRepository.getUsers();
-      }
-    } else {
-      // No impersonation → normal flow
-      _users = await _userRepository.getUsers();
-    }
-
-    debugPrint(
-        '👤 Active user: ${_users.isNotEmpty ? _users.first.email : 'none'}');
-
-    // STEP 2️⃣ — Fetch everything else using that impersonated email
-    final targetEmail =
-        _impersonatedEmail?.isNotEmpty == true ? _impersonatedEmail : null;
-
-    _ownerUnits = await _propertyRepository.getOwnerUnit(email: targetEmail);
-    debugPrint('🏢 ownerUnits count=${_ownerUnits.length}');
-
+    _users = await _userRepository.getUsers();
+    _ownerUnits = await _propertyRepository.getOwnerUnit();
     _unitByMonth = await _propertyRepository.getUnitByMonth();
     _revenueDashboard = await _propertyRepository.revenueByYear();
     _totalByMonth = await _propertyRepository.totalByMonth();
     _locationByMonth = await _propertyRepository.locationByMonth();
-
-    if (targetEmail != null) {
-      _users = await _userRepository.getSwitchedUser(targetEmail);
-    } else {
-      _users = await _userRepository.getUsers();
-    }
-
+    
     try {
-      final email = targetEmail ?? '';
+      final email = _users.first.email ?? '';
       final contractResponse =
           await _propertyRepository.getPropertyContractType(email: email);
       _propertyContractType = List<Map<String, dynamic>>.from(contractResponse);
@@ -259,8 +174,6 @@ class GlobalDataManager extends ChangeNotifier {
         };
       }).toList();
     }
-
-    debugPrint('✅ _fetchAllData finished for $targetEmail');
   }
 
   Future<void> _fetchPropertyOccupancy() async {
@@ -304,91 +217,6 @@ class GlobalDataManager extends ChangeNotifier {
   // Refresh data
   Future<void> refreshData() async {
     await initializeData(forceRefresh: true);
-  }
-
-  /// Create a lightweight snapshot of current key data so impersonation can be reverted.
-  Map<String, dynamic> createSnapshot() {
-    return {
-      'users': _users
-          .map((u) => {
-                'email': u.email,
-                'firstName': u.firstName,
-                'lastName': u.lastName,
-                'token': u.token,
-                'role': u.role,
-                'ownerEmail': u.ownerEmail,
-                'ownerFullName': u.ownerFullName,
-                'ownerContact': u.ownerContact,
-                'ownerAddress': u.ownerAddress,
-              })
-          .toList(),
-      'impersonatedEmail': _impersonatedEmail,
-      // Note: ownerUnits and other large structures are intentionally omitted
-      // to keep the snapshot small. They will be re-fetched when restoring.
-    };
-  }
-
-  /// Restore a snapshot created by [createSnapshot]. This will overwrite in-memory users and impersonation flag.
-  void restoreSnapshot(Map<String, dynamic> snapshot) {
-    try {
-      final usersList = snapshot['users'] as List<dynamic>? ?? [];
-      _users = usersList.map((m) {
-        final mm = Map<String, dynamic>.from(m as Map);
-        return User.fromJson(mm);
-      }).toList();
-
-      _impersonatedEmail = snapshot['impersonatedEmail'] as String?;
-      // Re-fetch other cached data when needed by callers
-      notifyListeners();
-    } catch (e) {
-      debugPrint('❌ Failed to restore snapshot: $e');
-    }
-  }
-
-  /// Apply an impersonated user object so the UI shows the impersonated account immediately.
-  void applyImpersonatedUser(User u) {
-    _users = [u];
-    _impersonatedEmail = u.email;
-    // Clear caches that are specific to a user so re-fetch will use the impersonated email
-    resetAllData();
-    notifyListeners();
-  }
-
-  /// Apply an in-memory impersonation token. This token is only kept in RAM
-  /// and will be used by AuthService (if wired) for subsequent API calls.
-  /// Do NOT persist this token to disk.
-  void applyImpersonationToken(String token,
-      {DateTime? expiry, String? owner}) {
-    _impersonationAccessToken = token;
-    _impersonationTokenExpiry = expiry;
-    if (owner != null && owner.isNotEmpty) {
-      _impersonationOwnerOverride = owner;
-    }
-    _isImpersonating = true;
-    notifyListeners();
-  }
-
-  /// Apply a client-side owner/email override (no token). This will influence
-  /// UI and logging but will not change the Authorization header unless a
-  /// token is also provided.
-  void applyImpersonationOwnerOverride(String ownerEmail) {
-    _impersonationOwnerOverride = ownerEmail;
-    _impersonatedEmail = ownerEmail;
-    _isImpersonating = true;
-    notifyListeners();
-  }
-
-  /// Clear any in-memory impersonation state (token and owner overrides).
-  /// This will also clear `impersonatedEmail` and reset impersonation mode.
-  void clearImpersonation() {
-    _impersonationAccessToken = null;
-    _impersonationTokenExpiry = null;
-    _impersonationOwnerOverride = null;
-    _impersonatedEmail = null;
-    _isImpersonating = false;
-    // Optionally restore backups if available; callers can also call
-    // restoreSnapshot when needed.
-    notifyListeners();
   }
 
   // Helper methods for accessing specific data
@@ -608,13 +436,6 @@ class GlobalDataManager extends ChangeNotifier {
   Future<void> resetAndRefreshData() async {
     clearAllData();
     await initializeData(forceRefresh: true);
-  }
-
-  /// Set or clear impersonation target email.
-  /// When set, subsequent initializeData will fetch user data for this email.
-  void setImpersonatedEmail(String? email) {
-    _impersonatedEmail = email;
-    debugPrint('🔐 GlobalDataManager.setImpersonatedEmail -> $email');
   }
 
   Future<void> _fetchInitialOccupancyHistory() async {
@@ -889,158 +710,5 @@ class GlobalDataManager extends ChangeNotifier {
       _isLoadingLocations = false;
       notifyListeners();
     }
-  }
-
-  void resetAndReinitialize(String switchUserEmail) async {
-    debugPrint('🔄 Resetting and reinitializing GlobalDataManager...');
-    resetAllData();
-    setImpersonatedEmail(switchUserEmail);
-    await initializeData(forceRefresh: true);
-    debugPrint('✅ GlobalDataManager refreshed for $switchUserEmail');
-  }
-
-  /// Apply full impersonation data supplied by the caller.
-  /// This allows the app to show complete user and owner-unit data without
-  /// depending on backend responses. Useful for local fixtures or testing.
-  void applyImpersonationData(
-      {required User user,
-      List<OwnerPropertyList>? ownerUnits,
-      bool notify = true}) {
-    _impersonatedEmail = user.email;
-    _users = [user];
-    _ownerUnits = ownerUnits ?? [];
-    if (notify) notifyListeners();
-    debugPrint(
-        '🔧 GlobalDataManager.applyImpersonationData applied for ${user.email}');
-  }
-
-  /// Try to load impersonation data from an asset JSON file.
-  /// Expected asset structure (example):
-  /// {
-  ///   "user": { ... },
-  ///   "ownerUnits": [ { ... }, ... ]
-  /// }
-  /// Returns true if file was found and applied, false otherwise.
-  Future<bool> loadImpersonationFromAsset(String assetPath) async {
-    try {
-      final jsonStr = await rootBundle.loadString(assetPath);
-      final Map<String, dynamic> data = json.decode(jsonStr);
-
-      // Parse user
-      User user;
-      if (data.containsKey('user') && data['user'] is Map<String, dynamic>) {
-        user = User.fromJson(Map<String, dynamic>.from(data['user']));
-      } else {
-        debugPrint('⚠️ impersonation asset missing `user` object');
-        return false;
-      }
-
-      // Parse ownerUnits if provided
-      List<OwnerPropertyList> ownerUnits = [];
-      if (data.containsKey('ownerUnits') && data['ownerUnits'] is List) {
-        final list = List<dynamic>.from(data['ownerUnits']);
-        for (var item in list) {
-          if (item is Map<String, dynamic>) {
-            ownerUnits.add(OwnerPropertyList.fromJson(item, 0, ''));
-          }
-        }
-      }
-
-      // Apply parsed data
-      applyImpersonationData(user: user, ownerUnits: ownerUnits);
-      debugPrint('✅ Loaded impersonation asset: $assetPath');
-      return true;
-    } catch (e) {
-      debugPrint('⚠️ Failed to load impersonation asset $assetPath: $e');
-      return false;
-    }
-  }
-
-  Future<void> impersonateUser(String email) async {
-    debugPrint('🧑‍💼 Starting impersonation for $email');
-
-    if (_isImpersonating) {
-      final current = _impersonatedEmail ?? '<unknown>';
-      if (current.toLowerCase() == email.toLowerCase()) {
-        debugPrint('⚠️ Already impersonating $email.');
-        return;
-      }
-
-      debugPrint(
-          '🔁 Updating impersonation from $current to $email (keeping original backup)');
-
-      // Update target and clear caches so UI shows loading for new target.
-      _impersonatedEmail = email;
-      _users = [];
-      _ownerUnits = [];
-      _unitByMonth = [];
-      _revenueDashboard = [];
-      _totalByMonth = [];
-      _locationByMonth = [];
-      _propertyContractType = [];
-      _propertyOccupancy = {};
-      _occupancyRateHistory = [];
-
-      debugPrint(
-          '🔄 Cleared local user data and starting background load for $email');
-
-      unawaited(_fetchAllData());
-      notifyListeners();
-      return;
-    }
-    final userExists = await _userRepository.userExists(email);
-    if (!userExists) {
-      debugPrint('❌ User $email does not exist');
-      throw Exception('User not found: $email');
-    }
-
-    // Not currently impersonating — create backups and start impersonation.
-    _originalUsersBackup = List<User>.from(_users);
-    _originalOwnerUnits = List<OwnerPropertyList>.from(_ownerUnits);
-    _originalUser = _users.isNotEmpty ? _users.first : null;
-    _isImpersonating = true;
-
-    // Set impersonated email and clear caches
-    _impersonatedEmail = email;
-    _users = [];
-    _ownerUnits = [];
-    _unitByMonth = [];
-    _revenueDashboard = [];
-    _totalByMonth = [];
-    _locationByMonth = [];
-    _propertyContractType = [];
-    _propertyOccupancy = {};
-    _occupancyRateHistory = [];
-
-    debugPrint(
-        '🔄 Cleared local user data and starting background load for $email');
-
-    // Start fetching impersonated data in background. When it completes the
-    // UI will be updated via notifyListeners called by the fetch routines.
-    unawaited(_fetchAllData());
-
-    notifyListeners();
-  }
-
-  Future<void> revertImpersonation() async {
-    if (!_isImpersonating) {
-      debugPrint('⚠️ Not currently impersonating anyone.');
-      return;
-    }
-
-    debugPrint('↩️ Reverting impersonation to original user...');
-
-    // Restore backups
-    _users = List<User>.from(_originalUsersBackup);
-    _ownerUnits = List<OwnerPropertyList>.from(_originalOwnerUnits);
-    _impersonatedEmail = null;
-    _isImpersonating = false;
-
-    // Optionally refresh all data from backend again
-    unawaited(_fetchAllData());
-
-    notifyListeners();
-
-    debugPrint('✅ Impersonation reverted successfully.');
   }
 }

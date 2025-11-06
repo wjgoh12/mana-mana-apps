@@ -27,6 +27,53 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
     model.fetchData().then((_) => model.checkRole());
   }
 
+  Future<void> _handleRevert() async {
+    if (_isReverting) return; // prevent duplicate presses
+
+    setState(() {
+      _isReverting = true;
+    });
+
+    try {
+      // Get the current user's email before reverting
+      final currentUserEmail =
+          model.users.isNotEmpty ? model.users.first.email ?? '' : '';
+
+      if (currentUserEmail.isEmpty) {
+        debugPrint("⚠️ No current user email found for revert operation");
+        return;
+      }
+
+      // Call the cancel user function
+      await model.cancelUser(currentUserEmail);
+
+      // Clear the switch user flag
+      GlobalDataManager().isSwitchUser = false;
+
+      // Refresh the data to load the original user's data
+      await model.refreshData();
+
+      debugPrint("✅ Successfully reverted to original user");
+
+      // Navigate to homepage after successful revert
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const NewDashboardV3()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      debugPrint("❌ Revert failed: $e");
+      // You might want to show an error dialog here
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isReverting = false;
+        });
+      }
+    }
+  }
+
   Future<void> _handleLogout() async {
     if (_isLoggingOut) return; // prevent duplicate presses
 
@@ -107,26 +154,9 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         ),
                     Spacer(),
                     // Revert impersonation button (visible only when impersonating)
-                    if (GlobalDataManager().isImpersonating) ...[
+                    if (GlobalDataManager().isSwitchUser) ...[
                       TextButton(
-                        onPressed: _isReverting
-                            ? null
-                            : () async {
-                                setState(() {
-                                  _isReverting = true;
-                                });
-                                try {
-                                  await model.revertTemporaryImpersonation();
-                                } catch (e) {
-                                  debugPrint('Revert failed: $e');
-                                } finally {
-                                  if (mounted) {
-                                    setState(() {
-                                      _isReverting = false;
-                                    });
-                                  }
-                                }
-                              },
+                        onPressed: _isReverting ? null : _handleRevert,
                         style: ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(Colors.white),
@@ -742,16 +772,14 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   showDialog(
                                     context: context,
                                     builder: (context) {
-                                      // Use StatefulBuilder to manage dialog-local state
-                                      return StatefulBuilder(
-                                        builder: (context, setState) {
-                                          final TextEditingController
-                                              _emailController =
-                                              TextEditingController();
-                                          bool _isProcessing = false;
-                                          String? _validationMessage;
+                                      // Declare variables outside the StatefulBuilder to maintain state
+                                      String? validationMessage;
+                                      bool isProcessing = false;
+                                      final emailController =
+                                          TextEditingController();
 
-                                          // Wrap in WillPopScope so we can dispose controller when dialog closes
+                                      return StatefulBuilder(
+                                        builder: (context, setDialogState) {
                                           return Dialog(
                                             child: Container(
                                               decoration: BoxDecoration(
@@ -773,8 +801,17 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                   ),
                                                   SizedBox(height: 12.fSize),
                                                   TextField(
-                                                    controller:
-                                                        _emailController,
+                                                    controller: emailController,
+                                                    onChanged: (value) {
+                                                      // Clear error message when user starts typing
+                                                      if (validationMessage !=
+                                                          null) {
+                                                        setDialogState(() {
+                                                          validationMessage =
+                                                              null;
+                                                        });
+                                                      }
+                                                    },
                                                     decoration:
                                                         const InputDecoration(
                                                       border:
@@ -788,16 +825,20 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                     ),
                                                   ),
                                                   const SizedBox(height: 12),
-                                                  if (_validationMessage !=
-                                                      null)
+                                                  if (validationMessage != null)
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
                                                               bottom: 8.0),
-                                                      child: Text(
-                                                        _validationMessage!,
-                                                        style: const TextStyle(
-                                                          color: Colors.red,
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                          validationMessage!,
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.red,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -813,30 +854,26 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                                       .white),
                                                         ),
                                                         onPressed: () async {
-                                                          // Cancel impersonation on server
-                                                          await model
-                                                              .cancelUser(_emailController
-                                                                  .text
-                                                                  .trim());
+                  
                                                           Navigator.of(context)
                                                               .pop();
                                                         },
-                                                        child: Text('Cancel',
+                                                        child: const Text('Cancel',
                                                             style: TextStyle(
                                                                 fontFamily:
                                                                     'Outfit')),
                                                       ),
-                                                      SizedBox(width: 8),
+                                                      const SizedBox(width: 8),
                                                       ElevatedButton(
                                                         onPressed: () async {
                                                           final email =
-                                                              _emailController
+                                                              emailController
                                                                   .text
                                                                   .trim();
                                                           if (email.isEmpty) {
-                                                            setState(() {
-                                                              _validationMessage =
-                                                                  'Please enter an email.';
+                                                            setDialogState(() {
+                                                              validationMessage =
+                                                                  'Please insert the email';
                                                             });
                                                             return;
                                                           }
@@ -846,20 +883,33 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                               await model
                                                                   .validateSwitchUser(
                                                                       email);
+                                                          
 
-                                                          if (validateRes[
-                                                                  'success'] ==
-                                                              false) {
-                                                            setState(() {
-                                                              _validationMessage =
-                                                                  validateRes['body']
-                                                                          ?.toString() ??
-                                                                      'Email is not allowed to be switched.';
-                                                            });
-                                                            return;
+                                                          // Check for success response with "Now valid viewing as:" message
+                                                          bool isValidUser =
+                                                              false;
+
+                                                          if (validateRes
+                                                              is Map) {
+                                                            // Single response
+                                                            final body = validateRes[
+                                                                        'body']
+                                                                    ?.toString() ??
+                                                                '';
+                                                            isValidUser = validateRes[
+                                                                        'success'] ==
+                                                                    true &&
+                                                                body.contains(
+                                                                    'Now valid viewing as:');
                                                           }
 
-                                                          // Ask user to confirm before switching. The
+                                                          if (!isValidUser) {
+                                                            setDialogState(() {
+                                                              validationMessage =
+                                                                  'User Invalid';
+                                                            });
+                                                            return;
+                                                          } // Ask user to confirm before switching. The
                                                           // confirmation dialog performs the switch and
                                                           // shows loading while the operation runs. It
                                                           // returns true on success.
@@ -928,18 +978,19 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                                               // that clears the current account data immediately
                                                                               // and loads the requested email in the background.
                                                                               await model.switchUserAndReload(email);
-
-                                                                              if (!mounted)
+                                                                              // await model.cancelUser(email);
+                                                                              if (!mounted) {
                                                                                 return;
+                                                                              }
 
                                                                               // Close dialog on success (background load in progress)
                                                                               Navigator.of(ctx).pop(true);
                                                                             },
                                                                       child: isLoading
-                                                                          ? SizedBox(
+                                                                          ? const SizedBox(
                                                                               width: 20,
                                                                               height: 20,
-                                                                              child: const CircularProgressIndicator(strokeWidth: 2))
+                                                                              child: CircularProgressIndicator(strokeWidth: 2))
                                                                           : const Text('Yes', style: TextStyle(fontFamily: 'Outfit')),
                                                                     ),
                                                                   ],
@@ -956,7 +1007,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                           // the refreshed dashboard.
                                                           Navigator.of(context)
                                                               .pop();
-                                                          // ignore: use_build_context_synchronously
+                                                          // // ignore: use_build_context_synchronously
                                                           Navigator.of(context)
                                                               .pushAndRemoveUntil(
                                                                   MaterialPageRoute(
@@ -966,7 +1017,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                                   (route) =>
                                                                       false);
                                                         },
-                                                        child: _isProcessing
+                                                        child: isProcessing
                                                             ? CircularProgressIndicator(
                                                                 strokeWidth: 2)
                                                             : Text('Confirm',

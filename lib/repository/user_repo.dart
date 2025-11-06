@@ -9,24 +9,13 @@ import 'package:mana_mana_app/model/user_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
-import 'package:mana_mana_app/provider/global_data_manager.dart';
-// AuthService token replacement intentionally not used here; token handling
-// is managed elsewhere if needed.
+import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 
 class UserRepository {
   final ApiService _apiService = ApiService();
 
   Future<List<User>> getUsers() async {
-    // If impersonation is active, include the impersonated email in the request
-    final g = GlobalDataManager();
-    final Map<String, dynamic>? payload =
-        (g.impersonatedEmail != null && g.impersonatedEmail!.isNotEmpty)
-            ? {'email': g.impersonatedEmail}
-            : null;
-
-    return await _apiService
-        .post(ApiEndpoint.ownerUserData, data: payload)
-        .then((res) {
+    return await _apiService.post(ApiEndpoint.ownerUserData).then((res) {
       try {
         if (res == null) {
           print("⚠️ API returned null for ownerUserData");
@@ -34,6 +23,48 @@ class UserRepository {
         }
         debugPrint(
             "✅ API call succeeded for ownerUserData; \nraw response: $res");
+        print(res['ownersinfo']);
+
+        // NEW: Check if response is a malformed string and extract token if present
+        if (res is String) {
+          debugPrint(
+              '🔧 getUsers response is malformed string, checking for token');
+
+          // Look for JWT token pattern in the string
+          final tokenRegex = RegExp(r'token:\s*([A-Za-z0-9_.-]+)');
+          final tokenMatch = tokenRegex.firstMatch(res);
+
+          if (tokenMatch != null) {
+            final newToken = tokenMatch.group(1);
+            debugPrint(
+                '🔑 Found token in getUsers response: ${newToken?.substring(0, 20)}...');
+
+            // Update stored token
+            final AuthService authService = AuthService();
+            authService.updateTokens(accessToken: newToken!);
+            debugPrint('✅ Updated token from getUsers response');
+          } else {
+            // Try alternative pattern
+            final altTokenRegex = RegExp(r'eyJ[A-Za-z0-9_.-]+');
+            final altTokenMatch = altTokenRegex.firstMatch(res);
+
+            if (altTokenMatch != null) {
+              final newToken = altTokenMatch.group(0);
+              debugPrint(
+                  '🔑 Found token using alt pattern in getUsers: ${newToken?.substring(0, 20)}...');
+
+              final AuthService authService = AuthService();
+              authService.updateTokens(accessToken: newToken!);
+              debugPrint('✅ Updated token from getUsers response');
+            }
+          }
+
+          // For malformed string, try to parse user data from it
+          // This is a fallback - the response should be proper JSON
+          debugPrint(
+              '⚠️ getUsers returned malformed string, cannot parse user data properly');
+          return [];
+        }
 
         // Support both Map and List responses — prefer first item if List
         Map<String, dynamic> userMap;
@@ -56,13 +87,16 @@ class UserRepository {
           final token = userMap['token']?.toString();
           debugPrint(
               '🔎 ownerUserData parsed: userId=$serverUserId, email=$serverEmail, token_present=${token != null}');
-        } catch (_) {}
 
-        // IMPORTANT: Do NOT synthesize or overwrite server-returned user fields
-        // with the client-side requested impersonation email. If the backend
-        // does not return the impersonated profile, the client must treat
-        // that as the server truth and either fall back to admin or show
-        // a clear "view-only" mode. We therefore avoid forcing the email.
+          // If there's a token in the response, update it
+          if (token != null && token.isNotEmpty) {
+            debugPrint(
+                '🔑 Found token in getUsers JSON response, updating stored token');
+            final AuthService authService = AuthService();
+            authService.updateTokens(accessToken: token);
+            debugPrint('✅ Updated token from getUsers JSON response');
+          }
+        } catch (_) {}
 
         debugPrint("✅ Successfully parsed user: ${user.email}");
         return [user];
@@ -109,98 +143,29 @@ class UserRepository {
     }
   }
 
-  /// Confirm switch to the provided owner account
-  /// Handles both JSON and plain text backend responses
   Future<Map<String, dynamic>> confirmSwitchUser(String switchUserEmail) async {
     try {
       final response = await _apiService.post(ApiEndpoint.confirmUser, data: {
-        "switchUserEmail": switchUserEmail, // e.g. hslean1996@hotmail.com
-      }
-
-          // autoLogoutOnAuthFailure: false,
-          );
-
+        "switchUserEmail": switchUserEmail,
+      });
       debugPrint('🔁 confirmSwitchUser response: $response');
 
-      // Note: do NOT replace stored tokens here.
-      // The backend in this environment does not return replacement tokens
-      // for impersonation; token replacement is disabled to avoid swapping
-      // the admin token unexpectedly. The switch will be driven by the
-      // impersonated email only.
+      // The confirmUser API just returns a confirmation message
+      // The actual token switching happens when we call getUsers()
+      debugPrint('� User switch confirmed, now fetching updated user data...');
 
-      // ✅ Handle JSON response
-      if (response is Map<String, dynamic>) {
-        // Try to pull impersonated email if backend included it
-        String? impersonatedEmail;
-        if (response.containsKey('impersonatedEmail')) {
-          impersonatedEmail = response['impersonatedEmail']?.toString();
-        } else if (response.containsKey('email')) {
-          impersonatedEmail = response['email']?.toString();
-        }
-
-        return {
-          ...response,
-          // 'tokensReplaced': tokensReplaced,
-          'impersonatedEmail': impersonatedEmail,
-          'success': true,
-        };
-      }
-
-      // ✅ Handle plain text response (like “Now viewing as: ...”)
-      if (response is String) {
-        final lower = response.toLowerCase();
-        final success = lower.contains('now viewing as') ||
-            lower.contains('success') ||
-            lower.contains('ok');
-
-        // Attempt to parse an email from the textual response (robust regex)
-        String? parsedEmail;
-        try {
-          final match =
-              RegExp(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
-                  .firstMatch(response);
-          parsedEmail = match?.group(0)?.toLowerCase();
-        } catch (_) {
-          parsedEmail = null;
-        }
-
-        // If the backend only returns a plain-text confirmation but includes
-        // the target email, apply a client-side impersonation owner override
-        // so the UI and ApiService headers/bodies will use the requested
-        // impersonated email. This does NOT replace tokens; it only changes
-        // in-memory state and triggers a background fetch via impersonateUser.
-        try {
-          if (parsedEmail != null && parsedEmail.isNotEmpty) {
-            debugPrint(
-                '🔁 confirmSwitchUser: applying client-side impersonation for $parsedEmail');
-            final g = GlobalDataManager();
-            // Use the safer impersonateUser flow which clears caches and
-            // fetches the impersonated data in background. Schedule it
-            // without awaiting so we return immediately to the caller.
-            Future.microtask(() => g.impersonateUser(parsedEmail!));
-          }
-        } catch (e) {
-          debugPrint(
-              '⚠️ Failed to apply client-side impersonation override: $e');
-        }
-
-        return {
-          'statusCode': success ? 200 : 500,
-          'body': response,
-          'success': success,
-          'impersonatedEmail': parsedEmail,
-        };
-      }
-
-      // ✅ Fallback case
       return {
-        'statusCode': 500,
-        'body': 'Unknown response format',
-        'success': false,
+        'statusCode': 200,
+        'success': true,
+        'body': response,
       };
     } catch (e) {
       debugPrint('❌ confirmSwitchUser error: $e');
-      return {'statusCode': 500, 'body': e.toString(), 'success': false};
+      return {
+        'statusCode': 500,
+        'success': false,
+        'body': e.toString(),
+      };
     }
   }
 
@@ -209,6 +174,7 @@ class UserRepository {
         await _apiService.post(ApiEndpoint.cancelSwitchUser, data: {
       "switchUserEmail": email,
     });
+    print('🔁 cancelSwitchUser response: $response');
     return response;
   }
 
@@ -417,10 +383,6 @@ class UserRepository {
           }
         }
       } catch (_) {}
-
-      // Do not overwrite server response. If server did not honor impersonation
-      // (i.e., userId or other identifier still points to admin), the app must
-      // not synthesize a new identity locally.
 
       debugPrint("Successfully parsed switched user: ${user.ownerEmail}");
       return [user];

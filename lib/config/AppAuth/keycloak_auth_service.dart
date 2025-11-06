@@ -75,23 +75,6 @@ class AuthService {
   }
 
   Future<bool> checkToken() async {
-    final g = GlobalDataManager();
-
-    // If impersonation is active (view-only or token-based), do not attempt
-    // to refresh the stored admin token. Treat the presence of an access
-    // token as sufficient so the UI and ApiService can continue sending
-    // requests with the current Authorization header or X-Impersonate header.
-    if (g.isImpersonating) {
-      String? accessToken = await getAccessToken();
-      if (accessToken == null) {
-        print(
-            '⚠️ No access token found while impersonating - user needs to login');
-        return false;
-      }
-      print('🔁 Impersonation active - skipping token refresh checks');
-      return true;
-    }
-
     String? accessToken = await getAccessToken();
     if (accessToken == null) {
       print('⚠️ No access token found - user needs to login');
@@ -119,48 +102,11 @@ class AuthService {
   }
 
   Future<String?> getValidAccessToken() async {
-    final g = GlobalDataManager();
-
-    try {
-      // ✅ 1. Use in-memory impersonation token first (admin switch mode)
-      if (g.impersonationAccessToken != null &&
-          g.impersonationAccessToken!.isNotEmpty) {
-        final expiry = g.impersonationTokenExpiry;
-        if (expiry == null || expiry.isAfter(DateTime.now())) {
-          print('🔁 Using in-memory impersonation token for API calls');
-          return g.impersonationAccessToken;
-        } else {
-          // Token expired; clear impersonation state
-          g.clearImpersonation();
-        }
-      }
-    } catch (e) {
-      debugPrint('⚠️ Error checking in-memory impersonation token: $e');
-    }
-
-    // ✅ 2. View-only impersonation (no dedicated token)
-    if (g.isImpersonating &&
-        (g.impersonationAccessToken == null ||
-            g.impersonationAccessToken!.isEmpty)) {
-      String? accessTokenViewOnly = await getAccessToken();
-      if (accessTokenViewOnly == null) return null;
-      print(
-          '🔁 View-only impersonation active - returning stored token (no refresh)');
-      return accessTokenViewOnly;
-    }
-
-    // ✅ 3. Normal (non-impersonation) mode
     String? accessToken = await getAccessToken();
     String? refreshToken = await _secureStorage.read(key: 'refresh_token');
 
     if (accessToken == null || refreshToken == null) {
       return null; // missing tokens
-    }
-
-    // ❌ 4. Skip refresh completely if impersonating (safety net)
-    if (g.isImpersonating) {
-      print('🚫 Skipping token refresh while impersonating');
-      return accessToken;
     }
 
     // ✅ 5. Check refresh token expiry
@@ -272,20 +218,30 @@ class AuthService {
     return await _secureStorage.read(key: 'access_token');
   }
 
+  /// Update stored tokens (for user switching scenarios)
+  Future<void> updateTokens({
+    required String accessToken, 
+    String? refreshToken
+  }) async {
+    debugPrint('🔄 Updating stored tokens for user switch');
+    
+    // Store new access token
+    await _secureStorage.write(key: 'access_token', value: accessToken);
+    
+    // Store new refresh token if provided
+    if (refreshToken != null) {
+      await _secureStorage.write(key: 'refresh_token', value: refreshToken);
+    }
+    
+    // Cancel existing refresh timer and start new one with the new token
+    _refreshTimer?.cancel();
+    _startTokenRefreshTimer(accessToken);
+    
+    debugPrint('✅ Tokens updated successfully');
+  }
+
   Future<void> _startTokenRefreshTimer(String accessToken) async {
     _refreshTimer?.cancel();
-
-    // If impersonation is active (view-only or token-based), do not schedule
-    // periodic refreshes for the stored admin token. Token lifecycle for an
-    // impersonation token (if used) is managed separately and should not be
-    // mixed with normal refresh timers.
-    try {
-      final g = GlobalDataManager();
-      if (g.isImpersonating) {
-        debugPrint('🔁 Impersonation active - skipping refresh timer setup');
-        return;
-      }
-    } catch (_) {}
 
     try {
       DateTime expiryDate = JwtDecoder.getExpirationDate(accessToken);

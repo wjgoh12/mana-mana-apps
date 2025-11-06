@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/config/env_config.dart';
-import 'package:mana_mana_app/provider/global_data_manager.dart';
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:dio/dio.dart';
 
 // Custom exception for authentication failures
 class AuthenticationException implements Exception {
@@ -18,6 +20,18 @@ class AuthenticationException implements Exception {
 class ApiService {
   final String baseUrl = EnvConfig.apiBaseUrl;
   String? tokenOwner;
+  
+  // Add cookie support for session management
+  static final Dio _dio = Dio();
+  static final CookieJar _cookieJar = CookieJar();
+  static bool _initialized = false;
+  
+  ApiService() {
+    if (!_initialized) {
+      _dio.interceptors.add(CookieManager(_cookieJar));
+      _initialized = true;
+    }
+  }
 
   Future<dynamic> post(
     String url, {
@@ -28,30 +42,16 @@ class ApiService {
     String? token = await authService.getValidAccessToken();
 
     // Debug: print token fingerprint so we can tell which token is used
-    String? tokenOwner;
     try {
       if (token != null) {
-        final prefix = token.substring(0, min(10, token.length));
-        // debugPrint('🔐 ApiService.post using token prefix: $prefix');
+        // debugPrint('🔐 ApiService.post using token prefix: ${token.substring(0, min(10, token.length))}');
 
         // Try to decode token to see which user it belongs to (for debugging)
         try {
           final decodedPayload = _decodeTokenPayload(token);
           if (decodedPayload != null) {
-            // debugPrint(
-            //     '🔐 ApiService.post decoded token payload: $decodedPayload');
-            try {
-              final Map<String, dynamic> payloadJson =
-                  Map<String, dynamic>.from(json.decode(decodedPayload));
-              tokenOwner = payloadJson['email'] ??
-                  payloadJson['preferred_username'] ??
-                  payloadJson['sub'] ??
-                  payloadJson['userId'] ??
-                  'unknown';
-              // debugPrint('🔐 Token belongs to: $tokenOwner');
-            } catch (e) {
-              debugPrint('🔐 Could not parse decoded token payload JSON: $e');
-            }
+            // debugPrint('🔐 ApiService.post decoded token payload: $decodedPayload');
+            // Token parsing for debugging is available but commented out to avoid lint warnings
           }
         } catch (e) {
           debugPrint('🔐 Could not decode token payload: $e');
@@ -66,96 +66,41 @@ class ApiService {
       throw AuthenticationException('Session expired');
     }
 
-    // Inject impersonation header if an impersonated email is set
-    final extraHeaders = <String, String>{};
-    final g = GlobalDataManager();
-    // If a client-side owner override is present, use it for display/logging
-    // so diagnostic logs match what QA expects to see when using view-only mode.
-    if (g.impersonationOwnerOverride != null &&
-        g.impersonationOwnerOverride!.isNotEmpty) {
-      tokenOwner = g.impersonationOwnerOverride;
-      debugPrint(
-          '🔐 ApiService.post using owner override for logs: $tokenOwner');
-    }
-
-    // If caller didn't supply data, and impersonation is active, send the
-    // impersonated email as the request body so backend endpoints that
-    // default to current user will use the impersonated account.
     dynamic sendData = data;
-    if ((sendData == null || (sendData is Map && sendData.isEmpty)) &&
-        g.impersonatedEmail != null &&
-        g.impersonatedEmail!.isNotEmpty) {
-      // Send a minimal body containing the impersonated email. Some
-      // backend endpoints only look at the POST body for the target user.
-      sendData = {'email': g.impersonatedEmail};
-    }
 
-    // Include impersonation header when active so server can detect it
-    if (g.impersonatedEmail != null && g.impersonatedEmail!.isNotEmpty) {
-      extraHeaders['X-Impersonate-Email'] = g.impersonatedEmail!;
-      debugPrint(
-        '🔐 ApiService.post adding impersonation header: ${g.impersonatedEmail}',
-      );
-    }
-
-    // Log outgoing request (mask auth token) when impersonation active to
-    // help debugging why backend returns admin data.
     try {
-      // final logHeaders = Map<String, String>.from({
-      //   ...{
-      //     ...extraHeaders,
-      //   }
-      // });
-      // if (logHeaders.containsKey('Authorization')) {
-      //   logHeaders['Authorization'] = 'Bearer <masked>'; // never log full token
-      // }
-      // debugPrint('➡️ ApiService.post -> $baseUrl$url');
-      // debugPrint('   🔑 Token owner: ${tokenOwner ?? "unknown"}');
-      // debugPrint('   📤 Headers (masked): $logHeaders');
-      // debugPrint('   📋 Body: ${json.encode(sendData ?? {})}');
-    } catch (_) {}
+      // Use Dio for cookie support (maintains sessions)
+      final response = await _dio.post(
+        '$baseUrl$url',
+        data: sendData ?? {},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          responseType: ResponseType.plain, // Get response as string to handle malformed JSON
+        ),
+      );
 
-    final response = await http.post(
-      Uri.parse('$baseUrl$url'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-        ...extraHeaders,
-      },
-      body: json.encode(sendData ?? {}), // always send at least {}
-    );
-
-    // Check for authentication errors
-    if (response.statusCode == 401 || response.statusCode == 403) {
-      print('❌ API authentication failed - server rejected token');
-      if (autoLogoutOnAuthFailure) {
-        // Clear tokens and trigger session expiry handling
-        await authService.handleServerAuthenticationFailure();
-        throw AuthenticationException('Authentication failed');
-      } else {
-        // Return a structured response so callers can handle it gracefully
-        if (response.body.isEmpty)
-          return {'statusCode': response.statusCode, 'body': null};
-        try {
-          return {
-            'statusCode': response.statusCode,
-            'body': json.decode(response.body),
-          };
-        } catch (e) {
-          return {'statusCode': response.statusCode, 'body': response.body};
+      debugPrint("🔧 Raw response body: ${response.data}");
+      
+      // Try to parse as JSON first
+      try {
+        return json.decode(response.data.toString());
+      } catch (e) {
+        debugPrint("❌ JSON decode error: $e");
+        // Fallback: return raw string when response is not JSON
+        return response.data.toString();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        debugPrint("❌ Dio error: ${e.message}");
+        if (e.response != null) {
+          debugPrint("🔧 Error response body: ${e.response?.data}");
+          return e.response?.data?.toString() ?? 'Network error';
         }
       }
-    }
-
-    if (response.body.isEmpty) return null;
-    // debugPrint("➡️ FULL URL: $baseUrl$url");
-    // debugPrint("➡️ POST BYTES URL: $baseUrl$url");
-    try {
-      return json.decode(response.body);
-    } catch (e) {
-      debugPrint("❌ JSON decode error: $e");
-      // Fallback: return raw string when response is not JSON
-      return response.body;
+      rethrow;
     }
   }
 
@@ -189,53 +134,14 @@ class ApiService {
         }
       }
     } catch (_) {}
-    // Add impersonation header if present
-    final extraHeadersBytes = <String, String>{};
-    final gBytes = GlobalDataManager();
-    if (gBytes.impersonationOwnerOverride != null &&
-        gBytes.impersonationOwnerOverride!.isNotEmpty) {
-      tokenOwner = gBytes.impersonationOwnerOverride;
-      // debugPrint(
-      //     '🔐 ApiService.postWithBytes using owner override for logs: $tokenOwner');
-    }
-    if (gBytes.impersonatedEmail != null &&
-        gBytes.impersonatedEmail!.isNotEmpty) {
-      extraHeadersBytes['X-Impersonate-Email'] = gBytes.impersonatedEmail!;
-      // debugPrint(
-      //   '🔐 ApiService.postWithBytes adding impersonation header: ${gBytes.impersonatedEmail}',
-      // );
-    }
 
-    // If no data provided, attach impersonatedEmail as body so endpoints
-    // that expect the user's email will receive the impersonated one.
     dynamic sendBytesData = data;
-    if ((sendBytesData == null ||
-            (sendBytesData is Map && sendBytesData.isEmpty)) &&
-        gBytes.impersonatedEmail != null &&
-        gBytes.impersonatedEmail!.isNotEmpty) {
-      sendBytesData = {'email': gBytes.impersonatedEmail};
-    }
-
-    try {
-      final logHeaders = Map<String, String>.from({
-        ...{
-          ...extraHeadersBytes,
-        }
-      });
-      if (logHeaders.containsKey('Authorization')) {
-        logHeaders['Authorization'] = 'Bearer <masked>';
-      }
-      // debugPrint('➡️ ApiService.postWithBytes -> $baseUrl$url');
-      // debugPrint('   Headers (masked): $logHeaders');
-      // debugPrint('   Body: ${json.encode(sendBytesData ?? {})}');
-    } catch (_) {}
 
     final response = await http.post(
       Uri.parse('$baseUrl$url'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
-        ...extraHeadersBytes,
       },
       body: json.encode(sendBytesData ?? {}),
     );
@@ -253,8 +159,7 @@ class ApiService {
     String? tokenOwner;
     try {
       if (token != null) {
-        final prefix = token.substring(0, min(10, token.length));
-        // debugPrint('🔐 ApiService.postJson using token prefix: $prefix');
+        // debugPrint('🔐 ApiService.postJson using token prefix: ${token.substring(0, min(10, token.length))}');
         final decodedPayload = _decodeTokenPayload(token);
         if (decodedPayload != null) {
           // debugPrint(
@@ -283,29 +188,7 @@ class ApiService {
     // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
     // debugPrint("Posting to full URL: $baseUrl$url");
 
-    // Add impersonation header if set in GlobalDataManager
-    final extra = <String, String>{};
-    final gg = GlobalDataManager();
-    if (gg.impersonationOwnerOverride != null &&
-        gg.impersonationOwnerOverride!.isNotEmpty) {
-      tokenOwner = gg.impersonationOwnerOverride;
-      debugPrint(
-          '🔐 ApiService.postJson using owner override for logs: $tokenOwner');
-    }
-    if (gg.impersonatedEmail != null && gg.impersonatedEmail!.isNotEmpty) {
-      extra['X-Impersonate-Email'] = gg.impersonatedEmail!;
-      debugPrint(
-        '🔐 ApiService.postJson adding impersonation header: ${gg.impersonatedEmail}',
-      );
-    }
-
-    // Default empty POST bodies to include impersonated email when active
     dynamic sendJson = data;
-    if ((sendJson == null || (sendJson is Map && sendJson.isEmpty)) &&
-        gg.impersonatedEmail != null &&
-        gg.impersonatedEmail!.isNotEmpty) {
-      sendJson = {'email': gg.impersonatedEmail};
-    }
 
     // try {
     //   final logHeaders = Map<String, String>.from({
@@ -327,26 +210,9 @@ class ApiService {
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
-        ...extra,
       },
       body: json.encode(sendJson ?? {}),
     );
-
-    // Check for authentication errors
-    if (response.statusCode == 401 || response.statusCode == 403) {
-      print('❌ API authentication failed - server rejected token');
-      // Clear tokens and trigger session expiry handling
-      await authService.handleServerAuthenticationFailure();
-      throw AuthenticationException('Authentication failed');
-    }
-
-    // debugPrint("➡️ FULL URL: $baseUrl$url");
-    // debugPrint("➡️ POST JSON URL: $baseUrl$url");
-    // debugPrint("📤 Request body: ${json.encode(data ?? {})}");
-    // debugPrint("📥 Response status: ${response.statusCode}");
-    // debugPrint("📥 Response body: ${response.body}");
-
-    if (response.body.isEmpty) return null;
 
     try {
       return json.decode(response.body);
@@ -390,36 +256,11 @@ class ApiService {
 
       final url = Uri.parse('$baseUrl$endpoint');
 
-      final extraGet = <String, String>{};
-      final gget = GlobalDataManager();
-      if (gget.impersonatedEmail != null &&
-          gget.impersonatedEmail!.isNotEmpty) {
-        extraGet['X-Impersonate-Email'] = gget.impersonatedEmail!;
-        debugPrint(
-          '🔐 ApiService.get adding impersonation header: ${gget.impersonatedEmail}',
-        );
-      }
-
-      // Log the complete request
-      try {
-        final logHeaders = Map<String, String>.from({
-          ...extraGet,
-          ...?headers,
-        });
-        if (logHeaders.containsKey('Authorization')) {
-          logHeaders['Authorization'] = 'Bearer <masked>';
-        }
-        // debugPrint('➡️ ApiService.get -> $url');
-        // debugPrint('   🔑 Token owner: ${tokenOwner ?? "unknown"}');
-        // debugPrint('   📤 Headers (masked): $logHeaders');
-      } catch (_) {}
-
       final response = await http.get(
         url,
         headers: {
           'Authorization': 'Bearer $token', // Add this
           'Content-Type': 'application/json',
-          ...extraGet,
           ...?headers,
         },
       );
@@ -428,21 +269,9 @@ class ApiService {
       // debugPrint("🔍 GET Response Status: ${response.statusCode}");
       // debugPrint("🔍 GET Response Body: ${response.body}");
 
-      if (response.statusCode == 200) {
-        if (response.body.isEmpty) return null;
-        return json.decode(response.body);
-      } else if (response.statusCode == 401 || response.statusCode == 403) {
-        print('❌ API authentication failed - server rejected token');
-        // Clear tokens and trigger session expiry handling
-        await authService.handleServerAuthenticationFailure();
-        throw AuthenticationException('Authentication failed');
-      } else {
-        throw Exception(
-          'GET request failed with status: ${response.statusCode}',
-        );
-      }
+      return json.decode(response.body);
     } catch (e) {
-      // debugPrint('❌ GET request error: $e');
+      debugPrint('❌ GET request error: $e');
       rethrow; // Re-throw to preserve the exception type
     }
   }
