@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
+import 'package:mana_mana_app/config/AppAuth/native_auth_service.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/provider/version_checker.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
+import 'package:mana_mana_app/screens/Login/View/loginpage.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -14,7 +16,7 @@ class Splashscreen extends StatefulWidget {
 class _SplashScreenState extends State<Splashscreen>
     with SingleTickerProviderStateMixin {
   bool _isLoading = true;
-  bool _needsLogin = false;
+  final NativeAuthService _nativeAuthService = NativeAuthService();
 
   @override
   void initState() {
@@ -44,7 +46,6 @@ class _SplashScreenState extends State<Splashscreen>
           if (mounted) {
             setState(() {
               _isLoading = false;
-              _needsLogin = true;
             });
           }
         },
@@ -53,7 +54,6 @@ class _SplashScreenState extends State<Splashscreen>
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _needsLogin = true;
         });
       }
     }
@@ -61,113 +61,96 @@ class _SplashScreenState extends State<Splashscreen>
 
   Future<void> _checkAuthStatus() async {
     try {
-      final authService = AuthService();
-      bool isLoggedIn = await authService.isLoggedIn();
-
-      if (mounted) {
-        if (isLoggedIn) {
-          // User is already logged in, navigate to dashboard
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const NewDashboardV3()));
-        } else {
-          // User needs to login - automatically trigger login
-          await _handleLogin();
+      // First check if user has a valid session using native auth service
+      bool hasValidSession = await _nativeAuthService.hasValidSession();
+      
+      if (hasValidSession) {
+        // Check if tokens are still valid with the main auth service
+        final authService = AuthService();
+        bool isLoggedIn = await authService.isLoggedIn();
+        
+        if (mounted) {
+          if (isLoggedIn) {
+            // User is already logged in, navigate to dashboard
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const NewDashboardV3()));
+          } else {
+            // Session expired, show login page
+            _showLoginPage();
+          }
         }
       } else {
+        // No valid session, show login page
+        if (mounted) {
+          _showLoginPage();
+        }
       }
     } catch (e) {
       if (mounted) {
-        // If error checking auth, try to login
-        await _handleLogin();
+        // If error checking auth, show login page
+        _showLoginPage();
       }
     }
   }
 
-  Future<void> _handleLogin() async {
-    if (!mounted) return;
-
+  void _showLoginPage() {
     setState(() {
-      _isLoading = true;
-      _needsLogin = false;
+      _isLoading = false;
     });
-
-    try {
-      final authService = AuthService();
-      bool success = await authService.authenticate();
-
-      if (mounted) {
-        if (success) {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const NewDashboardV3()));
-        } else {
-          // Login failed or cancelled, show retry option
-          setState(() {
-            _isLoading = false;
-            _needsLogin = true;
-          });
-
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(
-          //     content: Text('Login failed or cancelled. Tap to retry.'),
-          //     backgroundColor: Colors.orange,
-          //   ),
-          // );
-        }
-      } else {
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _needsLogin = true;
-        });
-
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     content: Text('Login error. Tap to retry.'),
-        //     backgroundColor: Colors.red,
-        //   ),
-        // );
-      }
-    }
+    
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: _needsLogin && !_isLoading ? _handleLogin : null,
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/splashscreen.png'),
-              fit: BoxFit.fill,
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/loginScreenBackground.png'),
+            fit: BoxFit.cover,
           ),
-          child: _isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                )
-              : _needsLogin
-                  ? const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Tap to Login',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 50),
-                        ],
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo
+              CircleAvatar(
+                radius: 80,
+                backgroundColor: Colors.transparent,
+                backgroundImage: const AssetImage('assets/images/mana2logo1.png'),
+              ),
+              const SizedBox(height: 40),
+              // Title text
+              const Text(
+                'Simple, Timeless',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF606060),
+                  fontFamily: 'Outfit',
+                ),
+              ),
+              const Text(
+                'Assets Management',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF606060),
+                  fontFamily: 'Outfit',
+                ),
+              ),
+              const SizedBox(height: 40),
+              // Loading indicator
+              if (_isLoading)
+                const CircularProgressIndicator(
+                  color: Color(0xFF606060),
+                ),
+            ],
+          ),
         ),
       ),
     );

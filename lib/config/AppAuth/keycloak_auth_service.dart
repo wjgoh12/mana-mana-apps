@@ -2,16 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:mana_mana_app/splashscreen.dart';
 import '../env_config.dart';
-import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final FlutterAppAuth _appAuth = const FlutterAppAuth();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   Timer? _refreshTimer;
@@ -44,33 +41,18 @@ class AuthService {
     _handleSessionExpiry();
   }
 
+  /// Initialize tokens from native login
+  Future<void> initializeTokensFromNativeLogin(String accessToken, String refreshToken) async {
+    await _secureStorage.write(key: 'access_token', value: accessToken);
+    await _secureStorage.write(key: 'refresh_token', value: refreshToken);
+    _startTokenRefreshTimer(accessToken);
+    print('✅ Tokens initialized from native login');
+  }
+
+  // Removed web-based authentication - now using native login only
+  // This method is kept for backward compatibility but will return false
   Future<bool> authenticate() async {
-    try {
-      final AuthorizationTokenResponse? result =
-          await _appAuth.authorizeAndExchangeCode(
-        AuthorizationTokenRequest(
-          EnvConfig.keycloakClientId,
-          EnvConfig.keycloakRedirectUrl,
-          discoveryUrl: EnvConfig.keycloakDiscoveryUrl,
-          clientSecret: EnvConfig.keycloakClientSecret,
-          scopes: ['openid', 'profile', 'email'],
-          preferEphemeralSession: true,
-          allowInsecureConnections: true,
-        ),
-      );
-
-      if (result != null) {
-        await _secureStorage.write(
-            key: 'access_token', value: result.accessToken);
-        await _secureStorage.write(
-            key: 'refresh_token', value: result.refreshToken);
-
-        _startTokenRefreshTimer(result.accessToken!);
-        return true;
-      }
-    } catch (e) {
-      print('❌ Authentication error: $e');
-    }
+    print('⚠️ Web-based authentication disabled. Use native login instead.');
     return false;
   }
 
