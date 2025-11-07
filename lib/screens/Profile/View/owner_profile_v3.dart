@@ -70,12 +70,12 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
       debugPrint("✅ Successfully reverted to original user");
 
       // Navigate to homepage after successful revert
-      if (mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const NewDashboardV3()),
-          (route) => false,
-        );
-      }
+      // if (mounted) {
+      //   Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(builder: (_) => const NewDashboardV3()),
+      //     (route) => false,
+      //   );
+      // }
     } catch (e) {
       debugPrint("❌ Revert failed: $e");
       // You might want to show an error dialog here

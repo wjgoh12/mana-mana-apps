@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/config/env_config.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
+import 'package:mana_mana_app/screens/Login/View/loginpage.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/splashscreen.dart';
@@ -80,7 +81,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Splashscreen(), // Set initial route
+      home: const LoginPage(), // Set initial route
     );
   }
 }
