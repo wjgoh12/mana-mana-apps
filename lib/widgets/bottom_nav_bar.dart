@@ -1,17 +1,9 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:mana_mana_app/screens/All_Property/View/old/all_property.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
-import 'package:mana_mana_app/screens/All_Property/View/old/property_summary.dart';
 import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
-import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
-import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
-import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -114,15 +106,15 @@ class _BottomNavBarState extends State<BottomNavBar> {
           break;
 
         case 1:
-          final newDashboardVM = context.read<NewDashboardVM>();
+          context.read<NewDashboardVM>();
           Navigator.pushReplacement(
               context,
               _createRoute(const AllPropertyNewScreen(),
                   transitionType: 'fade'));
           break;
         case 2:
-          Navigator.pushReplacement(
-              context, _createRoute(OwnerProfile_v3(), transitionType: 'fade'));
+          Navigator.pushReplacement(context,
+              _createRoute(const OwnerProfile_v3(), transitionType: 'fade'));
           break;
         case 3:
         // Navigator.pushReplacement(context,
@@ -137,11 +129,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: LayoutBuilder(builder: (context, constraints) {
-        const itemCount = 3;
-        final totalWidth = constraints.maxWidth;
-        final itemWidth = totalWidth / itemCount;
-        final indicatorSize = 70.fSize;
-
         return Container(
           height: 70,
           width: constraints.maxWidth *
@@ -155,6 +142,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.grey.withOpacity(0.4),
                 blurRadius: 4,
                 offset: const Offset(0, 4),
@@ -197,87 +185,83 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 color: Color(0xFF606060),
               )
             : null,
-        child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Icon container
-              AnimatedScale(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Icon container
+            AnimatedScale(
+              duration: const Duration(milliseconds: 300),
+              scale: isSelected ? 1.2 : 1.0,
+              child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 300),
-                scale: isSelected ? 1.2 : 1.0,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  opacity: isSelected ? 1.0 : 1.0,
-                  child: icon is IconData
-                      ? Icon(
-                          icon,
-                          size: 24.fSize,
-                          color: isSelected ? Colors.white : Colors.grey,
-                        )
-                      : isSelected
-                          ? Image.asset(
+                opacity: isSelected ? 1.0 : 1.0,
+                child: icon is IconData
+                    ? Icon(
+                        icon,
+                        size: 24.fSize,
+                        color: isSelected ? Colors.white : Colors.grey,
+                      )
+                    : isSelected
+                        ? Image.asset(
+                            icon,
+                            width: 24.fSize,
+                            height: 24.fSize,
+                            color: const Color(0xFFFFCF00),
+                          )
+                        : ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              colors: [Colors.black, Colors.black],
+                            ).createShader(bounds),
+                            blendMode: BlendMode.srcIn,
+                            child: Image.asset(
                               icon,
                               width: 24.fSize,
                               height: 24.fSize,
-                              color: Color(0xFFFFCF00),
-                            )
-                          : ShaderMask(
-                              shaderCallback: (bounds) => const LinearGradient(
-                                colors: [Colors.black, Colors.black],
-                              ).createShader(bounds),
-                              blendMode: BlendMode.srcIn,
-                              child: Image.asset(
-                                icon,
-                                width: 24.fSize,
-                                height: 24.fSize,
-                              ),
                             ),
-                ),
+                          ),
               ),
+            ),
 
-              SizedBox(height: 4.fSize),
+            SizedBox(height: 4.fSize),
 
-              SizedBox(
-                width: 70.fSize,
-                child: AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 200),
-                  style: TextStyle(
-                    color: isSelected
-                        ? const Color(0xFFFFCF00)
-                        : Colors.transparent,
-                    fontSize: 10.fSize,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
-                  ),
-                  child: isSelected
-                      ? Text(
+            SizedBox(
+              width: 70.fSize,
+              child: AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 200),
+                style: TextStyle(
+                  color:
+                      isSelected ? const Color(0xFFFFCF00) : Colors.transparent,
+                  fontSize: 10.fSize,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                child: isSelected
+                    ? Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      )
+                    : ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [Colors.black, Colors.black],
+                        ).createShader(bounds),
+                        child: Text(
                           label,
+                          style: TextStyle(
+                            fontFamily: 'outfit',
+                            color: Colors.white,
+                            fontSize: 10.fSize,
+                            fontWeight: FontWeight.normal,
+                          ),
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                        )
-                      : ShaderMask(
-                          shaderCallback: (bounds) => LinearGradient(
-                            colors: [Colors.black, Colors.black],
-                          ).createShader(bounds),
-                          child: Text(
-                            label,
-                            style: TextStyle(
-                              fontFamily: 'outfit',
-                              color: Colors.white,
-                              fontSize: 10.fSize,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
                         ),
-                ),
+                      ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

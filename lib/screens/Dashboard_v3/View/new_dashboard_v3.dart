@@ -2,15 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/View/newsletter_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/profit_box.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/View/property_list_v3.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
-import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
 import 'package:mana_mana_app/widgets/overview_card.dart';
-import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/widgets/top_bar.dart';
@@ -25,7 +19,6 @@ class NewDashboardV3 extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Global data manager at the top level
         ChangeNotifierProvider.value(value: GlobalDataManager()),
         // Dashboard ViewModel
         ChangeNotifierProvider(
@@ -39,28 +32,18 @@ class NewDashboardV3 extends StatelessWidget {
       ],
       child: Consumer<NewDashboardVM_v3>(
         builder: (context, model, child) {
-          // Call dialog check from ViewModel after loading is complete
-          // Use post frame callback to prevent calling during build
           WidgetsBinding.instance.addPostFrameCallback((_) {
             model.checkAndShowNewFeaturesDialog(context);
           });
 
-          final ScrollController propertyScrollController = ScrollController();
-          final ScrollController newsletterScrollController =
-              ScrollController();
           final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
           final isMobile = MediaQuery.of(context).size.width < 600;
           final screenWidth = MediaQuery.of(context).size.width;
 
-          //final double horizontalPadding = isMobile ? 16.0 : 40.0;
           final horizontalPadding = screenWidth * 0.05; // 5% of screen width
 
           final screenHeight = MediaQuery.of(context).size.height;
 
-          double responsiveWidth(double value) =>
-              (value / 375.0) * screenWidth; // base width
-          double responsiveHeight(double value) =>
-              (value / 812.0) * screenHeight; // base height
           double responsiveFont(double value) =>
               (value / 812.0) * screenHeight; // font scaling
 
@@ -144,7 +127,6 @@ class NewDashboardV3 extends StatelessWidget {
                                   ),
                                   SizedBox(height: 2.height),
 
-                                  // Gradient title
                                   Row(
                                     children: [
                                       Text(
@@ -165,49 +147,9 @@ class NewDashboardV3 extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  // SizedBox(height: 4.height),
-
-                                  // Search bar
-                                  // TextField(
-                                  //   decoration: InputDecoration(
-                                  //     prefixIcon: SizedBox(
-                                  //       width: 20,
-                                  //       height: 20,
-                                  //       child: Image.asset(
-                                  //           'assets/images/searchIcon.png'),
-                                  //     ),
-                                  //     hintText: 'Search Your Properties',
-                                  //     hintStyle: TextStyle(
-                                  //       fontSize: ResponsiveSize.text(12),
-                                  //       fontFamily: 'outfit',
-                                  //       fontWeight: FontWeight.w400,
-                                  //     ),
-                                  //     suffixIcon: IconButton(
-                                  //       icon: Image.asset(
-                                  //         'assets/images/Settingsbutton.png',
-                                  //         width: 20,
-                                  //         height: 20,
-                                  //       ),
-                                  //       onPressed: () {},
-                                  //     ),
-                                  //     border: OutlineInputBorder(
-                                  //       borderRadius: BorderRadius.circular(12),
-                                  //     ),
-                                  //     focusedBorder: OutlineInputBorder(
-                                  //       borderRadius: BorderRadius.circular(12),
-                                  //       borderSide: const BorderSide(
-                                  //         color: Color(0XFFD9D9D9),
-                                  //         width: 1.5,
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                  //   SizedBox(height: 2.height),
                                 ],
                               ),
                             ),
-
-                            // Overview section
                             Container(
                               width: screenWidth,
                               padding: EdgeInsets.symmetric(
@@ -219,15 +161,6 @@ class NewDashboardV3 extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       _buildSectionTitle('Overview'),
-                                      // _seeAllButton(
-                                      //   onPressed: () {
-                                      //     Navigator.push(
-                                      //         context,
-                                      //         MaterialPageRoute(
-                                      //             builder: (context) =>
-                                      //                 PropertySummaryScreen()));
-                                      //   },
-                                      // ),
                                     ],
                                   ),
                                   const SizedBox(height: 12),
@@ -235,87 +168,8 @@ class NewDashboardV3 extends StatelessWidget {
                                 ],
                               ),
                             ),
-
-                            // SizedBox(height: 2.height),
-                            ProfitBox(),
+                            const ProfitBox(),
                             SizedBox(height: isMobile ? 16.height : 24.height),
-
-                            // Properties section
-                            // Container(
-                            //   width: screenWidth,
-                            //   padding: EdgeInsets.symmetric(
-                            //       horizontal: horizontalPadding, vertical: 14),
-                            //   color: Colors.white,
-                            //   child: Column(
-                            //     children: [
-                            //       Row(
-                            //         mainAxisAlignment:
-                            //             MainAxisAlignment.spaceBetween,
-                            //         children: [
-                            //           _buildSectionTitle('Your Properties'),
-                            //           _seeAllButton(
-                            //             onPressed: () {
-                            //               Navigator.push(
-                            //                 context,
-                            //                 MaterialPageRoute(
-                            //                   builder: (context) =>
-                            //                       AllPropertyNewScreen(),
-                            //                 ),
-                            //               );
-                            //             },
-                            //           ),
-                            //         ],
-                            //       ),
-                            //       PropertyListV3(
-                            //         model: model,
-                            //         controller: propertyScrollController,
-                            //       ),
-                            //       const SizedBox(
-                            //           height: kBottomNavigationBarHeight + 50),
-                            //     ],
-                            //     // prevent blocking
-                            //   ),
-                            // ),
-
-                            //SizedBox(height: 2.height),
-
-                            // Newsletter section
-                            // Container(
-                            //   width: screenWidth,
-                            //   padding: EdgeInsets.symmetric(
-                            //       horizontal: horizontalPadding),
-                            //   color: Colors.white,
-                            //   child: Column(
-                            //     children: [
-                            //       Row(
-                            //         mainAxisAlignment:
-                            //             MainAxisAlignment.spaceBetween,
-                            //         crossAxisAlignment: CrossAxisAlignment.center,
-                            //         children: [
-                            //           _buildSectionTitle('Newsletter'),
-                            //           _seeAllButton(
-                            //             onPressed: () {
-                            //               Navigator.push(
-                            //                 context,
-                            //                 MaterialPageRoute(
-                            //                     builder: (context) =>
-                            //                         AllNewsletter()),
-                            //               );
-                            //             },
-                            //           ),
-                            //         ],
-                            //       ),
-                            //       SizedBox(height: responsiveHeight(15)),
-                            //       NewsletterListV3(
-                            //         model: model,
-                            //         controller: newsletterScrollController,
-                            //       ),
-                            //       SizedBox(
-                            //           height: kBottomNavigationBarHeight +
-                            //               20), // prevent blocking
-                            //     ],
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
@@ -340,12 +194,16 @@ class NewDashboardV3 extends StatelessWidget {
               ),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
-              bottomNavigationBar: AbsorbPointer(
-                ignoringSemantics: false,
-                absorbing: model.isLoading, // Disable bottom nav when loading
-                child: Opacity(
-                  opacity: model.isLoading ? 0.3 : 1.0,
-                  child: const BottomNavBar(currentIndex: 0),
+              bottomNavigationBar: Container(
+                color: Colors.transparent,
+                child: AbsorbPointer(
+                  // ignore: deprecated_member_use
+                  ignoringSemantics: false,
+                  absorbing: model.isLoading, // Disable bottom nav when loading
+                  child: Opacity(
+                    opacity: model.isLoading ? 0.3 : 1.0,
+                    child: const BottomNavBar(currentIndex: 0),
+                  ),
                 ),
               ),
               extendBody: true,
@@ -357,7 +215,6 @@ class NewDashboardV3 extends StatelessWidget {
   }
 
   double _getExpandedHeight(BuildContext context) {
-    // Only need height for status bar + top bar since other content is in body
     final statusBarHeight = MediaQuery.of(context).padding.top;
     const topBarHeight = 60.0; // Approximate height of topBar
 
@@ -387,19 +244,6 @@ class NewDashboardV3 extends StatelessWidget {
       ),
     );
   }
-
-  Widget _seeAllButton({VoidCallback? onPressed}) {
-    return TextButton(
-      onPressed: onPressed,
-      child: Text(
-        'See All',
-        style: TextStyle(
-          fontFamily: 'outfit',
-          fontSize: 16.fSize,
-        ),
-      ),
-    );
-  }
 }
 
 class _SmartLoadingDialog extends StatelessWidget {
@@ -407,7 +251,6 @@ class _SmartLoadingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use RepaintBoundary to optimize rendering
     return RepaintBoundary(
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -417,16 +260,16 @@ class _SmartLoadingDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
             ),
           ],
         ),
-        child: Column(
+        child: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Use SizedBox to prevent layout shifts
-            const SizedBox(
+            SizedBox(
               height: 36,
               width: 36,
               child: CircularProgressIndicator(
@@ -434,7 +277,7 @@ class _SmartLoadingDialog extends StatelessWidget {
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3E51FF)),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               "Loading...",
               style: TextStyle(

@@ -9,6 +9,7 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// ignore: camel_case_types
 class OwnerProfile_v3 extends StatefulWidget {
   const OwnerProfile_v3({super.key});
 
@@ -16,6 +17,7 @@ class OwnerProfile_v3 extends StatefulWidget {
   State<OwnerProfile_v3> createState() => _OwnerProfile_v3State();
 }
 
+// ignore: camel_case_types
 class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
   final OwnerProfileVM model = OwnerProfileVM();
   bool _isLoggingOut = false;
@@ -125,92 +127,55 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
         listenable: model,
         builder: (context, child) {
           return Scaffold(
+            backgroundColor: Colors.white,
+            extendBody: true,
+            appBar: AppBar(
               backgroundColor: Colors.white,
-              extendBody: true,
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                leadingWidth: 13.width,
-                automaticallyImplyLeading: false,
-                centerTitle: true,
-                title: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 20.fSize, // or tweak size as needed
-                      backgroundImage: const AssetImage(
-                        'assets/images/mana2logo1.png',
-                      ),
-                      backgroundColor: Colors.transparent,
+              leadingWidth: 13.width,
+              automaticallyImplyLeading: false,
+              centerTitle: true,
+              title: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 20.fSize, // or tweak size as needed
+                    backgroundImage: const AssetImage(
+                      'assets/images/mana2logo1.png',
                     ),
-                    Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 10),
-                        child: Text(
-                          'Profile',
-                          style: TextStyle(
-                            color: const Color(0xFF606060),
-                            fontFamily: 'outfit',
-                            fontSize: ResponsiveSize.text(20),
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )
-                        // GradientText1(
-                        //     text: 'Profile',
-                        //     style: TextStyle(
-                        //       fontFamily: 'outfit',
-                        //       fontSize: responsiveFont(20),
-                        //       fontWeight: FontWeight.w800,
-                        //     ),
-                        //     gradient: const LinearGradient(
-                        //       begin: Alignment.centerLeft,
-                        //       end: Alignment.centerRight,
-                        //       colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                        //     )),
+                    backgroundColor: Colors.transparent,
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 10, top: 10),
+                      child: Text(
+                        'Profile',
+                        style: TextStyle(
+                          color: const Color(0xFF606060),
+                          fontFamily: 'outfit',
+                          fontSize: ResponsiveSize.text(20),
+                          fontWeight: FontWeight.w700,
                         ),
-                    Spacer(),
-                    // Revert impersonation button (visible only when impersonating)
-                    if (GlobalDataManager().isSwitchUser) ...[
-                      TextButton(
-                        onPressed: _isReverting ? null : _handleRevert,
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: const BorderSide(
-                                  color: Color(0xFF606060), width: 2),
-                            ),
-                          ),
-                        ),
-                        child: _isReverting
-                            ? SizedBox(
-                                width: ResponsiveSize.scaleWidth(16),
-                                height: ResponsiveSize.scaleHeight(16),
-                                child: const CircularProgressIndicator(
-                                    strokeWidth: 2),
-                              )
-                            : Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: ResponsiveSize.scaleWidth(8)),
-                                child: const Text(
-                                  'Revert',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    color: Color(0xFF606060),
-                                  ),
-                                ),
-                              ),
+                      )
+                      // GradientText1(
+                      //     text: 'Profile',
+                      //     style: TextStyle(
+                      //       fontFamily: 'outfit',
+                      //       fontSize: responsiveFont(20),
+                      //       fontWeight: FontWeight.w800,
+                      //     ),
+                      //     gradient: const LinearGradient(
+                      //       begin: Alignment.centerLeft,
+                      //       end: Alignment.centerRight,
+                      //       colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
+                      //     )),
                       ),
-                      SizedBox(width: ResponsiveSize.scaleWidth(8)),
-                    ],
-
-                    // Logout button
+                  const Spacer(),
+                  // Revert impersonation button (visible only when impersonating)
+                  if (GlobalDataManager().isSwitchUser) ...[
                     TextButton(
-                      onPressed: _isLoggingOut ? null : _handleLogout,
+                      onPressed: _isReverting ? null : _handleRevert,
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        shape: MaterialStateProperty.all(
+                        backgroundColor: WidgetStateProperty.all(Colors.white),
+                        shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                             side: const BorderSide(
@@ -218,7 +183,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                           ),
                         ),
                       ),
-                      child: _isLoggingOut
+                      child: _isReverting
                           ? SizedBox(
                               width: ResponsiveSize.scaleWidth(16),
                               height: ResponsiveSize.scaleHeight(16),
@@ -227,9 +192,9 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             )
                           : Padding(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: ResponsiveSize.scaleWidth(10)),
+                                  horizontal: ResponsiveSize.scaleWidth(8)),
                               child: const Text(
-                                'Logout',
+                                'Revert',
                                 style: TextStyle(
                                   fontFamily: 'outfit',
                                   color: Color(0xFF606060),
@@ -237,142 +202,349 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               ),
                             ),
                     ),
+                    SizedBox(width: ResponsiveSize.scaleWidth(8)),
                   ],
-                ),
-              ),
-              body: Padding(
-                padding: EdgeInsets.only(bottom: responsiveHeight(100)),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+
+                  // Logout button
+                  TextButton(
+                    onPressed: _isLoggingOut ? null : _handleLogout,
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(Colors.white),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: const BorderSide(
+                              color: Color(0xFF606060), width: 2),
+                        ),
+                      ),
+                    ),
+                    child: _isLoggingOut
+                        ? SizedBox(
+                            width: ResponsiveSize.scaleWidth(16),
+                            height: ResponsiveSize.scaleHeight(16),
+                            child:
+                                const CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: ResponsiveSize.scaleWidth(10)),
+                            child: const Text(
+                              'Logout',
+                              style: TextStyle(
+                                fontFamily: 'outfit',
+                                color: Color(0xFF606060),
+                              ),
+                            ),
+                          ),
                   ),
-                  child: SingleChildScrollView(
-                      child: Padding(
-                    padding: EdgeInsets.all(responsiveHeight(10)),
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12.fSize),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: const Offset(
-                                      0, 3), // changes position of shadow
+                ],
+              ),
+            ),
+            body: Padding(
+              padding: EdgeInsets.only(bottom: responsiveHeight(100)),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: SingleChildScrollView(
+                    child: Padding(
+                  padding: EdgeInsets.all(responsiveHeight(10)),
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12.fSize),
+                            boxShadow: [
+                              BoxShadow(
+                                // ignore: deprecated_member_use
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
+                              ),
+                            ]),
+                        child: Column(
+                          children: [
+                            SizedBox(height: ResponsiveSize.scaleHeight(20)),
+                            Row(
+                              children: [
+                                SizedBox(width: 15.fSize),
+                                Image.asset(
+                                  'assets/images/profile_icon.png',
+                                  width: ResponsiveSize.scaleWidth(50),
+                                  height: ResponsiveSize.scaleHeight(50),
                                 ),
-                              ]),
-                          child: Column(
-                            children: [
-                              SizedBox(height: ResponsiveSize.scaleHeight(20)),
-                              Row(
-                                children: [
-                                  SizedBox(width: 15.fSize),
-                                  Image.asset(
-                                    'assets/images/profile_icon.png',
-                                    width: ResponsiveSize.scaleWidth(50),
-                                    height: ResponsiveSize.scaleHeight(50),
+                                SizedBox(width: 10.fSize),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Property Owner',
+                                          style: TextStyle(
+                                              fontFamily: 'outfit',
+                                              fontSize: ResponsiveSize.text(14),
+                                              fontWeight: FontWeight.w300),
+                                        ),
+                                        model.users.isNotEmpty
+                                            ? Text(
+                                                model.users.first
+                                                        .ownerFullName ??
+                                                    '',
+                                                style: TextStyle(
+                                                    fontFamily: 'outfit',
+                                                    fontSize:
+                                                        responsiveFont(20),
+                                                    fontWeight: FontWeight.bold,
+                                                    color: const Color(
+                                                        0xFF606060)),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              )
+                                            : const Text('Loading...'),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20.fSize),
+                            // Row(
+                            //   children: [
+                            //     _buildRow(context, label: 'Name'),
+                            //     SizedBox(width: responsiveWidth(8)),
+                            //     model.users.isNotEmpty
+                            //         ? _buildData(context,
+                            //             data:
+                            //                 model.users.first.ownerFullName ??
+                            //                     '')
+                            //         : const Text('Loading...'),
+                            //   ],
+                            // ),
+                            Row(
+                              children: [
+                                SizedBox(width: ResponsiveSize.scaleWidth(9)),
+                                CircleAvatar(
+                                  radius: ResponsiveSize.scaleWidth(20),
+                                  backgroundColor: const Color(0xFF606060),
+                                  child: Image.asset(
+                                    'assets/images/ic_icon.png',
+                                    width: ResponsiveSize.scaleWidth(25),
+                                    color: const Color(0xFFFFFFFF),
+                                    height: ResponsiveSize.scaleHeight(25),
                                   ),
-                                  SizedBox(width: 10.fSize),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Property Owner',
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(10)),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Identification',
+                                      style: TextStyle(
+                                          fontFamily: 'outfit',
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    SizedBox(width: responsiveWidth(8)),
+                                    model.users.isNotEmpty
+                                        ? Text(
+                                            _formatIdentificationNumber(
+                                                model.users.first.ownerRefNo ??
+                                                    ''),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.visible,
+                                            softWrap: true,
                                             style: TextStyle(
                                                 fontFamily: 'outfit',
                                                 fontSize:
-                                                    ResponsiveSize.text(14),
-                                                fontWeight: FontWeight.w300),
+                                                    ResponsiveSize.text(12),
+                                                fontWeight: FontWeight.w400),
+                                          )
+                                        : Text(
+                                            '000000-00-0000',
+                                            maxLines: 6,
+                                            overflow: TextOverflow.visible,
+                                            softWrap: true,
+                                            style: TextStyle(
+                                                fontFamily: 'outfit',
+                                                fontSize:
+                                                    ResponsiveSize.text(12),
+                                                fontWeight: FontWeight.w400),
                                           ),
-                                          model.users.isNotEmpty
-                                              ? Text(
-                                                  model.users.first
-                                                          .ownerFullName ??
-                                                      '',
-                                                  style: TextStyle(
-                                                      fontFamily: 'outfit',
-                                                      fontSize:
-                                                          responsiveFont(20),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color(0xFF606060)),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                )
-                                              : const Text('Loading...'),
-                                        ],
-                                      ),
-                                    ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: ResponsiveSize.scaleHeight(15)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(width: ResponsiveSize.scaleWidth(9)),
+                                CircleAvatar(
+                                  radius: ResponsiveSize.scaleWidth(20),
+                                  backgroundColor: const Color(0xFF606060),
+                                  child: Image.asset(
+                                    'assets/images/profile_personal_email.png',
+                                    width: ResponsiveSize.scaleWidth(25),
+                                    color: const Color(0xFFFFFFFF),
                                   ),
-                                ],
-                              ),
-                              SizedBox(height: 20.fSize),
-                              // Row(
-                              //   children: [
-                              //     _buildRow(context, label: 'Name'),
-                              //     SizedBox(width: responsiveWidth(8)),
-                              //     model.users.isNotEmpty
-                              //         ? _buildData(context,
-                              //             data:
-                              //                 model.users.first.ownerFullName ??
-                              //                     '')
-                              //         : const Text('Loading...'),
-                              //   ],
-                              // ),
-                              Row(
-                                children: [
-                                  SizedBox(width: ResponsiveSize.scaleWidth(9)),
-                                  CircleAvatar(
-                                    radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF606060),
-                                    child: Image.asset(
-                                      'assets/images/ic_icon.png',
-                                      width: ResponsiveSize.scaleWidth(25),
-                                      color: const Color(0xFFFFFFFFFF),
-                                      height: ResponsiveSize.scaleHeight(25),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: ResponsiveSize.scaleWidth(10)),
-                                  Column(
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(10)),
+                                Expanded(
+                                  child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Identification',
-                                        style: TextStyle(
+                                      Expanded(
+                                        flex: 2,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Email',
+                                              style: TextStyle(
+                                                fontFamily: 'outfit',
+                                                fontSize:
+                                                    ResponsiveSize.text(11),
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                height:
+                                                    ResponsiveSize.scaleHeight(
+                                                        4)),
+                                            model.users.isNotEmpty
+                                                ? Text(
+                                                    model.users.first
+                                                            .ownerEmail ??
+                                                        '',
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.visible,
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                        fontFamily: 'outfit',
+                                                        fontSize:
+                                                            ResponsiveSize.text(
+                                                                12),
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  )
+                                                : const Text('Loading...'),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width: ResponsiveSize.scaleWidth(15)),
+                                      Expanded(
+                                        flex: 3,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            CircleAvatar(
+                                              radius:
+                                                  ResponsiveSize.scaleWidth(20),
+                                              backgroundColor:
+                                                  const Color(0xFF606060),
+                                              child: Image.asset(
+                                                'assets/images/profile_phone.png',
+                                                color: const Color(0xFFFFFFFF),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width:
+                                                    ResponsiveSize.scaleWidth(
+                                                        10)),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Contact No.',
+                                                  style: TextStyle(
+                                                    fontFamily: 'outfit',
+                                                    fontSize:
+                                                        ResponsiveSize.text(11),
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    height: ResponsiveSize
+                                                        .scaleHeight(4)),
+                                                model.users.isNotEmpty
+                                                    ? Text(
+                                                        model.users.first
+                                                                .ownerContact ??
+                                                            '',
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .visible,
+                                                        softWrap: true,
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                'outfit',
+                                                            fontSize:
+                                                                ResponsiveSize
+                                                                    .text(12),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      )
+                                                    : const Text('Loading...'),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: ResponsiveSize.scaleHeight(15)),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(width: ResponsiveSize.scaleWidth(9)),
+                                CircleAvatar(
+                                  radius: ResponsiveSize.scaleWidth(20),
+                                  backgroundColor: const Color(0xFF606060),
+                                  child: Image.asset(
+                                    'assets/images/profile_address.png',
+                                    color: const Color(0xFFFFFFFF),
+                                  ),
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(10)),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Address',
+                                          style: TextStyle(
                                             fontFamily: 'outfit',
                                             fontSize: ResponsiveSize.text(11),
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                      SizedBox(width: responsiveWidth(8)),
+                                            fontWeight: FontWeight.w400,
+                                          )),
+                                      SizedBox(
+                                          height:
+                                              ResponsiveSize.scaleHeight(4)),
                                       model.users.isNotEmpty
                                           ? Text(
-                                              _formatIdentificationNumber(model
-                                                      .users.first.ownerRefNo ??
-                                                  ''),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.visible,
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                  fontFamily: 'outfit',
-                                                  fontSize:
-                                                      ResponsiveSize.text(12),
-                                                  fontWeight: FontWeight.w400),
-                                            )
-                                          : Text(
-                                              '000000-00-0000',
+                                              model.users.first.ownerAddress ??
+                                                  '',
                                               maxLines: 6,
                                               overflow: TextOverflow.visible,
                                               softWrap: true,
@@ -381,807 +553,600 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                   fontSize:
                                                       ResponsiveSize.text(12),
                                                   fontWeight: FontWeight.w400),
-                                            ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: ResponsiveSize.scaleHeight(15)),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: ResponsiveSize.scaleWidth(9)),
-                                  CircleAvatar(
-                                    radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF606060),
-                                    child: Image.asset(
-                                      'assets/images/profile_personal_email.png',
-                                      width: ResponsiveSize.scaleWidth(25),
-                                      color: Color(0xFFFFFFFFFF),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: ResponsiveSize.scaleWidth(10)),
-                                  Expanded(
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Email',
-                                                style: TextStyle(
-                                                  fontFamily: 'outfit',
-                                                  fontSize:
-                                                      ResponsiveSize.text(11),
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  height: ResponsiveSize
-                                                      .scaleHeight(4)),
-                                              model.users.isNotEmpty
-                                                  ? Text(
-                                                      model.users.first
-                                                              .ownerEmail ??
-                                                          '',
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.visible,
-                                                      softWrap: true,
-                                                      style: TextStyle(
-                                                          fontFamily: 'outfit',
-                                                          fontSize:
-                                                              ResponsiveSize
-                                                                  .text(12),
-                                                          fontWeight:
-                                                              FontWeight.w400),
-                                                    )
-                                                  : const Text('Loading...'),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(
-                                            width:
-                                                ResponsiveSize.scaleWidth(15)),
-                                        Expanded(
-                                          flex: 3,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              CircleAvatar(
-                                                radius:
-                                                    ResponsiveSize.scaleWidth(
-                                                        20),
-                                                backgroundColor:
-                                                    const Color(0xFF606060),
-                                                child: Image.asset(
-                                                  'assets/images/profile_phone.png',
-                                                  color:
-                                                      const Color(0xFFFFFFFFFF),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width:
-                                                      ResponsiveSize.scaleWidth(
-                                                          10)),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Contact No.',
-                                                    style: TextStyle(
-                                                      fontFamily: 'outfit',
-                                                      fontSize:
-                                                          ResponsiveSize.text(
-                                                              11),
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                      height: ResponsiveSize
-                                                          .scaleHeight(4)),
-                                                  model.users.isNotEmpty
-                                                      ? Text(
-                                                          model.users.first
-                                                                  .ownerContact ??
-                                                              '',
-                                                          maxLines: 2,
-                                                          overflow: TextOverflow
-                                                              .visible,
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'outfit',
-                                                              fontSize:
-                                                                  ResponsiveSize
-                                                                      .text(12),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400),
-                                                        )
-                                                      : const Text(
-                                                          'Loading...'),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: ResponsiveSize.scaleHeight(15)),
-
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: ResponsiveSize.scaleWidth(9)),
-                                  CircleAvatar(
-                                    child: Image.asset(
-                                      'assets/images/profile_address.png',
-                                      color: const Color(0xFFFFFFFF),
-                                    ),
-                                    radius: ResponsiveSize.scaleWidth(20),
-                                    backgroundColor: const Color(0xFF606060),
-                                  ),
-                                  SizedBox(
-                                      width: ResponsiveSize.scaleWidth(10)),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Address',
-                                            style: TextStyle(
-                                              fontFamily: 'outfit',
-                                              fontSize: ResponsiveSize.text(11),
-                                              fontWeight: FontWeight.w400,
-                                            )),
-                                        SizedBox(
-                                            height:
-                                                ResponsiveSize.scaleHeight(4)),
-                                        model.users.isNotEmpty
-                                            ? Text(
-                                                model.users.first
-                                                        .ownerAddress ??
-                                                    '',
-                                                maxLines: 6,
-                                                overflow: TextOverflow.visible,
-                                                softWrap: true,
-                                                style: TextStyle(
-                                                    fontFamily: 'outfit',
-                                                    fontSize:
-                                                        ResponsiveSize.text(12),
-                                                    fontWeight:
-                                                        FontWeight.w400),
-                                              )
-                                            : const Text('Loading...'),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 25.fSize),
-
-                              SizedBox(height: ResponsiveSize.scaleHeight(20)),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: ResponsiveSize.scaleHeight(20)),
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12.fSize),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: const Offset(
-                                      0, 3), // changes position of shadow
-                                ),
-                              ]),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(
-                                        ResponsiveSize.scaleWidth(9.0)),
-                                    child: Text('Financial Details',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: ResponsiveSize.text(15),
-                                          fontWeight: FontWeight.bold,
-                                        )),
-                                  ),
-                                ],
-                              ),
-
-                              // Financial details content (building + unit + bank/account)
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: ResponsiveSize.scaleWidth(9.0),
-                                    vertical: 8.fSize),
-                                child: buildFinancialDetails(model),
-                              ),
-                              SizedBox(height: 12.fSize),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: 25.fSize),
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12.fSize),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: const Offset(
-                                      0, 3), // changes position of shadow
-                                ),
-                              ]),
-                          child: Column(
-                            children: [
-                              SizedBox(height: ResponsiveSize.scaleHeight(10)),
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text('Contact Us',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: ResponsiveSize.text(15),
-                                          fontWeight: FontWeight.bold,
-                                        )),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 12.fSize),
-                              InkWell(
-                                focusColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                //this widget responds to touch actions
-                                onTap: () {
-                                  //   Navigator.of(context).push(
-                                  //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
-                                  //   );
-                                  final Uri emailLaunchUri = Uri(
-                                    scheme: 'mailto',
-                                    path: 'admin@manamanasuites.com',
-                                  );
-                                  launchUrl(emailLaunchUri);
-                                },
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: ResponsiveSize.scaleWidth(20),
-                                        backgroundColor:
-                                            const Color(0xFFFFCF00),
-                                        child: Image.asset(
-                                            'assets/images/profile_email.png',
-                                            width:
-                                                ResponsiveSize.scaleWidth(20),
-                                            height:
-                                                ResponsiveSize.scaleHeight(20)),
-                                      ),
-                                      SizedBox(width: 20.fSize),
-                                      Text(
-                                        'Email',
-                                        style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: 16.fSize,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      const Icon(Icons.arrow_forward_ios,
-                                          size: 20, color: Colors.grey),
+                                            )
+                                          : const Text('Loading...'),
                                     ],
                                   ),
                                 ),
+                              ],
+                            ),
+                            SizedBox(height: 25.fSize),
+
+                            SizedBox(height: ResponsiveSize.scaleHeight(20)),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveSize.scaleHeight(20)),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12.fSize),
+                            boxShadow: [
+                              BoxShadow(
+                                // ignore: deprecated_member_use
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
                               ),
-                              SizedBox(height: 12.fSize),
-                              InkWell(
-                                highlightColor: Colors.transparent,
-                                onTap: () {
-                                  launchUrl(Uri.parse('tel:+60327795035'));
-                                },
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: ResponsiveSize.scaleWidth(20),
-                                        backgroundColor:
-                                            const Color(0xFFFFCF00),
-                                        child: Image.asset(
-                                          'assets/images/profile_telephone.png',
+                            ]),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                      ResponsiveSize.scaleWidth(9.0)),
+                                  child: Text('Financial Details',
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        fontSize: ResponsiveSize.text(15),
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                ),
+                              ],
+                            ),
+
+                            // Financial details content (building + unit + bank/account)
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: ResponsiveSize.scaleWidth(9.0),
+                                  vertical: 8.fSize),
+                              child: buildFinancialDetails(model),
+                            ),
+                            SizedBox(height: 12.fSize),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: 25.fSize),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12.fSize),
+                            boxShadow: [
+                              BoxShadow(
+                                // ignore: deprecated_member_use
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
+                              ),
+                            ]),
+                        child: Column(
+                          children: [
+                            SizedBox(height: ResponsiveSize.scaleHeight(10)),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text('Contact Us',
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        fontSize: ResponsiveSize.text(15),
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 12.fSize),
+                            InkWell(
+                              focusColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              //this widget responds to touch actions
+                              onTap: () {
+                                //   Navigator.of(context).push(
+                                //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
+                                //   );
+                                final Uri emailLaunchUri = Uri(
+                                  scheme: 'mailto',
+                                  path: 'admin@manamanasuites.com',
+                                );
+                                launchUrl(emailLaunchUri);
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: ResponsiveSize.scaleWidth(20),
+                                      backgroundColor: const Color(0xFFFFCF00),
+                                      child: Image.asset(
+                                          'assets/images/profile_email.png',
+                                          width: ResponsiveSize.scaleWidth(20),
+                                          height:
+                                              ResponsiveSize.scaleHeight(20)),
+                                    ),
+                                    SizedBox(width: 20.fSize),
+                                    Text(
+                                      'Email',
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        fontSize: 16.fSize,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Icon(Icons.arrow_forward_ios,
+                                        size: 20, color: Colors.grey),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12.fSize),
+                            InkWell(
+                              highlightColor: Colors.transparent,
+                              onTap: () {
+                                launchUrl(Uri.parse('tel:+60327795035'));
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: ResponsiveSize.scaleWidth(20),
+                                      backgroundColor: const Color(0xFFFFCF00),
+                                      child: Image.asset(
+                                        'assets/images/profile_telephone.png',
+                                        width: ResponsiveSize.scaleWidth(20),
+                                        height: ResponsiveSize.scaleHeight(20),
+                                        color: const Color(0xFF606060),
+                                      ),
+                                    ),
+                                    SizedBox(width: 20.fSize),
+                                    Text(
+                                      'Telephone',
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        fontSize: 16.fSize,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Icon(Icons.arrow_forward_ios,
+                                        size: 20, color: Colors.grey),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12.fSize),
+                            InkWell(
+                              highlightColor: Colors.transparent,
+                              onTap: () {
+                                launchUrl(
+                                    Uri.parse('https://wa.me/60125626784'));
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: ResponsiveSize.scaleWidth(20),
+                                      backgroundColor: const Color(0xFFFFCF00),
+                                      child: Image.asset(
+                                          'assets/images/profile_whatsapp.png',
                                           width: ResponsiveSize.scaleWidth(20),
                                           height:
                                               ResponsiveSize.scaleHeight(20),
-                                          color: Color(0xFF606060),
-                                        ),
-                                      ),
-                                      SizedBox(width: 20.fSize),
-                                      Text(
-                                        'Telephone',
-                                        style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: 16.fSize,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      const Icon(Icons.arrow_forward_ios,
-                                          size: 20, color: Colors.grey),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 12.fSize),
-                              InkWell(
-                                highlightColor: Colors.transparent,
-                                onTap: () {
-                                  launchUrl(
-                                      Uri.parse('https://wa.me/60125626784'));
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: ResponsiveSize.scaleWidth(20),
-                                        backgroundColor:
-                                            const Color(0xFFFFCF00),
-                                        child: Image.asset(
-                                            'assets/images/profile_whatsapp.png',
-                                            width:
-                                                ResponsiveSize.scaleWidth(20),
-                                            height:
-                                                ResponsiveSize.scaleHeight(20),
-                                            color: Color(0xFF606060)),
-                                      ),
-                                      SizedBox(width: 20.fSize),
-                                      Text(
-                                        'Whatsapp',
-                                        style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: 16.fSize,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      const Icon(Icons.arrow_forward_ios,
-                                          size: 20, color: Colors.grey),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: ResponsiveSize.scaleHeight(15)),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: 12.fSize),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // If the user can switch, show Switch User button
-                            if (model.canSwitchUser) ...[
-                              TextButton(
-                                onPressed: () {
-                                  // TODO: implement actual switch user action
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      // Declare variables outside the StatefulBuilder to maintain state
-                                      String? validationMessage;
-                                      bool isProcessing = false;
-                                      final emailController =
-                                          TextEditingController();
-
-                                      return StatefulBuilder(
-                                        builder: (context, setDialogState) {
-                                          return Dialog(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          12)),
-                                              padding: const EdgeInsets.all(16),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  const Text(
-                                                    'Switch User',
-                                                    style: TextStyle(
-                                                        fontFamily: 'outfit',
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  SizedBox(height: 12.fSize),
-                                                  TextField(
-                                                    controller: emailController,
-                                                    onChanged: (value) {
-                                                      // Clear error message when user starts typing
-                                                      if (validationMessage !=
-                                                          null) {
-                                                        setDialogState(() {
-                                                          validationMessage =
-                                                              null;
-                                                        });
-                                                      }
-                                                    },
-                                                    decoration:
-                                                        const InputDecoration(
-                                                      border:
-                                                          OutlineInputBorder(),
-                                                      labelText:
-                                                          'Enter User Email',
-                                                      labelStyle:
-                                                          const TextStyle(
-                                                        fontFamily: 'outfit',
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 12),
-                                                  if (validationMessage != null)
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              bottom: 8.0),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Text(
-                                                          validationMessage!,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.red,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      TextButton(
-                                                        style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all(Colors
-                                                                      .white),
-                                                        ),
-                                                        onPressed: () async {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        child: const Text(
-                                                            'Cancel',
-                                                            style: TextStyle(
-                                                                fontFamily:
-                                                                    'Outfit')),
-                                                      ),
-                                                      const SizedBox(width: 8),
-                                                      ElevatedButton(
-                                                        onPressed: () async {
-                                                          final email =
-                                                              emailController
-                                                                  .text
-                                                                  .trim();
-                                                          if (email.isEmpty) {
-                                                            setDialogState(() {
-                                                              validationMessage =
-                                                                  'Please insert the email';
-                                                            });
-                                                            return;
-                                                          }
-
-                                                          // First validate the requested email with server.
-                                                          final validateRes =
-                                                              await model
-                                                                  .validateSwitchUser(
-                                                                      email);
-
-                                                          // Check for success response with "Now valid viewing as:" message
-                                                          bool isValidUser =
-                                                              false;
-
-                                                          if (validateRes
-                                                              is Map) {
-                                                            // Single response
-                                                            final body = validateRes[
-                                                                        'body']
-                                                                    ?.toString() ??
-                                                                '';
-                                                            isValidUser = validateRes[
-                                                                        'success'] ==
-                                                                    true &&
-                                                                body.contains(
-                                                                    'Now valid viewing as:');
-                                                          }
-
-                                                          if (!isValidUser) {
-                                                            setDialogState(() {
-                                                              validationMessage =
-                                                                  'User Invalid';
-                                                            });
-                                                            return;
-                                                          } // Ask user to confirm before switching. The
-                                                          // confirmation dialog performs the switch and
-                                                          // shows loading while the operation runs. It
-                                                          // returns true on success.
-                                                          final doSwitch =
-                                                              await showDialog<
-                                                                  bool>(
-                                                            context: context,
-                                                            builder: (ctx) =>
-                                                                StatefulBuilder(
-                                                              builder: (ctx,
-                                                                  setStateDialog) {
-                                                                bool isLoading =
-                                                                    false;
-                                                                String?
-                                                                    dialogError;
-
-                                                                return AlertDialog(
-                                                                  title: const Text(
-                                                                      'Confirm Switch',
-                                                                      style: TextStyle(
-                                                                          fontFamily:
-                                                                              'Outfit')),
-                                                                  content:
-                                                                      Column(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .min,
-                                                                    children: [
-                                                                      Text(
-                                                                          'Are you sure you want to switch to "${email}"?',
-                                                                          style:
-                                                                              const TextStyle(fontFamily: 'Outfit')),
-                                                                      if (dialogError !=
-                                                                          null)
-                                                                        Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .only(
-                                                                              top: 8.0),
-                                                                          child: Text(
-                                                                              dialogError,
-                                                                              style: const TextStyle(color: Colors.red)),
-                                                                        ),
-                                                                    ],
-                                                                  ),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed: isLoading
-                                                                          ? null
-                                                                          : () =>
-                                                                              Navigator.of(ctx).pop(false),
-                                                                      child: const Text(
-                                                                          'No',
-                                                                          style:
-                                                                              TextStyle(fontFamily: 'Outfit')),
-                                                                    ),
-                                                                    TextButton(
-                                                                      onPressed: isLoading
-                                                                          ? null
-                                                                          : () async {
-                                                                              setStateDialog(() {
-                                                                                isLoading = true;
-                                                                                dialogError = null;
-                                                                              });
-
-                                                                              // Start a temporary, client-side impersonation
-                                                                              // that clears the current account data immediately
-                                                                              // and loads the requested email in the background.
-                                                                              await model.switchUserAndReload(email);
-                                                                              // await model.cancelUser(email);
-                                                                              if (!mounted) {
-                                                                                return;
-                                                                              }
-
-                                                                              // Close dialog on success (background load in progress)
-                                                                              Navigator.of(ctx).pop(true);
-                                                                            },
-                                                                      child: isLoading
-                                                                          ? const SizedBox(
-                                                                              width: 20,
-                                                                              height: 20,
-                                                                              child: CircularProgressIndicator(strokeWidth: 2))
-                                                                          : const Text('Yes', style: TextStyle(fontFamily: 'Outfit')),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              },
-                                                            ),
-                                                          );
-
-                                                          if (doSwitch != true)
-                                                            return;
-
-                                                          // Switch succeeded inside the confirmation dialog.
-                                                          // Close the Switch User dialog and navigate to
-                                                          // the refreshed dashboard.
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                          // // ignore: use_build_context_synchronously
-                                                          Navigator.of(context)
-                                                              .pushAndRemoveUntil(
-                                                                  MaterialPageRoute(
-                                                                      builder:
-                                                                          (_) =>
-                                                                              const NewDashboardV3()),
-                                                                  (route) =>
-                                                                      false);
-                                                        },
-                                                        child: isProcessing
-                                                            ? CircularProgressIndicator(
-                                                                strokeWidth: 2)
-                                                            : Text('Confirm',
-                                                                style: TextStyle(
-                                                                    fontFamily:
-                                                                        'Outfit')),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-
-                                  debugPrint('Switch User pressed');
-                                },
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.white),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      side: const BorderSide(
-                                          color: Color(0xFF606060), width: 2),
+                                          color: const Color(0xFF606060)),
                                     ),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Switch User',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    color: Color(0xFF606060),
-                                  ),
+                                    SizedBox(width: 20.fSize),
+                                    Text(
+                                      'Whatsapp',
+                                      style: TextStyle(
+                                        fontFamily: 'outfit',
+                                        fontSize: 16.fSize,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Icon(Icons.arrow_forward_ios,
+                                        size: 20, color: Colors.grey),
+                                  ],
                                 ),
                               ),
-                              SizedBox(width: ResponsiveSize.scaleWidth(12)),
-                            ],
+                            ),
+                            SizedBox(height: ResponsiveSize.scaleHeight(15)),
                           ],
                         ),
-                        SizedBox(height: 35.fSize),
+                      ),
 
-                        //terms and conditions and privacy policy
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: ResponsiveSize.scaleWidth(130),
-                              height: ResponsiveSize.scaleHeight(35),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: const Color(0xFF3E51FF)),
-                                color: const Color(0xFF606060),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Container(
-                                child: TextButton(
-                                  onPressed: () {
-                                    launchUrl(Uri.parse(
-                                        'https://www.manamanasuites.com/terms-conditions'));
+                      SizedBox(height: 12.fSize),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // If the user can switch, show Switch User button
+                          if (model.canSwitchUser) ...[
+                            TextButton(
+                              onPressed: () {
+                                // TODO: implement actual switch user action
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    // Declare variables outside the StatefulBuilder to maintain state
+                                    String? validationMessage;
+                                    final emailController =
+                                        TextEditingController();
 
-                                    ButtonStyle(
-                                      backgroundColor: WidgetStateProperty.all(
-                                          Colors.transparent),
-                                      overlayColor: WidgetStateProperty.all(
-                                          Colors.transparent),
-                                      foregroundColor: WidgetStateProperty.all(
-                                          Colors.transparent),
-                                      shadowColor: WidgetStateProperty.all(
-                                          Colors.transparent),
+                                    return StatefulBuilder(
+                                      builder: (context, setDialogState) {
+                                        return Dialog(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(12)),
+                                            padding: const EdgeInsets.all(16),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Text(
+                                                  'Switch User',
+                                                  style: TextStyle(
+                                                      fontFamily: 'outfit',
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                SizedBox(height: 12.fSize),
+                                                TextField(
+                                                  controller: emailController,
+                                                  onChanged: (value) {
+                                                    // Clear error message when user starts typing
+                                                    if (validationMessage !=
+                                                        null) {
+                                                      setDialogState(() {
+                                                        validationMessage =
+                                                            null;
+                                                      });
+                                                    }
+                                                  },
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                    labelText:
+                                                        'Enter User Email',
+                                                    labelStyle: TextStyle(
+                                                      fontFamily: 'outfit',
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 12),
+                                                if (validationMessage != null)
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 8.0),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                        validationMessage!,
+                                                        style: const TextStyle(
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    TextButton(
+                                                      style: ButtonStyle(
+                                                        backgroundColor:
+                                                            WidgetStateProperty
+                                                                .all(Colors
+                                                                    .white),
+                                                      ),
+                                                      onPressed: () async {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: const Text(
+                                                          'Cancel',
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  'Outfit')),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    ElevatedButton(
+                                                      onPressed: () async {
+                                                        final email =
+                                                            emailController.text
+                                                                .trim();
+                                                        if (email.isEmpty) {
+                                                          setDialogState(() {
+                                                            validationMessage =
+                                                                'Please insert the email';
+                                                          });
+                                                          return;
+                                                        }
+
+                                                        // First validate the requested email with server.
+                                                        final validateRes =
+                                                            await model
+                                                                .validateSwitchUser(
+                                                                    email);
+
+                                                        // Check for success response with "Now valid viewing as:" message
+                                                        bool isValidUser =
+                                                            false;
+
+                                                        // Single response
+                                                        final body = validateRes[
+                                                                    'body']
+                                                                ?.toString() ??
+                                                            '';
+                                                        isValidUser = validateRes[
+                                                                    'success'] ==
+                                                                true &&
+                                                            body.contains(
+                                                                'Now valid viewing as:');
+
+                                                        if (!isValidUser) {
+                                                          setDialogState(() {
+                                                            validationMessage =
+                                                                'User Invalid';
+                                                          });
+                                                          return;
+                                                        } // Ask user to confirm before switching. The
+                                                        // confirmation dialog performs the switch and
+                                                        // shows loading while the operation runs. It
+                                                        // returns true on success.
+                                                        final doSwitch =
+                                                            await showDialog<
+                                                                bool>(
+                                                          // ignore: use_build_context_synchronously
+                                                          context: context,
+                                                          builder: (ctx) =>
+                                                              StatefulBuilder(
+                                                            builder: (ctx,
+                                                                setStateDialog) {
+                                                              return AlertDialog(
+                                                                title: const Text(
+                                                                    'Confirm Switch',
+                                                                    style: TextStyle(
+                                                                        fontFamily:
+                                                                            'Outfit')),
+                                                                content: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  children: [
+                                                                    Text(
+                                                                        'Are you sure you want to switch to "$email"?',
+                                                                        style: const TextStyle(
+                                                                            fontFamily:
+                                                                                'Outfit')),
+                                                                  ],
+                                                                ),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.of(ctx)
+                                                                            .pop(false),
+                                                                    child: const Text(
+                                                                        'No',
+                                                                        style: TextStyle(
+                                                                            fontFamily:
+                                                                                'Outfit')),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      setStateDialog(
+                                                                          () {});
+
+                                                                      // Start a temporary, client-side impersonation
+                                                                      // that clears the current account data immediately
+                                                                      // and loads the requested email in the background.
+                                                                      await model
+                                                                          .switchUserAndReload(
+                                                                              email);
+                                                                      // await model.cancelUser(email);
+                                                                      if (!mounted) {
+                                                                        return;
+                                                                      }
+
+                                                                      // Close dialog on success (background load in progress)
+                                                                      // ignore: use_build_context_synchronously
+                                                                      Navigator.of(
+                                                                              ctx)
+                                                                          .pop(
+                                                                              true);
+                                                                    },
+                                                                    child: const Text(
+                                                                        'Yes',
+                                                                        style: TextStyle(
+                                                                            fontFamily:
+                                                                                'Outfit')),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          ),
+                                                        );
+
+                                                        if (doSwitch != true) {
+                                                          return;
+                                                        }
+
+                                                        // Switch succeeded inside the confirmation dialog.
+                                                        // Close the Switch User dialog and navigate to
+                                                        // the refreshed dashboard.
+                                                        // ignore: use_build_context_synchronously
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        // // ignore: use_build_context_synchronously
+                                                        // ignore: use_build_context_synchronously
+                                                        Navigator.of(context)
+                                                            .pushAndRemoveUntil(
+                                                                MaterialPageRoute(
+                                                                    builder: (_) =>
+                                                                        const NewDashboardV3()),
+                                                                (route) =>
+                                                                    false);
+                                                      },
+                                                      child: const Text(
+                                                          'Confirm',
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  'Outfit')),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     );
                                   },
-                                  child: Text(
-                                    'Terms and Conditions',
-                                    style: TextStyle(
-                                      fontFamily: 'outfit',
-                                      fontSize: ResponsiveSize.text(9),
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
+                                );
+
+                                debugPrint('Switch User pressed');
+                              },
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    WidgetStateProperty.all(Colors.white),
+                                shape: WidgetStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: const BorderSide(
+                                        color: Color(0xFF606060), width: 2),
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: ResponsiveSize.scaleWidth(15)),
-                            Container(
-                              width: ResponsiveSize.scaleWidth(130),
-                              height: ResponsiveSize.scaleHeight(35),
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: const Color(0xFF3E51FF)),
-                                color: const Color(0xFF606060),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: TextButton(
-                                onPressed: () {
-                                  launchUrl(Uri.parse(
-                                      'https://www.manamanasuites.com/privacy-policy'));
-                                  ButtonStyle(
-                                    backgroundColor: WidgetStateProperty.all(
-                                        Colors.transparent),
-                                    overlayColor: WidgetStateProperty.all(
-                                        Colors.transparent),
-                                  );
-                                },
-                                child: Text(
-                                  'Privacy Policy',
-                                  style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontSize: ResponsiveSize.text(11),
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
+                              child: const Text(
+                                'Switch User',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  color: Color(0xFF606060),
                                 ),
                               ),
                             ),
+                            SizedBox(width: ResponsiveSize.scaleWidth(12)),
                           ],
-                        ),
-                      ],
-                    ),
-                  )),
+                        ],
+                      ),
+                      SizedBox(height: 35.fSize),
+
+                      //terms and conditions and privacy policy
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: ResponsiveSize.scaleWidth(130),
+                            height: ResponsiveSize.scaleHeight(35),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: const Color(0xFF3E51FF)),
+                              color: const Color(0xFF606060),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                launchUrl(Uri.parse(
+                                    'https://www.manamanasuites.com/terms-conditions'));
+
+                                ButtonStyle(
+                                  backgroundColor: WidgetStateProperty.all(
+                                      Colors.transparent),
+                                  overlayColor: WidgetStateProperty.all(
+                                      Colors.transparent),
+                                  foregroundColor: WidgetStateProperty.all(
+                                      Colors.transparent),
+                                  shadowColor: WidgetStateProperty.all(
+                                      Colors.transparent),
+                                );
+                              },
+                              child: Text(
+                                'Terms and Conditions',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: ResponsiveSize.text(9),
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: ResponsiveSize.scaleWidth(15)),
+                          Container(
+                            width: ResponsiveSize.scaleWidth(130),
+                            height: ResponsiveSize.scaleHeight(35),
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: const Color(0xFF3E51FF)),
+                              color: const Color(0xFF606060),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                launchUrl(Uri.parse(
+                                    'https://www.manamanasuites.com/privacy-policy'));
+                                ButtonStyle(
+                                  backgroundColor: WidgetStateProperty.all(
+                                      Colors.transparent),
+                                  overlayColor: WidgetStateProperty.all(
+                                      Colors.transparent),
+                                );
+                              },
+                              child: Text(
+                                'Privacy Policy',
+                                style: TextStyle(
+                                  fontFamily: 'outfit',
+                                  fontSize: ResponsiveSize.text(11),
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )),
+              ),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            bottomNavigationBar: Container(
+              color: Colors.transparent,
+              child: AbsorbPointer(
+                // ignore: deprecated_member_use
+                ignoringSemantics: false,
+                absorbing: model.isLoading, // Disable bottom nav when loading
+                child: Opacity(
+                  opacity: model.isLoading ? 0.3 : 1.0,
+                  child: const BottomNavBar(currentIndex: 2),
                 ),
               ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              bottomNavigationBar: Container(
-                decoration: BoxDecoration(
-                  // ignore: deprecated_member_use
-                  color: Colors.white.withOpacity(0),
-                ),
-                child: const BottomNavBar(
-                  currentIndex: 2,
-                ),
-              ));
+            ),
+          );
         });
   }
 }
@@ -1277,6 +1242,7 @@ Widget buildFinancialDetails(OwnerProfileVM model) {
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 2,
                       blurRadius: 5,

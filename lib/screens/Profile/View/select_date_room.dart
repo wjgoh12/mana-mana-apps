@@ -56,11 +56,12 @@ class SelectDateRoom extends StatefulWidget {
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _SelectDateRoomState createState() => _SelectDateRoomState();
 }
 
 class _SelectDateRoomState extends State<SelectDateRoom> {
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime? _focusedDay;
   DateTime? _selectedDay;
   DateTime? _rangeStart;
@@ -381,15 +382,15 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
   DateTime getInitialFocusedDay() {
     final today = DateTime.now();
-    final sevenDaysFromNow = today.add(Duration(days: 7));
+    final sevenDaysFromNow = today.add(const Duration(days: 7));
 
     bool hasAvailableDayThisMonth = false;
     DateTime firstOfMonth = DateTime(today.year, today.month, 1);
     DateTime lastOfMonth = DateTime(today.year, today.month + 1, 0);
 
     for (DateTime d = firstOfMonth;
-        d.isBefore(lastOfMonth.add(Duration(days: 1)));
-        d = d.add(Duration(days: 1))) {
+        d.isBefore(lastOfMonth.add(const Duration(days: 1)));
+        d = d.add(const Duration(days: 1))) {
       if (_isDayEnabled(d)) {
         hasAvailableDayThisMonth = true;
         break;
@@ -405,7 +406,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
   bool _isDayEnabled(DateTime day) {
     final today = DateTime.now();
-    final sevenDaysFromNow = today.add(Duration(days: 7));
+    final sevenDaysFromNow = today.add(const Duration(days: 7));
     return day.isAfter(sevenDaysFromNow) || isSameDay(day, sevenDaysFromNow);
   }
 
@@ -455,16 +456,16 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: const Icon(
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Icon(
                     Icons.arrow_back_ios,
                     color: Colors.black,
                     size: 24,
                   ),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
                 'Select Date and Room',
                 style: TextStyle(
@@ -492,16 +493,16 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               onTap: () {
                 Navigator.of(context).pop();
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: const Icon(
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Icon(
                   Icons.arrow_back_ios,
                   color: Colors.black,
                   size: 24,
                 ),
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(
               'Select Date and Room',
               style: TextStyle(
@@ -567,7 +568,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     calendarBuilders: CalendarBuilders(
                       disabledBuilder: (context, day, focusedDay) {
                         if (_isBlackoutDay(day)) {
-                          final color = Colors.black;
+                          const color = Colors.black;
 
                           bool isStart = _blockedDates.any(
                             (bd) =>
@@ -586,13 +587,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                               height: double.infinity,
                               margin: EdgeInsets.zero,
                               decoration: BoxDecoration(
+                                // ignore: deprecated_member_use
                                 color: color.withOpacity(0.2),
                               ),
                               child: Center(
                                 child: Container(
                                   width: 35,
                                   height: 35,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: color,
                                     shape: BoxShape.circle,
                                   ),
@@ -612,12 +614,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                               height: double.infinity,
                               margin: EdgeInsets.zero,
                               decoration: BoxDecoration(
+                                // ignore: deprecated_member_use
                                 color: color.withOpacity(0.2),
                               ),
                               child: Center(
                                 child: Text(
                                   '${day.day}',
                                   style: TextStyle(
+                                    // ignore: deprecated_member_use
                                     color: color.withOpacity(0.8),
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -791,6 +795,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         shape: BoxShape.circle,
                       ),
                       todayDecoration: BoxDecoration(
+                        // ignore: deprecated_member_use
                         color: Theme.of(context).primaryColor.withOpacity(1),
                         shape: BoxShape.circle,
                       ),
@@ -966,6 +971,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       border: Border.all(color: Colors.grey.shade300),
                       boxShadow: [
                         BoxShadow(
+                          // ignore: deprecated_member_use
                           color: Colors.grey.withOpacity(0.1),
                           spreadRadius: 2,
                           blurRadius: 5,
@@ -993,7 +999,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black,
                               )),
-                          Spacer(),
+                          const Spacer(),
                           Text(
                             'Total: ',
                             style: TextStyle(
@@ -1028,18 +1034,17 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                           ? null
                           : _onNextPressed, // 🆕 Disable if stale
                       style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
-                        backgroundColor: MaterialStateProperty.all(
+                        backgroundColor: WidgetStateProperty.all(
                           dataIsStale
                               ? Colors.grey.shade300
                               : const Color(0xFF606060),
                         ),
-                        fixedSize: MaterialStateProperty.all(Size(300, 40)),
+                        fixedSize: WidgetStateProperty.all(const Size(300, 40)),
                       ),
                       child: Text(
                         dataIsStale ? 'Updating Prices...' : 'Next',
@@ -1062,6 +1067,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
           // Loading Overlay
           if (_isLoadingRoomTypes)
             Container(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.5),
               child: Center(
                 child: Container(
@@ -1070,9 +1076,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Column(
+                  child: const Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       CircularProgressIndicator(),
                       SizedBox(height: 16),
                       Text(
