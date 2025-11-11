@@ -14,6 +14,12 @@ class RoomType {
   final bool b2WashingMachine;
   final bool b1Bathtub;
   final bool b2Bathtub;
+  final String room1BedType2;
+  final String room2BedType2;
+  final bool b1Sofa;
+  final bool b2Sofa;
+  final bool b1SofaBed;
+  final bool b2SofaBed;
 
   RoomType({
     required this.pic,
@@ -31,26 +37,59 @@ class RoomType {
     this.b2WashingMachine = false,
     this.b1Bathtub = false,
     this.b2Bathtub = false,
+    this.room1BedType2 = '',
+    this.room2BedType2 = '',
+    this.b1Sofa = false,
+    this.b2Sofa = false,
+    this.b1SofaBed = false,
+    this.b2SofaBed = false,
   });
 
   factory RoomType.fromJson(Map<String, dynamic> json) {
     return RoomType(
-      pic: json['pic'] ?? '',
-      pic2: json['pic2'] ?? '',
-      pic3: json['pic3'] ?? '',
-      pic4: json['pic4'] ?? '',
-      pic5: json['pic5'] ?? '',
-      roomTypeName: json['roomTypeName'] ?? '',
+      pic: _safeString(json['pic']),
+      pic2: _safeString(json['pic2']),
+      pic3: _safeString(json['pic3']),
+      pic4: _safeString(json['pic4']),
+      pic5: _safeString(json['pic5']),
+      roomTypeName: _safeString(json['roomTypeName']),
       roomTypePoints: _parseToDouble(json['roomTypePoints']),
-      numberOfPax: json['numGuestPax'] ?? 0,
-      numBedrooms: json['numBedrooms'] ?? 1,
-      bedRoom1: json['bedRoom1'] ?? '',
-      bedRoom2: json['bedRoom2'] ?? '',
-      b1WashingMachine: json['b1WashingMachine'] ?? false,
-      b2WashingMachine: json['b2WashingMachine'] ?? false,
-      b1Bathtub: json['b1Bathtub'] ?? false,
-      b2Bathtub: json['b2Bathtub'] ?? false,
+      numberOfPax: _safeInt(json['numGuestPax'] ?? json['numberOfPax']),
+      numBedrooms: _safeInt(json['numBedrooms']),
+      bedRoom1: _safeString(json['bedRoom1']),
+      bedRoom2: _safeString(json['bedRoom2']),
+      b1WashingMachine: _safeBool(json['b1WashingMachine']),
+      b2WashingMachine: _safeBool(json['b2WashingMachine']),
+      b1Bathtub: _safeBool(json['b1Bathtub']),
+      b2Bathtub: _safeBool(json['b2Bathtub']),
+      room1BedType2: _safeString(json['room1BedType2']),
+      room2BedType2: _safeString(json['room2BedType2']),
+      b1Sofa: _safeBool(json['b1Sofa']),
+      b2Sofa: _safeBool(json['b2Sofa']),
+      b1SofaBed: _safeBool(json['b1SofaBed']),
+      b2SofaBed: _safeBool(json['b2SofaBed']),
     );
+  }
+
+  static String _safeString(dynamic v) {
+    if (v == null) return '';
+    if (v is String) return v;
+    // convert booleans/numbers to meaningful string representation
+    return v.toString();
+  }
+
+  static int _safeInt(dynamic v) {
+    if (v == null) return 0;
+    if (v is int) return v;
+    if (v is double) return v.toInt();
+    return int.tryParse(v.toString()) ?? 0;
+  }
+
+  static bool _safeBool(dynamic v) {
+    if (v == null) return false;
+    if (v is bool) return v;
+    final s = v.toString().toLowerCase();
+    return s == 'true' || s == '1' || s == 'yes';
   }
 
   static double _parseToDouble(dynamic value) {
@@ -80,6 +119,12 @@ class RoomType {
       "b2WashingMachine": b2WashingMachine,
       "b1Bathtub": b1Bathtub,
       "b2Bathtub": b2Bathtub,
+      'room1BedType2': room1BedType2,
+      'room2BedType2': room2BedType2,
+      'b1Sofa': b1Sofa,
+      'b2Sofa': b2Sofa,
+      'b1SofaBed': b1SofaBed,
+      'b2SofaBed': b2SofaBed,
     };
   }
 }
