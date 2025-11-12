@@ -22,12 +22,14 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.dfs.manamanaowners"
+    // namespace "com.dfs.manamanaowners"
+    namespace "com.mana_mana_app"
     compileSdkVersion 36
     ndkVersion "28.0.12433566"
 
     defaultConfig {
-        applicationId "com.dfs.manamanaowners"
+        // applicationId "com.dfs.manamanaowners"
+        applicationId "com.mana_mana_app"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
