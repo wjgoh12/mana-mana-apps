@@ -548,7 +548,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                         style: TextStyle(
                                           fontSize: ResponsiveSize.text(11),
                                           fontFamily: 'Outfit',
-                                          color: Colors.grey[600],
+                                          color: Colors.black,
                                         ),
                                       ),
                                       SizedBox(
@@ -601,7 +601,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                         style: TextStyle(
                                           fontSize: ResponsiveSize.text(11),
                                           fontFamily: 'Outfit',
-                                          color: Colors.grey[600],
+                                          color: Colors.black,
                                         ),
                                       ),
                                       SizedBox(
@@ -764,14 +764,14 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       ],
                                     ],
                                   ),
-                                Text(
-                                  '${widget.roomType.numBedrooms} rooms',
-                                  style: TextStyle(
-                                    fontSize: ResponsiveSize.text(11),
-                                    fontFamily: 'Outfit',
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
+                                // Text(
+                                //   '${widget.roomType.numBedrooms} rooms',
+                                //   style: TextStyle(
+                                //     fontSize: ResponsiveSize.text(11),
+                                //     fontFamily: 'Outfit',
+                                //     color: Colors.grey[600],
+                                //   ),
+                                // ),
                               ],
                             ),
                           if (widget.roomType.numBedrooms == 0)
@@ -908,6 +908,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                         ],
                       ),
                     ),
+                    SizedBox(height: ResponsiveSize.scaleHeight(5)),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Wrap(
@@ -936,6 +937,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                 ),
                               ],
                             ),
+                            SizedBox(width: ResponsiveSize.scaleWidth(8)),
 
                           if (widget.roomType.b1SofaBed ||
                               widget.roomType.b2SofaBed)
@@ -943,7 +945,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Image.asset(
-                                  'assets/images/Sofa.png',
+                                  'assets/images/Sofabed.png',
                                   height: ResponsiveSize.scaleHeight(16),
                                   width: ResponsiveSize.scaleWidth(16),
                                 ),

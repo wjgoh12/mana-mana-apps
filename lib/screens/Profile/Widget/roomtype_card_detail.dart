@@ -16,6 +16,10 @@ class RoomtypeCardDetail extends StatefulWidget {
   final DateTime startDate;
   final DateTime endDate;
   final int quantity;
+  final int numberofPax;
+  final int numBedrooms;
+  final String bedRoom1;
+  final String bedRoom2;
   final Function(RoomType? room)? onSelect;
   final Function(int quantity)? onQuantityChanged;
   final bool Function(RoomType room, int duration) checkAffordable;
@@ -29,6 +33,10 @@ class RoomtypeCardDetail extends StatefulWidget {
     required this.startDate,
     required this.endDate,
     this.quantity = 1,
+    this.numberofPax = 1,
+    this.numBedrooms = 1,
+    this.bedRoom1 = '',
+    this.bedRoom2 = '',
     this.onSelect,
     this.onQuantityChanged,
     this.multiSelectable = false,
@@ -121,7 +129,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
 
     return Container(
       margin: const EdgeInsets.all(8),
-      height: displayedSelected ? 380 : 320,
+      height: displayedSelected ? 380 : 350,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -311,8 +319,8 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                   children: [
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Room Info',
@@ -324,14 +332,254 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            '1 King Bed',
-                            style: TextStyle(
-                              fontSize: ResponsiveSize.text(11),
-                              fontFamily: 'Outfit',
-                              color: Colors.grey[600],
+                          if (widget.roomType.numBedrooms == 1)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (widget.roomType.bedRoom1.isNotEmpty)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Room 1',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width: ResponsiveSize.scaleWidth(8)),
+                                      // Only render bedroom1 icon + text if value exists
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
+                                      SizedBox(
+                                          width: ResponsiveSize.scaleWidth(4)),
+                                      Text(
+                                        '${widget.roomType.bedRoom1} bed ',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      // Only render the second bed icon + value when room1BedType2 is present
+                                      if (widget.roomType.room1BedType2
+                                          .isNotEmpty) ...[
+                                        SizedBox(
+                                            width:
+                                                ResponsiveSize.scaleWidth(8)),
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
+                                        SizedBox(
+                                            width:
+                                                ResponsiveSize.scaleWidth(4)),
+                                        Text(
+                                          '${widget.roomType.room1BedType2} bed ',
+                                          style: TextStyle(
+                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: 'Outfit',
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                if (widget.roomType.bedRoom2.isNotEmpty)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Room 2',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width: ResponsiveSize.scaleWidth(8)),
+                                      // Only show icon + text when bedRoom2 has value
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
+                                      SizedBox(
+                                          width: ResponsiveSize.scaleWidth(4)),
+                                      Text(
+                                        '${widget.roomType.bedRoom2} bed ',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      // Only render room2BedType2 when it is non-empty
+                                      if (widget.roomType.room2BedType2
+                                          .isNotEmpty) ...[
+                                        SizedBox(
+                                            width:
+                                                ResponsiveSize.scaleWidth(8)),
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
+                                        SizedBox(
+                                            width:
+                                                ResponsiveSize.scaleWidth(4)),
+                                        Text(
+                                          '${widget.roomType.room2BedType2} bed ',
+                                          style: TextStyle(
+                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: 'Outfit',
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                // Text(
+                                //   ' ${widget.roomType.numBedrooms} room',
+                                //   style: TextStyle(
+                                //     fontSize: ResponsiveSize.text(11),
+                                //     fontFamily: 'Outfit',
+                                //     color: Colors.grey[600],
+                                //   ),
+                                // ),
+                              ],
                             ),
-                          ),
+                          if (widget.roomType.numBedrooms == 2)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (widget.roomType.bedRoom1.isNotEmpty)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Room 1',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width: ResponsiveSize.scaleWidth(8)),
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
+                                      SizedBox(
+                                          width: ResponsiveSize.scaleWidth(4)),
+                                      Text(
+                                        '${widget.roomType.bedRoom1} bed ',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      // only show second bed type when present
+                                      if (widget.roomType.room1BedType2
+                                          .isNotEmpty) ...[
+                                        SizedBox(
+                                            width:
+                                                ResponsiveSize.scaleWidth(8)),
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
+                                        SizedBox(
+                                            width:
+                                                ResponsiveSize.scaleWidth(4)),
+                                        Text(
+                                          '${widget.roomType.room1BedType2} bed ',
+                                          style: TextStyle(
+                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: 'Outfit',
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                if (widget.roomType.bedRoom2.isNotEmpty)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Room 2',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width: ResponsiveSize.scaleWidth(8)),
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
+                                      SizedBox(
+                                          width: ResponsiveSize.scaleWidth(4)),
+                                      Text(
+                                        '${widget.roomType.bedRoom2} bed ',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      if (widget.roomType.room2BedType2
+                                          .isNotEmpty) ...[
+                                        SizedBox(
+                                            width:
+                                                ResponsiveSize.scaleWidth(8)),
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
+                                        SizedBox(
+                                            width:
+                                                ResponsiveSize.scaleWidth(4)),
+                                        Text(
+                                          '${widget.roomType.room2BedType2} bed ',
+                                          style: TextStyle(
+                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: 'Outfit',
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                // Text(
+                                //   '${widget.roomType.numBedrooms} rooms',
+                                //   style: TextStyle(
+                                //     fontSize: ResponsiveSize.text(11),
+                                //     fontFamily: 'Outfit',
+                                //     color: Colors.grey[600],
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          if (widget.roomType.numBedrooms == 0)
+                            Text(
+                              'Null',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(11),
+                                fontFamily: 'Outfit',
+                                color: Colors.grey[600],
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -358,7 +606,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                             ),
                             SizedBox(width: ResponsiveSize.scaleWidth(6)),
                             Text(
-                              '2',
+                              widget.numberofPax.toString(),
                               style: TextStyle(
                                 fontSize: ResponsiveSize.text(11),
                                 fontFamily: 'Outfit',
@@ -378,6 +626,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       'Amenities Available',
@@ -388,34 +637,138 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.bathtub_outlined,
-                          size: ResponsiveSize.scaleHeight(16),
-                        ),
-                        SizedBox(width: ResponsiveSize.scaleWidth(6)),
-                        Text(
-                          'Bathtub',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(11),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                        SizedBox(width: ResponsiveSize.scaleWidth(25)),
-                        Icon(
-                          Icons.local_laundry_service_outlined,
-                          size: ResponsiveSize.scaleHeight(16),
-                        ),
-                        SizedBox(width: ResponsiveSize.scaleWidth(6)),
-                        Text(
-                          'Washing Machine',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.text(11),
-                            fontFamily: 'Outfit',
-                          ),
-                        ),
-                      ],
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Wrap(
+                        spacing: ResponsiveSize.scaleWidth(12),
+                        runSpacing: ResponsiveSize.scaleHeight(6),
+                        children: [
+                          if (widget.roomType.b1Bathtub ||
+                              widget.roomType.b2Bathtub)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  'assets/images/bathtub.png',
+                                  height: ResponsiveSize.scaleHeight(16),
+                                  width: ResponsiveSize.scaleWidth(16),
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(6)),
+                                Text(
+                                  'Bathtub',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                          if (widget.roomType.b1WashingMachine ||
+                              widget.roomType.b2WashingMachine)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  'assets/images/washing_machine.png',
+                                  height: ResponsiveSize.scaleHeight(16),
+                                  width: ResponsiveSize.scaleWidth(16),
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(6)),
+                                Text(
+                                  'Washing Machine',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                          // Fallback if no amenity:
+                          if (!(widget.roomType.b1Bathtub ||
+                              widget.roomType.b2Bathtub ||
+                              widget.roomType.b1WashingMachine ||
+                              widget.roomType.b2WashingMachine))
+                            Text(
+                              'None',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(11),
+                                fontFamily: 'Outfit',
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: ResponsiveSize.scaleHeight(5)),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Wrap(
+                        spacing: ResponsiveSize.scaleWidth(12),
+                        runSpacing: ResponsiveSize.scaleHeight(6),
+                        children: [
+                          if (widget.roomType.b1Sofa || widget.roomType.b2Sofa)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  'assets/images/Sofa.png',
+                                  height: ResponsiveSize.scaleHeight(16),
+                                  width: ResponsiveSize.scaleWidth(16),
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(6)),
+                                Text(
+                                  'Sofa',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          SizedBox(width: ResponsiveSize.scaleWidth(8)),
+
+                          if (widget.roomType.b1SofaBed ||
+                              widget.roomType.b2SofaBed)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  'assets/images/Sofabed.png',
+                                  height: ResponsiveSize.scaleHeight(16),
+                                  width: ResponsiveSize.scaleWidth(16),
+                                ),
+                                SizedBox(width: ResponsiveSize.scaleWidth(6)),
+                                Text(
+                                  'Sofa Bed',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.text(11),
+                                    fontFamily: 'Outfit',
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                          // Fallback if no amenity:
+                          if (!(widget.roomType.b1Bathtub ||
+                              widget.roomType.b2Bathtub ||
+                              widget.roomType.b1WashingMachine ||
+                              widget.roomType.b2WashingMachine))
+                            Container(
+                              height: ResponsiveSize.scaleHeight(1),
+                              width: ResponsiveSize.scaleWidth(1),
+                            ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 12),
                     if (displayedSelected)

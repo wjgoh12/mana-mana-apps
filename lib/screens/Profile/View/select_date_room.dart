@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ffi' hide Size;
+// import 'dart:ffi' hide Size; // removed unused import
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -98,22 +98,28 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   Future<void> _initializeData() async {
     // First load blocked dates
     await _fetchBlockedDates();
-
     // Load required data
-    await Future.wait([
-      _vm.ensureAllLocationDataLoaded(),
-      _vm.fetchRedemptionBalancePoints(
-        location: widget.ownedLocation,
-        unitNo: widget.ownedUnitNo,
-      ),
-      _vm.fetchRoomTypes(
-        state: widget.state,
-        bookingLocationName: widget.location,
-        rooms: _selectedQuantity,
-        arrivalDate: DateTime.now().add(const Duration(days: 7)),
-        departureDate: DateTime.now().add(const Duration(days: 8)),
-      ),
-    ]);
+    setState(() => _isLoadingRoomTypes = true);
+    try {
+      await Future.wait([
+        _vm.ensureAllLocationDataLoaded(),
+        _vm.fetchRedemptionBalancePoints(
+          location: widget.ownedLocation,
+          unitNo: widget.ownedUnitNo,
+        ),
+        _vm.fetchRoomTypes(
+          state: widget.state,
+          bookingLocationName: widget.location,
+          rooms: _selectedQuantity,
+          arrivalDate: DateTime.now().add(const Duration(days: 7)),
+          departureDate: DateTime.now().add(const Duration(days: 8)),
+        ),
+      ]);
+    } catch (e) {
+      debugPrint('Failed initial data load: $e');
+    } finally {
+      if (mounted) setState(() => _isLoadingRoomTypes = false);
+    }
   }
 
   int getNumBedroomsFromRoomTypeName(String roomTypeName) {
@@ -892,69 +898,93 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 ),
 
                 // Room Types List
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: vm.roomTypes.length,
-                  itemBuilder: (context, index) {
-                    final room = vm.roomTypes[index];
-                    final displayName = sanitizeRoomTypeName(room.roomTypeName);
-                    final numberOfPax = room.numberOfPax;
-                    final numBedRooms =
-                        getNumBedroomsFromRoomTypeName(displayName);
-                    final start = _rangeStart ??
-                        DateTime.now().add(const Duration(days: 7));
-                    final end = _rangeEnd ?? start.add(const Duration(days: 1));
+                if (vm.roomTypes.isEmpty)
+                  // Show spinner while fetching, otherwise show plain no-rooms text
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveSize.scaleWidth(18),
+                        vertical: ResponsiveSize.scaleHeight(35)),
+                    child: Center(
+                      child: _isLoadingRoomTypes
+                          ? const CircularProgressIndicator()
+                          : Text(
+                              'No rooms available',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.text(14),
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                    ),
+                  )
+                else
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: vm.roomTypes.length,
+                    itemBuilder: (context, index) {
+                      final room = vm.roomTypes[index];
+                      final displayName =
+                          sanitizeRoomTypeName(room.roomTypeName);
+                      final numberOfPax = room.numberOfPax;
+                      final numBedRooms =
+                          getNumBedroomsFromRoomTypeName(displayName);
+                      final start = _rangeStart ??
+                          DateTime.now().add(const Duration(days: 7));
+                      final end =
+                          _rangeEnd ?? start.add(const Duration(days: 1));
 
-                    return RoomtypeCard(
-                      key: ValueKey(displayName),
-                      roomType: room,
-                      displayName: displayName,
-                      isSelected: displayName == (_selectedRoomId ?? ''),
-                      enabled: true,
-                      startDate: start,
-                      endDate: end,
-                      quantity: _selectedQuantity,
-                      numberofPax: numberOfPax,
-                      numBedrooms: numBedRooms,
-                      checkAffordable: (room, duration) {
-                        final userPoints = vm.UserPointBalance.isNotEmpty
-                            ? vm.UserPointBalance.first.redemptionBalancePoints
-                            : 0;
-                        final totalPoints =
-                            room.roomTypePoints * _selectedQuantity;
-                        return totalPoints <= userPoints;
-                      },
-                      onSelect: (selectedRoom) {
-                        setState(() {
-                          _selectedRoom = selectedRoom;
-                          _selectedRoomId = selectedRoom != null
-                              ? sanitizeRoomTypeName(selectedRoom.roomTypeName)
-                              : null;
-                        });
-                      },
-                      onQuantityChanged: (val) {
-                        setState(() {
-                          _selectedQuantity = val;
-                          _hasPendingChanges = true;
-                        });
+                      return RoomtypeCard(
+                        key: ValueKey(displayName),
+                        roomType: room,
+                        displayName: displayName,
+                        isSelected: displayName == (_selectedRoomId ?? ''),
+                        enabled: true,
+                        startDate: start,
+                        endDate: end,
+                        quantity: _selectedQuantity,
+                        numberofPax: numberOfPax,
+                        numBedrooms: numBedRooms,
+                        checkAffordable: (room, duration) {
+                          final userPoints = vm.UserPointBalance.isNotEmpty
+                              ? vm.UserPointBalance.first
+                                  .redemptionBalancePoints
+                              : 0;
+                          final totalPoints =
+                              room.roomTypePoints * _selectedQuantity;
+                          return totalPoints <= userPoints;
+                        },
+                        onSelect: (selectedRoom) {
+                          setState(() {
+                            _selectedRoom = selectedRoom;
+                            _selectedRoomId = selectedRoom != null
+                                ? sanitizeRoomTypeName(
+                                    selectedRoom.roomTypeName)
+                                : null;
+                          });
+                        },
+                        onQuantityChanged: (val) {
+                          setState(() {
+                            _selectedQuantity = val;
+                            _hasPendingChanges = true;
+                          });
 
-                        // Only fetch if both dates are selected
-                        if (_rangeStart != null && _rangeEnd != null) {
-                          _fetchDebounce?.cancel();
-                          _fetchDebounce = Timer(
-                            const Duration(milliseconds: 500),
-                            () {
-                              if (mounted && _selectedQuantity == val) {
-                                _fetchRoomTypesAndMaintainSelection();
-                              }
-                            },
-                          );
-                        }
-                      },
-                    );
-                  },
-                ),
+                          // Only fetch if both dates are selected
+                          if (_rangeStart != null && _rangeEnd != null) {
+                            _fetchDebounce?.cancel();
+                            _fetchDebounce = Timer(
+                              const Duration(milliseconds: 500),
+                              () {
+                                if (mounted && _selectedQuantity == val) {
+                                  _fetchRoomTypesAndMaintainSelection();
+                                }
+                              },
+                            );
+                          }
+                        },
+                      );
+                    },
+                  ),
 
                 // const SizedBox(height: 5),
                 // Total Points
@@ -1064,36 +1094,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             ),
           ),
 
-          // Loading Overlay
-          if (_isLoadingRoomTypes)
-            Container(
-              // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.5),
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text(
-                        'Updating room availability...',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'outfit',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+          // Loading overlay removed — we now use the inline spinner above
         ],
       ),
     );

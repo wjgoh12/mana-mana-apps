@@ -6,7 +6,6 @@ import 'package:mana_mana_app/model/bookingRoom.dart';
 import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/model/unitAvailablePoints.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
-import 'package:mana_mana_app/screens/Profile/Widget/roomtype_card.dart';
 import 'package:mana_mana_app/screens/Profile/Widget/roomtype_card_detail.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
@@ -107,8 +106,15 @@ class _RoomDetailsState extends State<RoomDetails> {
 
     final firstToken = s.split(RegExp(r'\s+'))[0];
 
+    // If the first token starts with a digit (eg. "22M" building code), strip it
+    if (RegExp(r'^\d').hasMatch(firstToken)) {
+      return s.substring(firstToken.length).trim();
+    }
+
     final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
-    if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 5) {
+    // Only strip very short all-caps tokens (likely codes/abbreviations).
+    // Keep longer words which are meaningful descriptors.
+    if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 3) {
       return s.substring(firstToken.length).trim();
     }
 
