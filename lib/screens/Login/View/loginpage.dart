@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mana_mana_app/config/AppAuth/native_auth_service.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Login/View/forgot_password_page.dart';
@@ -19,6 +20,7 @@ class LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final NativeAuthService _authService = NativeAuthService();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final storage = const FlutterSecureStorage();
 
   @override
   void dispose() {
@@ -43,6 +45,20 @@ class LoginPageState extends State<LoginPage> {
       return 'Password is required';
     }
     return null;
+  }
+
+  Future<void> saveLogin(String email, String token) async {
+    await storage.write(key: 'email', value: email);
+    await storage.write(key: 'token', value: token);
+  }
+
+  Future<void> autoLogin() async {
+    final token = await storage.read(key: 'token');
+    final email = await storage.read(key: 'email');
+    if (token != null) {
+      // Automatically log user in
+      print('Auto-login as $email');
+    }
   }
 
   Future<void> _handleLogin() async {
@@ -217,7 +233,7 @@ class LoginPageState extends State<LoginPage> {
                                 textInputAction: TextInputAction.next,
                                 validator: _validateEmail,
                                 decoration: InputDecoration(
-                                  hintText: 'emailemail@domain.com',
+                                  hintText: 'youremail@domain.com',
                                   hintStyle: TextStyle(color: Colors.grey[400]),
                                   filled: true,
                                   fillColor: Colors.grey[50],
