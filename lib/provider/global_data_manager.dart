@@ -119,7 +119,6 @@ class GlobalDataManager extends ChangeNotifier {
     notifyListeners();
 
     try {
-      
       // Fetch all core data
       await _fetchAllData();
 
@@ -143,7 +142,7 @@ class GlobalDataManager extends ChangeNotifier {
     _revenueDashboard = await _propertyRepository.revenueByYear();
     _totalByMonth = await _propertyRepository.totalByMonth();
     _locationByMonth = await _propertyRepository.locationByMonth();
-    
+
     try {
       final email = _users.first.email ?? '';
       final contractResponse =
@@ -632,6 +631,13 @@ class GlobalDataManager extends ChangeNotifier {
   // Clear selection cache method
   void clearSelectionCache() {
     debugPrint("✅ Selection cache cleared in GlobalDataManager");
+    notifyListeners();
+  }
+
+  void clearRuntimeCache() {
+    // Clear only temporary/runtime data here
+    // DON'T clear secure storage or shared preferences
+    print('🧹 Clearing runtime cache only');
     notifyListeners();
   }
 

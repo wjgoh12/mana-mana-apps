@@ -21,71 +21,74 @@ class _SplashScreenState extends State<Splashscreen>
   @override
   void initState() {
     super.initState();
-
-    //FULLSCREEN
-    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-
     _initialize();
   }
 
   void _initialize() async {
-    // Clear any cached data from previous sessions on app restart
+    // ✅ IMPORTANT: DON'T clear data here - we need it to check auth!
+    // Only clear runtime cache, not stored credentials
     final globalDataManager = GlobalDataManager();
-    globalDataManager.clearAllData();
+    globalDataManager.clearRuntimeCache(); // Use this instead of clearAllData()
 
     final versionChecker = VersionChecker();
     if (await versionChecker.needsUpdate()) {
       // Handle update logic here if needed
     }
-    
-    // Add timeout to prevent infinite loading
+
     try {
       await _checkAuthStatus().timeout(
-        const Duration(seconds: 30),
+        const Duration(seconds: 10), // Reduced timeout
         onTimeout: () {
+          print('⚠️ Auth check timeout - showing login page');
           if (mounted) {
-            setState(() {
-              _isLoading = false;
-            });
+            _showLoginPage();
           }
         },
       );
     } catch (e) {
+      print('❌ Error during auth check: $e');
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        _showLoginPage();
       }
     }
   }
 
   Future<void> _checkAuthStatus() async {
     try {
+      print('🔍 Checking authentication status...');
+
       // First check if user has a valid session using native auth service
       bool hasValidSession = await _nativeAuthService.hasValidSession();
-      
+      print('📱 Native session valid: $hasValidSession');
+
       if (hasValidSession) {
         // Check if tokens are still valid with the main auth service
         final authService = AuthService();
         bool isLoggedIn = await authService.isLoggedIn();
-        
+        print('🔐 Auth service logged in: $isLoggedIn');
+
         if (mounted) {
           if (isLoggedIn) {
+            print('✅ User authenticated - navigating to dashboard');
             // User is already logged in, navigate to dashboard
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const NewDashboardV3()));
+              MaterialPageRoute(builder: (_) => const NewDashboardV3()),
+            );
           } else {
+            print('⚠️ Session expired - showing login page');
             // Session expired, show login page
             _showLoginPage();
           }
         }
       } else {
+        print('❌ No valid session - showing login page');
         // No valid session, show login page
         if (mounted) {
           _showLoginPage();
         }
       }
     } catch (e) {
+      print('❌ Error checking auth status: $e');
       if (mounted) {
         // If error checking auth, show login page
         _showLoginPage();
@@ -97,7 +100,7 @@ class _SplashScreenState extends State<Splashscreen>
     setState(() {
       _isLoading = false;
     });
-    
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const LoginPage()),
     );
@@ -121,7 +124,8 @@ class _SplashScreenState extends State<Splashscreen>
               CircleAvatar(
                 radius: 80,
                 backgroundColor: Colors.transparent,
-                backgroundImage: const AssetImage('assets/images/mana2logo1.png'),
+                backgroundImage:
+                    const AssetImage('assets/images/mana2logo1.png'),
               ),
               const SizedBox(height: 40),
               // Title text
@@ -154,28 +158,5 @@ class _SplashScreenState extends State<Splashscreen>
         ),
       ),
     );
-  }
-
-  void checkForUpdates() async {
-    final versionChecker = VersionChecker();
-    if (await versionChecker.needsUpdate()) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: const Text('Update Available'),
-          content: const Text(
-              'A new version is available. Please update to continue.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                versionChecker.launchUpdate();
-              },
-              child: const Text('Update Now'),
-            ),
-          ],
-        ),
-      );
-    }
   }
 }
