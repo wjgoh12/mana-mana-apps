@@ -76,10 +76,15 @@ class LoginPageState extends State<LoginPage> {
         setState(() => _isLoading = false);
 
         if (result.success) {
-          // ✅ Notify OS that autofill data was successfully used
+          FocusScope.of(context).unfocus();
+          // Small additional hide to ensure keyboard is dismissed on some devices
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
           TextInput.finishAutofillContext();
+          // Wait for the platform UI to appear (widely-compatible delay)
+          await Future.delayed(const Duration(milliseconds: 1000));
 
           // Navigate to dashboard
+          if (!mounted) return;
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const NewDashboardV3()),
           );
