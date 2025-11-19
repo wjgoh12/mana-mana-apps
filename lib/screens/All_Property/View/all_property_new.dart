@@ -768,6 +768,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<NewDashboardVM_v3>(context);
+    final isMobile = MediaQuery.of(context).size.width < 600;
 
     // Get properties
     final properties = model.ownerUnits
@@ -800,18 +801,6 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
 
     return Row(
       children: [
-        // SizedBox(width: ResponsiveSize.scaleWidth(16)),
-        // Label
-        // Text(
-        //   'Unit:',
-        //   style: TextStyle(
-        //     fontFamily: 'Outfit',
-        //     fontSize: ResponsiveSize.text(18),
-        //     fontWeight: FontWeight.w500,
-        //   ),
-        // ),
-        // const SizedBox(width: 8),
-
         // Property dropdown
         Container(
           width: ResponsiveSize.scaleWidth(160),
@@ -939,7 +928,9 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
               CircleAvatar(
                 backgroundColor: Color(0xFF606060),
                 child: Image.asset('assets/images/unit.png',
-                    width: ResponsiveSize.scaleWidth(20),
+                    width: isMobile
+                        ? ResponsiveSize.scaleWidth(20)
+                        : ResponsiveSize.scaleWidth(15),
                     height: ResponsiveSize.scaleWidth(20)),
               ),
               SizedBox(width: ResponsiveSize.scaleWidth(6)),
