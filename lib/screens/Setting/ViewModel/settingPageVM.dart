@@ -14,7 +14,7 @@ class SettingPageVM extends ChangeNotifier {
     await _globalDataManager.initializeData();
     notifyListeners();
   }
-
+ 
   Future<void> refreshData() async {
     await _globalDataManager.refreshData();
     notifyListeners();
