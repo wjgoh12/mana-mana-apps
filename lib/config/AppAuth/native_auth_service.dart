@@ -303,6 +303,204 @@ class NativeAuthService {
       return null;
     }
   }
+
+  /// Check if user is first login by detecting UPDATE_PASSWORD required action via admin API
+  Future<bool> isFirstLogin(String username) async {
+    try {
+      // Obtain an admin access token via client credentials
+      final Uri tokenEndpoint = Uri.parse(
+          '${EnvConfig.keycloakBaseUrl}/auth/realms/mana/protocol/openid-connect/token');
+
+      final tokenResp = await http.post(
+        tokenEndpoint,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {
+          'grant_type': 'client_credentials',
+          'client_id': EnvConfig.keycloakClientId,
+          'client_secret': EnvConfig.keycloakClientSecret,
+        },
+      );
+
+      if (tokenResp.statusCode != 200) {
+        print('DEBUG: Failed to obtain admin token');
+        return false;
+      }
+
+      final Map<String, dynamic> adminTokenData = json.decode(tokenResp.body);
+      final String adminAccessToken = adminTokenData['access_token'];
+
+      // Search user by username
+      final Uri searchUsers = Uri.parse(
+          '${EnvConfig.keycloakBaseUrl}/auth/admin/realms/mana/users?username=${Uri.encodeQueryComponent(username)}');
+
+      final userResp = await http.get(
+        searchUsers,
+        headers: {
+          'Authorization': 'Bearer $adminAccessToken',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (userResp.statusCode != 200) {
+        print('DEBUG: User search failed with status ${userResp.statusCode}');
+        return false;
+      }
+
+      final List<dynamic> users = json.decode(userResp.body);
+      if (users.isEmpty) {
+        print('DEBUG: No users found for username: $username');
+        return false;
+      }
+
+      final String userId = users.first['id'];
+
+      // Fetch full user representation to inspect requiredActions
+      final Uri userUrl = Uri.parse(
+          '${EnvConfig.keycloakBaseUrl}/auth/admin/realms/mana/users/$userId');
+
+      final fullResp = await http.get(
+        userUrl,
+        headers: {
+          'Authorization': 'Bearer $adminAccessToken',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (fullResp.statusCode != 200) {
+        print('DEBUG: Failed to fetch user details');
+        return false;
+      }
+
+      final Map<String, dynamic> userData = json.decode(fullResp.body);
+
+      final List<dynamic>? requiredActions =
+          (userData['requiredActions'] is List)
+              ? userData['requiredActions'] as List<dynamic>
+              : null;
+
+      if (requiredActions != null) {
+        print('DEBUG: requiredActions: $requiredActions');
+        for (final action in requiredActions) {
+          if (action != null &&
+              action.toString().toUpperCase().contains('UPDATE_PASSWORD')) {
+            print('DEBUG: UPDATE_PASSWORD action found - first-time login');
+            return true;
+          }
+        }
+      }
+
+      print('DEBUG: No UPDATE_PASSWORD action - not first-time login');
+      return false;
+    } catch (e) {
+      print('DEBUG: Exception in isFirstLogin: $e');
+      return false;
+    }
+  }
+
+  /// Update password for a specific username using admin API (no user token required).
+  /// Sets password as non-temporary so it persists as the user's permanent password.
+  Future<AuthResult> updatePasswordForUsername(
+      String username, String newPassword) async {
+    try {
+      print('DEBUG: updatePasswordForUsername called for user: $username');
+      // Obtain admin token
+      final Uri tokenEndpoint = Uri.parse(
+          '${EnvConfig.keycloakBaseUrl}/auth/realms/mana/protocol/openid-connect/token');
+
+      final tokenResp = await http.post(
+        tokenEndpoint,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {
+          'grant_type': 'client_credentials',
+          'client_id': EnvConfig.keycloakClientId,
+          'client_secret': EnvConfig.keycloakClientSecret,
+        },
+      );
+
+      if (tokenResp.statusCode != 200) {
+        print(
+            'DEBUG: Failed to get admin token, status: ${tokenResp.statusCode}');
+        return AuthResult(
+            success: false, message: 'Failed to obtain admin token');
+      }
+
+      print('DEBUG: Got admin token successfully');
+      final Map<String, dynamic> adminTokenData = json.decode(tokenResp.body);
+      final String adminAccessToken = adminTokenData['access_token'];
+
+      // Find user id
+      final Uri searchUsers = Uri.parse(
+          '${EnvConfig.keycloakBaseUrl}/auth/admin/realms/mana/users?username=${Uri.encodeQueryComponent(username)}');
+
+      print('DEBUG: Searching for user: $username');
+      final userResp = await http.get(
+        searchUsers,
+        headers: {
+          'Authorization': 'Bearer $adminAccessToken',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (userResp.statusCode != 200) {
+        print('DEBUG: Failed to search users, status: ${userResp.statusCode}');
+        return AuthResult(success: false, message: 'Failed to locate user');
+      }
+
+      final List<dynamic> users = json.decode(userResp.body);
+      if (users.isEmpty) {
+        print('DEBUG: User not found: $username');
+        return AuthResult(success: false, message: 'User not found');
+      }
+
+      final String userId = users.first['id'];
+      print('DEBUG: Found user with ID: $userId');
+
+      // Reset password via Admin API with temporary: false so it becomes permanent
+      final Uri resetUrl = Uri.parse(
+          '${EnvConfig.keycloakBaseUrl}/auth/admin/realms/mana/users/$userId/reset-password');
+
+      final body = json.encode({
+        'type': 'password',
+        'value': newPassword,
+        'temporary': false,
+      });
+
+      print('DEBUG: Calling reset-password endpoint');
+      final resetResp = await http.put(
+        resetUrl,
+        headers: {
+          'Authorization': 'Bearer $adminAccessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      print('DEBUG: Reset password response status: ${resetResp.statusCode}');
+      if (resetResp.statusCode == 204) {
+        print('DEBUG: Password updated successfully');
+        return AuthResult(
+            success: true,
+            message:
+                'Password updated successfully. Please login with your new password.');
+      }
+
+      String msg = 'Failed to update password';
+      try {
+        final Map<String, dynamic> err = json.decode(resetResp.body);
+        if (err['error'] != null) msg = err['error'].toString();
+        print('DEBUG: Reset password error response: $msg');
+      } catch (_) {
+        print(
+            'DEBUG: Could not parse error response. Status: ${resetResp.statusCode}, Body: ${resetResp.body}');
+      }
+
+      return AuthResult(success: false, message: msg);
+    } catch (e) {
+      print('DEBUG: Exception in updatePasswordForUsername: $e');
+      return AuthResult(success: false, message: 'Network error: $e');
+    }
+  }
+
 }
 
 class AuthResult {

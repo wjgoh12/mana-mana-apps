@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mana_mana_app/config/AppAuth/native_auth_service.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Login/View/forgot_password_page.dart';
+import 'package:mana_mana_app/screens/Login/View/update_password_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -99,6 +100,10 @@ class LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = true);
 
     try {
+      // Attempt authentication directly
+      // If user has UPDATE_PASSWORD but already has a valid password (old accounts),
+      // they should be able to authenticate successfully
+      print('DEBUG: Attempting authentication for: $username');
       final result = await _authService.authenticate(username, password);
 
       if (mounted) {
@@ -132,7 +137,22 @@ class LoginPageState extends State<LoginPage> {
           );
         } else {
           TextInput.finishAutofillContext(shouldSave: false);
-          _showErrorDialog(result.message);
+          
+          //Check if error is about account not being fully set up
+          if (result.message.toLowerCase().contains('not fully set up') ||
+              result.message.toLowerCase().contains('account is not fully setup')) {
+            // This is likely a first-time user, redirect to UpdatePasswordPage
+            print('DEBUG: Account not fully set up, redirecting to UpdatePasswordPage');
+            if (!mounted) return;
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => UpdatePasswordPage(username: username),
+              ),
+            );
+          } else {
+            // Normal login error
+            _showErrorDialog(result.message);
+          }
         }
       }
     } catch (e) {
