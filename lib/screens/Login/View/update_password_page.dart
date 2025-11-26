@@ -16,7 +16,8 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   bool _isLoading = false;
 
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final NativeAuthService _authService = NativeAuthService();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -25,12 +26,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
-  }
-
-  String? _validateNewPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Password is required';
-    if (value.length < 8) return 'Password must be at least 8 characters';
-    return null;
   }
 
   String? _validateConfirmPassword(String? value) {
@@ -233,7 +228,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                               obscureText: _obscureText,
                               keyboardType: TextInputType.visiblePassword,
                               textInputAction: TextInputAction.next,
-                              validator: _validateNewPassword,
+                              // validator: _validateNewPassword,
                               enableSuggestions: false,
                               autocorrect: false,
                               decoration: InputDecoration(
@@ -310,7 +305,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
                             // Back to login
                             Align(
-                              alignment: Alignment.centerRight,
+                              alignment: Alignment.center,
                               child: TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pushReplacement(
