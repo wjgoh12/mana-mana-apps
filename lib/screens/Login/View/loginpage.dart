@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mana_mana_app/config/AppAuth/native_auth_service.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
 import 'package:mana_mana_app/screens/Login/View/forgot_password_page.dart';
 import 'package:mana_mana_app/screens/Login/View/update_password_page.dart';
@@ -132,6 +133,12 @@ class LoginPageState extends State<LoginPage> {
           }
 
           if (!mounted) return;
+          
+          // Clear cached data before navigating to dashboard
+          // This ensures fresh data loads for the new user
+          print('🧹 Clearing cached data before navigating to dashboard');
+          GlobalDataManager().clearAllData();
+          
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const NewDashboardV3()),
           );

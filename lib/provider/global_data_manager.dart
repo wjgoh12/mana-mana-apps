@@ -11,6 +11,7 @@ import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class GlobalDataManager extends ChangeNotifier {
   static final GlobalDataManager _instance = GlobalDataManager._internal();
@@ -26,6 +27,7 @@ class GlobalDataManager extends ChangeNotifier {
   bool _isInitialized = false;
   bool _isLoading = false;
   DateTime? _lastFetchTime;
+  String? _currentUserEmail; // Track current logged-in user
 
   // Core data
   List<User> _users = [];
@@ -105,14 +107,38 @@ class GlobalDataManager extends ChangeNotifier {
 
   // Initialize all data
   Future<void> initializeData({bool forceRefresh = false}) async {
-    // Don't reload if already initialized and not forced
-    if (_isInitialized && !forceRefresh) {
-      return;
-    }
-
     // Don't reload if already loading
     if (_isLoading) {
       return;
+    }
+
+    // Auto-detect user change: if we have cached data but it's for a different user,
+    // force a refresh to clear stale data
+    bool userChanged = false;
+    if (_isInitialized && !forceRefresh) {
+      // Try to get current user email from secure storage to detect user change
+      try {
+        final storage = const FlutterSecureStorage();
+        final currentEmail = await storage.read(key: 'email');
+        if (currentEmail != null && _currentUserEmail != null && currentEmail != _currentUserEmail) {
+          print('🔄 User changed from $_currentUserEmail to $currentEmail - clearing cached data');
+          userChanged = true;
+          forceRefresh = true;
+        }
+      } catch (e) {
+        print('Error checking user change: $e');
+      }
+    }
+
+    // Don't reload if already initialized and not forced (and user hasn't changed)
+    if (_isInitialized && !forceRefresh && !userChanged) {
+      return;
+    }
+
+    // If user changed or force refresh, clear old data first
+    if (forceRefresh || userChanged) {
+      print('🧹 Clearing cached data before refresh');
+      clearAllData();
     }
 
     _isLoading = true;
@@ -137,6 +163,13 @@ class GlobalDataManager extends ChangeNotifier {
 
   Future<void> _fetchAllData() async {
     _users = await _userRepository.getUsers();
+    
+    // Track the current user email to detect user changes
+    if (_users.isNotEmpty && _users.first.email != null) {
+      _currentUserEmail = _users.first.email;
+      print('📧 Current user set to: $_currentUserEmail');
+    }
+    
     _ownerUnits = await _propertyRepository.getOwnerUnit();
     _unitByMonth = await _propertyRepository.getUnitByMonth();
     _revenueDashboard = await _propertyRepository.revenueByYear();
