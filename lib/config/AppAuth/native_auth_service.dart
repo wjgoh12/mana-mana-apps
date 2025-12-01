@@ -42,6 +42,7 @@ class NativeAuthService {
         await authService.initializeTokensFromNativeLogin(
             tokenData['access_token'], tokenData['refresh_token']);
 
+        print('DEBUG: Authentication successful for: $username');
         return AuthResult(
           success: true,
           accessToken: tokenData['access_token'],
@@ -50,12 +51,28 @@ class NativeAuthService {
         );
       } else if (response.statusCode == 401) {
         // Invalid credentials
-        return AuthResult(
-          success: false,
-          message: 'Invalid username or password',
-        );
+        print('DEBUG: Authentication failed - 401 Unauthorized');
+        print('DEBUG: Response body: ${response.body}');
+        
+        // Try to parse error details
+        try {
+          final errorData = json.decode(response.body);
+          final errorDesc = errorData['error_description'] ?? 'Invalid username or password';
+          print('DEBUG: Error description: $errorDesc');
+          return AuthResult(
+            success: false,
+            message: errorDesc,
+          );
+        } catch (e) {
+          return AuthResult(
+            success: false,
+            message: 'Invalid username or password',
+          );
+        }
       } else {
         // Other errors
+        print('DEBUG: Authentication failed - Status: ${response.statusCode}');
+        print('DEBUG: Response body: ${response.body}');
         final Map<String, dynamic> errorData = json.decode(response.body);
         return AuthResult(
           success: false,

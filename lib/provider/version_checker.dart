@@ -8,14 +8,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:huawei_hmsavailability/huawei_hmsavailability.dart';
 
 class VersionChecker {
-  static const String playStoreId = 'com.dfs.manamanaowners';
+  static const String playStoreId = 'com.mana_mana_app ';
   static const String appStoreId = '6636538776';
   static const String huaweiAppId = 'C112273799';
 
   Future<bool> needsUpdate() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String currentVersion = packageInfo.version;
-    
+
     if (Platform.isAndroid) {
       return await _checkPlayStore(currentVersion) ||
           await _checkHuaweiStore(currentVersion);
@@ -26,30 +26,29 @@ class VersionChecker {
   }
 
   Future<bool> _checkPlayStore(String currentVersion) async {
-  try {
-    final response = await http.get(
-      Uri.parse(
-        'https://play.google.com/store/apps/details?id=$playStoreId&hl=en',
-      ),
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
-      },
-    );
-    if (response.statusCode == 200) {
-      final RegExp regex = RegExp(r'\[\[\["(\d+\.\d+\.\d+)"\]\]');
-      final match = regex.firstMatch(response.body);
-      if (match != null) {
-        final storeVersion = match.group(1)!;
-        return _compareVersions(currentVersion, storeVersion);
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'https://play.google.com/store/apps/details?id=$playStoreId&hl=en',
+        ),
+        headers: {
+          'User-Agent':
+              'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+        },
+      );
+      if (response.statusCode == 200) {
+        final RegExp regex = RegExp(r'\[\[\["(\d+\.\d+\.\d+)"\]\]');
+        final match = regex.firstMatch(response.body);
+        if (match != null) {
+          final storeVersion = match.group(1)!;
+          return _compareVersions(currentVersion, storeVersion);
+        }
       }
+    } catch (e) {
+      // print('Play Store check error: $e');
     }
-  } catch (e) {
-    // print('Play Store check error: $e');
+    return false;
   }
-  return false;
-}
-
-
 
   Future<bool> _checkAppStore(String currentVersion) async {
     final response = await http.get(

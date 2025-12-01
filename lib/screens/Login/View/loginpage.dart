@@ -156,8 +156,28 @@ class LoginPageState extends State<LoginPage> {
                 builder: (_) => UpdatePasswordPage(username: username),
               ),
             );
+          } else if (result.message.toLowerCase().contains('invalid user credentials')) {
+            // Could be wrong password OR first-time login with UPDATE_PASSWORD action
+            // Check if this is a first-time user
+            print('DEBUG: Invalid credentials - checking if first-time login...');
+            final isFirst = await _authService.isFirstLogin(username);
+            print('DEBUG: isFirstLogin result: $isFirst');
+            
+            if (isFirst) {
+              // User has UPDATE_PASSWORD action, redirect to update password
+              print('DEBUG: First-time login detected, redirecting to UpdatePasswordPage');
+              if (!mounted) return;
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (_) => UpdatePasswordPage(username: username),
+                ),
+              );
+            } else {
+              // Actually wrong password
+              _showErrorDialog('Invalid username or password');
+            }
           } else {
-            // Normal login error
+            // Other login errors
             _showErrorDialog(result.message);
           }
         }
