@@ -799,244 +799,206 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
     }
     final units = uniqueUnits.keys.toList();
 
-    return Row(
-      children: [
-        // Property dropdown
-        Container(
-          width: ResponsiveSize.scaleWidth(160),
-          height: ResponsiveSize.scaleHeight(50),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(ResponsiveSize.scaleWidth(15)),
-            border: Border.all(color: Colors.grey.shade200),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                blurRadius: 5,
-                offset: const Offset(0, 3), // changes position of shadow
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(ResponsiveSize.scaleWidth(15)),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
           ),
-          child: Row(
-            children: [
-              SizedBox(width: ResponsiveSize.scaleWidth(8)),
-              CircleAvatar(
-                backgroundColor: Color(0xFF606060),
-                child: Image.asset('assets/images/building.png',
-                    width: ResponsiveSize.scaleWidth(20),
-                    height: ResponsiveSize.scaleWidth(20)),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Property dropdown
+          Container(
+            width: ResponsiveSize.scaleWidth(160),
+            height: ResponsiveSize.scaleHeight(50),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(ResponsiveSize.scaleWidth(15)),
+                bottomLeft: Radius.circular(ResponsiveSize.scaleWidth(15)),
               ),
-              SizedBox(width: ResponsiveSize.scaleWidth(8)),
-              Expanded(
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    value: selectedProperty,
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: ResponsiveSize.text(18),
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                    iconStyleData: IconStyleData(
-                      icon: Icon(Icons.keyboard_arrow_down),
-                      iconSize: ResponsiveSize.scaleWidth(20),
-                    ),
-                    items: properties.map((property) {
-                      return DropdownMenuItem(
-                        value: property,
-                        child: Text(
-                          property ?? '',
-                          style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: ResponsiveSize.text(12),
-                              fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    }).toList(),
-                    dropdownStyleData: DropdownStyleData(
-                      maxHeight: 200,
-                      width: ResponsiveSize.scaleWidth(
-                          160), // Exact container width
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.zero,
-                          topRight: Radius.zero,
-                          bottomLeft:
-                              Radius.circular(ResponsiveSize.scaleWidth(15)),
-                          bottomRight:
-                              Radius.circular(ResponsiveSize.scaleWidth(15)),
-                        ),
-                        color: Colors.white,
-                        border: Border(
-                          left: BorderSide(color: Colors.grey.shade200),
-                          right: BorderSide(color: Colors.grey.shade200),
-                          bottom: BorderSide(color: Colors.grey.shade200),
-                          top: BorderSide
-                              .none, // No top border for seamless connection
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
+            ),
+            child: Row(
+              children: [
+                SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                CircleAvatar(
+                  backgroundColor: Color(0xFF606060),
+                  child: Image.asset('assets/images/building.png',
+                      width: ResponsiveSize.scaleWidth(20),
+                      height: ResponsiveSize.scaleWidth(20)),
+                ),
+                SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      value: selectedProperty,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: ResponsiveSize.text(18),
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
                       ),
-                      offset: const Offset(-51, 8), // Perfect alignment
+                      iconStyleData: IconStyleData(
+                        icon: Icon(Icons.keyboard_arrow_down),
+                        iconSize: ResponsiveSize.scaleWidth(20),
+                      ),
+                      items: properties.map((property) {
+                        return DropdownMenuItem(
+                          value: property,
+                          child: Text(
+                            property ?? '',
+                            style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: ResponsiveSize.text(12),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      }).toList(),
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 200,
+                        width: ResponsiveSize.scaleWidth(160),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.zero,
+                            topRight: Radius.zero,
+                            bottomLeft:
+                                Radius.circular(ResponsiveSize.scaleWidth(15)),
+                            bottomRight:
+                                Radius.circular(ResponsiveSize.scaleWidth(15)),
+                          ),
+                          color: Colors.white,
+                          border: Border(
+                            left: BorderSide(color: Colors.grey.shade200),
+                            right: BorderSide(color: Colors.grey.shade200),
+                            bottom: BorderSide(color: Colors.grey.shade200),
+                            top: BorderSide.none,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        offset: const Offset(-51, 8),
+                      ),
+                      onChanged: (value) {
+                        if (value != null) {
+                          _handlePropertySelection(value, context);
+                        }
+                      },
                     ),
-                    onChanged: (value) {
-                      if (value != null) {
-                        _handlePropertySelection(value, context);
-                      }
-                    },
                   ),
                 ),
-              ),
-              SizedBox(width: ResponsiveSize.scaleWidth(8)),
-            ],
+                SizedBox(width: ResponsiveSize.scaleWidth(8)),
+              ],
+            ),
           ),
-        ),
-        // SizedBox(width: ResponsiveSize.scaleWidth(8)),
-        // Text(
-        //   ' > ',
-        //   style: TextStyle(
-        //     fontFamily: 'Outfit',
-        //     fontSize: ResponsiveSize.text(18),
-        //     fontWeight: FontWeight.w500,
-        //   ),
-        // ),
-        // Unit dropdown
-        SizedBox(width: ResponsiveSize.scaleWidth(20)),
-        Container(
-          width: ResponsiveSize.scaleWidth(161),
-          height: ResponsiveSize.scaleHeight(50),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(ResponsiveSize.scaleWidth(15)),
-            border: Border.all(color: Colors.grey.shade200),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.25),
-                blurRadius: 5,
-                offset: const Offset(0, 3), // changes position of shadow
-              ),
-            ],
+          // Divider line between dropdowns
+          Container(
+            width: 1,
+            height: ResponsiveSize.scaleHeight(30),
+            color: Colors.grey.shade300,
           ),
-          child: Row(
-            children: [
-              SizedBox(width: ResponsiveSize.scaleWidth(8)),
-              CircleAvatar(
-                backgroundColor: Color(0xFF606060),
-                child: Image.asset('assets/images/unit.png',
-                    width: isMobile
-                        ? ResponsiveSize.scaleWidth(20)
-                        : ResponsiveSize.scaleWidth(15),
-                    height: ResponsiveSize.scaleWidth(20)),
+          // Unit dropdown
+          Container(
+            width: ResponsiveSize.scaleWidth(161),
+            height: ResponsiveSize.scaleHeight(50),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(ResponsiveSize.scaleWidth(15)),
+                bottomRight: Radius.circular(ResponsiveSize.scaleWidth(15)),
               ),
-              SizedBox(width: ResponsiveSize.scaleWidth(6)),
-              Expanded(
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    value: selectedUnit,
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: ResponsiveSize.text(14),
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                    iconStyleData: IconStyleData(
-                      icon: Icon(Icons.keyboard_arrow_down),
-                      iconSize: ResponsiveSize.scaleWidth(20),
-                    ),
-                    items: units.map((unit) {
-                      return DropdownMenuItem(
-                        value: unit,
-                        child: Text(
-                          unit,
-                          style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: ResponsiveSize.text(12)),
-                        ),
-                      );
-                    }).toList(),
-                    dropdownStyleData: DropdownStyleData(
-                      maxHeight: 200,
-                      width: ResponsiveSize.scaleWidth(
-                          161), // Exact container width
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius
-                              .zero, // No top border radius for seamless connection
-                          topRight: Radius
-                              .zero, // No top border radius for seamless connection
-                          bottomLeft:
-                              Radius.circular(ResponsiveSize.scaleWidth(15)),
-                          bottomRight:
-                              Radius.circular(ResponsiveSize.scaleWidth(15)),
-                        ),
-                        color: Colors.white,
-                        border: Border(
-                          left: BorderSide(color: Colors.grey.shade200),
-                          right: BorderSide(color: Colors.grey.shade200),
-                          bottom: BorderSide(color: Colors.grey.shade200),
-                          top: BorderSide
-                              .none, // No top border for seamless connection
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.25),
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
+            ),
+            child: Row(
+              children: [
+                SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                CircleAvatar(
+                  backgroundColor: Color(0xFF606060),
+                  child: Image.asset('assets/images/unit.png',
+                      width: isMobile
+                          ? ResponsiveSize.scaleWidth(20)
+                          : ResponsiveSize.scaleWidth(15),
+                      height: ResponsiveSize.scaleWidth(20)),
+                ),
+                SizedBox(width: ResponsiveSize.scaleWidth(6)),
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      value: selectedUnit,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: ResponsiveSize.text(14),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
-                      offset: const Offset(-51, 8), // Perfect alignment
+                      iconStyleData: IconStyleData(
+                        icon: Icon(Icons.keyboard_arrow_down),
+                        iconSize: ResponsiveSize.scaleWidth(20),
+                      ),
+                      items: units.map((unit) {
+                        return DropdownMenuItem(
+                          value: unit,
+                          child: Text(
+                            unit,
+                            style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: ResponsiveSize.text(12)),
+                          ),
+                        );
+                      }).toList(),
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 200,
+                        width: ResponsiveSize.scaleWidth(161),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.zero,
+                            topRight: Radius.zero,
+                            bottomLeft:
+                                Radius.circular(ResponsiveSize.scaleWidth(15)),
+                            bottomRight:
+                                Radius.circular(ResponsiveSize.scaleWidth(15)),
+                          ),
+                          color: Colors.white,
+                          border: Border(
+                            left: BorderSide(color: Colors.grey.shade200),
+                            right: BorderSide(color: Colors.grey.shade200),
+                            bottom: BorderSide(color: Colors.grey.shade200),
+                            top: BorderSide.none,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.25),
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        offset: const Offset(-51, 8),
+                      ),
+                      onChanged: (value) {
+                        if (value != null) {
+                          _handleUnitSelection(value, context);
+                        }
+                      },
                     ),
-                    onChanged: (value) {
-                      if (value != null) {
-                        _handleUnitSelection(value, context);
-                      }
-                    },
                   ),
                 ),
-              ),
-              SizedBox(width: ResponsiveSize.scaleWidth(4)),
-            ],
+                SizedBox(width: ResponsiveSize.scaleWidth(4)),
+              ],
+            ),
           ),
-        ),
-        // Container(
-        //   padding: const EdgeInsets.symmetric(horizontal: 12),
-        //   decoration: BoxDecoration(
-        //     color: Colors.white,
-        //     borderRadius: BorderRadius.circular(8),
-        //     border: Border.all(color: Colors.grey.shade300),
-        //   ),
-        //   child: DropdownButtonHideUnderline(
-        //     child: DropdownButton<String>(
-        //       value: selectedUnit,
-        //       hint: const Text('Select Unit'),
-        //       items: units.map((unit) {
-        //         return DropdownMenuItem(
-        //           value: unit,
-        //           child: Text(
-        //             unit ?? '',
-        //             style: TextStyle(
-        //               fontFamily: 'Outfit',
-        //               fontSize: ResponsiveSize.text(16),
-        //             ),
-        //           ),
-        //         );
-        //       }).toList(),
-        //       onChanged: (value) {
-        //         setState(() {
-        //           selectedUnit = value;
-        //         });
-        //       },
-        //     ),
-        //   ),
-        // ),
-        // const SizedBox(width: 16),
-      ],
+        ],
+      ),
     );
   }
 }

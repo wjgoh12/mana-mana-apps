@@ -6,15 +6,19 @@ import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
 import 'package:mana_mana_app/widgets/new_features_dialog.dart';
+import 'package:mana_mana_app/widgets/notice_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NewDashboardVM_v3 extends ChangeNotifier {
   static const String _hasExploredFeaturesKey = 'has_explored_new_features';
+  static const String _hasSeenNoticeDialogKey = 'has_seen_notice_dialog_v1'; // v1 to track version
 
   bool contractTypeLoaded = false;
   bool occupancyRateLoaded = false;
   bool _hasShownNewFeaturesDialog = false;
+  bool _hasShownNoticeDialog = false;
   bool _userHasExploredFeatures = false; // Track if user clicked "Explore Now"
+  bool _userHasSeenNotice = false; // Track if user has seen the notice dialog
 
   bool isLoading = true;
   final GlobalDataManager _globalDataManager = GlobalDataManager();
@@ -23,6 +27,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
   NewDashboardVM_v3() {
     _loadExploredFeaturesState();
+    _loadNoticeDialogState();
   }
 
   // Load saved state from SharedPreferences
@@ -37,6 +42,17 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
+  // Load notice dialog state from SharedPreferences
+  Future<void> _loadNoticeDialogState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _userHasSeenNotice = prefs.getBool(_hasSeenNoticeDialogKey) ?? false;
+      notifyListeners();
+    } catch (e) {
+      print('Error loading notice dialog state: $e');
+    }
+  }
+
   // Save state to SharedPreferences
   Future<void> _saveExploredFeaturesState() async {
     try {
@@ -47,11 +63,28 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
+  // Save notice dialog state to SharedPreferences
+  Future<void> _saveNoticeDialogState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_hasSeenNoticeDialogKey, _userHasSeenNotice);
+    } catch (e) {
+      print('Error saving notice dialog state: $e');
+    }
+  }
+
   // Optional: Method to reset the dialog state for testing
   Future<void> resetNewFeaturesDialog() async {
     _userHasExploredFeatures = false;
     _hasShownNewFeaturesDialog = false;
     await _saveExploredFeaturesState();
+    notifyListeners();
+  }
+
+  Future<void> resetNoticeDialog() async {
+    _userHasSeenNotice = false;
+    _hasShownNoticeDialog = false;
+    await _saveNoticeDialogState();
     notifyListeners();
   }
 
@@ -155,6 +188,17 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
+  void checkAndShowNoticeDialog(BuildContext context) {
+    // Only show dialog if:
+    // 1. Loading is complete
+    // 2. Dialog hasn't been shown yet in this session
+    // 3. User hasn't seen the notice before (persistent check)
+    if (!isLoading && !_hasShownNoticeDialog && !_userHasSeenNotice) {
+      _showNoticeDialog(context);
+      _hasShownNoticeDialog = true;
+    }
+  }
+
   void _showNewFeaturesDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -174,6 +218,22 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         );
       },
     );
+  }
+
+  void _showNoticeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return NoticeDialog();
+      },
+    ).then((_) async {
+      // When dialog is dismissed (either by OK button or barrier tap),
+      // mark it as seen and save to SharedPreferences
+      _userHasSeenNotice = true;
+      await _saveNoticeDialogState();
+      notifyListeners();
+    });
   }
 
   Future<void> refreshData() async {

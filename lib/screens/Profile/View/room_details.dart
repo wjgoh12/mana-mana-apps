@@ -558,7 +558,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 }
                               },
                         style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFF606060),
+                          backgroundColor: const Color(0xFFFFCF00),
                           fixedSize: const Size(300, 40),
                         ),
                         child: _isSubmitting
@@ -575,7 +575,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 style: TextStyle(
                                     fontFamily: 'Outfit',
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.white,
+                                    color: Color(0xFF606060),
                                     fontSize: ResponsiveSize.text(12)),
                               ),
                       ),

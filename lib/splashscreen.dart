@@ -110,50 +110,61 @@ class _SplashScreenState extends State<Splashscreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/loginScreenBackground.png'),
-            fit: BoxFit.cover,
+          // Gradient background that mimics the cloudy effect
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFF8F8F8), // Light gray at top
+              Color(0xFFE8E8E8), // Medium gray
+              Color(0xFFD0D0D0), // Darker gray at bottom (cloudy effect)
+            ],
+            stops: [0.0, 0.6, 1.0],
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo
-              CircleAvatar(
-                radius: 80,
-                backgroundColor: Colors.transparent,
-                backgroundImage:
-                    const AssetImage('assets/images/mana2logo1.png'),
-              ),
-              const SizedBox(height: 40),
-              // Title text
-              const Text(
-                'Simple, Timeless',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF606060),
-                  fontFamily: 'Outfit',
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo
+                const CircleAvatar(
+                  radius: 80,
+                  backgroundColor: Colors.transparent,
+                  backgroundImage:
+                      AssetImage('assets/images/mana2logo1.png'),
                 ),
-              ),
-              const Text(
-                'Assets Management',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF606060),
-                  fontFamily: 'Outfit',
+                const SizedBox(height: 40),
+                // Title text
+                const Text(
+                  'Simple, Timeless',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF606060),
+                    fontFamily: 'Outfit',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              // Loading indicator
-              if (_isLoading)
-                const CircularProgressIndicator(
-                  color: Color(0xFF606060),
+                const Text(
+                  'Assets Management',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF606060),
+                    fontFamily: 'Outfit',
+                  ),
                 ),
-            ],
+                const SizedBox(height: 40),
+                // Loading indicator
+                if (_isLoading)
+                  const CircularProgressIndicator(
+                    color: Color(0xFF606060),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
