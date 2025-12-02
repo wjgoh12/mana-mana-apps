@@ -229,6 +229,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       } else {
         _rangeStart = start;
         _rangeEnd = end;
+        _selectedQuantity = 1; // Reset quantity when date range changes
         _hasPendingChanges = true;
         // Don't clear room selection, it will be validated in _restoreRoomSelection
       }
@@ -291,9 +292,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   void _restoreRoomSelection() {
     if (_selectedRoomId == null) return;
 
+    debugPrint("🔍 Attempting to restore room selection: $_selectedRoomId");
+    debugPrint("🔍 Current quantity: $_selectedQuantity");
+    debugPrint("🔍 Available rooms: ${_vm.roomTypes.map((r) => sanitizeRoomTypeName(r.roomTypeName)).toList()}");
+
     // First find the room in current available rooms
+    // IMPORTANT: Compare sanitized names since _selectedRoomId is stored as sanitized
     final matchingRoom = _vm.roomTypes.firstWhere(
-      (room) => room.roomTypeName == _selectedRoomId,
+      (room) => sanitizeRoomTypeName(room.roomTypeName) == _selectedRoomId,
       orElse: () => RoomType(
           roomTypeName: '',
           roomTypePoints: 0,
@@ -307,6 +313,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     if (matchingRoom.roomTypeName.isEmpty) {
       // Room is not available for these dates
+      debugPrint("❌ Room not found in available rooms - deselecting");
       setState(() {
         _selectedRoom = null;
         _selectedRoomId = null;
@@ -322,20 +329,27 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       return;
     }
 
+    debugPrint("✅ Room found: ${matchingRoom.roomTypeName}");
+    debugPrint("🔍 Room points: ${matchingRoom.roomTypePoints}");
+
     // Room is available, check if user has enough points
     final isAffordable = isRoomAffordable(
       matchingRoom,
       1, // duration doesn't affect points
-      1, // quantity doesn't affect points
+      _selectedQuantity, // Use actual selected quantity
     );
+
+    debugPrint("🔍 Is affordable: $isAffordable");
 
     if (isAffordable) {
       // Room is available and affordable, keep the selection
+      debugPrint("✅ Room is affordable - keeping selection");
       setState(() {
         _selectedRoom = matchingRoom;
       });
     } else {
       // Room is available but not affordable
+      debugPrint("❌ Room not affordable - deselecting");
       setState(() {
         _selectedRoom = null;
         _selectedRoomId = null;
@@ -421,9 +435,19 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ? _vm.UserPointBalance.first.redemptionBalancePoints
         : 0;
 
-    // Simply compare the room's points with user's points
-    // No multiplication by duration or quantity as points are fixed per room
-    return room.roomTypePoints <= userPoints;
+    // Calculate total points: room points × quantity
+    final totalPoints = room.roomTypePoints * quantity;
+    final isAffordable = totalPoints <= userPoints;
+    
+    debugPrint("💰 Affordability check:");
+    debugPrint("   Room: ${room.roomTypeName}");
+    debugPrint("   Points per room: ${room.roomTypePoints}");
+    debugPrint("   Quantity: $quantity");
+    debugPrint("   Total points needed: $totalPoints");
+    debugPrint("   User points: $userPoints");
+    debugPrint("   Affordable: $isAffordable");
+    
+    return isAffordable;
   }
 
   // 🆕 Check if current selection matches last fetch
@@ -956,11 +980,24 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         },
                         onSelect: (selectedRoom) {
                           setState(() {
+                            // Check if switching to a different room
+                            final isDifferentRoom = selectedRoom != null &&
+                                _selectedRoom != null &&
+                                sanitizeRoomTypeName(selectedRoom.roomTypeName) !=
+                                    _selectedRoomId;
+
                             _selectedRoom = selectedRoom;
                             _selectedRoomId = selectedRoom != null
                                 ? sanitizeRoomTypeName(
                                     selectedRoom.roomTypeName)
                                 : null;
+
+                            // Reset quantity to 1 when:
+                            // 1. Room is deselected (selectedRoom == null)
+                            // 2. Switching to a different room
+                            if (selectedRoom == null || isDifferentRoom) {
+                              _selectedQuantity = 1;
+                            }
                           });
                         },
                         onQuantityChanged: (val) {
@@ -988,113 +1025,27 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
                 // const SizedBox(height: 5),
                 // Total Points
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveSize.scaleWidth(15),
-                    vertical: ResponsiveSize.scaleHeight(1),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      // color: Color.fromARGB(255, 236, 247, 255),
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey.shade300),
-                      boxShadow: [
-                        BoxShadow(
-                          // ignore: deprecated_member_use
-                          color: Colors.grey.withOpacity(0.1),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(ResponsiveSize.scaleWidth(12)),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Number of Rooms Selected:  ',
-                            style: TextStyle(
-                              fontSize: ResponsiveSize.text(10),
-                              fontFamily: 'outfit',
-                              fontWeight: FontWeight.w400,
-                              // color: const Color(0xFF606060),
-                            ),
-                          ),
-                          Text('$_selectedQuantity',
-                              style: TextStyle(
-                                fontSize: ResponsiveSize.text(12),
-                                fontFamily: 'outfit',
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              )),
-                          const Spacer(),
-                          Text(
-                            'Total: ',
-                            style: TextStyle(
-                              fontSize: ResponsiveSize.text(12),
-                              fontFamily: 'outfit',
-                              fontWeight: FontWeight.w400,
-                              // color: const Color(0xFF606060),
-                            ),
-                          ),
-                          Text(
-                            '$formattedPoints points',
-                            style: TextStyle(
-                              fontSize: ResponsiveSize.text(12),
-                              fontFamily: 'outfit',
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-                // Next Button
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: TextButton(
-                      onPressed: dataIsStale
-                          ? null
-                          : _onNextPressed, // 🆕 Disable if stale
-                      style: ButtonStyle(
-                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        backgroundColor: WidgetStateProperty.all(
-                          dataIsStale
-                              ? Colors.grey.shade300
-                              : const Color(0xFF606060),
-                        ),
-                        fixedSize: WidgetStateProperty.all(const Size(300, 40)),
-                      ),
-                      child: Text(
-                        dataIsStale ? 'Updating Prices...' : 'Next',
-                        style: TextStyle(
-                          color:
-                              dataIsStale ? Colors.grey.shade600 : Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
                 SizedBox(
-                  height: ResponsiveSize.scaleHeight(20),
-                ),
+                    height: ResponsiveSize.scaleHeight(
+                        150)), // Space for bottom bar
               ],
             ),
           ),
 
-          // Loading overlay removed — we now use the inline spinner above
+          // Sticky Bottom Bar
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: StickyBottomBar(
+              selectedQuantity: _selectedQuantity,
+              formattedPoints: formattedPoints,
+              dataIsStale: dataIsStale,
+              onNextPressed: _onNextPressed,
+              hasRoomSelected: _selectedRoom != null,
+              hasDatesSelected: _rangeStart != null && _rangeEnd != null,
+            ),
+          ),
         ],
       ),
     );
@@ -1231,7 +1182,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     }
 
     // Simply check if user has enough points for the room
-    if (!isRoomAffordable(_selectedRoom!, 1, 1)) {
+    if (!isRoomAffordable(_selectedRoom!, 1, _selectedQuantity)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Insufficient points for this room.'),
@@ -1265,4 +1216,127 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       ),
     );
   }
+}
+
+Widget StickyBottomBar({
+  required int selectedQuantity,
+  required String formattedPoints,
+  required bool dataIsStale,
+  required VoidCallback onNextPressed,
+  required bool hasRoomSelected,
+  required bool hasDatesSelected,
+}) {
+  return Container(
+    color: Colors.white,
+    child: Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveSize.scaleWidth(15),
+            vertical: ResponsiveSize.scaleHeight(15),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              // color: Color.fromARGB(255, 236, 247, 255),
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  // ignore: deprecated_member_use
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(ResponsiveSize.scaleWidth(12)),
+              child: Row(
+                children: [
+                  Text(
+                    'Number of Rooms Selected:  ',
+                    style: TextStyle(
+                      fontSize: ResponsiveSize.text(10),
+                      fontFamily: 'outfit',
+                      fontWeight: FontWeight.w400,
+                      // color: const Color(0xFF606060),
+                    ),
+                  ),
+                  Text('$selectedQuantity',
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.text(12),
+                        fontFamily: 'outfit',
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      )),
+                  const Spacer(),
+                  Text(
+                    'Total: ',
+                    style: TextStyle(
+                      fontSize: ResponsiveSize.text(12),
+                      fontFamily: 'outfit',
+                      fontWeight: FontWeight.w400,
+                      // color: const Color(0xFF606060),
+                    ),
+                  ),
+                  Text(
+                    '$formattedPoints points',
+                    style: TextStyle(
+                      fontSize: ResponsiveSize.text(12),
+                      fontFamily: 'outfit',
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 8),
+        // Next Button
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: TextButton(
+              onPressed:
+                  dataIsStale ? null : onNextPressed, // 🆕 Disable if stale
+              style: ButtonStyle(
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                backgroundColor: WidgetStateProperty.all(
+                  dataIsStale
+                      ? Colors.grey.shade300
+                      : (hasRoomSelected && hasDatesSelected
+                          ? const Color(0xFFFFCF00)
+                          : const Color(0xFF606060)),
+                ),
+                fixedSize: WidgetStateProperty.all(const Size(300, 40)),
+              ),
+              child: Text(
+                dataIsStale ? 'Updating Prices...' : 'Next',
+                style: TextStyle(
+                  color: dataIsStale
+                      ? Colors.grey.shade600
+                      : (hasRoomSelected && hasDatesSelected
+                          ? const Color(0xFF606060)
+                          : Colors.white),
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: ResponsiveSize.scaleHeight(20),
+        ),
+      ],
+    ),
+  );
 }
