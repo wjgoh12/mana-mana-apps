@@ -4,10 +4,10 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/roomtype.dart';
-import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
+import 'package:mana_mana_app/screens/Book_freestay/Widget/quantity_controller.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
-class RoomtypeCardDetail extends StatefulWidget {
+class RoomtypeCard extends StatefulWidget {
   final RoomType roomType;
   final String displayName;
   final bool isSelected;
@@ -18,13 +18,12 @@ class RoomtypeCardDetail extends StatefulWidget {
   final int quantity;
   final int numberofPax;
   final int numBedrooms;
-  final String bedRoom1;
-  final String bedRoom2;
+
   final Function(RoomType? room)? onSelect;
   final Function(int quantity)? onQuantityChanged;
   final bool Function(RoomType room, int duration) checkAffordable;
 
-  const RoomtypeCardDetail({
+  const RoomtypeCard({
     super.key,
     required this.roomType,
     required this.displayName,
@@ -35,8 +34,6 @@ class RoomtypeCardDetail extends StatefulWidget {
     this.quantity = 1,
     this.numberofPax = 1,
     this.numBedrooms = 1,
-    this.bedRoom1 = '',
-    this.bedRoom2 = '',
     this.onSelect,
     this.onQuantityChanged,
     this.multiSelectable = false,
@@ -44,12 +41,13 @@ class RoomtypeCardDetail extends StatefulWidget {
   });
 
   @override
-  State<RoomtypeCardDetail> createState() => _RoomtypeCardDetailState();
+  State<RoomtypeCard> createState() => _RoomtypeCardState();
 }
 
-class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
+class _RoomtypeCardState extends State<RoomtypeCard>
     with AutomaticKeepAliveClientMixin {
-  Uint8List? _bytes;
+  // Hold up to 5 decoded images (nullable entries for missing/bad images).
+  List<Uint8List?> _images = [];
   bool _decoding = false;
   // Local selection state used when multiSelectable == true
   bool _localSelected = false;
@@ -62,32 +60,58 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
   }
 
   @override
-  void didUpdateWidget(covariant RoomtypeCardDetail oldWidget) {
+  void didUpdateWidget(covariant RoomtypeCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     // If the parent controls selection (multiSelectable==false), reflect
     // updates from parent. If multiSelectable is true, keep local state.
     if (!widget.multiSelectable && oldWidget.isSelected != widget.isSelected) {
       _localSelected = widget.isSelected;
     }
+    // If the underlying RoomType changed, clear and re-decode images so
+    // the thumbnails and gallery update accordingly.
+    if (oldWidget.roomType.pic != widget.roomType.pic ||
+        oldWidget.roomType.pic2 != widget.roomType.pic2 ||
+        oldWidget.roomType.pic3 != widget.roomType.pic3 ||
+        oldWidget.roomType.pic4 != widget.roomType.pic4 ||
+        oldWidget.roomType.pic5 != widget.roomType.pic5) {
+      _images = [];
+      _decodeOnce();
+    }
   }
 
   Future<void> _decodeOnce() async {
-    if (_bytes != null || _decoding) return;
+    // If we've already attempted to decode (images list filled), skip.
+    if (_images.isNotEmpty || _decoding) return;
     _decoding = true;
 
     try {
-      if (widget.roomType.pic.isEmpty) {
-        _bytes = null;
-      } else if (widget.roomType.pic.startsWith('data:image')) {
-        // data URI: parse
-        final data = Uri.parse(widget.roomType.pic).data;
-        _bytes = data?.contentAsBytes();
-      } else {
-        _bytes = base64Decode(widget.roomType.pic);
+      final pics = [
+        widget.roomType.pic,
+        widget.roomType.pic2,
+        widget.roomType.pic3,
+        widget.roomType.pic4,
+        widget.roomType.pic5,
+      ];
+
+      _images = <Uint8List?>[];
+      for (final p in pics) {
+        if (p.isEmpty) {
+          _images.add(null);
+          continue;
+        }
+
+        try {
+          if (p.startsWith('data:image')) {
+            final data = Uri.parse(p).data;
+            _images.add(data?.contentAsBytes());
+          } else {
+            _images.add(base64Decode(p));
+          }
+        } catch (e) {
+          // If one image fails to decode, add null and continue with others
+          _images.add(null);
+        }
       }
-    } catch (e) {
-      // decoding failed -> leave _bytes null
-      _bytes = null;
     } finally {
       if (mounted) {
         _decoding = false;
@@ -96,32 +120,160 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
     }
   }
 
+  Future<void> _showImageGallery(int initialIndex) async {
+    if (!mounted) return;
+    // Always start the gallery focused on the first image (index 0).
+    // This ignores the passed-in initialIndex so the dialog consistently
+    // points to the first image when opened.
+    int selected = 0;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: StatefulBuilder(builder: (context, setStateDialog) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[850],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Large preview
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Builder(builder: (_) {
+                      // Guard against selected being out of range
+                      final Uint8List? selectedImage =
+                          (selected >= 0 && selected < _images.length)
+                              ? _images[selected]
+                              : null;
+
+                      if (selectedImage != null) {
+                        return Image.memory(
+                          selectedImage,
+                          width: double.infinity,
+                          height: ResponsiveSize.scaleHeight(260),
+                          fit: BoxFit.cover,
+                        );
+                      }
+
+                      // No image for this slot: render nothing (empty box)
+                      return SizedBox(
+                        width: double.infinity,
+                        height: ResponsiveSize.scaleHeight(260),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Thumbnails
+                  SizedBox(
+                    height: ResponsiveSize.scaleHeight(60),
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      // If we decoded images, iterate over that length; otherwise
+                      // show zero items (no thumbnails).
+                      itemCount: _images.isNotEmpty ? _images.length : 0,
+                      separatorBuilder: (_, __) =>
+                          SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                      itemBuilder: (context, idx) {
+                        final isSel = idx == selected;
+                        final Uint8List? bytes =
+                            (idx < _images.length) ? _images[idx] : null;
+
+                        // If this particular image is missing, render an empty
+                        // box (blank) so the layout stays consistent without
+                        // forcing a null image use.
+                        if (bytes == null) {
+                          return SizedBox(
+                            width: ResponsiveSize.scaleWidth(80),
+                            height: ResponsiveSize.scaleHeight(60),
+                          );
+                        }
+
+                        return GestureDetector(
+                          onTap: () {
+                            setStateDialog(() => selected = idx);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: isSel
+                                  ? Border.all(
+                                      color: const Color(0xFFFFCF00), width: 2)
+                                  : null,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: Image.memory(
+                                bytes,
+                                width: ResponsiveSize.scaleWidth(80),
+                                height: ResponsiveSize.scaleHeight(60),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Close button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        child: Text('Close'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        );
+      },
+    );
+  }
+
   @override
   bool get wantKeepAlive => true; // keep decoded bytes alive
 
   @override
   Widget build(BuildContext context) {
-    final bedImg = Image.asset('assets/images/bed_img.png',
-        height: ResponsiveSize.scaleHeight(14),
-        width: ResponsiveSize.scaleWidth(14));
     super.build(context); // for AutomaticKeepAliveClientMixin
 
-    // Use the cached _bytes (or placeholder)
-    final imageWidget = _bytes != null
+    // Use the first available decoded image (if any), otherwise show placeholder
+    final Uint8List? firstImage =
+        _images.firstWhere((i) => i != null, orElse: () => null);
+
+    final imageWidget = firstImage != null
         ? Image.memory(
-            _bytes!,
+            firstImage,
             fit: BoxFit.cover,
             width: double.infinity,
             height: 180,
           )
-        : Container(
+        // No image: render nothing (empty box) so the UI doesn't show a
+        // placeholder icon.
+        : SizedBox(
             width: double.infinity,
             height: 180,
-            color: Colors.grey[300],
-            child: const Center(
-              child:
-                  Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
-            ),
           );
 
     final int duration = widget.endDate.difference(widget.startDate).inDays;
@@ -132,7 +284,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
 
     return Container(
       margin: const EdgeInsets.all(8),
-      height: displayedSelected ? 380 : 350,
+      constraints: BoxConstraints(minHeight: displayedSelected ? 380 : 320),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -191,7 +343,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
             }
           },
           child: Column(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Image Stack Section
               Stack(
@@ -313,6 +465,50 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                 ],
               ),
 
+              // Horizontal thumbnails row (uses decoded images if available)
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: ResponsiveSize.scaleHeight(8)),
+                child: SizedBox(
+                  height: ResponsiveSize.scaleHeight(60),
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: false,
+                    // Use the number of decoded images; if none decoded, show
+                    // zero thumbnails (nothing).
+                    itemCount: _images.isNotEmpty ? _images.length : 0,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveSize.scaleWidth(12)),
+                    separatorBuilder: (_, __) =>
+                        SizedBox(width: ResponsiveSize.scaleWidth(8)),
+                    itemBuilder: (context, index) {
+                      final Uint8List? bytes =
+                          (_images.isNotEmpty && index < _images.length)
+                              ? _images[index]
+                              : null;
+                      return GestureDetector(
+                        onTap: () => _showImageGallery(index),
+                        child: bytes != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.memory(
+                                  bytes,
+                                  width: ResponsiveSize.scaleWidth(100),
+                                  height: ResponsiveSize.scaleHeight(60),
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            // No thumbnail: keep the slot empty (blank)
+                            : SizedBox(
+                                width: ResponsiveSize.scaleWidth(0),
+                                height: ResponsiveSize.scaleHeight(60),
+                              ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+
               // Room Info Section
               Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -354,7 +550,10 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(8)),
                                       // Only render bedroom1 icon + text if value exists
-                                      bedImg,
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(4)),
                                       Text(
@@ -366,18 +565,21 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                         ),
                                       ),
                                       // Only render the second bed icon + value when room1BedType2 is present
-                                      if (widget
-                                              .roomType.bedroomDetails.length >
-                                          1) ...[
+                                      if (widget.roomType.bedroomDetails[0]
+                                          .bedtype2.isNotEmpty) ...[
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(8)),
-                                        bedImg,
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(4)),
                                         Text(
-                                          '${widget.roomType.bedroomDetails[1].bedtype1} bed ',
+                                          '${widget.roomType.bedroomDetails[0].bedtype2} bed ',
                                           style: TextStyle(
                                             fontSize: ResponsiveSize.text(11),
                                             fontFamily: 'Outfit',
@@ -401,7 +603,10 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(8)),
                                       // Only show icon + text when bedRoom2 has value
-                                      bedImg,
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(4)),
                                       Text(
@@ -413,13 +618,16 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                         ),
                                       ),
                                       // Only render room2BedType2 when it is non-empty
-                                      if (widget
-                                              .roomType.bedroomDetails.length >
-                                          1) ...[
+                                      if (widget.roomType.bedroomDetails[1]
+                                          .bedtype2.isNotEmpty) ...[
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(8)),
-                                        bedImg,
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(4)),
@@ -434,6 +642,14 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       ],
                                     ],
                                   ),
+                                // Text(
+                                //   ' ${widget.roomType.numBedrooms} room',
+                                //   style: TextStyle(
+                                //     fontSize: ResponsiveSize.text(11),
+                                //     fontFamily: 'Outfit',
+                                //     color: Colors.grey[600],
+                                //   ),
+                                // ),
                               ],
                             ),
                           if (widget.roomType.numBedrooms == 2)
@@ -441,7 +657,9 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (widget.roomType.bedroomDetails.isNotEmpty)
+                                if (widget.roomType.bedroomDetails.length > 0 &&
+                                    widget.roomType.bedroomDetails[0].bedtype1
+                                        .isNotEmpty)
                                   Row(
                                     children: [
                                       Text(
@@ -454,7 +672,10 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       ),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(8)),
-                                      bedImg,
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(4)),
                                       Text(
@@ -466,15 +687,16 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                         ),
                                       ),
                                       // only show second bed type when present
-                                      if (widget.roomType.bedroomDetails
-                                                  .length >
-                                              0 &&
-                                          widget.roomType.bedroomDetails[0]
-                                              .bedtype2.isNotEmpty) ...[
+                                      if (widget.roomType.bedroomDetails[0]
+                                          .bedtype2.isNotEmpty) ...[
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(8)),
-                                        bedImg,
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(4)),
@@ -489,7 +711,9 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       ],
                                     ],
                                   ),
-                                if (widget.roomType.bedroomDetails.length > 1)
+                                if (widget.roomType.bedroomDetails.length > 1 &&
+                                    widget.roomType.bedroomDetails[1].bedtype1
+                                        .isNotEmpty)
                                   Row(
                                     children: [
                                       Text(
@@ -502,7 +726,10 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       ),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(8)),
-                                      bedImg,
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(4)),
                                       Text(
@@ -521,7 +748,11 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(8)),
-                                        bedImg,
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(4)),
@@ -661,30 +892,36 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                     ),
                     const SizedBox(height: 12),
                     if (displayedSelected)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                'Number of Rooms:',
-                                style: TextStyle(
-                                  fontSize: ResponsiveSize.text(11),
-                                  fontFamily: 'Outfit',
-                                  fontWeight: FontWeight.w600,
+                      Column(
+                        children: [
+                          Divider(height: 1, color: Colors.grey[300]),
+                          const SizedBox(height: 12),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    'Number of Rooms:',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.text(11),
+                                      fontFamily: 'Outfit',
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 8),
+                                QuantityController(
+                                  initialValue: widget.quantity,
+                                  onChanged: (val) {
+                                    widget.onQuantityChanged?.call(val);
+                                  },
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            QuantityController(
-                              initialValue: widget.quantity,
-                              onChanged: (val) {
-                                widget.onQuantityChanged?.call(val);
-                              },
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                   ],
                 ),

@@ -1,4 +1,12 @@
+import 'bedroom.dart';
+
 class RoomType {
+  final String? state;
+  final int bookingLocation;
+  final String? bookingLocationName;
+  final int rooms;
+  final String? arrivalDate;
+  final String? departureDate;
   final String pic;
   final String pic2;
   final String pic3;
@@ -8,45 +16,43 @@ class RoomType {
   final double roomTypePoints;
   final int numberOfPax;
   final int numBedrooms;
-  final String bedRoom1;
-  final String bedRoom2;
-  final bool b1WashingMachine;
-  final bool b2WashingMachine;
-  final bool b1Bathtub;
-  final bool b2Bathtub;
-  final String room1BedType2;
-  final String room2BedType2;
-  final bool b1Sofa;
-  final bool b2Sofa;
-  final bool b1SofaBed;
-  final bool b2SofaBed;
+  final List<BedroomDetail> bedroomDetails;
 
   RoomType({
+    this.state,
+    this.bookingLocation = 0,
+    this.bookingLocationName,
+    this.rooms = 0,
+    this.arrivalDate,
+    this.departureDate,
     required this.pic,
-    required this.pic2,
-    required this.pic3,
-    required this.pic4,
-    required this.pic5,
+    this.pic2 = '',
+    this.pic3 = '',
+    this.pic4 = '',
+    this.pic5 = '',
     required this.roomTypeName,
     required this.roomTypePoints,
     required this.numberOfPax,
     this.numBedrooms = 1,
-    this.bedRoom1 = '',
-    this.bedRoom2 = '',
-    this.b1WashingMachine = false,
-    this.b2WashingMachine = false,
-    this.b1Bathtub = false,
-    this.b2Bathtub = false,
-    this.room1BedType2 = '',
-    this.room2BedType2 = '',
-    this.b1Sofa = false,
-    this.b2Sofa = false,
-    this.b1SofaBed = false,
-    this.b2SofaBed = false,
+    this.bedroomDetails = const [],
   });
 
   factory RoomType.fromJson(Map<String, dynamic> json) {
+    // Parse bedroomDetails array
+    List<BedroomDetail> bedroomDetailsList = [];
+    if (json['bedroomDetails'] != null && json['bedroomDetails'] is List) {
+      bedroomDetailsList = (json['bedroomDetails'] as List)
+          .map((detailJson) => BedroomDetail.fromJson(detailJson))
+          .toList();
+    }
+
     return RoomType(
+      state: json['state'] as String?,
+      bookingLocation: _safeInt(json['bookingLocation']),
+      bookingLocationName: json['bookingLocationName'] as String?,
+      rooms: _safeInt(json['rooms']),
+      arrivalDate: json['arrivalDate'] as String?,
+      departureDate: json['departureDate'] as String?,
       pic: _safeString(json['pic']),
       pic2: _safeString(json['pic2']),
       pic3: _safeString(json['pic3']),
@@ -56,25 +62,13 @@ class RoomType {
       roomTypePoints: _parseToDouble(json['roomTypePoints']),
       numberOfPax: _safeInt(json['numGuestPax'] ?? json['numberOfPax']),
       numBedrooms: _safeInt(json['numBedrooms']),
-      bedRoom1: _safeString(json['bedRoom1']),
-      bedRoom2: _safeString(json['bedRoom2']),
-      b1WashingMachine: _safeBool(json['b1WashingMachine']),
-      b2WashingMachine: _safeBool(json['b2WashingMachine']),
-      b1Bathtub: _safeBool(json['b1Bathtub']),
-      b2Bathtub: _safeBool(json['b2Bathtub']),
-      room1BedType2: _safeString(json['room1BedType2']),
-      room2BedType2: _safeString(json['room2BedType2']),
-      b1Sofa: _safeBool(json['b1Sofa']),
-      b2Sofa: _safeBool(json['b2Sofa']),
-      b1SofaBed: _safeBool(json['b1SofaBed']),
-      b2SofaBed: _safeBool(json['b2SofaBed']),
+      bedroomDetails: bedroomDetailsList,
     );
   }
 
   static String _safeString(dynamic v) {
     if (v == null) return '';
     if (v is String) return v;
-    // convert booleans/numbers to meaningful string representation
     return v.toString();
   }
 
@@ -104,6 +98,12 @@ class RoomType {
 
   Map<String, dynamic> toJson() {
     return {
+      "state": state,
+      "bookingLocation": bookingLocation,
+      "bookingLocationName": bookingLocationName,
+      "rooms": rooms,
+      "arrivalDate": arrivalDate,
+      "departureDate": departureDate,
       "pic": pic,
       "pic2": pic2,
       "pic3": pic3,
@@ -113,18 +113,7 @@ class RoomType {
       "roomTypePoints": roomTypePoints,
       "numGuestPax": numberOfPax,
       "numBedrooms": numBedrooms,
-      "bedRoom1": bedRoom1,
-      "bedRoom2": bedRoom2,
-      "b1WashingMachine": b1WashingMachine,
-      "b2WashingMachine": b2WashingMachine,
-      "b1Bathtub": b1Bathtub,
-      "b2Bathtub": b2Bathtub,
-      'room1BedType2': room1BedType2,
-      'room2BedType2': room2BedType2,
-      'b1Sofa': b1Sofa,
-      'b2Sofa': b2Sofa,
-      'b1SofaBed': b1SofaBed,
-      'b2SofaBed': b2SofaBed,
+      "bedroomDetails": bedroomDetails.map((d) => d.toJson()).toList(),
     };
   }
 }

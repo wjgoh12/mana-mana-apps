@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/roomtype.dart';
-import 'package:mana_mana_app/screens/Profile/Widget/quantity_controller.dart';
+import 'package:mana_mana_app/screens/Book_freestay/Widget/quantity_controller.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class RoomtypeCardDetail extends StatefulWidget {
@@ -18,8 +18,6 @@ class RoomtypeCardDetail extends StatefulWidget {
   final int quantity;
   final int numberofPax;
   final int numBedrooms;
-  final String bedRoom1;
-  final String bedRoom2;
   final Function(RoomType? room)? onSelect;
   final Function(int quantity)? onQuantityChanged;
   final bool Function(RoomType room, int duration) checkAffordable;
@@ -35,8 +33,6 @@ class RoomtypeCardDetail extends StatefulWidget {
     this.quantity = 1,
     this.numberofPax = 1,
     this.numBedrooms = 1,
-    this.bedRoom1 = '',
-    this.bedRoom2 = '',
     this.onSelect,
     this.onQuantityChanged,
     this.multiSelectable = false,
@@ -101,9 +97,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
 
   @override
   Widget build(BuildContext context) {
-    final bedImg = Image.asset('assets/images/bed_img.png',
-        height: ResponsiveSize.scaleHeight(14),
-        width: ResponsiveSize.scaleWidth(14));
+    final yellow = const Color(0xFFFFCF00);
     super.build(context); // for AutomaticKeepAliveClientMixin
 
     // Use the cached _bytes (or placeholder)
@@ -245,7 +239,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFFCF00),
+                                color: yellow,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -354,7 +348,10 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(8)),
                                       // Only render bedroom1 icon + text if value exists
-                                      bedImg,
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(4)),
                                       Text(
@@ -366,18 +363,21 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                         ),
                                       ),
                                       // Only render the second bed icon + value when room1BedType2 is present
-                                      if (widget
-                                              .roomType.bedroomDetails.length >
-                                          1) ...[
+                                      if (widget.roomType.bedroomDetails[0]
+                                          .bedtype2.isNotEmpty) ...[
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(8)),
-                                        bedImg,
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(4)),
                                         Text(
-                                          '${widget.roomType.bedroomDetails[1].bedtype1} bed ',
+                                          '${widget.roomType.bedroomDetails[0].bedtype2} bed ',
                                           style: TextStyle(
                                             fontSize: ResponsiveSize.text(11),
                                             fontFamily: 'Outfit',
@@ -401,7 +401,10 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(8)),
                                       // Only show icon + text when bedRoom2 has value
-                                      bedImg,
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(4)),
                                       Text(
@@ -413,13 +416,16 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                         ),
                                       ),
                                       // Only render room2BedType2 when it is non-empty
-                                      if (widget
-                                              .roomType.bedroomDetails.length >
-                                          1) ...[
+                                      if (widget.roomType.bedroomDetails[1]
+                                          .bedtype2.isNotEmpty) ...[
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(8)),
-                                        bedImg,
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(4)),
@@ -454,7 +460,10 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       ),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(8)),
-                                      bedImg,
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(4)),
                                       Text(
@@ -466,15 +475,16 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                         ),
                                       ),
                                       // only show second bed type when present
-                                      if (widget.roomType.bedroomDetails
-                                                  .length >
-                                              0 &&
-                                          widget.roomType.bedroomDetails[0]
-                                              .bedtype2.isNotEmpty) ...[
+                                      if (widget.roomType.bedroomDetails[0]
+                                          .bedtype2.isNotEmpty) ...[
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(8)),
-                                        bedImg,
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(4)),
@@ -502,7 +512,10 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       ),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(8)),
-                                      bedImg,
+                                      Image.asset('assets/images/bed_img.png',
+                                          height:
+                                              ResponsiveSize.scaleHeight(14),
+                                          width: ResponsiveSize.scaleWidth(14)),
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(4)),
                                       Text(
@@ -513,15 +526,16 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                           color: Colors.grey[600],
                                         ),
                                       ),
-                                      if (widget.roomType.bedroomDetails
-                                                  .length >
-                                              1 &&
-                                          widget.roomType.bedroomDetails[1]
-                                              .bedtype2.isNotEmpty) ...[
+                                      if (widget.roomType.bedroomDetails[1]
+                                          .bedtype2.isNotEmpty) ...[
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(8)),
-                                        bedImg,
+                                        Image.asset('assets/images/bed_img.png',
+                                            height:
+                                                ResponsiveSize.scaleHeight(14),
+                                            width:
+                                                ResponsiveSize.scaleWidth(14)),
                                         SizedBox(
                                             width:
                                                 ResponsiveSize.scaleWidth(4)),

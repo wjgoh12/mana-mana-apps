@@ -34,7 +34,7 @@ class NewDashboardV3 extends StatelessWidget {
         builder: (context, model, child) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             model.checkAndShowNewFeaturesDialog(context);
-            model.checkAndShowNoticeDialog(context);
+            // model.checkAndShowNoticeDialog(context);
           });
 
           final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
