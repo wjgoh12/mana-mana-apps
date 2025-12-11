@@ -89,6 +89,8 @@ class OwnerProfileVM extends ChangeNotifier {
 
   String getBankInfo() {
     if (ownerUnits.isEmpty) return 'No Information';
+    debugPrint('Bank Info: ${ownerUnits.first.bank}');
+
     return ownerUnits.first.bank?.toString() ?? 'No Information';
   }
 
@@ -627,8 +629,7 @@ class OwnerProfileVM extends ChangeNotifier {
           .where((s) => s.isNotEmpty)
           .toList();
 
-      _canSwitchUser =
-          roles.contains('MOBILE-ADMIN');
+      _canSwitchUser = roles.contains('MOBILE-ADMIN');
     } catch (e) {
       debugPrint('❌ Error checking role: $e');
       _canSwitchUser = false;
@@ -655,10 +656,10 @@ class OwnerProfileVM extends ChangeNotifier {
       // Step 2: confirm switch on server
       await _userRepository.confirmSwitchUser(email).then((confirmRes) async {
         debugPrint('✅ confirmSwitchUser response: $confirmRes');
-        
+
         // Set the switch user flag
         _globalDataManager.isSwitchUser = true;
-        
+
         await _globalDataManager.initializeData(forceRefresh: true);
         return;
       });
@@ -675,10 +676,10 @@ class OwnerProfileVM extends ChangeNotifier {
 //cancel user/stop impersonate user
   Future<void> cancelUser(String email) async {
     await _userRepository.cancelSwitchUser(email);
-    
+
     // Clear the switch user flag
     _globalDataManager.isSwitchUser = false;
-    
+
     // Refresh data to load original user
     await _globalDataManager.initializeData(forceRefresh: true);
 

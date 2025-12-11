@@ -41,11 +41,6 @@ class LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Note: we intentionally do NOT show an in-app save dialog. Instead we use
-  // the platform autofill save API so the OS (Android/iOS) can prompt the
-  // user to save credentials. This avoids custom dialogs and works with the
-  // system autofill services (preferred) while keeping a consistent UX.
-
   String? _validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Email is required';
@@ -101,9 +96,6 @@ class LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = true);
 
     try {
-      // Attempt authentication directly
-      // If user has UPDATE_PASSWORD but already has a valid password (old accounts),
-      // they should be able to authenticate successfully
       print('DEBUG: Attempting authentication for: $username');
       final result = await _authService.authenticate(username, password);
 
@@ -111,61 +103,53 @@ class LoginPageState extends State<LoginPage> {
         setState(() => _isLoading = false);
 
         if (result.success) {
-          // Ask the platform autofill service to save the credentials.
-          // Use a guarded call because some platforms may not implement it.
           try {
             TextInput.finishAutofillContext(shouldSave: true);
           } catch (_) {}
 
-          // Give time for the OS autofill/save UI to appear on some devices
           await Future.delayed(const Duration(milliseconds: 500));
 
           FocusScope.of(context).unfocus();
           SystemChannels.textInput.invokeMethod('TextInput.hide');
 
-          // Ask the OS autofill service to save the credentials (no in-app dialog).
-          // The platform (Android/iOS autofill) will show its own save prompt
-          // when available. This avoids using a custom showDialog.
           try {
             TextInput.finishAutofillContext(shouldSave: true);
-          } catch (_) {
-            // ignore - some platforms may not implement this API
-          }
+          } catch (_) {}
 
           if (!mounted) return;
-          
-          // Clear cached data before navigating to dashboard
-          // This ensures fresh data loads for the new user
+
           print('🧹 Clearing cached data before navigating to dashboard');
           GlobalDataManager().clearAllData();
-          
+
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const NewDashboardV3()),
           );
         } else {
           TextInput.finishAutofillContext(shouldSave: false);
-          
-          //Check if error is about account not being fully set up
+
           if (result.message.toLowerCase().contains('not fully set up') ||
-              result.message.toLowerCase().contains('account is not fully setup')) {
-            // This is likely a first-time user, redirect to UpdatePasswordPage
-            print('DEBUG: Account not fully set up, redirecting to UpdatePasswordPage');
+              result.message
+                  .toLowerCase()
+                  .contains('account is not fully setup')) {
+            print(
+                'DEBUG: Account not fully set up, redirecting to UpdatePasswordPage');
             if (!mounted) return;
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (_) => UpdatePasswordPage(username: username),
               ),
             );
-          } else if (result.message.toLowerCase().contains('invalid user credentials')) {
-            // Could be wrong password OR first-time login with UPDATE_PASSWORD action
-            // Check if this is a first-time user
-            print('DEBUG: Invalid credentials - checking if first-time login...');
+          } else if (result.message
+              .toLowerCase()
+              .contains('invalid user credentials')) {
+            print(
+                'DEBUG: Invalid credentials - checking if first-time login...');
             final isFirst = await _authService.isFirstLogin(username);
             print('DEBUG: isFirstLogin result: $isFirst');
-            
+
             if (isFirst) {
-              // User has UPDATE_PASSWORD action, redirect to update password
-              print('DEBUG: First-time login detected, redirecting to UpdatePasswordPage');
+              print(
+                  'DEBUG: First-time login detected, redirecting to UpdatePasswordPage');
               if (!mounted) return;
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
@@ -173,7 +157,6 @@ class LoginPageState extends State<LoginPage> {
                 ),
               );
             } else {
-              // Actually wrong password
               _showErrorDialog('Invalid username or password');
             }
           } else {
@@ -216,8 +199,6 @@ class LoginPageState extends State<LoginPage> {
     final isSmallScreen = screenSize.width < 600;
 
     return Scaffold(
-      // CRITICAL: This makes the screen resize when keyboard appears
-      // Required for autofill to work properly
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
@@ -266,8 +247,6 @@ class LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-
-                  // Right side - Login Form
                   Expanded(
                     child: Center(
                       child: SingleChildScrollView(
@@ -310,7 +289,6 @@ class LoginPageState extends State<LoginPage> {
                                   ),
                                   const SizedBox(height: 40),
 
-                                  // Email Field
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
@@ -373,7 +351,6 @@ class LoginPageState extends State<LoginPage> {
                                         const SizedBox(height: 8),
                                         TextFormField(
                                           controller: _passwordController,
-                                          // CRITICAL: This hint tells Huawei this is password
                                           autofillHints: const [
                                             AutofillHints.password
                                           ],
@@ -415,7 +392,6 @@ class LoginPageState extends State<LoginPage> {
 
                                   const SizedBox(height: 15),
 
-                                  // Forgot password
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: TextButton(

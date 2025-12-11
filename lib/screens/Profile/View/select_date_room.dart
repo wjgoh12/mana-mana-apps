@@ -469,7 +469,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     // Calculate total points: room points × quantity
     final String formattedPoints = _selectedRoom != null
-        ? NumberFormat('#,###').format(_selectedRoom!.roomTypePoints)
+        ? NumberFormat('#,###')
+            .format(_selectedRoom!.roomTypePoints * _selectedQuantity)
         : '0';
 
     // 🆕 Check if data is stale

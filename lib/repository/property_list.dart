@@ -15,8 +15,6 @@ class PropertyListRepository {
     final Map<String, dynamic>? data =
         (email != null && email.isNotEmpty) ? {'email': email} : null;
 
-    debugPrint('🏢 getOwnerUnit called with email: $email, data: $data');
-
     return await _apiService
         .post(ApiEndpoint.ownerUnit, data: data)
         .then((res) {
@@ -33,8 +31,6 @@ class PropertyListRepository {
   }
 
   Future<List<OwnerPropertyList>> getSwitchedOwnerUnit({String? email}) async {
-    // If an email is provided, pass it to the API so the backend can
-    // return owner units for that email (useful for impersonation flows).
     final Map<String, dynamic>? data =
         (email != null && email.isNotEmpty) ? {'email': email} : null;
 
@@ -43,14 +39,12 @@ class PropertyListRepository {
     return await _apiService
         .post(ApiEndpoint.ownerUnit, data: data)
         .then((res) {
-      // debugPrint('🏢 getOwnerUnit response received: ${res?.length} items');
       List<dynamic> value = res ?? [];
       List<OwnerPropertyList> _ = [];
       for (int i = 0; i < value.length; i++) {
         _.add(OwnerPropertyList.fromJson(value[i], i, _apiService.baseUrl));
       }
       _.sort((a, b) => a.lseqid.compareTo(b.lseqid));
-      // debugPrint('🏢 getOwnerUnit returning ${_.length} sorted units');
       return _;
     });
   }
@@ -111,22 +105,9 @@ class PropertyListRepository {
         "unitNo": selectedUnitNo,
         "type": selectedType,
         "location": property,
-        // "ownerName": userData.first.ownerFullName,
         "email": userData.first.ownerEmail
       }
     };
-    // final Map<String, dynamic> data = {
-
-    //     "year": "2024",
-    //     // "month": 8,
-    //     "unitModel": {
-    //       "unitNo": "Q-03-01",
-    //       "type": "STUDIO SIMPLE",
-    //       "location": "MOSSAZ",
-    //       "email": "jeanw@tsitd.com"
-    //     }
-
-    // };
 
     final res = await _apiService
         .postWithBytes(ApiEndpoint.downloadPdfAnnualStatement, data: data);

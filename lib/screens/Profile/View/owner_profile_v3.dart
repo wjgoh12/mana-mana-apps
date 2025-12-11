@@ -60,7 +60,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
         return;
       }
 
-      // Call the cancel user function
       await model.cancelUser(currentUserEmail);
 
       // Clear the switch user flag
@@ -70,14 +69,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
       await model.refreshData();
 
       debugPrint("✅ Successfully reverted to original user");
-
-      // Navigate to homepage after successful revert
-      // if (mounted) {
-      //   Navigator.of(context).pushAndRemoveUntil(
-      //     MaterialPageRoute(builder: (_) => const NewDashboardV3()),
-      //     (route) => false,
-      //   );
-      // }
     } catch (e) {
       debugPrint("❌ Revert failed: $e");
       // You might want to show an error dialog here
@@ -115,6 +106,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    const grey = Color(0xFF606060);
+    const yellow = Color(0xFFFFCF00);
 
     double responsiveWidth(double value) =>
         (value / 375.0) * screenWidth; // base width
@@ -149,25 +142,12 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                       child: Text(
                         'Profile',
                         style: TextStyle(
-                          color: const Color(0xFF606060),
+                          color: grey,
                           fontFamily: 'outfit',
                           fontSize: ResponsiveSize.text(20),
                           fontWeight: FontWeight.w700,
                         ),
-                      )
-                      // GradientText1(
-                      //     text: 'Profile',
-                      //     style: TextStyle(
-                      //       fontFamily: 'outfit',
-                      //       fontSize: responsiveFont(20),
-                      //       fontWeight: FontWeight.w800,
-                      //     ),
-                      //     gradient: const LinearGradient(
-                      //       begin: Alignment.centerLeft,
-                      //       end: Alignment.centerRight,
-                      //       colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                      //     )),
-                      ),
+                      )),
                   const Spacer(),
                   // Revert impersonation button (visible only when impersonating)
                   if (GlobalDataManager().isSwitchUser) ...[
@@ -178,8 +158,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
-                            side: const BorderSide(
-                                color: Color(0xFF606060), width: 2),
+                            side: const BorderSide(color: grey, width: 2),
                           ),
                         ),
                       ),
@@ -197,7 +176,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 'Revert',
                                 style: TextStyle(
                                   fontFamily: 'outfit',
-                                  color: Color(0xFF606060),
+                                  color: grey,
                                 ),
                               ),
                             ),
@@ -213,8 +192,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
-                          side: const BorderSide(
-                              color: Color(0xFF606060), width: 2),
+                          side: const BorderSide(color: grey, width: 2),
                         ),
                       ),
                     ),
@@ -232,7 +210,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               'Logout',
                               style: TextStyle(
                                 fontFamily: 'outfit',
-                                color: Color(0xFF606060),
+                                color: grey,
                               ),
                             ),
                           ),
@@ -316,24 +294,12 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               ],
                             ),
                             SizedBox(height: 20.fSize),
-                            // Row(
-                            //   children: [
-                            //     _buildRow(context, label: 'Name'),
-                            //     SizedBox(width: responsiveWidth(8)),
-                            //     model.users.isNotEmpty
-                            //         ? _buildData(context,
-                            //             data:
-                            //                 model.users.first.ownerFullName ??
-                            //                     '')
-                            //         : const Text('Loading...'),
-                            //   ],
-                            // ),
                             Row(
                               children: [
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                 CircleAvatar(
                                   radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: const Color(0xFF606060),
+                                  backgroundColor: grey,
                                   child: Image.asset(
                                     'assets/images/ic_icon.png',
                                     width: ResponsiveSize.scaleWidth(25),
@@ -390,7 +356,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                 CircleAvatar(
                                   radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: const Color(0xFF606060),
+                                  backgroundColor: grey,
                                   child: Image.asset(
                                     'assets/images/profile_personal_email.png',
                                     width: ResponsiveSize.scaleWidth(25),
@@ -454,8 +420,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             CircleAvatar(
                                               radius:
                                                   ResponsiveSize.scaleWidth(20),
-                                              backgroundColor:
-                                                  const Color(0xFF606060),
+                                              backgroundColor: grey,
                                               child: Image.asset(
                                                 'assets/images/profile_phone.png',
                                                 color: const Color(0xFFFFFFFF),
@@ -512,7 +477,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               ],
                             ),
                             SizedBox(height: ResponsiveSize.scaleHeight(15)),
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -520,7 +484,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                 CircleAvatar(
                                   radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: const Color(0xFF606060),
+                                  backgroundColor: grey,
                                   child: Image.asset(
                                     'assets/images/profile_address.png',
                                     color: const Color(0xFFFFFFFF),
@@ -561,7 +525,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               ],
                             ),
                             SizedBox(height: 25.fSize),
-
                             SizedBox(height: ResponsiveSize.scaleHeight(20)),
                           ],
                         ),
@@ -604,10 +567,9 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: ResponsiveSize.scaleWidth(9.0),
-                                  vertical: 8.fSize),
+                                  vertical: 15.fSize),
                               child: buildFinancialDetails(model),
                             ),
-                            SizedBox(height: 12.fSize),
                           ],
                         ),
                       ),
@@ -650,9 +612,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               highlightColor: Colors.transparent,
                               //this widget responds to touch actions
                               onTap: () {
-                                //   Navigator.of(context).push(
-                                //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
-                                //   );
                                 final Uri emailLaunchUri = Uri(
                                   scheme: 'mailto',
                                   path: 'admin@manamanasuites.com',
@@ -666,7 +625,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   children: [
                                     CircleAvatar(
                                       radius: ResponsiveSize.scaleWidth(20),
-                                      backgroundColor: const Color(0xFFFFCF00),
+                                      backgroundColor: yellow,
                                       child: Image.asset(
                                           'assets/images/profile_email.png',
                                           width: ResponsiveSize.scaleWidth(20),
@@ -702,12 +661,12 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   children: [
                                     CircleAvatar(
                                       radius: ResponsiveSize.scaleWidth(20),
-                                      backgroundColor: const Color(0xFFFFCF00),
+                                      backgroundColor: yellow,
                                       child: Image.asset(
                                         'assets/images/profile_telephone.png',
                                         width: ResponsiveSize.scaleWidth(20),
                                         height: ResponsiveSize.scaleHeight(20),
-                                        color: const Color(0xFF606060),
+                                        color: grey,
                                       ),
                                     ),
                                     SizedBox(width: 20.fSize),
@@ -740,13 +699,13 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   children: [
                                     CircleAvatar(
                                       radius: ResponsiveSize.scaleWidth(20),
-                                      backgroundColor: const Color(0xFFFFCF00),
+                                      backgroundColor: yellow,
                                       child: Image.asset(
                                           'assets/images/profile_whatsapp.png',
                                           width: ResponsiveSize.scaleWidth(20),
                                           height:
                                               ResponsiveSize.scaleHeight(20),
-                                          color: const Color(0xFF606060)),
+                                          color: grey),
                                     ),
                                     SizedBox(width: 20.fSize),
                                     Text(
@@ -870,6 +829,12 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                     ),
                                                     const SizedBox(width: 8),
                                                     ElevatedButton(
+                                                      style: ButtonStyle(
+                                                        backgroundColor:
+                                                            WidgetStateProperty
+                                                                .all(Colors
+                                                                    .white),
+                                                      ),
                                                       onPressed: () async {
                                                         final email =
                                                             emailController.text
@@ -909,10 +874,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                                 'User Invalid';
                                                           });
                                                           return;
-                                                        } // Ask user to confirm before switching. The
-                                                        // confirmation dialog performs the switch and
-                                                        // shows loading while the operation runs. It
-                                                        // returns true on success.
+                                                        }
                                                         final doSwitch =
                                                             await showDialog<
                                                                 bool>(
@@ -923,6 +885,9 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                             builder: (ctx,
                                                                 setStateDialog) {
                                                               return AlertDialog(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .white,
                                                                 title: const Text(
                                                                     'Confirm Switch',
                                                                     style: TextStyle(
@@ -956,10 +921,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                                         () async {
                                                                       setStateDialog(
                                                                           () {});
-
-                                                                      // Start a temporary, client-side impersonation
-                                                                      // that clears the current account data immediately
-                                                                      // and loads the requested email in the background.
                                                                       await model
                                                                           .switchUserAndReload(
                                                                               email);
@@ -991,10 +952,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                           return;
                                                         }
 
-                                                        // Switch succeeded inside the confirmation dialog.
-                                                        // Close the Switch User dialog and navigate to
-                                                        // the refreshed dashboard.
-                                                        // ignore: use_build_context_synchronously
                                                         Navigator.of(context)
                                                             .pop();
                                                         // // ignore: use_build_context_synchronously
@@ -1032,8 +989,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 shape: WidgetStateProperty.all(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    side: const BorderSide(
-                                        color: Color(0xFF606060), width: 2),
+                                    side: BorderSide(color: grey, width: 2),
                                   ),
                                 ),
                               ),
@@ -1041,7 +997,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 'Switch User',
                                 style: TextStyle(
                                   fontFamily: 'outfit',
-                                  color: Color(0xFF606060),
+                                  color: grey,
                                 ),
                               ),
                             ),
@@ -1063,7 +1019,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             decoration: BoxDecoration(
                               border:
                                   Border.all(color: const Color(0xFF3E51FF)),
-                              color: const Color(0xFF606060),
+                              color: grey,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: TextButton(
@@ -1100,7 +1056,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             decoration: BoxDecoration(
                               border:
                                   Border.all(color: const Color(0xFF3E51FF)),
-                              color: const Color(0xFF606060),
+                              color: grey,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: TextButton(
@@ -1235,7 +1191,7 @@ Widget buildFinancialDetails(OwnerProfileVM model) {
             final unitNo = (unit?.unitno as String?) ?? '-';
 
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
+              padding: const EdgeInsets.only(bottom: 25.0),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -1360,7 +1316,6 @@ Widget buildFinancialDetails(OwnerProfileVM model) {
             );
           }).toList(),
         ),
-        SizedBox(height: 12.fSize),
       ],
     ],
   );

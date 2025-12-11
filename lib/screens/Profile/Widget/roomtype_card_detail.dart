@@ -51,7 +51,6 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
     with AutomaticKeepAliveClientMixin {
   Uint8List? _bytes;
   bool _decoding = false;
-  // Local selection state used when multiSelectable == true
   bool _localSelected = false;
 
   @override
@@ -64,8 +63,6 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
   @override
   void didUpdateWidget(covariant RoomtypeCardDetail oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // If the parent controls selection (multiSelectable==false), reflect
-    // updates from parent. If multiSelectable is true, keep local state.
     if (!widget.multiSelectable && oldWidget.isSelected != widget.isSelected) {
       _localSelected = widget.isSelected;
     }
@@ -86,7 +83,6 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
         _bytes = base64Decode(widget.roomType.pic);
       }
     } catch (e) {
-      // decoding failed -> leave _bytes null
       _bytes = null;
     } finally {
       if (mounted) {
@@ -106,7 +102,6 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
         width: ResponsiveSize.scaleWidth(14));
     super.build(context); // for AutomaticKeepAliveClientMixin
 
-    // Use the cached _bytes (or placeholder)
     final imageWidget = _bytes != null
         ? Image.memory(
             _bytes!,
@@ -171,9 +166,6 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
 
             if (!widget.enabled) return;
 
-            // If multiSelectable is enabled, manage selection locally so
-            // multiple cards can be selected independently. Otherwise,
-            // fallback to parent-controlled selection behavior (single-select).
             if (widget.multiSelectable) {
               _localSelected = !_localSelected;
               setState(() {});
@@ -467,8 +459,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       ),
                                       // only show second bed type when present
                                       if (widget.roomType.bedroomDetails
-                                                  .length >
-                                              0 &&
+                                              .isNotEmpty &&
                                           widget.roomType.bedroomDetails[0]
                                               .bedtype2.isNotEmpty) ...[
                                         SizedBox(
