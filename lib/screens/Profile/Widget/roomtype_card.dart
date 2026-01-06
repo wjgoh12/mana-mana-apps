@@ -20,6 +20,7 @@ class RoomtypeCard extends StatefulWidget {
   final int numBedrooms;
   final String bedRoom1;
   final String bedRoom2;
+  final double? displayedPoints;
 
   final Function(RoomType? room)? onSelect;
   final Function(int quantity)? onQuantityChanged;
@@ -42,6 +43,7 @@ class RoomtypeCard extends StatefulWidget {
     this.onQuantityChanged,
     this.multiSelectable = false,
     required this.checkAffordable,
+    this.displayedPoints,
   });
 
   @override
@@ -313,7 +315,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.roomType.roomTypePoints)}',
+                          'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.displayedPoints ?? widget.roomType.roomTypePoints)}',
                         ),
                       ),
                     ],
@@ -442,7 +444,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            '${NumberFormat("#,###").format(widget.roomType.roomTypePoints)} points',
+                            '${NumberFormat("#,###").format(widget.displayedPoints ?? widget.roomType.roomTypePoints)} points',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: ResponsiveSize.text(12),
@@ -826,18 +828,44 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: widget.roomType.bedroomDetails.isNotEmpty &&
-                              widget.roomType.bedroomDetails[0]
-                                  .bedroomFacilities.isNotEmpty
-                          ? Wrap(
-                              spacing: ResponsiveSize.scaleWidth(12),
-                              runSpacing: ResponsiveSize.scaleHeight(6),
-                              children: widget
-                                  .roomType.bedroomDetails[0].bedroomFacilities
-                                  .map((facility) {
-                                return Row(
+                      child: Builder(builder: (context) {
+                        // Check if there are any bedroom details with facilities
+                        final bedroomDetails = widget.roomType.bedroomDetails;
+                        final hasAnyFacilities = bedroomDetails.any(
+                            (bedroom) => bedroom.bedroomFacilities.isNotEmpty);
+
+                        if (!hasAnyFacilities) {
+                          return Text(
+                            'None',
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.text(11),
+                              fontFamily: 'Outfit',
+                              color: Colors.grey[600],
+                            ),
+                          );
+                        }
+
+                        // Build facilities grouped by room: "Room 1: [Icon] title  Room 2: [Icon] title"
+                        List<Widget> roomFacilityWidgets = [];
+                        for (int i = 0; i < bedroomDetails.length; i++) {
+                          final bedroom = bedroomDetails[i];
+                          if (bedroom.bedroomFacilities.isNotEmpty) {
+                            for (final facility in bedroom.bedroomFacilities) {
+                              roomFacilityWidgets.add(
+                                Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    Text(
+                                      'Room ${i + 1}',
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.text(11),
+                                        fontFamily: 'Outfit',
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        width: ResponsiveSize.scaleWidth(12)),
                                     // Decode and display base64 icon
                                     if (facility.icon.isNotEmpty)
                                       Image.memory(
@@ -849,15 +877,14 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                           // Fallback if image decode fails
                                           return Icon(
                                             Icons.check_circle_outline,
-                                            size:
-                                                ResponsiveSize.scaleHeight(16),
+                                            size: ResponsiveSize.scaleHeight(16),
                                             color: Colors.grey[600],
                                           );
                                         },
                                       ),
                                     if (facility.icon.isNotEmpty)
                                       SizedBox(
-                                          width: ResponsiveSize.scaleWidth(6)),
+                                          width: ResponsiveSize.scaleWidth(4)),
                                     Text(
                                       facility.facilitiesName,
                                       style: TextStyle(
@@ -867,17 +894,23 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       ),
                                     ),
                                   ],
-                                );
-                              }).toList(),
-                            )
-                          : Text(
-                              'None',
-                              style: TextStyle(
-                                fontSize: ResponsiveSize.text(11),
-                                fontFamily: 'Outfit',
-                                color: Colors.grey[600],
-                              ),
-                            ),
+                                ),
+                              );
+                            }
+                          }
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: roomFacilityWidgets.map((widget) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: ResponsiveSize.scaleHeight(6)),
+                              child: widget,
+                            );
+                          }).toList(),
+                        );
+                      }),
                     ),
                     const SizedBox(height: 12),
                     if (displayedSelected)

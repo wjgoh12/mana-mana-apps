@@ -13,6 +13,7 @@ const gradientColor2 = LinearGradient(
     end: Alignment.bottomCenter,
     colors: [Color(0XFF8C71E7), Color(0XFF4313E9)]);
 
+// ignore: must_be_immutable
 class BarChartSample extends StatelessWidget {
   final NewDashboardVM model;
   BarChartSample({required this.model, Key? key}) : super(key: key);

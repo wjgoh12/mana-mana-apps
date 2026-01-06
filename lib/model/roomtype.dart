@@ -79,13 +79,6 @@ class RoomType {
     return int.tryParse(v.toString()) ?? 0;
   }
 
-  static bool _safeBool(dynamic v) {
-    if (v == null) return false;
-    if (v is bool) return v;
-    final s = v.toString().toLowerCase();
-    return s == 'true' || s == '1' || s == 'yes';
-  }
-
   static double _parseToDouble(dynamic value) {
     if (value == null) return 0.0;
     if (value is double) return value;

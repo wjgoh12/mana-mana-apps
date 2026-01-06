@@ -433,7 +433,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         : 0;
 
     // Calculate total points: room points × quantity
-    final totalPoints = room.roomTypePoints * quantity;
+    final totalPoints = room.roomTypePoints;
     final isAffordable = totalPoints <= userPoints;
 
     debugPrint("💰 Affordability check:");
@@ -955,25 +955,36 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       final end =
                           _rangeEnd ?? start.add(const Duration(days: 1));
 
+                      final isSelected = displayName == (_selectedRoomId ?? '');
+                      final effectiveQuantity =
+                          isSelected ? _selectedQuantity : 1;
+                      // Calculate unit price (points per 1 room) for display
+                      double displayedPoints = room.roomTypePoints;
+                      if (!isSelected && _selectedQuantity > 1) {
+                        displayedPoints =
+                            room.roomTypePoints / _selectedQuantity;
+                      }
+
                       return RoomtypeCard(
                         key: ValueKey(displayName),
                         roomType: room,
                         displayName: displayName,
-                        isSelected: displayName == (_selectedRoomId ?? ''),
+                        isSelected: isSelected,
                         enabled: true,
                         startDate: start,
                         endDate: end,
-                        quantity: _selectedQuantity,
+                        quantity: effectiveQuantity,
                         numberofPax: numberOfPax,
                         numBedrooms: numBedRooms,
+                        displayedPoints: displayedPoints,
                         checkAffordable: (room, duration) {
                           final userPoints = vm.UserPointBalance.isNotEmpty
                               ? vm.UserPointBalance.first
                                   .redemptionBalancePoints
                               : 0;
-                          final totalPoints =
-                              room.roomTypePoints * _selectedQuantity;
-                          return totalPoints <= userPoints;
+                          // Always check affordability against the TOTAL points required (room.roomTypePoints)
+                          // displayedPoints might be the unit price, which is just for display.
+                          return room.roomTypePoints <= userPoints;
                         },
                         onSelect: (selectedRoom) {
                           setState(() {
@@ -990,11 +1001,9 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                                     selectedRoom.roomTypeName)
                                 : null;
 
-                            // Reset quantity to 1 when:
-                            // 1. Room is deselected (selectedRoom == null)
-                            // 2. Switching to a different room
                             if (selectedRoom == null || isDifferentRoom) {
                               _selectedQuantity = 1;
+                              _fetchRoomTypesAndMaintainSelection();
                             }
                           });
                         },
@@ -1196,6 +1205,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ? ownerVM.UserPointBalance.first.redemptionBalancePoints
         : 0;
 
+    // Calculate formatted points from the selected room
+    final formatter = NumberFormat('#,###');
+    final totalPoints = _selectedRoom!.roomTypePoints;
+    final formattedPoints = formatter.format(totalPoints);
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -1210,6 +1224,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             ownerLocation: widget.ownedLocation,
             ownerUnitNo: widget.ownedUnitNo,
             bookingLocationName: widget.location,
+            totalPoints: formattedPoints,
           ),
         ),
       ),

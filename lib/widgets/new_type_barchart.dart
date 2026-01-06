@@ -13,6 +13,7 @@ const gradientColor2 = LinearGradient(
     end: Alignment.bottomCenter,
     colors: [Color(0XFF8C71E7), Color(0XFF4313E9)]);
 
+// ignore: must_be_immutable
 class BarChartSample extends StatelessWidget {
   final NewDashboardVM model;
   BarChartSample({required this.model, Key? key}) : super(key: key);
@@ -39,27 +40,28 @@ class BarChartSample extends StatelessWidget {
       LinearGradient(colors: [Color(0xFF2900B7), Color(0xFF120051)]);
 
   BarChartGroupData generateBarGroup(
-  int x,
-  double value1,
-  double value2,
-) {
-  return BarChartGroupData(
-    x: x,
-    groupVertically: true,  // Stack bars vertically
-    barsSpace: 2,
-    barRods: [
-      BarChartRodData(
-        toY: value1 + value2,  // Combined height
-        width: 20,  // Wider rectangular bars
-        borderRadius: BorderRadius.zero,  // Rectangle shape
-        rodStackItems: [
-          BarChartRodStackItem(0, value1, Colors.blue),  // First value
-          BarChartRodStackItem(value1, value1 + value2, Colors.red),  // Second value
-        ],
-      ),
-    ],
-  );
-}
+    int x,
+    double value1,
+    double value2,
+  ) {
+    return BarChartGroupData(
+      x: x,
+      groupVertically: true,
+      barsSpace: 2,
+      barRods: [
+        BarChartRodData(
+          toY: value1 + value2,
+          width: 20,
+          borderRadius: BorderRadius.zero,
+          rodStackItems: [
+            BarChartRodStackItem(0, value1, Colors.blue),
+            BarChartRodStackItem(
+                value1, value1 + value2, Colors.red), // Second value
+          ],
+        ),
+      ],
+    );
+  }
 
   int touchedGroupIndex = -1;
 
@@ -67,72 +69,48 @@ class BarChartSample extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasData =
         model.monthlyProfitOwner.isNotEmpty || model.monthlyBlcOwner.isNotEmpty;
-          final dataList = [
-            ...List.generate(
-                12,
-                (index) => _BarData(
-                    gradientColor1,
-                    index < model.monthlyProfitOwner.length
-                        ? model.monthlyProfitOwner[index]['total']
-                        : 0,
-                    index < model.monthlyBlcOwner.length
-                        ? model.monthlyBlcOwner[index]['total']
-                        : 0
-                    // index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year ? model.monthlyProfitOwner[index]['total'] : 0,
-                    // index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year ? model.monthlyBlcOwner[index]['total'] : 0
-                    )),
-          ];
 
-          final List<String> monthNames = List.generate(12, (index) {
-            String month;
-            if (index < model.monthlyBlcOwner.length) {
-              month = model.monthlyBlcOwner[index]['month'].toString();
-            } else if (index < model.monthlyProfitOwner.length) {
-              month = model.monthlyProfitOwner[index]['month'].toString();
-            } else {
-              month = '0';
-            }
-            // if (index < model.monthlyBlcOwner.length && model.monthlyBlcOwner[index]['year'] == DateTime.now().year) {
-            //   month = model.monthlyBlcOwner[index]['month'].toString();
-            // } else if (index < model.monthlyProfitOwner.length && model.monthlyProfitOwner[index]['year'] == DateTime.now().year) {
-            //   month = model.monthlyProfitOwner[index]['month'].toString();
-            // } else {
-            //   month = '0';
-            // }
+    final List<String> monthNames = List.generate(12, (index) {
+      String month;
+      if (index < model.monthlyBlcOwner.length) {
+        month = model.monthlyBlcOwner[index]['month'].toString();
+      } else if (index < model.monthlyProfitOwner.length) {
+        month = model.monthlyProfitOwner[index]['month'].toString();
+      } else {
+        month = '0';
+      }
 
-            switch (month) {
-              case '1':
-                return 'Jan';
-              case '2':
-                return 'Feb';
-              case '3':
-                return 'Mar';
-              case '4':
-                return 'Apr';
-              case '5':
-                return 'May';
-              case '6':
-                return 'Jun';
-              case '7':
-                return 'Jul';
-              case '8':
-                return 'Aug';
-              case '9':
-                return 'Sep';
-              case '10':
-                return 'Oct';
-              case '11':
-                return 'Nov';
-              case '12':
-                return 'Dec';
-              default:
-                return '';
-            }
-          });
-          // _BarData(gradientColor1, 160, 125),
-          // _BarData(gradientColor1, 170, 110),
+      switch (month) {
+        case '1':
+          return 'Jan';
+        case '2':
+          return 'Feb';
+        case '3':
+          return 'Mar';
+        case '4':
+          return 'Apr';
+        case '5':
+          return 'May';
+        case '6':
+          return 'Jun';
+        case '7':
+          return 'Jul';
+        case '8':
+          return 'Aug';
+        case '9':
+          return 'Sep';
+        case '10':
+          return 'Oct';
+        case '11':
+          return 'Nov';
+        case '12':
+          return 'Dec';
+        default:
+          return '';
+      }
+    });
 
-          return Padding(
+    return Padding(
       padding: const EdgeInsets.all(24),
       child: SizedBox(
         width: 80.width,
@@ -197,7 +175,8 @@ class BarChartSample extends StatelessWidget {
                       ),
                       barGroups: List.generate(12, (index) {
                         final profit = index < model.monthlyProfitOwner.length
-                            ? model.monthlyProfitOwner[index]['total'].toDouble()
+                            ? model.monthlyProfitOwner[index]['total']
+                                .toDouble()
                             : 0.0;
                         final blc = index < model.monthlyBlcOwner.length
                             ? model.monthlyBlcOwner[index]['total'].toDouble()
@@ -249,10 +228,10 @@ class BarChartSample extends StatelessWidget {
         ),
       ),
     );
-        
   }
 }
 
+// ignore: unused_element
 class _BarData {
   const _BarData(this.color, this.value, this.shadowValue);
   final LinearGradient color;
@@ -288,7 +267,7 @@ class ColoredSideTitleWidget extends StatelessWidget {
             style: TextStyle(fontSize: 15.fSize),
             gradient: monthColors,
           ),
-          if (monthNames[index].isNotEmpty) // Only show year if month exists
+          if (monthNames[index].isNotEmpty)
             GradientText1(
               text: year.toString(),
               style: TextStyle(fontSize: 12.fSize),

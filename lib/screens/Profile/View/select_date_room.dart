@@ -436,7 +436,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         : 0;
 
     // Calculate total points: room points × quantity
-    final totalPoints = room.roomTypePoints * quantity;
+    final totalPoints = room.roomTypePoints;
     final isAffordable = totalPoints <= userPoints;
     
     debugPrint("💰 Affordability check:");
@@ -470,7 +470,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     // Calculate total points: room points × quantity
     final String formattedPoints = _selectedRoom != null
         ? NumberFormat('#,###')
-            .format(_selectedRoom!.roomTypePoints * _selectedQuantity)
+            .format(_selectedRoom!.roomTypePoints)
         : '0';
 
     // 🆕 Check if data is stale
@@ -959,25 +959,33 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       final end =
                           _rangeEnd ?? start.add(const Duration(days: 1));
 
+                      final isSelected = displayName == (_selectedRoomId ?? '');
+                      final effectiveQuantity =
+                          isSelected ? _selectedQuantity : 1;
+                      final effectivePoints = isSelected
+                          ? room.roomTypePoints
+                          : (_selectedQuantity > 0
+                              ? room.roomTypePoints / _selectedQuantity
+                              : room.roomTypePoints);
+
                       return RoomtypeCard(
-                        key: ValueKey(displayName),
+                        key: ValueKey('$displayName-$_selectedQuantity'),
                         roomType: room,
                         displayName: displayName,
-                        isSelected: displayName == (_selectedRoomId ?? ''),
+                        isSelected: isSelected,
                         enabled: true,
                         startDate: start,
                         endDate: end,
-                        quantity: _selectedQuantity,
+                        quantity: effectiveQuantity,
                         numberofPax: numberOfPax,
                         numBedrooms: numBedRooms,
+                        displayedPoints: effectivePoints,
                         checkAffordable: (room, duration) {
                           final userPoints = vm.UserPointBalance.isNotEmpty
                               ? vm.UserPointBalance.first
                                   .redemptionBalancePoints
                               : 0;
-                          final totalPoints =
-                              room.roomTypePoints * _selectedQuantity;
-                          return totalPoints <= userPoints;
+                          return effectivePoints <= userPoints;
                         },
                         onSelect: (selectedRoom) {
                           setState(() {
@@ -998,6 +1006,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                             // 2. Switching to a different room
                             if (selectedRoom == null || isDifferentRoom) {
                               _selectedQuantity = 1;
+                              _fetchRoomTypesAndMaintainSelection();
                             }
                           });
                         },

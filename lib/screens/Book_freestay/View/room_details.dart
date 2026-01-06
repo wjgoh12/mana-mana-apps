@@ -20,6 +20,7 @@ class RoomDetails extends StatefulWidget {
   final String ownerUnitNo;
   final String bookingLocationName;
   final bool isBookingMode;
+  final String? totalPoints;
 
   const RoomDetails({
     Key? key,
@@ -31,10 +32,12 @@ class RoomDetails extends StatefulWidget {
     required this.ownerLocation,
     required this.ownerUnitNo,
     required this.bookingLocationName,
+    required this.totalPoints,
     this.isBookingMode = false,
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _RoomDetailsState createState() => _RoomDetailsState();
 }
 
@@ -45,7 +48,6 @@ class _RoomDetailsState extends State<RoomDetails> {
   bool _highlightCheckBox = false;
   bool _isSubmitting = false;
 
-  // TODO: Replace with your actual admin email
   // ignore: constant_identifier_names
   static const String ADMIN_EMAIL = 'admin@example.com';
 
@@ -54,7 +56,6 @@ class _RoomDetailsState extends State<RoomDetails> {
     super.initState();
   }
 
-  // Send email notification to admin (via backend API)
   Future<void> sendEmailNotificationToAdmin({
     required String guestName,
     required String userEmail,
@@ -89,11 +90,15 @@ class _RoomDetailsState extends State<RoomDetails> {
       debugPrint('✅ Email notification sent to admin: $ADMIN_EMAIL');
     } catch (e) {
       debugPrint('❌ Error sending email notification: $e');
-      // Don’t throw, so booking still goes through
     }
   }
 
-  double totalPoints() => widget.room.roomTypePoints;
+  double totalPoints() {
+    if (widget.totalPoints == null) return 0.0;
+    // Remove formatting like commas before parsing
+    String cleanString = widget.totalPoints!.replaceAll(',', '');
+    return double.tryParse(cleanString) ?? 0.0;
+  }
 
   String formattedTotalPoints() {
     final formatter = NumberFormat('#,###');
@@ -106,14 +111,12 @@ class _RoomDetailsState extends State<RoomDetails> {
 
     final firstToken = s.split(RegExp(r'\s+'))[0];
 
-    // If the first token starts with a digit (eg. "22M" building code), strip it
     if (RegExp(r'^\d').hasMatch(firstToken)) {
       return s.substring(firstToken.length).trim();
     }
 
     final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
-    // Only strip very short all-caps tokens (likely codes/abbreviations).
-    // Keep longer words which are meaningful descriptors.
+
     if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 3) {
       return s.substring(firstToken.length).trim();
     }
@@ -137,7 +140,7 @@ class _RoomDetailsState extends State<RoomDetails> {
           );
         }
       });
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: Colors.white,
         body: Center(
           child: Text("Property state not found"),
@@ -188,23 +191,17 @@ class _RoomDetailsState extends State<RoomDetails> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Use RoomtypeCard widget directly
               RoomtypeCardDetail(
                 roomType: widget.room,
                 displayName: sanitizeRoomTypeName(widget.room.roomTypeName),
-                isSelected: false, // No selection in details page
-                enabled:
-                    true, // Set to true to avoid white overlay (non-interactive because onSelect is null)
+                isSelected: false,
+                enabled: true,
                 startDate: widget.checkIn ?? DateTime.now(),
                 endDate: widget.checkOut ?? DateTime.now(),
-                onSelect: null, // No selection callback = not interactive
-                checkAffordable: (room, duration) =>
-                    true, // Always affordable in details view
+                onSelect: null,
+                checkAffordable: (room, duration) => true,
               ),
-
               const SizedBox(height: 16.0),
-
-              /// Room details card
               Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: ResponsiveSize.scaleWidth(10)),
@@ -271,7 +268,6 @@ class _RoomDetailsState extends State<RoomDetails> {
                     ),
                     const SizedBox(height: 20),
 
-                    /// Guest name input
                     Row(
                       children: [
                         Text(
@@ -315,7 +311,6 @@ class _RoomDetailsState extends State<RoomDetails> {
                                   'Compulsory',
                                   style: TextStyle(
                                     fontSize: ResponsiveSize.text(12),
-                                    // color: Colors.red,
                                     fontFamily: 'Outfit',
                                   ),
                                 ),
@@ -354,7 +349,6 @@ class _RoomDetailsState extends State<RoomDetails> {
                     ),
                     const SizedBox(height: 16),
 
-                    /// Expandable Terms Widget
                     ExpandableTermsWidget(
                       initialValue: _isChecked,
                       highlight: _highlightCheckBox,
@@ -461,19 +455,6 @@ class _RoomDetailsState extends State<RoomDetails> {
                                     );
 
                                     if (result != null) {
-                                      // Send email notification to admin
-                                      // await sendEmailNotificationToAdmin(
-                                      //   guestName:
-                                      //       _guestNameController.text.trim(),
-                                      //   userEmail: userEmail,
-                                      //   checkIn: widget.checkIn,
-                                      //   checkOut: widget.checkOut,
-                                      //   points: totalPoints(),
-                                      //   roomType: widget.room.roomTypeName,
-                                      //   bookingLocation:
-                                      //       widget.bookingLocationName,
-                                      // );
-
                                       showDialog(
                                         context: context,
                                         builder: (_) => AlertDialog(
@@ -651,7 +632,6 @@ class _RoomDetailsState extends State<RoomDetails> {
   }
 }
 
-// Expandable Terms Widget
 class ExpandableTermsWidget extends StatefulWidget {
   final bool initialValue;
   final ValueChanged<bool> onChecked;
@@ -791,7 +771,7 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
           ),
         ),
         const SizedBox(height: 8),
-        // Checkbox row
+
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -801,7 +781,7 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
               BoxShadow(
                 color: Colors.grey.withOpacity(0.2),
                 blurRadius: 5,
-                offset: const Offset(0, 3), // changes position of shadow
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -809,7 +789,7 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
             children: [
               Checkbox(
                 value: isChecked,
-                checkColor: Colors.white, // color of the tick mark
+                checkColor: Colors.white,
                 activeColor: const Color(0xFFF48D47B),
                 side: BorderSide(
                   color: widget.highlight ? Colors.red : Colors.grey,

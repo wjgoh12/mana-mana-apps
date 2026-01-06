@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math' show min;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -53,11 +52,12 @@ class NativeAuthService {
         // Invalid credentials
         print('DEBUG: Authentication failed - 401 Unauthorized');
         print('DEBUG: Response body: ${response.body}');
-        
+
         // Try to parse error details
         try {
           final errorData = json.decode(response.body);
-          final errorDesc = errorData['error_description'] ?? 'Invalid username or password';
+          final errorDesc =
+              errorData['error_description'] ?? 'Invalid username or password';
           print('DEBUG: Error description: $errorDesc');
           return AuthResult(
             success: false,
@@ -132,14 +132,11 @@ class NativeAuthService {
           RegExp(r'<form[^>]*action="([^"]*)"[^>]*>', caseSensitive: false)
               .firstMatch(htmlBody);
       if (formMatch != null) {
-        final actionUrl = formMatch.group(1)!;
       } else {}
 
       // Extract parameters from the form action URL
       String? sessionCode;
       String? execution;
-      String? tabId;
-      String? clientData;
       Uri? postUrl;
 
       if (formMatch != null) {
@@ -156,8 +153,6 @@ class NativeAuthService {
         postUrl = uri; // Use the complete URL from the form action
         sessionCode = uri.queryParameters['session_code'];
         execution = uri.queryParameters['execution'];
-        tabId = uri.queryParameters['tab_id'];
-        clientData = uri.queryParameters['client_data'];
       }
 
       if (sessionCode == null || sessionCode.isEmpty) {
@@ -371,7 +366,6 @@ class NativeAuthService {
 
       final String userId = users.first['id'];
 
-      // Fetch full user representation to inspect requiredActions
       final Uri userUrl = Uri.parse(
           '${EnvConfig.keycloakBaseUrl}/auth/admin/realms/mana/users/$userId');
 
@@ -472,7 +466,6 @@ class NativeAuthService {
       final String userId = users.first['id'];
       print('DEBUG: Found user with ID: $userId');
 
-      // Reset password via Admin API with temporary: false so it becomes permanent
       final Uri resetUrl = Uri.parse(
           '${EnvConfig.keycloakBaseUrl}/auth/admin/realms/mana/users/$userId/reset-password');
 
@@ -517,7 +510,6 @@ class NativeAuthService {
       return AuthResult(success: false, message: 'Network error: $e');
     }
   }
-
 }
 
 class AuthResult {

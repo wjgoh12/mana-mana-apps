@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.mana_mana_app"
+          package= "com.dfs.manamanaowners"
+            
           xmlns:tools="http://schemas.android.com/tools">
 <uses-permission android:name="android.permission.CALL_PHONE"/>
 <uses-permission android:name="android.permission.INTERNET" />

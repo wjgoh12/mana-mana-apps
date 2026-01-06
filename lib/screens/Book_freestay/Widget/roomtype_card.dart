@@ -18,6 +18,7 @@ class RoomtypeCard extends StatefulWidget {
   final int quantity;
   final int numberofPax;
   final int numBedrooms;
+  final double? displayedPoints;
 
   final Function(RoomType? room)? onSelect;
   final Function(int quantity)? onQuantityChanged;
@@ -38,6 +39,7 @@ class RoomtypeCard extends StatefulWidget {
     this.onQuantityChanged,
     this.multiSelectable = false,
     required this.checkAffordable,
+    this.displayedPoints,
   });
 
   @override
@@ -309,7 +311,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.roomType.roomTypePoints)}',
+                          'Insufficient points for ${widget.displayName}. Required points: ${NumberFormat("#,###").format(widget.displayedPoints ?? widget.roomType.roomTypePoints)}',
                         ),
                       ),
                     ],
@@ -438,7 +440,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            '${NumberFormat("#,###").format(widget.roomType.roomTypePoints)} points',
+                            '${NumberFormat("#,###").format(widget.displayedPoints ?? widget.roomType.roomTypePoints)} points',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: ResponsiveSize.text(12),
@@ -642,14 +644,6 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       ],
                                     ],
                                   ),
-                                // Text(
-                                //   ' ${widget.roomType.numBedrooms} room',
-                                //   style: TextStyle(
-                                //     fontSize: ResponsiveSize.text(11),
-                                //     fontFamily: 'Outfit',
-                                //     color: Colors.grey[600],
-                                //   ),
-                                // ),
                               ],
                             ),
                           if (widget.roomType.numBedrooms == 2)
@@ -870,7 +864,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       SizedBox(
                                           width: ResponsiveSize.scaleWidth(6)),
                                     Text(
-                                      facility.facilitiesName,
+                                      '${facility.facilitiesName}\n',
                                       style: TextStyle(
                                         fontSize: ResponsiveSize.text(11),
                                         fontFamily: 'Outfit',

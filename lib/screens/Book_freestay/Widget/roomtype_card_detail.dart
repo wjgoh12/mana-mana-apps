@@ -60,8 +60,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
   @override
   void didUpdateWidget(covariant RoomtypeCardDetail oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // If the parent controls selection (multiSelectable==false), reflect
-    // updates from parent. If multiSelectable is true, keep local state.
+
     if (!widget.multiSelectable && oldWidget.isSelected != widget.isSelected) {
       _localSelected = widget.isSelected;
     }
@@ -75,14 +74,12 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
       if (widget.roomType.pic.isEmpty) {
         _bytes = null;
       } else if (widget.roomType.pic.startsWith('data:image')) {
-        // data URI: parse
         final data = Uri.parse(widget.roomType.pic).data;
         _bytes = data?.contentAsBytes();
       } else {
         _bytes = base64Decode(widget.roomType.pic);
       }
     } catch (e) {
-      // decoding failed -> leave _bytes null
       _bytes = null;
     } finally {
       if (mounted) {
@@ -126,7 +123,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
 
     return Container(
       margin: const EdgeInsets.all(8),
-      height: displayedSelected ? 380 : 350,
+      constraints: BoxConstraints(minHeight: displayedSelected ? 380 : 350),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -185,7 +182,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
             }
           },
           child: Column(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Image Stack Section
               Stack(
@@ -279,14 +276,14 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Text(
-                            '${NumberFormat("#,###").format(widget.roomType.roomTypePoints)} points',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: ResponsiveSize.text(12),
-                              fontFamily: 'Outfit',
-                            ),
-                          ),
+                          // Text(
+                          //   '${NumberFormat("#,###").format(widget.roomType.roomTypePoints)} points',
+                          //   style: TextStyle(
+                          //     color: Colors.white,
+                          //     fontSize: ResponsiveSize.text(12),
+                          //     fontFamily: 'Outfit',
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -620,19 +617,43 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: widget.roomType.bedroomDetails.isNotEmpty &&
-                              widget.roomType.bedroomDetails[0]
-                                  .bedroomFacilities.isNotEmpty
-                          ? Wrap(
-                              spacing: ResponsiveSize.scaleWidth(12),
-                              runSpacing: ResponsiveSize.scaleHeight(6),
-                              children: widget
-                                  .roomType.bedroomDetails[0].bedroomFacilities
-                                  .map((facility) {
-                                return Row(
+                      child: Builder(builder: (context) {
+                        final bedroomDetails = widget.roomType.bedroomDetails;
+                        final hasAnyFacilities = bedroomDetails.any(
+                            (bedroom) => bedroom.bedroomFacilities.isNotEmpty);
+
+                        if (!hasAnyFacilities) {
+                          return Text(
+                            'None',
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.text(11),
+                              fontFamily: 'Outfit',
+                              color: Colors.grey[600],
+                            ),
+                          );
+                        }
+
+                        // Build facilities grouped by room
+                        List<Widget> roomFacilityWidgets = [];
+                        for (int i = 0; i < bedroomDetails.length; i++) {
+                          final bedroom = bedroomDetails[i];
+                          if (bedroom.bedroomFacilities.isNotEmpty) {
+                            for (final facility in bedroom.bedroomFacilities) {
+                              roomFacilityWidgets.add(
+                                Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    // Decode and display base64 icon
+                                    Text(
+                                      'Room ${i + 1}',
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.text(11),
+                                        fontFamily: 'Outfit',
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        width: ResponsiveSize.scaleWidth(12)),
                                     if (facility.icon.isNotEmpty)
                                       Image.memory(
                                         base64Decode(facility.icon),
@@ -651,7 +672,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       ),
                                     if (facility.icon.isNotEmpty)
                                       SizedBox(
-                                          width: ResponsiveSize.scaleWidth(6)),
+                                          width: ResponsiveSize.scaleWidth(4)),
                                     Text(
                                       facility.facilitiesName,
                                       style: TextStyle(
@@ -661,17 +682,23 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                                       ),
                                     ),
                                   ],
-                                );
-                              }).toList(),
-                            )
-                          : Text(
-                              'None',
-                              style: TextStyle(
-                                fontSize: ResponsiveSize.text(11),
-                                fontFamily: 'Outfit',
-                                color: Colors.grey[600],
-                              ),
-                            ),
+                                ),
+                              );
+                            }
+                          }
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: roomFacilityWidgets.map((widget) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: ResponsiveSize.scaleHeight(6)),
+                              child: widget,
+                            );
+                          }).toList(),
+                        );
+                      }),
                     ),
                     const SizedBox(height: 12),
                     if (displayedSelected)
