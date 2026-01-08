@@ -1,5 +1,4 @@
 import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_rate_dropdown.dart';
-import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_line_chart.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/profit_chart.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +7,11 @@ import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
 
-final labelColor1 = const Color(0xFF8C71E7);
-final barBackgroundColor = const Color(0xFFDDD7FF);
+const labelColor1 = Color(0xFF8C71E7);
+const barBackgroundColor = Color(0xFFDDD7FF);
 
 class ProfitBox extends StatefulWidget {
-  final NewDashboardVM_v3? model; // Optional model parameter
+  final NewDashboardVM_v3? model;
 
   const ProfitBox({super.key, this.model});
 
@@ -49,15 +48,13 @@ class _ProfitBoxState extends State<ProfitBox> {
   Widget build(BuildContext context) {
     final model = widget.model ?? context.read<NewDashboardVM_v3>();
 
-    final width = 350.0;
-    final height = 280.0;
-    final fontScale = 1.0;
+    const height = 280.0;
 
     return Padding(
         padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.05, vertical: 4),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Important: prevents extra space
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               // width: width,
@@ -81,7 +78,7 @@ class _ProfitBoxState extends State<ProfitBox> {
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsets.only(left: 10, top: 15),
+                          padding: const EdgeInsets.only(left: 10, top: 15),
                           child: Text(
                             'Accumulated Profit',
                             style: TextStyle(
@@ -117,12 +114,13 @@ class _ProfitBoxState extends State<ProfitBox> {
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
           ],
         ));
   }
 }
 
+// ignore: unused_element
 class _BarData {
   const _BarData(this.color, this.value, this.maxValue);
   final Color color;

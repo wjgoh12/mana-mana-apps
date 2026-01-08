@@ -103,11 +103,11 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
             _bytes!,
             fit: BoxFit.cover,
             width: double.infinity,
-            height: 180,
+            height: MediaQuery.of(context).size.width >= 600 ? 200 : 180,
           )
         : Container(
             width: double.infinity,
-            height: 180,
+            height: MediaQuery.of(context).size.width >= 600 ? 230 : 180,
             color: Colors.grey[300],
             child: const Center(
               child:
@@ -123,7 +123,10 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
 
     return Container(
       margin: const EdgeInsets.all(8),
-      constraints: BoxConstraints(minHeight: displayedSelected ? 380 : 350),
+      constraints: BoxConstraints(
+          minHeight: displayedSelected
+              ? (MediaQuery.of(context).size.width >= 600 ? 450 : 380)
+              : (MediaQuery.of(context).size.width >= 600 ? 400 : 350)),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -194,7 +197,8 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                     ),
                     child: SizedBox(
                       width: double.infinity,
-                      height: 180,
+                      height:
+                          MediaQuery.of(context).size.width >= 600 ? 200 : 180,
                       child: imageWidget,
                     ),
                   ),
@@ -221,7 +225,9 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                           opacity: displayedSelected ? 0.55 : 0.0,
                           child: Container(
                             width: double.infinity,
-                            height: 180,
+                            height: MediaQuery.of(context).size.width >= 600
+                                ? 200
+                                : 180,
                             decoration: const BoxDecoration(
                               color: Colors.black,
                               borderRadius: BorderRadius.only(
@@ -276,14 +282,6 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          // Text(
-                          //   '${NumberFormat("#,###").format(widget.roomType.roomTypePoints)} points',
-                          //   style: TextStyle(
-                          //     color: Colors.white,
-                          //     fontSize: ResponsiveSize.text(12),
-                          //     fontFamily: 'Outfit',
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),

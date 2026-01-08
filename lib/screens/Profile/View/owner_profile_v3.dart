@@ -102,12 +102,228 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
     }
   }
 
+  Future<void> _showSwitchUserDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        String? validationMessage;
+        final emailController = TextEditingController();
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Switch User',
+                      style: TextStyle(
+                          fontFamily: 'outfit',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 12.fSize),
+                    TextField(
+                      controller: emailController,
+                      onChanged: (value) {
+                        if (validationMessage != null) {
+                          setDialogState(() {
+                            validationMessage = null;
+                          });
+                        }
+                      },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Enter User Email',
+                        labelStyle: TextStyle(
+                          fontFamily: 'outfit',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (validationMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            validationMessage!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStateProperty.all(Colors.white),
+                          ),
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancel',
+                              style: TextStyle(fontFamily: 'Outfit')),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStateProperty.all(Colors.white),
+                          ),
+                          onPressed: () async {
+                            final email = emailController.text.trim();
+                            if (email.isEmpty) {
+                              setDialogState(() {
+                                validationMessage = 'Please insert the email';
+                              });
+                              return;
+                            }
+
+                            final validateRes =
+                                await model.validateSwitchUser(email);
+
+                            bool isValidUser = false;
+                            final body = validateRes['body']?.toString() ?? '';
+                            isValidUser = validateRes['success'] == true &&
+                                body.contains('Now valid viewing as:');
+
+                            if (!isValidUser) {
+                              setDialogState(() {
+                                validationMessage = 'User Invalid';
+                              });
+                              return;
+                            }
+                            final doSwitch = await showDialog<bool>(
+                              // ignore: use_build_context_synchronously
+                              context: context,
+                              builder: (ctx) => StatefulBuilder(
+                                builder: (ctx, setStateDialog) {
+                                  return AlertDialog(
+                                    backgroundColor: Colors.white,
+                                    title: const Text('Confirm Switch',
+                                        style: TextStyle(fontFamily: 'Outfit')),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                            'Are you sure you want to switch to "$email"?',
+                                            style: const TextStyle(
+                                                fontFamily: 'Outfit')),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(ctx).pop(false),
+                                        child: const Text('No',
+                                            style: TextStyle(
+                                                fontFamily: 'Outfit')),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          setStateDialog(() {});
+                                          await model
+                                              .switchUserAndReload(email);
+                                          if (!mounted) {
+                                            return;
+                                          }
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.of(ctx).pop(true);
+                                        },
+                                        child: const Text('Yes',
+                                            style: TextStyle(
+                                                fontFamily: 'Outfit')),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            );
+
+                            if (doSwitch != true) {
+                              return;
+                            }
+
+                            if (!mounted) return;
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pop();
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (_) => const NewDashboardV3()),
+                                (route) => false);
+                          },
+                          child: const Text('Confirm',
+                              style: TextStyle(fontFamily: 'Outfit')),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildContactOption({
+    required String iconPath,
+    required String label,
+    required VoidCallback onTap,
+    Color? iconColor,
+  }) {
+    const yellow = Color(0xFFFFCF00);
+    return InkWell(
+      focusColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: ResponsiveSize.scaleWidth(20),
+              backgroundColor: yellow,
+              child: Image.asset(
+                iconPath,
+                width: ResponsiveSize.scaleWidth(20),
+                height: ResponsiveSize.scaleHeight(20),
+                color: iconColor,
+              ),
+            ),
+            SizedBox(width: 20.fSize),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'outfit',
+                fontSize: 16.fSize,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const Spacer(),
+            const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     const grey = Color(0xFF606060);
-    const yellow = Color(0xFFFFCF00);
 
     double responsiveWidth(double value) =>
         (value / 375.0) * screenWidth; // base width
@@ -607,10 +823,9 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               ],
                             ),
                             SizedBox(height: 12.fSize),
-                            InkWell(
-                              focusColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              //this widget responds to touch actions
+                            _buildContactOption(
+                              iconPath: 'assets/images/profile_email.png',
+                              label: 'Email',
                               onTap: () {
                                 final Uri emailLaunchUri = Uri(
                                   scheme: 'mailto',
@@ -618,110 +833,25 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 );
                                 launchUrl(emailLaunchUri);
                               },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: ResponsiveSize.scaleWidth(20),
-                                      backgroundColor: yellow,
-                                      child: Image.asset(
-                                          'assets/images/profile_email.png',
-                                          width: ResponsiveSize.scaleWidth(20),
-                                          height:
-                                              ResponsiveSize.scaleHeight(20)),
-                                    ),
-                                    SizedBox(width: 20.fSize),
-                                    Text(
-                                      'Email',
-                                      style: TextStyle(
-                                        fontFamily: 'outfit',
-                                        fontSize: 16.fSize,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    const Icon(Icons.arrow_forward_ios,
-                                        size: 20, color: Colors.grey),
-                                  ],
-                                ),
-                              ),
                             ),
                             SizedBox(height: 12.fSize),
-                            InkWell(
-                              highlightColor: Colors.transparent,
+                            _buildContactOption(
+                              iconPath: 'assets/images/profile_telephone.png',
+                              label: 'Telephone',
+                              iconColor: grey,
                               onTap: () {
                                 launchUrl(Uri.parse('tel:+60327795035'));
                               },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: ResponsiveSize.scaleWidth(20),
-                                      backgroundColor: yellow,
-                                      child: Image.asset(
-                                        'assets/images/profile_telephone.png',
-                                        width: ResponsiveSize.scaleWidth(20),
-                                        height: ResponsiveSize.scaleHeight(20),
-                                        color: grey,
-                                      ),
-                                    ),
-                                    SizedBox(width: 20.fSize),
-                                    Text(
-                                      'Telephone',
-                                      style: TextStyle(
-                                        fontFamily: 'outfit',
-                                        fontSize: 16.fSize,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    const Icon(Icons.arrow_forward_ios,
-                                        size: 20, color: Colors.grey),
-                                  ],
-                                ),
-                              ),
                             ),
                             SizedBox(height: 12.fSize),
-                            InkWell(
-                              highlightColor: Colors.transparent,
+                            _buildContactOption(
+                              iconPath: 'assets/images/profile_whatsapp.png',
+                              label: 'Whatsapp',
+                              iconColor: grey,
                               onTap: () {
                                 launchUrl(
                                     Uri.parse('https://wa.me/60125626784'));
                               },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 12),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: ResponsiveSize.scaleWidth(20),
-                                      backgroundColor: yellow,
-                                      child: Image.asset(
-                                          'assets/images/profile_whatsapp.png',
-                                          width: ResponsiveSize.scaleWidth(20),
-                                          height:
-                                              ResponsiveSize.scaleHeight(20),
-                                          color: grey),
-                                    ),
-                                    SizedBox(width: 20.fSize),
-                                    Text(
-                                      'Whatsapp',
-                                      style: TextStyle(
-                                        fontFamily: 'outfit',
-                                        fontSize: 16.fSize,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    const Icon(Icons.arrow_forward_ios,
-                                        size: 20, color: Colors.grey),
-                                  ],
-                                ),
-                              ),
                             ),
                             SizedBox(height: ResponsiveSize.scaleHeight(15)),
                           ],
@@ -736,252 +866,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                           if (model.canSwitchUser) ...[
                             TextButton(
                               onPressed: () {
-                                // TODO: implement actual switch user action
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    // Declare variables outside the StatefulBuilder to maintain state
-                                    String? validationMessage;
-                                    final emailController =
-                                        TextEditingController();
-
-                                    return StatefulBuilder(
-                                      builder: (context, setDialogState) {
-                                        return Dialog(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(12)),
-                                            padding: const EdgeInsets.all(16),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                const Text(
-                                                  'Switch User',
-                                                  style: TextStyle(
-                                                      fontFamily: 'outfit',
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                SizedBox(height: 12.fSize),
-                                                TextField(
-                                                  controller: emailController,
-                                                  onChanged: (value) {
-                                                    // Clear error message when user starts typing
-                                                    if (validationMessage !=
-                                                        null) {
-                                                      setDialogState(() {
-                                                        validationMessage =
-                                                            null;
-                                                      });
-                                                    }
-                                                  },
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    border:
-                                                        OutlineInputBorder(),
-                                                    labelText:
-                                                        'Enter User Email',
-                                                    labelStyle: TextStyle(
-                                                      fontFamily: 'outfit',
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 12),
-                                                if (validationMessage != null)
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            bottom: 8.0),
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Text(
-                                                        validationMessage!,
-                                                        style: const TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    TextButton(
-                                                      style: ButtonStyle(
-                                                        backgroundColor:
-                                                            WidgetStateProperty
-                                                                .all(Colors
-                                                                    .white),
-                                                      ),
-                                                      onPressed: () async {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      child: const Text(
-                                                          'Cancel',
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'Outfit')),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    ElevatedButton(
-                                                      style: ButtonStyle(
-                                                        backgroundColor:
-                                                            WidgetStateProperty
-                                                                .all(Colors
-                                                                    .white),
-                                                      ),
-                                                      onPressed: () async {
-                                                        final email =
-                                                            emailController.text
-                                                                .trim();
-                                                        if (email.isEmpty) {
-                                                          setDialogState(() {
-                                                            validationMessage =
-                                                                'Please insert the email';
-                                                          });
-                                                          return;
-                                                        }
-
-                                                        // First validate the requested email with server.
-                                                        final validateRes =
-                                                            await model
-                                                                .validateSwitchUser(
-                                                                    email);
-
-                                                        // Check for success response with "Now valid viewing as:" message
-                                                        bool isValidUser =
-                                                            false;
-
-                                                        // Single response
-                                                        final body = validateRes[
-                                                                    'body']
-                                                                ?.toString() ??
-                                                            '';
-                                                        isValidUser = validateRes[
-                                                                    'success'] ==
-                                                                true &&
-                                                            body.contains(
-                                                                'Now valid viewing as:');
-
-                                                        if (!isValidUser) {
-                                                          setDialogState(() {
-                                                            validationMessage =
-                                                                'User Invalid';
-                                                          });
-                                                          return;
-                                                        }
-                                                        final doSwitch =
-                                                            await showDialog<
-                                                                bool>(
-                                                          // ignore: use_build_context_synchronously
-                                                          context: context,
-                                                          builder: (ctx) =>
-                                                              StatefulBuilder(
-                                                            builder: (ctx,
-                                                                setStateDialog) {
-                                                              return AlertDialog(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .white,
-                                                                title: const Text(
-                                                                    'Confirm Switch',
-                                                                    style: TextStyle(
-                                                                        fontFamily:
-                                                                            'Outfit')),
-                                                                content: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  children: [
-                                                                    Text(
-                                                                        'Are you sure you want to switch to "$email"?',
-                                                                        style: const TextStyle(
-                                                                            fontFamily:
-                                                                                'Outfit')),
-                                                                  ],
-                                                                ),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.of(ctx)
-                                                                            .pop(false),
-                                                                    child: const Text(
-                                                                        'No',
-                                                                        style: TextStyle(
-                                                                            fontFamily:
-                                                                                'Outfit')),
-                                                                  ),
-                                                                  TextButton(
-                                                                    onPressed:
-                                                                        () async {
-                                                                      setStateDialog(
-                                                                          () {});
-                                                                      await model
-                                                                          .switchUserAndReload(
-                                                                              email);
-                                                                      // await model.cancelUser(email);
-                                                                      if (!mounted) {
-                                                                        return;
-                                                                      }
-
-                                                                      // Close dialog on success (background load in progress)
-                                                                      // ignore: use_build_context_synchronously
-                                                                      Navigator.of(
-                                                                              ctx)
-                                                                          .pop(
-                                                                              true);
-                                                                    },
-                                                                    child: const Text(
-                                                                        'Yes',
-                                                                        style: TextStyle(
-                                                                            fontFamily:
-                                                                                'Outfit')),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          ),
-                                                        );
-
-                                                        if (doSwitch != true) {
-                                                          return;
-                                                        }
-
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        // // ignore: use_build_context_synchronously
-                                                        // ignore: use_build_context_synchronously
-                                                        Navigator.of(context)
-                                                            .pushAndRemoveUntil(
-                                                                MaterialPageRoute(
-                                                                    builder: (_) =>
-                                                                        const NewDashboardV3()),
-                                                                (route) =>
-                                                                    false);
-                                                      },
-                                                      child: const Text(
-                                                          'Confirm',
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'Outfit')),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-
-                                debugPrint('Switch User pressed');
+                                _showSwitchUserDialog();
                               },
                               style: ButtonStyle(
                                 backgroundColor:
@@ -1095,7 +980,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
               child: AbsorbPointer(
                 // ignore: deprecated_member_use
                 ignoringSemantics: false,
-                absorbing: model.isLoading, // Disable bottom nav when loading
+                absorbing: model.isLoading,
                 child: Opacity(
                   opacity: model.isLoading ? 0.3 : 1.0,
                   child: const BottomNavBar(currentIndex: 2),
@@ -1146,7 +1031,6 @@ Widget buildInfoInRow(String info) {
 }
 
 Widget buildFinancialDetails(OwnerProfileVM model) {
-  // Group ownerUnits by building/location
   final Map<String, List<dynamic>> grouped = {};
   for (final unit in model.ownerUnits) {
     final key = (unit.location ?? 'Unknown').toString().trim();
@@ -1182,7 +1066,6 @@ Widget buildFinancialDetails(OwnerProfileVM model) {
         ),
         SizedBox(height: 6.fSize),
 
-        // Units for this building
         Column(
           children: entry.value.map((unit) {
             final bank = (unit?.bank as String?) ?? model.getBankInfo();

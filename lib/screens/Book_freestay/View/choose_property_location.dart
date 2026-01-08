@@ -7,7 +7,7 @@ import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:mana_mana_app/screens/Book_freestay/View/select_date_room.dart';
+import 'package:mana_mana_app/screens/Book_freestay/View/select_date_room/select_date_room.dart';
 
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
@@ -267,14 +267,14 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
               else
                 Expanded(
                   child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
-                      childAspectRatio: 0.7,
+                      childAspectRatio:
+                          MediaQuery.of(context).size.width >= 600 ? 1.0 : 0.7,
                     ),
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(26),
                     itemCount: locationsToShow.length,
                     // Add cache extent to reduce memory pressure
                     cacheExtent: 400,

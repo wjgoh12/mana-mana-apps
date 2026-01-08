@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
-import 'package:mana_mana_app/screens/Property_detail/View/Widget/occupancy_percent_text.dart';
-import 'package:mana_mana_app/widgets/occupancy_text.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
@@ -90,18 +88,9 @@ class _property_detail_v3State extends State<property_detail_v3> {
     );
   }
 
-  @override
-  // void dispose() {
-  //   _scrollController.removeListener(_onScroll);
-  //   _scrollController.dispose();
-  //   super.dispose();
-  // }
-
-  // Add this method to disable scroll for Overview
   void _onScroll() {
-    // Only allow scrolling for UnitDetails, block for Overview
     if (model.selectedView == 'Overview') {
-      return; // Block all scroll logic for Overview
+      return;
     }
 
     final scrollOffset = _scrollController.offset;
@@ -164,13 +153,13 @@ class _property_detail_v3State extends State<property_detail_v3> {
             icon: const Icon(Icons.arrow_back),
           ),
         ),
-        body: Center(
+        body: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.grey),
-              const SizedBox(height: 16),
-              const Text(
+              Icon(Icons.error_outline, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
                 'No property data available',
                 style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
@@ -182,9 +171,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
 
     return MultiProvider(
       providers: [
-        // Provide the global data manager
         ChangeNotifierProvider.value(value: GlobalDataManager()),
-        // Use the existing dashboard model passed from parent
         ChangeNotifierProvider<NewDashboardVM_v3>.value(value: widget.model),
       ],
       child: ListenableBuilder(
@@ -424,6 +411,7 @@ class _property_detail_v3State extends State<property_detail_v3> {
   }
 }
 
+// ignore: unused_element
 class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
   final double minHeight, maxHeight;
@@ -679,7 +667,6 @@ class AnnualStatementContainer extends StatelessWidget {
                       ),
               ),
             )
-            // _buildMonthlyStatementContent(),
           ],
         ),
       ),
@@ -916,7 +903,11 @@ class PropertyOverviewContainer extends StatelessWidget {
                     ),
                     TextSpan(
                       text: model.selectedView == 'Overview'
-                          ? '${_getTotalMonthlyProfit().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}'
+                          ? _getTotalMonthlyProfit()
+                              .toStringAsFixed(2)
+                              .replaceAllMapped(
+                                  RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                                  (m) => '${m[1]},')
                           : '${model.selectedUnitPro?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},') ?? '0.00'}',
                       style: TextStyle(
                         fontSize: responsiveFont(16),
@@ -964,7 +955,11 @@ class PropertyOverviewContainer extends StatelessWidget {
                     ),
                     TextSpan(
                       text: model.selectedView == 'Overview'
-                          ? '${_getTotalNetAfterPOB().toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}'
+                          ? _getTotalNetAfterPOB()
+                              .toStringAsFixed(2)
+                              .replaceAllMapped(
+                                  RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                                  (m) => '${m[1]},')
                           : '${model.selectedUnitBlc?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},') ?? '0.00'}',
                       style: TextStyle(
                         fontFamily: 'outfit',
@@ -1240,9 +1235,6 @@ class UnitDetailsContainer extends StatelessWidget {
     double responsiveFont(double value) => (value / 812.0) * screenHeight;
 
     double responsivePadding = isMobile ? 10 : 15;
-    //double responsiveFont = isMobile ? 12 : 16;
-    double responsiveFont2 = isMobile ? 10 : 12;
-    double responsiveFont3 = isMobile ? 15 : 18;
     final totalPro = model.selectedUnitPro?.total ?? 0.0;
     final formattedTotalPro = totalPro.toStringAsFixed(2).replaceAllMapped(
           RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
@@ -1259,32 +1251,6 @@ class UnitDetailsContainer extends StatelessWidget {
     final unitNo = model.selectedUnitNo ?? 'Unknown';
 
     String _monthNumberToName(int month) {
-      const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ];
-      if (month >= 1 && month <= 12) {
-        return months[month - 1];
-      } else {
-        return 'Unknown';
-      }
-    }
-
-    /// Converts a month number (1-12) to its corresponding month name.
-    ///
-    /// Returns 'Unknown' if [month] is not in the range 1-12.
-    ///
-    String monthNumberToName(int month) {
       const months = [
         'Jan',
         'Feb',

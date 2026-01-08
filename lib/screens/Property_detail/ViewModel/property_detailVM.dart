@@ -17,11 +17,9 @@ class PropertyDetailVM extends ChangeNotifier {
 
   String? selectedType;
   String? selectedUnitNo;
-  String selectedView =
-      'UnitDetails'; // Default to UnitDetails instead of Overview
-  List<String> propertyOccupancy =
-      []; // List to store PropertyOccupancy objects>
-  String? _selectedYearValue; // Don't initialize with any value
+  String selectedView = 'UnitDetails';
+  List<String> propertyOccupancy = [];
+  String? _selectedYearValue;
   String? get selectedYearValue => _selectedYearValue;
   List<Map<String, dynamic>> recentActivities = [];
 
@@ -36,6 +34,7 @@ class PropertyDetailVM extends ChangeNotifier {
   bool isLoading = true;
   String selectedValue = '';
   bool _isDownloading = false;
+  // ignore: non_constant_identifier_names
   bool _annual_isDownloading = false;
   bool _isMonthLoadng = false;
   bool _isDateLoading = false;
@@ -44,14 +43,15 @@ class PropertyDetailVM extends ChangeNotifier {
   bool get isAnnualDownloading => _annual_isDownloading;
   bool get isDateLoading => _isDateLoading;
 
+  // ignore: prefer_typing_uninitialized_variables
   var selectedUnitBlc;
+  // ignore: prefer_typing_uninitialized_variables
   var selectedUnitPro;
   final PropertyListRepository ownerPropertyListRepository =
       PropertyListRepository();
   final UserRepository userRepository = UserRepository();
   final GlobalDataManager _globalDataManager = GlobalDataManager();
 
-  // Getters that delegate to GlobalDataManager
   List<OwnerPropertyList> get ownerData => _globalDataManager.ownerUnits;
   List<SingleUnitByMonth> get unitByMonth => _globalDataManager.unitByMonth;
   List<User> get users => _globalDataManager.users;
@@ -109,7 +109,6 @@ class PropertyDetailVM extends ChangeNotifier {
     _calculateLatestYearMonth();
     _setSelectedUnitData();
 
-    // ✅ ONLY set year if it's not already set
     if (_selectedYearValue == null) {
       final yearItemsList = _getYearItems();
       if (yearItemsList.isNotEmpty) {
@@ -117,10 +116,7 @@ class PropertyDetailVM extends ChangeNotifier {
       }
     }
 
-    // ✅ ONLY set annual year if it's not already set
-    if (selectedAnnualYearValue == null) {
-      selectedAnnualYearValue = _selectedYearValue;
-    }
+    selectedAnnualYearValue ??= _selectedYearValue;
 
     _buildRecentActivities();
 
@@ -164,14 +160,10 @@ class PropertyDetailVM extends ChangeNotifier {
   void _calculateLatestYearMonth() {
     final currentProperty = selectedProperty ?? property;
 
-    // Reset to default values
     unitLatestYear = 0;
     unitLatestMonth = 0;
 
-    // Only calculate if we have valid selections
-    if (selectedType == null ||
-        selectedUnitNo == null ||
-        currentProperty == null) {
+    if (selectedType == null || selectedUnitNo == null) {
       return;
     }
 
@@ -206,14 +198,11 @@ class PropertyDetailVM extends ChangeNotifier {
   void _setSelectedUnitData() {
     final currentProperty = selectedProperty ?? property;
 
-    // Reset to default values first
     selectedUnitBlc = SingleUnitByMonth(total: 0.00);
     selectedUnitPro = SingleUnitByMonth(total: 0.00);
 
-    // Only set data if we have valid selections AND valid latest year/month
     if (selectedType != null &&
         selectedUnitNo != null &&
-        currentProperty != null &&
         unitLatestYear > 0 &&
         unitLatestMonth > 0) {
       selectedUnitBlc = unitByMonth.firstWhere(
@@ -311,7 +300,6 @@ class PropertyDetailVM extends ChangeNotifier {
         '🔄 updateSelectedTypeUnit called: Type=$newSelectedType, Unit=$newSelectedUnitNo, Property=$selectedProperty');
     _isDateLoading = true;
 
-    // Clear all data first
     selectedUnitBlc = SingleUnitByMonth(total: 0.00);
     selectedUnitPro = SingleUnitByMonth(total: 0.00);
     unitLatestYear = 0;
@@ -327,19 +315,15 @@ class PropertyDetailVM extends ChangeNotifier {
     print(
         '📝 New selection set: Type=$selectedType, Unit=$selectedUnitNo, Property=$selectedProperty');
 
-    // Update year selection to latest for this unit
     final yearItemsList = _getYearItems();
     _selectedYearValue = yearItemsList.isNotEmpty
         ? yearItemsList.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b)
         : null;
 
-    // Update month selection - Set to null to show all months by default
-    selectedMonthValue = null; // Show all months by default
+    selectedMonthValue = null;
 
-    // Recalculate latest year and month
     _calculateLatestYearMonth();
 
-    // Update selected unit data
     _setSelectedUnitData();
     print(
         '📊 Final data - Property=$selectedProperty, Type=$selectedType, Unit=$selectedUnitNo, selectedUnitBlc: ${selectedUnitBlc?.total}, selectedUnitPro: ${selectedUnitPro?.total}');
@@ -350,9 +334,8 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   Future<void> updateSelectedYear(String? newSelectedYear) async {
-    // Only update if value actually changed
     if (_selectedYearValue == newSelectedYear) {
-      return; // No change, don't notify
+      return;
     }
 
     _isMonthLoadng = true;
@@ -360,7 +343,6 @@ class PropertyDetailVM extends ChangeNotifier {
 
     _selectedYearValue = newSelectedYear;
 
-    // Reset to show all months when year changes
     selectedMonthValue = null;
 
     _isMonthLoadng = false;
@@ -373,9 +355,8 @@ class PropertyDetailVM extends ChangeNotifier {
   }
 
   void updateSelectedMonth(String? newSelectedMonth) {
-    // Only update if value actually changed
     if (selectedMonthValue == newSelectedMonth) {
-      return; // No change, don't notify
+      return;
     }
 
     selectedMonthValue = newSelectedMonth;

@@ -1,10 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/occupancy_rate.dart';
-import 'package:mana_mana_app/screens/All_Property/resources/app_colors.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
-import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class OccupancyLineChart extends StatelessWidget {
   const OccupancyLineChart({
@@ -370,8 +368,18 @@ String _labelForX(double x) {
     case 'Monthly':
     default:
       const months = [
-        'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-        'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+        'JAN',
+        'FEB',
+        'MAR',
+        'APR',
+        'MAY',
+        'JUN',
+        'JUL',
+        'AUG',
+        'SEP',
+        'OCT',
+        'NOV',
+        'DEC'
       ];
       final i = x.round();
       if (i >= 0 && i < months.length) return months[i];

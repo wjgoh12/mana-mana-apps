@@ -329,9 +329,6 @@ class _RoomtypeCardState extends State<RoomtypeCard>
 
             if (!widget.enabled) return;
 
-            // If multiSelectable is enabled, manage selection locally so
-            // multiple cards can be selected independently. Otherwise,
-            // fallback to parent-controlled selection behavior (single-select).
             if (widget.multiSelectable) {
               _localSelected = !_localSelected;
               setState(() {});
@@ -877,7 +874,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                           // Fallback if image decode fails
                                           return Icon(
                                             Icons.check_circle_outline,
-                                            size: ResponsiveSize.scaleHeight(16),
+                                            size:
+                                                ResponsiveSize.scaleHeight(16),
                                             color: Colors.grey[600],
                                           );
                                         },

@@ -24,26 +24,23 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Global data manager at the top level
         ChangeNotifierProvider.value(value: GlobalDataManager()),
-        // Dashboard ViewModel that will use cached data
         ChangeNotifierProvider(
           create: (_) {
             final model = NewDashboardVM_v3();
-            // Initialize data once - will use cached data if already loaded
+
             model.fetchData();
             return model;
           },
         ),
-        // Property Detail ViewModel that will use cached data
         ChangeNotifierProvider(
           create: (_) => PropertyDetailVM(),
         ),
       ],
       child: Consumer2<NewDashboardVM_v3, PropertyDetailVM>(
         builder: (context, dashboardModel, propertyModel, child) {
-          // Initialize property detail model with dashboard data
-          if (dashboardModel.locationByMonth.isNotEmpty && !propertyModel.isLoading) {
+          if (dashboardModel.locationByMonth.isNotEmpty &&
+              !propertyModel.isLoading) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               propertyModel.fetchData(dashboardModel.locationByMonth);
             });
@@ -51,13 +48,11 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
 
           return LayoutBuilder(
             builder: (context, constraints) {
-              // Screen width and height
               final screenWidth = constraints.maxWidth;
               final screenHeight = constraints.maxHeight;
 
-              // Scale factors (tweak as needed)
-              final double baseWidth = 390;
-              final double baseHeight = 844;
+              const double baseWidth = 390;
+              const double baseHeight = 844;
               final double scaleW = screenWidth / baseWidth;
               final double scaleH = screenHeight / baseHeight;
 
@@ -71,40 +66,36 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
                     ? const Center(child: CircularProgressIndicator())
                     : Column(
                         children: [
-                          // Add PropertyTitleDropdown here
                           const Padding(
-                            padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                            padding:
+                                EdgeInsets.only(left: 15, top: 10, bottom: 10),
                             child: Row(
-                              children: [
-                                // PropertyTitleDropdown(currentPage: 'Property List'),
-                              ],
+                              children: [],
                             ),
                           ),
-                          // Main content
                           Expanded(
                             child: ListView(
                               shrinkWrap: true,
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               children: [
-                                // Overview Card
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 15 * scaleW, vertical: 10 * scaleH),
+                                      horizontal: 15 * scaleW,
+                                      vertical: 10 * scaleH),
                                   child: OverviewCard(model: dashboardModel),
                                 ),
-
-                                // Occupancy Rate Box
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 15 * scaleW, vertical: 10 * scaleH),
-                                  child: OccupancyRateBox(model: dashboardModel),
+                                      horizontal: 15 * scaleW,
+                                      vertical: 10 * scaleH),
+                                  child:
+                                      OccupancyRateBox(model: dashboardModel),
                                 ),
-
-                                // Recent Activity
                                 if (propertyModel.unitByMonth.isNotEmpty)
                                   Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 15 * scaleW, vertical: 10 * scaleH),
+                                        horizontal: 15 * scaleW,
+                                        vertical: 10 * scaleH),
                                     child: RecentActivity(model: propertyModel),
                                   ),
                               ],
@@ -123,6 +114,7 @@ class _PropertySummaryScreenState extends State<PropertySummaryScreen> {
 }
 
 // Extract content to optimize rebuilds (optional)
+// ignore: unused_element
 class _PropertySummaryContent extends StatelessWidget {
   const _PropertySummaryContent();
 

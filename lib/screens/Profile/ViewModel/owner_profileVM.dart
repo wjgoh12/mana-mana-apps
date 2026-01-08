@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
@@ -10,15 +11,11 @@ import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
-import 'package:mana_mana_app/repository/property_list.dart';
 
 class OwnerProfileVM extends ChangeNotifier {
-  //repo
   final RedemptionRepository _ownerBookingRepository = RedemptionRepository();
   final UserRepository _userRepository = UserRepository();
-  final PropertyListRepository _propertyRepository = PropertyListRepository();
 
-  //state
   bool _isLoadingStates = false;
   bool _isLoadingLocations = false;
   String? _error;
@@ -28,8 +25,8 @@ class OwnerProfileVM extends ChangeNotifier {
   bool _isLoadingAvailablePoints = false;
   bool _isLoadingBlockedDates = false;
 
-  //data
   List<User> _users = [];
+  // ignore: non_constant_identifier_names
   final UserPointBalance = [];
   List<String> _states = [];
   List<PropertyState> _locationsInState = [];
@@ -40,7 +37,6 @@ class OwnerProfileVM extends ChangeNotifier {
   List<RoomType> _roomTypes = [];
   bool _isLoadingRoomTypes = false;
 
-  //getters
   bool get isLoading =>
       _isLoadingStates ||
       _isLoadingLocations ||
@@ -62,11 +58,9 @@ class OwnerProfileVM extends ChangeNotifier {
   List<RoomType> get roomTypes => _roomTypes;
   bool get isLoadingRoomTypes => _isLoadingRoomTypes;
 
-  // Getters that delegate to GlobalDataManager
   List<User> get users => _globalDataManager.users;
   List<OwnerPropertyList> get ownerUnits => _globalDataManager.ownerUnits;
 
-  // Add helper methods to safely access data
   String getOwnerName() {
     if (users.isEmpty) return 'No Information';
     return users.first.ownerFullName?.toString() ?? 'No Information';
@@ -100,11 +94,9 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   Future<void> fetchData() async {
-    // Use global data manager instead of making individual API calls
     await _globalDataManager.initializeData();
     _users = await _userRepository.getUsers();
 
-    // After loading users, evaluate roles
     await checkRole();
 
     notifyListeners();
@@ -136,7 +128,6 @@ class OwnerProfileVM extends ChangeNotifier {
       );
 
       _bookingHistory = response;
-      // debugPrint("✅ Booking history length: ${_bookingHistory.length}");
     } catch (e) {
       debugPrint('❌ Error fetching booking history: $e');
     } finally {
@@ -168,10 +159,9 @@ class OwnerProfileVM extends ChangeNotifier {
     } finally {
       _isLoadingAvailablePoints = false;
       notifyListeners();
-      // ❌ BUG: wrong flag here
+
       _isLoadingBookingHistory = false;
 
-      // ✅ Correct it:
       _isLoadingAvailablePoints = false;
 
       notifyListeners();
@@ -186,7 +176,6 @@ class OwnerProfileVM extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // First check if we already have the locations cached
       final cached = _globalDataManager.getLocationsForState(state);
       if (cached.isNotEmpty) {
         _locationsInState = List<PropertyState>.from(cached);
@@ -214,10 +203,8 @@ class OwnerProfileVM extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Get all states first
       _states = await _ownerBookingRepository.getAvailableStates();
 
-      // Batch load locations for all states
       if (_states.isNotEmpty) {
         await Future.wait(
           _states.map((state) => _preloadLocationsForState(state)),
@@ -395,14 +382,12 @@ class OwnerProfileVM extends ChangeNotifier {
       departureDate,
     );
 
-    // Return cached data immediately if available
     if (_roomTypeCache.containsKey(cacheKey)) {
       _roomTypes = _roomTypeCache[cacheKey]!;
       notifyListeners();
       return;
     }
 
-    // Only show loading if we don't have cached data
     if (_roomTypes.isEmpty) {
       _isLoadingRoomTypes = true;
       notifyListeners();
@@ -421,7 +406,6 @@ class OwnerProfileVM extends ChangeNotifier {
       _roomTypeCache[cacheKey] = response;
       debugPrint("✅ Room types loaded: ${_roomTypes.length}");
     } catch (e) {
-      // Only clear room types if we don't have cached data
       if (!_roomTypeCache.containsKey(cacheKey)) {
         _roomTypes = [];
       }
@@ -445,13 +429,13 @@ class OwnerProfileVM extends ChangeNotifier {
   }) async {
     try {
       return await _ownerBookingRepository.submitBooking(
-        bookingRoom: bookingRoom, // ✅ match repo
-        point: point, //available points
+        bookingRoom: bookingRoom,
+        point: point,
         propertyStates: propertyStates,
         checkIn: checkIn,
         checkOut: checkOut,
         quantity: quantity,
-        points: points, //required points
+        points: points,
         guestName: guestName,
         remark: remark,
       );
@@ -461,10 +445,8 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
-  // inside OwnerProfileVM
   PropertyState? findPropertyStateForOwner(String ownerLocation) {
     try {
-      // Convert location code to full name for matching
       String fullLocationName = _getLocationName(ownerLocation);
 
       debugPrint(
@@ -472,7 +454,6 @@ class OwnerProfileVM extends ChangeNotifier {
       debugPrint(
           "🔍 Available locations in state: ${_locationsInState.map((l) => l.locationName).toList()}");
 
-      // First try exact match with full location name in current state list
       PropertyState? found = _locationsInState
           .where((loc) =>
               loc.locationName.toLowerCase() == fullLocationName.toLowerCase())
@@ -483,7 +464,6 @@ class OwnerProfileVM extends ChangeNotifier {
         return found;
       }
 
-      // If not found in current state list, check the global data manager
       debugPrint(
           "🔍 Searching in global data manager for location: $fullLocationName");
       final allLocations = _globalDataManager.getAllLocationsFromAllStates();
@@ -508,7 +488,6 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
-  // Helper method to convert location code to full name
   String _getLocationName(String code) {
     switch (code.toUpperCase()) {
       case "22M":
@@ -539,68 +518,54 @@ class OwnerProfileVM extends ChangeNotifier {
     _roomTypes.clear();
     _blockedDates.clear();
 
-    // Clear room type cache to ensure fresh data on next selection
     _roomTypeCache.clear();
 
-    // IMPORTANT: Clear user point balance to force refresh for new unit
     UserPointBalance.clear();
 
     debugPrint("✅ Selection cache cleared in OwnerProfileVM");
     notifyListeners();
   }
 
-  // Add public method to ensure all location data is loaded
   Future<void> ensureAllLocationDataLoaded() async {
     debugPrint("🔄 Ensuring all location data is loaded in OwnerProfileVM...");
     await _globalDataManager.fetchAllLocationsForAllStates();
     debugPrint("✅ All location data loaded in OwnerProfileVM");
   }
 
-  // Clear location cache method
   void clearLocationCache() {
-    // Clear location-related cached data
     _states.clear();
     _locationsInState.clear();
     _selectedState = '';
 
-    // Clear room types as they are location-dependent
     _roomTypes.clear();
     _roomTypeCache.clear();
 
-    // Clear blocked dates as they are location-dependent
     _blockedDates.clear();
 
     debugPrint("✅ Location cache cleared in OwnerProfileVM");
     notifyListeners();
   }
 
-  // Optional: Complete reset method for thorough clearing
   void resetNavigationState() {
-    // Reset all navigation-related state
     clearSelectionCache();
     clearLocationCache();
 
-    // Reset loading states
     _isLoadingStates = false;
     _isLoadingLocations = false;
     _isLoadingRoomTypes = false;
     _isLoadingBlockedDates = false;
 
-    // Clear any error states
     _error = null;
 
     debugPrint("✅ Navigation state completely reset in OwnerProfileVM");
     notifyListeners();
   }
 
-  // Add this method to OwnerProfileVM
   Future<void> refreshPointsForUnit(String location, String unitNo) async {
-    // Force clear and refresh points for specific unit
     UserPointBalance.clear();
     await fetchRedemptionBalancePoints(location: location, unitNo: unitNo);
   }
 
-  // Add this method to OwnerProfileVM
   void clearRoomTypesForNewLocation() {
     _roomTypes.clear();
     _roomTypeCache.clear();
@@ -609,7 +574,6 @@ class OwnerProfileVM extends ChangeNotifier {
 
   Future<void> checkRole() async {
     try {
-      // Determine the source of users - prefer global manager's users
       final currentUsers = _globalDataManager.users.isNotEmpty
           ? _globalDataManager.users
           : _users;
@@ -622,7 +586,6 @@ class OwnerProfileVM extends ChangeNotifier {
 
       final roleString = currentUsers.first.role ?? '';
 
-      // roles field may be a comma separated string like "ADMIN,MOBILE-ADMIN"
       final roles = roleString
           .split(',')
           .map((s) => s.trim().toUpperCase())
@@ -638,7 +601,6 @@ class OwnerProfileVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Validate switch user via repository and return the raw response map.
   Future<Map<String, dynamic>> validateSwitchUser(String email) async {
     try {
       final res = await _userRepository.validateSwitchUser(email);
@@ -649,15 +611,11 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
-  /// Confirm the switch operation and then load the switched user's full
-  /// profile and owner-units. Returns null on success or an error message.
   Future<String?> switchUserAndReload(String email) async {
     try {
-      // Step 2: confirm switch on server
       await _userRepository.confirmSwitchUser(email).then((confirmRes) async {
         debugPrint('✅ confirmSwitchUser response: $confirmRes');
 
-        // Set the switch user flag
         _globalDataManager.isSwitchUser = true;
 
         await _globalDataManager.initializeData(forceRefresh: true);
@@ -673,19 +631,14 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
-//cancel user/stop impersonate user
   Future<void> cancelUser(String email) async {
     await _userRepository.cancelSwitchUser(email);
 
-    // Clear the switch user flag
     _globalDataManager.isSwitchUser = false;
 
-    // Refresh data to load original user
     await _globalDataManager.initializeData(forceRefresh: true);
 
     debugPrint("Cancel user operation executed and data refreshed.");
     notifyListeners();
   }
-
-//load impersonated user data
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
@@ -12,19 +12,9 @@ class RevenueDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Expanded(
-        //   child: _RevenueContainer(
-        //     title: 'Overall Balance To Owner',
-        //     icon: Icons.account_balance_wallet_outlined,
-        //     overallRevenue: true,
-        //   ),
-        // ),
-        // SizedBox(width: 10),
         Expanded(
           child: RevenueContainer(
-              title:
-              '${model.revenueLastestYear} Accumulated Profit​',
-                  // '${DateTime.now().month != 1 ? DateTime.now().year : DateTime.now().year - 1} Accumulated Profit​',
+              title: '${model.revenueLastestYear} Accumulated Profit​',
               icon: Icons.home_outlined,
               overallRevenue: false,
               model: model),
@@ -55,7 +45,6 @@ class RevenueContainer extends StatelessWidget {
       child: Stack(
         children: [
           GestureDetector(
-            // onTap: () => model.updateOverallRevenueAmount(),
             child: Container(
               padding: !Responsive.isMobile(context)
                   ? EdgeInsets.only(
@@ -107,22 +96,11 @@ class RevenueContainer extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Open Sans',
             fontWeight: FontWeight.w700,
-            // fontSize: 12.fSize,
             fontSize: 16.fSize,
             color: const Color(0xFF4313E9),
           ),
         ),
         const Spacer(),
-        // Container(
-        //   width: 3.width,
-        //   height: 3.width,
-        //   alignment: Alignment.center,
-        //   child: Icon(
-        //     Icons.arrow_outward_rounded,
-        //     color: const Color(0xff3E51FF),
-        //     size: 3.width,
-        //   ),
-        // ),
       ],
     );
   }
@@ -146,12 +124,10 @@ class RevenueContainer extends StatelessWidget {
           ),
         ),
         SizedBox(width: 3.width),
-        // const Spacer(),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             _buildAmountText(),
-            // _buildPercentageText(),
           ],
         ),
       ],
@@ -194,27 +170,4 @@ class RevenueContainer extends StatelessWidget {
       ],
     );
   }
-
-  // Widget _buildPercentageText() {
-  //   return Text.rich(
-  //     TextSpan(
-  //       text: '-',
-  //       style: TextStyle(
-  //         fontFamily: 'Open Sans',
-  //         fontWeight: FontWeight.w400,
-  //         fontSize: 10.fSize,
-  //         color: const Color(0XFF2900B7),
-  //       ),
-  //       children: <InlineSpan>[
-  //         WidgetSpan(
-  //           child: Icon(
-  //             Icons.arrow_drop_up,
-  //             color: const Color(0XFF42C18B),
-  //             size: 2.height,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

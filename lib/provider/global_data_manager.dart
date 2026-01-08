@@ -9,8 +9,6 @@ import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class GlobalDataManager extends ChangeNotifier {
@@ -27,7 +25,7 @@ class GlobalDataManager extends ChangeNotifier {
   bool _isInitialized = false;
   bool _isLoading = false;
   DateTime? _lastFetchTime;
-  String? _currentUserEmail; // Track current logged-in user
+  String? _currentUserEmail;
 
   // Core data
   List<User> _users = [];
@@ -120,8 +118,11 @@ class GlobalDataManager extends ChangeNotifier {
       try {
         final storage = const FlutterSecureStorage();
         final currentEmail = await storage.read(key: 'email');
-        if (currentEmail != null && _currentUserEmail != null && currentEmail != _currentUserEmail) {
-          print('🔄 User changed from $_currentUserEmail to $currentEmail - clearing cached data');
+        if (currentEmail != null &&
+            _currentUserEmail != null &&
+            currentEmail != _currentUserEmail) {
+          print(
+              '🔄 User changed from $_currentUserEmail to $currentEmail - clearing cached data');
           userChanged = true;
           forceRefresh = true;
         }
@@ -163,13 +164,13 @@ class GlobalDataManager extends ChangeNotifier {
 
   Future<void> _fetchAllData() async {
     _users = await _userRepository.getUsers();
-    
+
     // Track the current user email to detect user changes
     if (_users.isNotEmpty && _users.first.email != null) {
       _currentUserEmail = _users.first.email;
       print('📧 Current user set to: $_currentUserEmail');
     }
-    
+
     _ownerUnits = await _propertyRepository.getOwnerUnit();
     _unitByMonth = await _propertyRepository.getUnitByMonth();
     _revenueDashboard = await _propertyRepository.revenueByYear();

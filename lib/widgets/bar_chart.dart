@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
@@ -306,4 +306,3 @@ class ColoredSideTitleWidget extends StatelessWidget {
     );
   }
 }
-

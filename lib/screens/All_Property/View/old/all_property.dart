@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
-import 'package:mana_mana_app/screens/All_Property/Widget/property_dropdown.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
@@ -14,13 +13,11 @@ class AllPropertyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Global data manager at the top level
         ChangeNotifierProvider.value(value: GlobalDataManager()),
-        // Dashboard ViewModel that will use cached data
         ChangeNotifierProvider(
           create: (_) {
             final model = NewDashboardVM_v3();
-            // Initialize data once - will use cached data if already loaded
+
             model.fetchData();
             return model;
           },
@@ -35,20 +32,15 @@ class AllPropertyScreen extends StatelessWidget {
               () => Navigator.of(context).pop(),
             ),
             body: model.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator()) // Show loading
+                ? const Center(child: CircularProgressIndicator())
                 : Column(
                     children: [
-                      // Add PropertyTitleDropdown shere
                       const Padding(
                         padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
                         child: Row(
-                          children: [
-                            // PropertyTitleDropdown(currentPage: 'Property List'),
-                          ],
+                          children: [],
                         ),
                       ),
-                      // Main content
                       Expanded(
                         child: ListView(
                           shrinkWrap: true,
@@ -77,10 +69,8 @@ class AllPropertyScreen extends StatelessWidget {
     required NewDashboardVM_v3 model,
   }) {
     final isMobile = MediaQuery.of(context).size.width < 600;
-    final isTablet = MediaQuery.of(context).size.shortestSide >= 600;
     final horizontalPadding = isMobile ? 16.0 : 40.0;
 
-    // Group by location & pick latest month/year
     final Map<String, Map<String, dynamic>> latestByLocation = {};
     final List<Map<String, dynamic>> source = locationByMonth;
 
@@ -99,7 +89,6 @@ class AllPropertyScreen extends StatelessWidget {
       }
     }
 
-    // Convert to list & sort by newest first
     final latestProperties = latestByLocation.values.toList()
       ..sort((a, b) {
         final yearDiff = (b['year'] as int).compareTo(a['year'] as int);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile_v3.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
@@ -130,7 +130,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: LayoutBuilder(builder: (context, constraints) {
         return Container(
-          height: 70,
+          height:
+              MediaQuery.of(context).size.width >= 600 ? 90.fSize : 70.fSize,
           width: constraints.maxWidth *
               0.78, // Use 80% of available width for responsive narrowing
 

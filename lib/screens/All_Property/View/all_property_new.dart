@@ -4,8 +4,7 @@ import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/enhanced_statement_dropdown.dart';
 import 'package:mana_mana_app/screens/All_Property/Widget/enhanced_statement_container.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
-import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
+import 'package:mana_mana_app/screens/Book_freestay/View/property_redemption.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
@@ -183,7 +182,7 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
                     SizedBox(
                       height: ResponsiveSize.scaleHeight(15),
                     ),
-                    // Enhanced Statement Dropdown
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -255,13 +254,6 @@ Widget _unitDropDown() {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Text(
-        //   'Unit:',
-        //   style: TextStyle(
-        //       fontSize: ResponsiveSize.text(18),
-        //       fontWeight: FontWeight.bold,
-        //       fontFamily: 'Outfit'),
-        // ),
         SizedBox(height: ResponsiveSize.scaleHeight(8)),
         const PropertyUnitSelector(),
       ],
@@ -317,9 +309,7 @@ Widget _quickLinks(BuildContext context) {
                         borderRadius: BorderRadius.circular(12),
                         onTap: () {
                           // Create and initialize the VM
-                          final ownerVm = OwnerProfileVM();
-                          final globalData = Provider.of<GlobalDataManager>(
-                              context,
+                          Provider.of<GlobalDataManager>(context,
                               listen: false);
 
                           launchUrl(Uri.parse(
@@ -433,15 +423,18 @@ Widget _quickLinks(BuildContext context) {
                                   ),
                                 ),
                                 SizedBox(width: ResponsiveSize.scaleWidth(8)),
-                                Text(
-                                  'Free Stay \nRedemption',
-                                  maxLines: 2,
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: ResponsiveSize.text(12),
-                                    fontFamily: 'Outfit',
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                SizedBox(
+                                  width: ResponsiveSize.scaleWidth(90),
+                                  child: Text(
+                                    'Free Stay Redemption',
+                                    maxLines: 2,
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.text(12),
+                                      fontFamily: 'Outfit',
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -777,12 +770,11 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
         .toSet()
         .toList();
 
-    // Get units for selected property with debugging
     final allUnitsForProperty = model.ownerUnits
         .where((unit) => unit.location == selectedProperty)
         .toList();
 
-    // print('📊 All units for $selectedProperty:');
+    // ignore: unused_local_variable
     for (var unit in allUnitsForProperty) {
       // print('   - Unit: ${unit.unitno}, Type: ${unit.type}');
     }
@@ -829,6 +821,9 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
               children: [
                 SizedBox(width: ResponsiveSize.scaleWidth(8)),
                 CircleAvatar(
+                  radius: MediaQuery.of(context).size.width >= 600
+                      ? ResponsiveSize.scaleWidth(15)
+                      : null,
                   backgroundColor: Color(0xFF606060),
                   child: Image.asset('assets/images/building.png',
                       width: ResponsiveSize.scaleWidth(20),
@@ -923,6 +918,9 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
               children: [
                 SizedBox(width: ResponsiveSize.scaleWidth(8)),
                 CircleAvatar(
+                  radius: MediaQuery.of(context).size.width >= 600
+                      ? ResponsiveSize.scaleWidth(15)
+                      : null,
                   backgroundColor: Color(0xFF606060),
                   child: Image.asset('assets/images/unit.png',
                       width: isMobile

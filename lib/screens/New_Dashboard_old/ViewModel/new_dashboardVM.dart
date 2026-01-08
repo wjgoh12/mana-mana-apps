@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/OwnerPropertyList.dart';
 import 'package:mana_mana_app/model/user_model.dart';
-import 'package:mana_mana_app/provider/global_owner_state.dart';
-import 'package:mana_mana_app/provider/global_user_state.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 
@@ -78,7 +76,7 @@ class NewDashboardVM extends ChangeNotifier {
     // : DateTime.now().year.toString();
 
     totalByMonth = await ownerPropertyListRepository.totalByMonth();
-    
+
     // totalByMonth = [
     //   {'total': 4200.31, 'transcode': 'NOPROF', 'month': 5, 'year': 2024},
     //   {'total': 1842.01, 'transcode': 'OWNBAL', 'month': 5, 'year': 2024},
@@ -104,13 +102,7 @@ class NewDashboardVM extends ChangeNotifier {
           });
 
     locationByMonth = await ownerPropertyListRepository.locationByMonth();
-    // print(locationByMonth.first);
-    // locationByMonth = [
-    //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 5, 'year': 2024},
-    //   {'total': 1842.01, 'location': 'SCARLETZ', 'month': 6, 'year': 2024},
-    //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 1, 'year': 2025},
-    //   {'total': 2500.01, 'location': 'SCARLETZ', 'month': 2, 'year': 2025}
-    // ];
+
     try {
       unitLatestMonth = locationByMonth
           .map((unit) => {'month': unit['month'], 'year': unit['year']})

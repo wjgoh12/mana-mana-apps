@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:mana_mana_app/screens/Profile/View/financial_details.dart';
+import 'package:mana_mana_app/screens/Profile/View/old/financial_details.dart';
 import 'package:mana_mana_app/screens/Profile/View/personal_information.dart';
-import 'package:mana_mana_app/screens/Profile/View/property_redemption.dart';
+import 'package:mana_mana_app/screens/Book_freestay/View/property_redemption.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
@@ -571,7 +570,6 @@ class OwnerProfile_v3 extends StatelessWidget {
                             onPressed: () {
                               launchUrl(Uri.parse(
                                   'https://www.manamanasuites.com/privacy-policy'));
-                              style:
                               ButtonStyle(
                                 backgroundColor:
                                     WidgetStateProperty.all(Colors.transparent),

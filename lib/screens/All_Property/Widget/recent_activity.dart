@@ -15,8 +15,6 @@ class RecentActivity extends StatefulWidget {
 class _RecentActivityState extends State<RecentActivity> {
   @override
   Widget build(BuildContext context) {
-    final PropertyDetailVM model = PropertyDetailVM();
-
     return Container(
       alignment: Alignment.topLeft,
       width: 390,

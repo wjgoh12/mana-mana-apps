@@ -146,58 +146,6 @@ class PropertyListRepository {
     }
   }
 
-  // Future<void> downloadPdfStatement(BuildContext context, property, selectedYearValue, selectedMonthValue, selectedType, selectedUnitNo, userData) async {
-  //   // List<User> users = GlobalUserState.instance.getUsers();
-  //   final Map<String, dynamic> data = {
-  //     "month": selectedMonthValue,
-  //     "year": selectedYearValue,
-  //     "unitModel": {
-  //       "unitNo": selectedUnitNo,
-  //       "type": selectedType,
-  //       "location": property,
-  //       "ownerName": userData.first.ownerFullName,
-  //       "email": userData.first.ownerEmail
-  //     }
-  //   };
-
-  //   final res = await _apiService.postWithBytes(ApiEndpoint.downloadPdfStatement, data: data);
-
-  //   if (res is Uint8List) {
-  //     final pdfBytes = res;
-  //     final tempDir = await getTemporaryDirectory();
-  //     final file = File('${tempDir.path}/statement.pdf');
-  //     await file.writeAsBytes(pdfBytes);
-  //     await OpenFile.open(file.path);
-
-  //   } else if (res == "Incorrect result size") {
-  //     // Show pop-up message
-  //     showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return AlertDialog(
-  //           title: const Text('No Record'),
-  //           content: const Text('No record available for this unit in the selected month.'),
-  //           actions: <Widget>[
-  //             TextButton(
-  //               child: const Text('OK'),
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //             ),
-  //           ],
-  //           contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-  //           titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-  //           actionsPadding: const EdgeInsets.fromLTRB(0, 0, 8, 8),
-  //         );
-  //       },
-  //     );
-  //   } else if (res is Map<String, dynamic>) {
-  //     throw Exception('Failed to process PDF data: ${res['error'] ?? 'Unexpected response format'}');
-  //   } else {
-  //     throw Exception('Failed to process PDF data: Unexpected response type ${res.runtimeType}');
-  //   }
-  // }
-
   Future<List<Map<String, dynamic>>> revenueByYear() async {
     return await _apiService
         .post(ApiEndpoint.dashboardReveueByYear)

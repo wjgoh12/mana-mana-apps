@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/widgets/occupancy_text.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
@@ -9,12 +8,12 @@ import 'package:responsive_builder/responsive_builder.dart';
 class PropertyListV3 extends StatelessWidget {
   final ScrollController controller;
   final NewDashboardVM_v3 model;
-  PropertyListV3({required this.model, required this.controller, Key? key})
+  const PropertyListV3(
+      {required this.model, required this.controller, Key? key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // print('total assets: ${model.locationByMonth.length}');
     if (model.isLoading) {
       return Container(
         decoration: BoxDecoration(
@@ -45,7 +44,6 @@ class PropertyListV3 extends StatelessWidget {
             constraints: BoxConstraints(
               maxHeight: _computeSectionHeight(context) + 20,
             ),
-            // Match the section height to the actual card height to avoid extra gap
 
             child: Align(
               alignment: Alignment.centerLeft,
@@ -54,18 +52,6 @@ class PropertyListV3 extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   children: [
-                    //   ...model.locationByMonth
-                    //       .where((property) => property['year'] == latestYear)
-                    //       .toList()
-                    //     ..sort((a, b) =>
-                    //         (b['month'] as int).compareTo(a['month'] as int))
-                    // ]
-                    //     .expand((property) => [
-                    //           PropertyImageStack(locationByMonth: [property]),
-                    //           const SizedBox(width: 20),
-                    //         ])
-                    //     .toList(),
-                    // ViewAllProperty(model: model),
                     ...sequencedProperties.map((property) => PropertyImageStack(
                           locationByMonth: [property],
                           model: model,
@@ -79,10 +65,10 @@ class PropertyListV3 extends StatelessWidget {
   double _computeSectionHeight(BuildContext context) {
     final bool isMobile = MediaQuery.of(context).size.width < 600;
     final double screenHeight = MediaQuery.of(context).size.height;
-    // Keep in sync with PropertyImageStack's containerHeight formula
+
     final double containerHeight =
         isMobile ? screenHeight * 0.42 : screenHeight * 0.35;
-    // Add a small breathing space to prevent clipping
+
     return containerHeight;
   }
 
@@ -95,7 +81,6 @@ class PropertyListV3 extends StatelessWidget {
       .map((e) => e['month'] as int)
       .reduce((a, b) => a > b ? a : b);
 
-  /// Get all properties belonging to the owner, sequenced by latest transactions (left to right)
   List<Map<String, dynamic>> _getPropertiesSequencedByLatestTransactions() {
     if (model.locationByMonth.isEmpty) {
       return [];
@@ -129,7 +114,7 @@ class PropertyListV3 extends StatelessWidget {
     sequencedProperties.sort((a, b) {
       final aDate = a['year'] * 100 + a['month'];
       final bDate = b['year'] * 100 + b['month'];
-      return bDate.compareTo(aDate); // Latest first (left to right)
+      return bDate.compareTo(aDate);
     });
 
     return sequencedProperties;
@@ -190,8 +175,6 @@ class PropertyImageStack extends StatelessWidget {
         locationRoad = "";
         break;
     }
-    // print(
-    //     '${model.ownerUnits.where((unit) => unit.location == location).map((unit) => unit.unitno).toSet()}');
 
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
@@ -208,7 +191,6 @@ class PropertyImageStack extends StatelessWidget {
         final imageWidth = containerWidth * 0.95;
         final imageHeight = containerHeight * 0.48;
 
-        final smallContainerWidth = containerWidth * 0.45;
         final smallContainerHeight = containerHeight * 0.08;
         final horizontalPadding = containerWidth * 0.035;
 
@@ -221,7 +203,6 @@ class PropertyImageStack extends StatelessWidget {
               padding: EdgeInsets.only(right: horizontalPadding),
               child: Container(
                 width: containerWidth,
-                // height: containerHeight,
                 margin: const EdgeInsets.only(left: 5),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -238,7 +219,6 @@ class PropertyImageStack extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image at top
                     Stack(
                       children: [
                         Padding(
@@ -261,7 +241,6 @@ class PropertyImageStack extends StatelessWidget {
                           right: 0,
                           child: Center(
                             child: Container(
-                              // width: smallContainerWidth + containerWidth * 0.1,
                               height: smallContainerHeight,
                               margin: EdgeInsets.only(
                                   bottom: containerHeight * 0.01),
@@ -288,7 +267,6 @@ class PropertyImageStack extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  // Show occupancy rate using async widget
                                   FutureBuilder<String>(
                                     future: model
                                         .calculateTotalOccupancyForLocation(
@@ -322,7 +300,6 @@ class PropertyImageStack extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     Padding(
                       padding: const EdgeInsets.only(left: 10, top: 5),
                       child: Row(
@@ -378,10 +355,8 @@ class PropertyImageStack extends StatelessWidget {
                                                           .any((o) =>
                                                               o['ownerName'] ==
                                                               ownerName)
-                                                      ? const Color(
-                                                          0xff5092FF) // Main owner color
-                                                      : const Color(
-                                                          0xFF4CAF50), // Co-owner color
+                                                      ? const Color(0xff5092FF)
+                                                      : const Color(0xFF4CAF50),
                                                   child: Text(
                                                     getInitials(ownerName),
                                                     style: const TextStyle(

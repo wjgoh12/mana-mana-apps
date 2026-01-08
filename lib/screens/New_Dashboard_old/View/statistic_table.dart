@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
-// import 'package:mana_mana_app/widgets/new_type_barchart.dart';
+import 'package:mana_mana_app/screens/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/new_bar_chart.dart';
-
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class StatisticTable extends StatelessWidget {
@@ -42,15 +40,6 @@ class StatisticTable extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 1.height),
-                // Text(
-                //   '(Ringgit in thousands)',
-                //   style: TextStyle(
-                //     fontFamily: 'Open Sans',
-                //     fontSize: 6.fSize,
-                //     fontWeight: FontWeight.w600,
-                //     color: const Color(0XFF4313E9),
-                //   ),
-                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -78,7 +67,8 @@ class StatisticTable extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (model.monthlyBlcOwner.length <= 4) _buildRevenueTable(model),
+                if (model.monthlyBlcOwner.length <= 4)
+                  _buildRevenueTable(model),
               ],
             ),
           ),
@@ -138,21 +128,17 @@ Widget _buildRevenueTable(NewDashboardVM model) {
       children: [
         _buildTableHeader(),
         ...model.monthlyBlcOwner.map((entry) {
-          final year = entry['year']; // Extract year
-          final month = entry['month']; // Extract month
-          final totalBlc =
-              entry['total']; // Extract total balance for the month
+          final year = entry['year'];
+          final month = entry['month'];
+          final totalBlc = entry['total'];
 
-          // Find the corresponding profit for the same year and month
           final profitEntry = model.monthlyProfitOwner.firstWhere(
             (profit) => profit['year'] == year && profit['month'] == month,
             orElse: () => {'total': 0.00},
           );
 
-          final totalProfit =
-              profitEntry['total']; // Extract total profit for the month
+          final totalProfit = profitEntry['total'];
 
-          // Convert month number to a name (e.g., 5 -> May)
           final monthName = getMonthName(month);
 
           return Column(

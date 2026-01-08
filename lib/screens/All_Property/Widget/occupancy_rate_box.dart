@@ -8,8 +8,8 @@ import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 
-final labelColor1 = const Color(0XFF2900B7);
-final barBackgroundColor = const Color(0xFFDDD7FF);
+const labelColor1 = Color(0XFF2900B7);
+const barBackgroundColor = Color(0xFFDDD7FF);
 
 class OccupancyRateBox extends StatefulWidget {
   final NewDashboardVM_v3? model; // Optional model parameter
@@ -50,9 +50,8 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
         ? Provider.of<GlobalDataManager?>(context, listen: false)
         : null;
 
-    final width = 350.0;
-    final height = 280.0;
-    final fontScale = 1.0;
+    const width = 350.0;
+    const height = 280.0;
 
     return Column(
       mainAxisSize: MainAxisSize.min, // Important: prevents extra space
@@ -142,6 +141,7 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
   }
 }
 
+// ignore: unused_element
 class _BarData {
   const _BarData(this.color, this.value, this.maxValue);
   final Color color;

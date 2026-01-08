@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
-import 'package:mana_mana_app/screens/All_Property/Widget/occupancy_rate_box.dart';
 
 class UnitOverviewContainer extends StatelessWidget {
   const UnitOverviewContainer({Key? key}) : super(key: key);
@@ -138,19 +137,17 @@ class UnitOverviewContainer extends StatelessWidget {
 
     // Get occupancy rate from the dashboard model
     double occupancyRate = 0.0;
-    if (selectedUnit != null && selectedProperty != null) {
-      // Get occupancy from the dashboard model (now with improved fallback logic)
-      String occString = dashboardModel.getUnitOccupancyFromCache(
-        selectedProperty,
-        selectedUnit,
-      );
-      occupancyRate = double.tryParse(occString) ?? 0.0;
+    // Get occupancy from the dashboard model (now with improved fallback logic)
+    String occString = dashboardModel.getUnitOccupancyFromCache(
+      selectedProperty,
+      selectedUnit,
+    );
+    occupancyRate = double.tryParse(occString) ?? 0.0;
 
-      // Debug: only log if we have a meaningful occupancy rate
-      if (occupancyRate > 0) {
-        // print(
-        //     '✅ Group Occupancy for $selectedProperty unit $selectedUnit: $occupancyRate%');
-      }
+    // Debug: only log if we have a meaningful occupancy rate
+    if (occupancyRate > 0) {
+      // print(
+      //     '✅ Group Occupancy for $selectedProperty unit $selectedUnit: $occupancyRate%');
     }
 
     final formattedOcc = '${occupancyRate.toStringAsFixed(1)}%';
@@ -169,11 +166,10 @@ class UnitOverviewContainer extends StatelessWidget {
       String circleColor,
       Widget icon, {
       bool isCurrency = true,
-      VoidCallback? onTap, // Add onTap parameter
+      VoidCallback? onTap,
     }) {
       return Expanded(
         child: InkWell(
-          // Wrap Card with InkWell
           onTap: onTap,
           child: Card(
             shape: RoundedRectangleBorder(
@@ -186,7 +182,9 @@ class UnitOverviewContainer extends StatelessWidget {
             elevation: 2,
             color: Color(int.parse(color)),
             child: Container(
-              height: ResponsiveSize.scaleHeight(90),
+              height: MediaQuery.of(context).size.width >= 600
+                  ? ResponsiveSize.scaleHeight(110)
+                  : ResponsiveSize.scaleHeight(90),
               padding: EdgeInsets.all(ResponsiveSize.scaleWidth(8.0)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,11 +209,9 @@ class UnitOverviewContainer extends StatelessWidget {
                     ],
                   ),
                   SizedBox(width: ResponsiveSize.scaleWidth(8)),
-                  // Content on the right
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(height: ResponsiveSize.scaleHeight(8)),
                         Container(
@@ -263,14 +259,6 @@ class UnitOverviewContainer extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: ResponsiveSize.scaleHeight(4)),
-                        // Text(
-                        //   footer,
-                        //   style: TextStyle(
-                        //     fontFamily: 'outfit',
-                        //     fontSize: ResponsiveSize.text(10),
-                        //     color: Color(int.parse(fontColor)),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
@@ -282,21 +270,11 @@ class UnitOverviewContainer extends StatelessWidget {
       );
     }
 
-    void _showOccupancyDialog(BuildContext context, String occupancyRate) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog();
-        },
-      );
-    }
-
     return Container(
       padding: const EdgeInsets.all(8.0),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // The 2x2 grid of cards
           Column(
             children: [
               Row(
@@ -364,7 +342,10 @@ class UnitOverviewContainer extends StatelessWidget {
                     '0xFF606060',
                     Image.asset(
                       'assets/images/property_occupancy.png',
-                      width: ResponsiveSize.scaleWidth(20),
+                      width: MediaQuery.of(context).size.width >= 600
+                          ? ResponsiveSize.scaleWidth(25)
+                          : ResponsiveSize.scaleWidth(20),
+                      fit: BoxFit.contain,
                       color: Color(int.parse('0xFFFFCF00')),
                     ),
                     isCurrency: false,
@@ -373,31 +354,6 @@ class UnitOverviewContainer extends StatelessWidget {
               ),
             ],
           ),
-          // // Circle in the center, overlaying the cards
-          // Container(
-          //   width: ResponsiveSize.scaleWidth(20),
-          //   height: ResponsiveSize.scaleWidth(20),
-          //   decoration: BoxDecoration(
-          //     shape: BoxShape.circle,
-          //     gradient: SweepGradient(
-          //       colors: [
-          //         Color(int.parse('0xFFFFFFFF')),
-          //         Color(int.parse('0xFF606060')),
-          //         Color(int.parse('0xFFFFFFFF')),
-          //         Color(int.parse('0xFF606060')),
-          //       ],
-          //       startAngle: 0.0,
-          //       endAngle: 3.14 * 2,
-          //     ),
-          //     boxShadow: [
-          //       BoxShadow(
-          //         color: Colors.black.withOpacity(0.2),
-          //         blurRadius: 4,
-          //         offset: const Offset(0, 2),
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );

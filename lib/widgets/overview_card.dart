@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -59,7 +57,7 @@ class OverviewCard extends StatelessWidget {
               child: child,
             );
 
-          default: // 'slide' - slide from right
+          default:
             return SlideTransition(
               position: Tween<Offset>(
                 begin: const Offset(1.0, 0.0),
@@ -74,7 +72,6 @@ class OverviewCard extends StatelessWidget {
   }
 
   String getOccupancyRate() {
-    PropertyListRepository propertyrepo = PropertyListRepository();
     try {
       final uniqueLocations =
           model.locationByMonth.map((e) => e['slocation']).toSet().toList();
@@ -102,8 +99,8 @@ class OverviewCard extends StatelessWidget {
       int year = now.year;
 
       if (prevMonth == 0) {
-        prevMonth = 12; // December
-        year -= 1; // Go back one year
+        prevMonth = 12;
+        year -= 1;
       }
 
       const months = [
@@ -127,59 +124,39 @@ class OverviewCard extends StatelessWidget {
       };
     }
 
-    final prev = getPreviousMonthYear(DateTime.now());
-
-    String shortMonth = prev["month"]!;
-    String year = prev["year"]!;
-    // Calculate active/managed units count
-    final managedUnitsCount = model.totalByMonth
-        .where(
-            (e) => e['unitstatus'] == 'Active' || e['unitstatus'] == 'ACTIVE')
-        .map((e) => e['sunit'])
-        .toSet()
-        .length;
+    getPreviousMonthYear(DateTime.now());
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isMobile = Responsive.isMobile(context);
 
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width (for gaps only)
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
+    double responsiveHeight(double value) => (value / 812.0) * screenHeight;
 
     ResponsiveSize.init(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Use the ACTUAL available width inside the parent (after padding).
         final availableWidth = constraints.maxWidth;
 
-        // Single place to control the inter-column gap.
         final gapBetweenColumns = responsiveWidth(8);
 
-        // Compute each column width so that left/right outer gaps are equal.
         final cardWidth = (availableWidth - gapBetweenColumns) / 2;
 
-        // Heights can remain proportional; no change needed here.
         final cardHeightSmall =
             isMobile ? screenWidth * 0.20 : screenWidth * 0.13;
         final cardHeightLarge =
             isMobile ? screenWidth * 0.28 : screenWidth * 0.21;
 
         return Column(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Left Column (fixed position, exact width)
                 SizedBox(
                   width: cardWidth,
                   child: Column(
                     children: [
-                      // 1st - Updated to show total properties count
                       Container(
                         margin: EdgeInsets.only(bottom: responsiveHeight(5)),
                         child: Container(
@@ -189,7 +166,7 @@ class OverviewCard extends StatelessWidget {
                               responsiveHeight(10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
-                            color: Color(0xFFFFCF00),
+                            color: const Color(0xFFFFCF00),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,12 +179,12 @@ class OverviewCard extends StatelessWidget {
                                     top: 10,
                                     child: CircleAvatar(
                                       radius: ResponsiveSize.scaleWidth(20),
-                                      backgroundColor: Color(0xFF606060),
+                                      backgroundColor: const Color(0xFF606060),
                                       child: Image.asset(
                                         'assets/images/OverviewProperty.png',
                                         width: ResponsiveSize.scaleWidth(24),
                                         height: ResponsiveSize.scaleHeight(24),
-                                        color: Color(0xFFFFCF00),
+                                        color: const Color(0xFFFFCF00),
                                       ),
                                     ),
                                   ),
@@ -265,104 +242,91 @@ class OverviewCard extends StatelessWidget {
                               ),
                               InkWell(
                                 onTap: () {
-                                  final newDashboardVM =
-                                      context.read<NewDashboardVM>();
+                                  context.read<NewDashboardVM>();
                                   Navigator.pushReplacement(
                                       context,
                                       _createRoute(const AllPropertyNewScreen(),
                                           transitionType: 'fade'));
                                 },
-                                child: Container(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom: ResponsiveSize.scaleHeight(20)),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 10),
-                                          child: Text(
-                                            'Total Properties',
-                                            style: TextStyle(
-                                              fontFamily: 'outfit',
-                                              color: Color(0xFF606060),
-                                              fontSize: ResponsiveSize.text(12),
-                                              fontWeight: FontWeight.w400,
-                                            ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: ResponsiveSize.scaleHeight(20)),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          'Total Properties',
+                                          style: TextStyle(
+                                            fontFamily: 'outfit',
+                                            color: const Color(0xFF606060),
+                                            fontSize: ResponsiveSize.text(12),
+                                            fontWeight: FontWeight.w400,
                                           ),
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10),
-                                          child: Row(
-                                            children: [
-                                              // Text(
-                                              //   'Managed:', // Show managed units count
-                                              //   style: TextStyle(
-                                              //     fontFamily: 'outfit',
-                                              //     color: Color(0xFF606060),
-                                              //     fontSize:
-                                              //         ResponsiveSize.text(18),
-                                              //     fontWeight: FontWeight.bold,
-                                              //   ),
-                                              // ),
-                                              FutureBuilder<int>(
-                                                  future: PropertyListRepository
-                                                      .getTotalPropertyCount(),
-                                                  builder: (context, snapshot) {
-                                                    if (snapshot
-                                                            .connectionState ==
-                                                        ConnectionState
-                                                            .waiting) {
-                                                      return Text(
-                                                        '0',
-                                                        style: TextStyle(
-                                                          fontSize:
-                                                              ResponsiveSize
-                                                                  .text(18),
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Color(0xFF606060),
-                                                        ),
-                                                      );
-                                                    }
-                                                    if (snapshot.hasError) {
-                                                      return Text(
-                                                        '0',
-                                                        style: TextStyle(
-                                                          fontSize:
-                                                              ResponsiveSize
-                                                                  .text(18),
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Color(0xFF606060),
-                                                        ),
-                                                      );
-                                                    }
-                                                    final totalCount =
-                                                        snapshot.data ?? 0;
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Row(
+                                          children: [
+                                            FutureBuilder<int>(
+                                                future: PropertyListRepository
+                                                    .getTotalPropertyCount(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
                                                     return Text(
-                                                      'Managed: $totalCount',
+                                                      '0',
                                                       style: TextStyle(
-                                                        fontFamily: 'Outfit',
                                                         fontSize:
                                                             ResponsiveSize.text(
                                                                 18),
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color:
-                                                            Color(0xFF606060),
+                                                        color: const Color(
+                                                            0xFF606060),
                                                       ),
                                                     );
-                                                  })
-                                            ],
-                                          ),
+                                                  }
+                                                  if (snapshot.hasError) {
+                                                    return Text(
+                                                      '0',
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            ResponsiveSize.text(
+                                                                18),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: const Color(
+                                                            0xFF606060),
+                                                      ),
+                                                    );
+                                                  }
+                                                  final totalCount =
+                                                      snapshot.data ?? 0;
+                                                  return Text(
+                                                    'Managed: $totalCount',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Outfit',
+                                                      fontSize:
+                                                          ResponsiveSize.text(
+                                                              18),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: const Color(
+                                                          0xFF606060),
+                                                    ),
+                                                  );
+                                                })
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -373,16 +337,11 @@ class OverviewCard extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                // Gap between columns
                 SizedBox(width: gapBetweenColumns),
-
-                // Right Column (exact same width)
                 SizedBox(
                   width: cardWidth,
                   child: Column(
                     children: [
-                      // 3rd - Monthly Profit Card (unchanged)
                       Card(
                         margin: EdgeInsets.only(bottom: responsiveHeight(5)),
                         color: const Color(0xFF606060),
@@ -395,10 +354,10 @@ class OverviewCard extends StatelessWidget {
                                 padding: const EdgeInsets.only(left: 10),
                                 child: CircleAvatar(
                                   radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: Color(0xFFFFCF00),
+                                  backgroundColor: const Color(0xFFFFCF00),
                                   child: Image.asset(
                                     'assets/images/OverviewMonthlyProfit.png',
-                                    color: Color(0xFF606060),
+                                    color: const Color(0xFF606060),
                                     width: ResponsiveSize.scaleWidth(28),
                                     height: ResponsiveSize.scaleHeight(24),
                                   ),
@@ -507,25 +466,12 @@ class OverviewCard extends StatelessWidget {
                                       }
                                     },
                                   ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.only(left: 10),
-                                  //   child: Text(
-                                  //     '$shortMonth $year',
-                                  //     style: TextStyle(
-                                  //       fontFamily: 'outfit',
-                                  //       fontSize: ResponsiveSize.text(8),
-                                  //       fontStyle: FontStyle.normal,
-                                  //     ),
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                             ],
                           ),
                         ),
                       ),
-
-                      // 4th - Accumulated Profit Card (unchanged)
                       Container(
                         width: double.infinity,
                         height: cardHeightLarge,
@@ -581,7 +527,7 @@ class RevenueContainer extends StatelessWidget {
 
     double responsivePadding = isMobile ? 10 : 20;
     return SizedBox(
-      width: double.infinity, // will fill the parent column width
+      width: double.infinity,
       height: cardHeightLarge,
       child: Stack(
         children: [
@@ -595,7 +541,6 @@ class RevenueContainer extends StatelessWidget {
                     SizedBox(height: (0.5).height),
                     _buildTitleRow(),
                     _buildAmountText(context),
-                    // _buildDateRow(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -634,56 +579,6 @@ class RevenueContainer extends StatelessWidget {
           ),
         ),
         const Spacer(),
-      ],
-    );
-  }
-
-  Widget _buildDateRow() {
-    Map<String, String> getPreviousMonthYear(DateTime now) {
-      int prevMonth = now.month - 1;
-      int year = now.year;
-
-      if (prevMonth == 0) {
-        prevMonth = 12; // December
-        year -= 1; // Go back one year
-      }
-
-      const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ];
-
-      return {
-        "month": months[prevMonth - 1],
-        "year": year.toString(),
-      };
-    }
-
-    final prev = getPreviousMonthYear(DateTime.now());
-
-    String shortMonth = prev["month"]!;
-    String year = prev["year"]!;
-    return Row(
-      children: [
-        Text(
-          '$shortMonth $year',
-          style: TextStyle(
-            fontFamily: 'outfit',
-            fontSize: ResponsiveSize.text(10),
-            fontWeight: FontWeight.w400,
-            color: Colors.black,
-          ),
-        ),
       ],
     );
   }
@@ -734,20 +629,6 @@ class RevenueContainer extends StatelessWidget {
           },
         ),
       ],
-    );
-  }
-}
-
-// Small helper to replace literal text in a const Text with dynamic content
-extension _TextReplace on Text {
-  Widget buildWithText(String newText) {
-    return Text(
-      newText,
-      style: style,
-      textAlign: textAlign,
-      maxLines: maxLines,
-      overflow: overflow,
-      softWrap: softWrap,
     );
   }
 }

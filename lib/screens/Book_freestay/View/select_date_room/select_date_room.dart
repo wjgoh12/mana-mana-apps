@@ -1,11 +1,10 @@
 import 'dart:async';
-// import 'dart:ffi' hide Size; // removed unused import
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/screens/Book_freestay/View/room_details.dart';
+import 'package:mana_mana_app/screens/Book_freestay/View/select_date_room/widget/sticky_bottom_bar.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Book_freestay/Widget/roomtype_card.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +67,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   bool _isLoadingRoomTypes = false;
   bool _hasPendingChanges = false;
 
-  // Track the last fetched parameters to detect staleness
   DateTime? _lastFetchedStart;
   DateTime? _lastFetchedEnd;
   int? _lastFetchedQuantity;
@@ -85,16 +83,14 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     _focusedDay = DateTime.now().add(const Duration(days: 7));
     _selectedDay = null;
 
-    // Initialize VM and load data
     _vm = context.read<OwnerProfileVM>();
     _fetchDebounce = null;
     _initializeData();
   }
 
   Future<void> _initializeData() async {
-    // First load blocked dates
     await _fetchBlockedDates();
-    // Load required data
+
     setState(() => _isLoadingRoomTypes = true);
     try {
       await Future.wait([
@@ -124,7 +120,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     if (match != null && match.groupCount >= 1) {
       return int.parse(match.group(1) ?? '1');
     }
-    return 1; // Default to 1 bedroom if not specified
+    return 1;
   }
 
   String sanitizeRoomTypeName(String raw) {
@@ -133,14 +129,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
     final firstToken = s.split(RegExp(r'\s+'))[0];
 
-    // If the first token starts with a digit (eg. "22M" building code), strip it
     if (RegExp(r'^\d').hasMatch(firstToken)) {
       return s.substring(firstToken.length).trim();
     }
 
     final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
-    // Only strip very short all-caps tokens (likely codes/abbreviations).
-    // Keep longer words (e.g., 'RUBY', 'CORAL') which are meaningful descriptors.
+
     if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 3) {
       return s.substring(firstToken.length).trim();
     }
@@ -293,8 +287,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     debugPrint(
         "🔍 Available rooms: ${_vm.roomTypes.map((r) => sanitizeRoomTypeName(r.roomTypeName)).toList()}");
 
-    // First find the room in current available rooms
-    // IMPORTANT: Compare sanitized names since _selectedRoomId is stored as sanitized
     final matchingRoom = _vm.roomTypes.firstWhere(
       (room) => sanitizeRoomTypeName(room.roomTypeName) == _selectedRoomId,
       orElse: () => RoomType(
@@ -309,20 +301,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     );
 
     if (matchingRoom.roomTypeName.isEmpty) {
-      // Room is not available for these dates
       debugPrint("❌ Room not found in available rooms - deselecting");
       setState(() {
         _selectedRoom = null;
         _selectedRoomId = null;
       });
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     content: Text(
-      //       'Selected room is not available for these dates.',
-      //     ),
-      //     backgroundColor: Colors.orange,
-      //   ),
-      // );
+
       return;
     }
 
@@ -332,20 +316,18 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     // Room is available, check if user has enough points
     final isAffordable = isRoomAffordable(
       matchingRoom,
-      1, // duration doesn't affect points
-      _selectedQuantity, // Use actual selected quantity
+      1,
+      _selectedQuantity,
     );
 
     debugPrint("🔍 Is affordable: $isAffordable");
 
     if (isAffordable) {
-      // Room is available and affordable, keep the selection
       debugPrint("✅ Room is affordable - keeping selection");
       setState(() {
         _selectedRoom = matchingRoom;
       });
     } else {
-      // Room is available but not affordable
       debugPrint("❌ Room not affordable - deselecting");
       setState(() {
         _selectedRoom = null;
@@ -826,10 +808,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         color: Theme.of(context).primaryColor.withOpacity(1),
                         shape: BoxShape.circle,
                       ),
-                      // Keep the start/end CELL decorations transparent so the
-                      // custom small markers from the builders appear above the
-                      // band. The within-range cells will show a full-height
-                      // light-gray band (the "bridge").
                       rangeStartDecoration: const BoxDecoration(
                         color: Colors.transparent,
                         shape: BoxShape.rectangle,
@@ -838,17 +816,10 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                         color: Colors.transparent,
                         shape: BoxShape.rectangle,
                       ),
-                      // We render a thin connector via rangeHighlightBuilder.
-                      // Keep the default within-range cell decoration transparent
-                      // so it doesn't paint a full-height band behind our thin
-                      // connector. Avoid borderRadius here to prevent animation
-                      // tween conflicts with circular selected decorations.
                       withinRangeDecoration: const BoxDecoration(
                         color: Colors.transparent,
                         shape: BoxShape.rectangle,
                       ),
-                      // Deprecated / extra highlight color kept in sync with
-                      // withinRangeDecoration for compatibility.
                       rangeHighlightColor: Colors.grey.shade300,
                     ),
                     onPageChanged: (focusedDay) => _focusedDay = focusedDay,
@@ -856,7 +827,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 ),
 
                 const SizedBox(height: 10),
-                // Check-in / Check-out Cards
+
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: ResponsiveSize.scaleWidth(18)),
@@ -870,7 +841,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 ),
 
                 SizedBox(height: ResponsiveSize.scaleHeight(10)),
-                // Points Balance
+
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: ResponsiveSize.scaleWidth(18),
@@ -878,7 +849,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   child: _buildPointsAndQuantity(vm),
                 ),
 
-                // 🆕 Stale Data Warning
                 if (dataIsStale && _rangeStart != null && _rangeEnd != null)
                   Padding(
                     padding:
@@ -910,17 +880,18 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     ),
                   ),
                 SizedBox(height: ResponsiveSize.scaleHeight(26)),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(left: 18, bottom: 8),
                   child: Text(
                     'Available Room Types',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize:
+                            MediaQuery.of(context).size.width >= 600 ? 20 : 16,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
 
-                // Room Types List
                 if (vm.roomTypes.isEmpty)
-                  // Show spinner while fetching, otherwise show plain no-rooms text
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: ResponsiveSize.scaleWidth(18),
@@ -982,13 +953,11 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                               ? vm.UserPointBalance.first
                                   .redemptionBalancePoints
                               : 0;
-                          // Always check affordability against the TOTAL points required (room.roomTypePoints)
-                          // displayedPoints might be the unit price, which is just for display.
+
                           return room.roomTypePoints <= userPoints;
                         },
                         onSelect: (selectedRoom) {
                           setState(() {
-                            // Check if switching to a different room
                             final isDifferentRoom = selectedRoom != null &&
                                 _selectedRoom != null &&
                                 sanitizeRoomTypeName(
@@ -1030,8 +999,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     },
                   ),
 
-                // const SizedBox(height: 5),
-                // Total Points
                 SizedBox(
                     height: ResponsiveSize.scaleHeight(
                         150)), // Space for bottom bar
@@ -1039,8 +1006,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             ),
           ),
           SizedBox(height: ResponsiveSize.scaleHeight(20)),
-
-          // Sticky Bottom Bar
           Positioned(
             bottom: 0,
             left: 0,
@@ -1101,7 +1066,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
-        // color: const Color.fromARGB(255, 236, 247, 255),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
       ),
@@ -1128,9 +1092,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     );
   }
 
-  // 🆕 Enhanced with stale data check
   void _onNextPressed() async {
-    // Check if dates are selected
     if (_rangeStart == null || _rangeEnd == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -1141,7 +1103,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       return;
     }
 
-    // 🆕 If data is stale, force refresh first
     if (_isDataStale()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -1153,7 +1114,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
       await _fetchRoomTypesAndMaintainSelection();
 
-      // After refresh, check again if it's still stale (in case of error)
       if (_isDataStale()) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -1165,7 +1125,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       }
     }
 
-    // Check if room is selected
     if (_selectedRoom == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -1176,7 +1135,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       return;
     }
 
-    // Check if total points = 0
     if (_selectedRoom!.roomTypePoints == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -1189,7 +1147,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       return;
     }
 
-    // Simply check if user has enough points for the room
     if (!isRoomAffordable(_selectedRoom!, 1, _selectedQuantity)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -1205,7 +1162,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ? ownerVM.UserPointBalance.first.redemptionBalancePoints
         : 0;
 
-    // Calculate formatted points from the selected room
     final formatter = NumberFormat('#,###');
     final totalPoints = _selectedRoom!.roomTypePoints;
     final formattedPoints = formatter.format(totalPoints);
@@ -1230,127 +1186,4 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       ),
     );
   }
-}
-
-Widget StickyBottomBar({
-  required int selectedQuantity,
-  required String formattedPoints,
-  required bool dataIsStale,
-  required VoidCallback onNextPressed,
-  required bool hasRoomSelected,
-  required bool hasDatesSelected,
-}) {
-  final grey = const Color(0xFF606060);
-  return Container(
-    color: Colors.white,
-    child: Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveSize.scaleWidth(15),
-            vertical: ResponsiveSize.scaleHeight(15),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              // color: Color.fromARGB(255, 236, 247, 255),
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.grey.shade300),
-              boxShadow: [
-                BoxShadow(
-                  // ignore: deprecated_member_use
-                  color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(ResponsiveSize.scaleWidth(12)),
-              child: Row(
-                children: [
-                  Text(
-                    'Number of Rooms Selected:  ',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.text(10),
-                      fontFamily: 'outfit',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  Text('$selectedQuantity',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.text(12),
-                        fontFamily: 'outfit',
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      )),
-                  const Spacer(),
-                  Text(
-                    'Total: ',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.text(12),
-                      fontFamily: 'outfit',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  Text(
-                    '$formattedPoints points',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.text(12),
-                      fontFamily: 'outfit',
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 8),
-        // Next Button
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: TextButton(
-              onPressed:
-                  dataIsStale ? null : onNextPressed, // 🆕 Disable if stale
-              style: ButtonStyle(
-                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                backgroundColor: WidgetStateProperty.all(
-                  dataIsStale
-                      ? Colors.grey.shade300
-                      : (hasRoomSelected && hasDatesSelected
-                          ? const Color(0xFFFFCF00)
-                          : grey),
-                ),
-                fixedSize: WidgetStateProperty.all(const Size(300, 40)),
-              ),
-              child: Text(
-                dataIsStale ? 'Updating Prices...' : 'Next',
-                style: TextStyle(
-                  fontFamily: 'outfit',
-                  color: dataIsStale
-                      ? Colors.grey.shade600
-                      : (hasRoomSelected && hasDatesSelected
-                          ? grey
-                          : Colors.white),
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          height: ResponsiveSize.scaleHeight(20),
-        ),
-      ],
-    ),
-  );
 }

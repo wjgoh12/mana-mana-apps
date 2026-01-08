@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
-import 'package:mana_mana_app/screens/Profile/View/choose_property_location.dart';
+import 'package:mana_mana_app/screens/Book_freestay/View/choose_property_location.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';

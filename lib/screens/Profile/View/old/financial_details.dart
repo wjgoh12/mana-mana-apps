@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
-import 'package:mana_mana_app/widgets/responsive.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +17,7 @@ class _FinancialDetailsState extends State<FinancialDetails> {
   @override
   void initState() {
     super.initState();
-    // Initialize data once - it will use cached data if already loaded
+
     model.fetchData();
   }
 
@@ -28,9 +27,7 @@ class _FinancialDetailsState extends State<FinancialDetails> {
 
     return MultiProvider(
       providers: [
-        // Provide the global data manager
         ChangeNotifierProvider.value(value: GlobalDataManager()),
-        // Provide the profile view model
         ChangeNotifierProvider.value(value: model),
       ],
       child: Consumer<OwnerProfileVM>(
@@ -100,12 +97,8 @@ class _FinancialDetailsState extends State<FinancialDetails> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
+    double responsiveFont(double value) => (value / 812.0) * screenHeight;
 
     return SizedBox(
       width: responsiveWidth(160),
@@ -128,10 +121,10 @@ class _FinancialDetailsState extends State<FinancialDetails> {
 }
 
 Widget _buildData({required String value}) {
-  return Container(
+  return SizedBox(
     width: 180,
     child: Text(
-      value ?? 'Not available',
+      value,
       maxLines: 2,
       style: TextStyle(
           fontFamily: 'outfit',

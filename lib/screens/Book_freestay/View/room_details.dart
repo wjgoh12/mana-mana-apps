@@ -157,6 +157,8 @@ class _RoomDetailsState extends State<RoomDetails> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         elevation: 0,
         leadingWidth: ResponsiveSize.scaleWidth(13),
         automaticallyImplyLeading: false,

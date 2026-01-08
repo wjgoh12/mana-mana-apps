@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
-import 'package:mana_mana_app/model/user_model.dart';
-import 'package:mana_mana_app/provider/global_user_state.dart';
 import 'package:mana_mana_app/screens/Profile/View/owner_profile.dart';
 import 'package:mana_mana_app/screens/Setting/ViewModel/settingPageVM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
@@ -70,7 +68,9 @@ class SettingPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            model.users.isNotEmpty ? model.users.first.ownerFullName ?? '-' : '-',
+                            model.users.isNotEmpty
+                                ? model.users.first.ownerFullName ?? '-'
+                                : '-',
                             style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'package:mana_mana_app/screens/Newsletter/newsletter_read_details.dart';
-import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+// ignore: camel_case_types
 class newsletterStack extends StatelessWidget {
   const newsletterStack(
       {super.key,
@@ -15,8 +14,7 @@ class newsletterStack extends StatelessWidget {
   final String image;
   final String text1;
   final String text2;
-  // final double width;
-  // final double height;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -24,8 +22,6 @@ class newsletterStack extends StatelessWidget {
         ResponsiveBuilder(builder: (context, sizingInformation) {
           final isMobile =
               sizingInformation.deviceScreenType == DeviceScreenType.mobile;
-          final screenWidth = MediaQuery.of(context).size.width;
-          final screenHeight = MediaQuery.of(context).size.height;
 
           final width = isMobile ? 150.fSize : 140.fSize;
           final height = 150.fSize;

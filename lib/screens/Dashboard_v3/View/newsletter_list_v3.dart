@@ -1,8 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
-import 'package:mana_mana_app/screens/Newsletter/all_newsletter.dart';
 import 'package:mana_mana_app/screens/Newsletter/newsletter_read_details.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -17,9 +14,6 @@ class NewsletterListV3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const AllNewsletter allNewsletter = AllNewsletter();
-    // Do not fetch here to avoid repeated fetches and potential duplicates
-
     if (model.isLoading) {
       return Container(
         decoration: BoxDecoration(
@@ -50,12 +44,10 @@ class NewsletterListV3 extends StatelessWidget {
             final sectionHeight =
                 (isMobile ? screenHeight * 0.45 : screenHeight * 0.35) + 12.0;
 
-            // Determine latest year in dataset
             final int latestYear = model.locationByMonth
                 .map((p) => p['year'] as int)
                 .reduce((a, b) => a > b ? a : b);
 
-            // Filter by latest year and latest month
             final List<Map<String, dynamic>> filtered = model.locationByMonth
                 .where((property) =>
                     property['year'] == latestYear &&
@@ -63,7 +55,6 @@ class NewsletterListV3 extends StatelessWidget {
                 .cast<Map<String, dynamic>>()
                 .toList();
 
-            // Deduplicate by location (normalized) so a location appears at most once
             final Set<String> seenLocations = <String>{};
             final List<Map<String, dynamic>> uniqueByLocation = [];
             for (final prop in filtered) {
@@ -74,7 +65,6 @@ class NewsletterListV3 extends StatelessWidget {
               }
             }
 
-            // Show only one newsletter card
             final List<Map<String, dynamic>> items =
                 uniqueByLocation.take(1).toList();
 
@@ -135,7 +125,7 @@ class NewsletterImageStack extends StatelessWidget {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0xFF3E51FF).withOpacity(0.15),
+                    color: const Color(0xFF3E51FF).withOpacity(0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 0),
                   ),
@@ -196,8 +186,6 @@ class NewsletterImageStack extends StatelessWidget {
                           ))
                     ],
                   ),
-
-                  // Group icon and text
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
@@ -233,7 +221,6 @@ class NewsletterImageStack extends StatelessWidget {
                       maxLines: 2,
                     ),
                   ),
-
                   Stack(
                     children: [
                       Padding(
@@ -247,7 +234,6 @@ class NewsletterImageStack extends StatelessWidget {
                                   fontSize: 10,
                                   color: Colors.black,
                                 )),
-
                             const Text(
                               '10 Comments',
                               style: TextStyle(
@@ -255,11 +241,7 @@ class NewsletterImageStack extends StatelessWidget {
                                 color: Colors.black,
                               ),
                             ),
-
-                            //like button
-                            PostLike(),
-
-                            //after pressed button, it will navigate to property detail page
+                            const PostLike(),
                             Container(
                               margin: const EdgeInsets.only(right: 5),
                               child: TextButton(
@@ -315,7 +297,10 @@ class NewsletterImageStack extends StatelessWidget {
 }
 
 class PostLike extends StatefulWidget {
+  const PostLike({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _PostLikeState createState() => _PostLikeState();
 }
 

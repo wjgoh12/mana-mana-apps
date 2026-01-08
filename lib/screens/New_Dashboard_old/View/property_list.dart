@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/All_Property/View/old/all_property.dart';
-import 'package:mana_mana_app/screens/New_Dashboard/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -13,7 +13,6 @@ class PropertyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (model.isLoading) {
-      // Check if data is still loading
       return Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -21,7 +20,7 @@ class PropertyList extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(16),
         child: const Center(
-          child: CircularProgressIndicator(), // Display a loading spinner
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -56,20 +55,6 @@ class PropertyList extends StatelessWidget {
                           const SizedBox(width: 20),
                         ])
                     .toList(),
-                // ...model.locationByMonth
-                //     .where((property) =>
-                //         property['year'] ==
-                //             model.locationByMonth
-                //                 .map((p) => p['year'])
-                //                 .reduce((a, b) => a > b ? a : b) &&
-                //         property['month'] == model.unitLatestMonth)
-                //     .expand((property) => [
-                //           PropertyImageStack(
-                //             locationByMonth: [property],
-                //           ),
-                //           const SizedBox(width: 20),
-                //         ])
-                //     .toList(),
                 const SizedBox(width: 5),
                 ViewAllProperty(model: model),
               ],
@@ -78,21 +63,13 @@ class PropertyList extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class PropertyImageStack extends StatelessWidget {
   List<Map<String, dynamic>> locationByMonth;
   PropertyImageStack({
     Key? key,
-    // required this.image,
-    // required this.label,
-    // required this.location,
-    // required this.amount,
     required this.locationByMonth,
   }) : super(key: key);
-
-  // final String image;
-  // final String label;
-  // final String location;
-  // final String amount;
 
   @override
   Widget build(BuildContext context) {

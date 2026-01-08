@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/Newsletter/newsletter.dart';
-import 'package:mana_mana_app/screens/Newsletter/ViewModel/newsletter_VM.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
@@ -9,14 +7,12 @@ class NewsletterReadDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NewsletterVM();
     return ResponsiveBuilder(builder: (context, sizingInformation) {
       final containerWidth = 40.fSize;
       final containerHeight = 50.fSize;
       final isMobile =
           sizingInformation.deviceScreenType == DeviceScreenType.mobile;
       final screenWidth = MediaQuery.of(context).size.width;
-      final screenHeight = MediaQuery.of(context).size.height;
 
       final contentWidth = isMobile ? screenWidth * 0.85 : screenWidth * 0.9;
       return Scaffold(
@@ -24,7 +20,7 @@ class NewsletterReadDetails extends StatelessWidget {
             toolbarHeight: 285.fSize,
             automaticallyImplyLeading: false,
             flexibleSpace: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/newsletter_image.png'),
                   fit: BoxFit.cover,
@@ -85,7 +81,7 @@ class NewsletterReadDetails extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: const Text(
+                      child: Text(
                         'Scarletz Suites: Your Chic Urban Stay in the Heart of Kuala Lumpur',
                         style: TextStyle(
                           fontSize: 30,
@@ -141,14 +137,14 @@ class NewsletterReadDetails extends StatelessWidget {
                           children: [
                             Row(children: [
                               Image.asset('assets/images/newsletter_icon.png'),
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               const Text('Anis Shazwani'),
                             ]),
                             const SizedBox(height: 4),
                             Row(
                               children: [
                                 Image.asset('assets/images/Clock.png'),
-                                SizedBox(width: 2),
+                                const SizedBox(width: 2),
                                 const Text(
                                   '2 min read',
                                   style: TextStyle(fontSize: 12),

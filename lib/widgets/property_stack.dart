@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
 import 'package:mana_mana_app/screens/Property_detail/View/property_detail_v3.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:mana_mana_app/widgets/occupancy_text.dart';
 
 class PropertyStack extends StatelessWidget {
   final List<Map<String, dynamic>> locationByMonth;
@@ -96,7 +94,6 @@ class PropertyStack extends StatelessWidget {
       final imageWidth = containerWidth * 0.95;
       final imageHeight = containerHeight * 0.45;
 
-      final smallContainerWidth = containerWidth * 0.45;
       final smallContainerHeight = containerHeight * 0.08;
 
       final horizontalPadding = isMobile ? 16.0 : 40.0;

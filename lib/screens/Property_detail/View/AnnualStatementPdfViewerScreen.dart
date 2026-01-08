@@ -27,7 +27,7 @@ class AnnualStatementPdfViewerFromMemory extends StatelessWidget {
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
     Rect sharePositionOrigin = box.localToGlobal(Offset.zero) & box.size;
-    ShareResult result = await Share.shareXFiles([XFile(file.absolute.path)],
+    await Share.shareXFiles([XFile(file.absolute.path)],
         sharePositionOrigin: sharePositionOrigin);
   }
 

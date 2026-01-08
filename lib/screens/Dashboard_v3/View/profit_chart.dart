@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
-import 'dart:math' show max;
 
 class ProfitChart extends StatelessWidget {
   const ProfitChart({
@@ -19,7 +18,6 @@ class ProfitChart extends StatelessWidget {
     final series = _getSeries();
     final spots = _toSpots(series.values.toList());
 
-    // Check if there's any data
     final hasData = series.values.any((value) => value > 0);
     if (!hasData) {
       return Center(
@@ -35,11 +33,10 @@ class ProfitChart extends StatelessWidget {
       );
     }
 
-    final maxX = _getMaxX();
+    _getMaxX();
     final maxY = _computeAutoMaxY(series.values);
     final leftInterval = _computeAutoInterval(maxY);
 
-    // Check if we have only one data point
     final isSingleDataPoint = spots.length == 1;
 
     final titles = FlTitlesData(
@@ -48,7 +45,7 @@ class ProfitChart extends StatelessWidget {
         sideTitles: SideTitles(
           showTitles: true,
           interval: leftInterval,
-          reservedSize: 50, // Reduced from 64
+          reservedSize: 50,
           getTitlesWidget: (value, meta) {
             final label = _formatCompact(value);
             return Text(
@@ -147,7 +144,6 @@ class ProfitChart extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
     );
 
-    // Add annotation for single data point
     final chartWithAnnotation = isSingleDataPoint
         ? Stack(
             children: [

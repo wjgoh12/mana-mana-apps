@@ -152,7 +152,7 @@ class _EnhancedStatementContainerState
 
           // Filter by month if selected
           bool isSameMonth = true;
-          if (currentMonth != null && currentMonth.isNotEmpty) {
+          if (currentMonth.isNotEmpty) {
             try {
               final selectedMonthInt = int.parse(currentMonth);
               isSameMonth = item.imonth == selectedMonthInt;
@@ -165,7 +165,9 @@ class _EnhancedStatementContainerState
               !isSameUnitType ||
               !isSameUnit ||
               !isSameYear ||
-              !isSameMonth) return false;
+              !isSameMonth) {
+            return false;
+          }
 
           // Remove duplicates
           final key =
@@ -187,10 +189,8 @@ class _EnhancedStatementContainerState
               'Filter criteria: Property=$currentProperty, Type=$currentType, Unit=$currentUnit, Year=$currentYear, Month=$currentMonth');
 
           // Print details of filtered items
-          for (var item in filteredItems) {
-            print(
-                '  - Month: ${item.imonth}, Year: ${item.iyear}, Total: ${item.total}, TransCode: ${item.stranscode}');
-          }
+          // ignore: unused_local_variable
+          for (var item in filteredItems) {}
         }
 
         if (filteredItems.isEmpty) {
