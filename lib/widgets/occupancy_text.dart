@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
+import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
 
 class OccupancyText extends StatefulWidget {
   final String? location;

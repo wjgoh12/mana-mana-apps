@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:mana_mana_app/model/bookingHistory.dart';
+import 'package:mana_mana_app/model/booking_history.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BookingSubmissionService {

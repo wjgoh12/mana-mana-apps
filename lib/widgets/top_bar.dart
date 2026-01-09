@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
-import 'package:mana_mana_app/widgets/size_utils.dart';
+import 'package:mana_mana_app/core/utils/size_utils.dart';
 
 Widget topBar(context, function) {
   return PreferredSize(

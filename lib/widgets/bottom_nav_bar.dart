@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
-import 'package:mana_mana_app/screens/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/screens/Profile/View/owner_profile_v3.dart';
-import 'package:mana_mana_app/widgets/size_utils.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
+import 'package:mana_mana_app/screens/all_properties/view/all_properties_view.dart';
+import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/profile/view/owner_profile_v3_view.dart';
+import 'package:mana_mana_app/core/utils/size_utils.dart';
+import 'package:mana_mana_app/screens/dashboard/view/dashboard_view.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {

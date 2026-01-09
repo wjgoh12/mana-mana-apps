@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'package:mana_mana_app/widgets/size_utils.dart';
+import 'package:mana_mana_app/core/utils/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 // ignore: camel_case_types

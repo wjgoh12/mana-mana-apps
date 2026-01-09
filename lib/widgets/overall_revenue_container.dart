@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/widgets/size_utils.dart';
+import 'package:mana_mana_app/core/utils/size_utils.dart';
 
 class OverallRevenueContainer extends StatelessWidget{
   const OverallRevenueContainer({super.key,required this.color,required this.backgroundColor,required this.text1,required this.text2,required this.text3,required this.text4,required this.text5,required this.text6});

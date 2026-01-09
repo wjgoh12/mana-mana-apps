@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/config/env_config.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
-import 'package:mana_mana_app/screens/Login/View/loginpage.dart';
-import 'package:mana_mana_app/screens/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/screens/auth/view/login_page.dart';
+import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:provider/provider.dart';
 

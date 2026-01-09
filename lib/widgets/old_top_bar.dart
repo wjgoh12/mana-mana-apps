@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/widgets/size_utils.dart';
+import 'package:mana_mana_app/core/utils/size_utils.dart';
 
 class TopBar extends StatelessWidget {
   const TopBar({Key? key}) : super(key: key);

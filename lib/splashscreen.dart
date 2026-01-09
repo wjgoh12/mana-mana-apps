@@ -3,8 +3,8 @@ import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/config/AppAuth/native_auth_service.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/provider/version_checker.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/View/new_dashboard_v3.dart';
-import 'package:mana_mana_app/screens/Login/View/loginpage.dart';
+import 'package:mana_mana_app/screens/dashboard/view/dashboard_view.dart';
+import 'package:mana_mana_app/screens/auth/view/login_page.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});

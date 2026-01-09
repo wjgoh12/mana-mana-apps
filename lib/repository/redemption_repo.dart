@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mana_mana_app/model/bookingHistory.dart';
-import 'package:mana_mana_app/model/bookingRoom.dart';
-import 'package:mana_mana_app/model/calendarBlockedDate.dart';
-import 'package:mana_mana_app/model/propertyState.dart';
-import 'package:mana_mana_app/model/redemptionBalancePoints.dart';
+import 'package:mana_mana_app/model/booking_history.dart';
+import 'package:mana_mana_app/model/booking_room.dart';
+import 'package:mana_mana_app/model/calendar_blocked_date.dart';
+import 'package:mana_mana_app/model/property_state.dart';
+import 'package:mana_mana_app/model/redemption_balance_points.dart';
 import 'package:mana_mana_app/model/roomtype.dart';
-import 'package:mana_mana_app/model/unitAvailablePoints.dart';
+import 'package:mana_mana_app/model/unit_available_points.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
 

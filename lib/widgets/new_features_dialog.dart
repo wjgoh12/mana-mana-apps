@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
+import 'package:mana_mana_app/screens/all_properties/view/all_properties_view.dart';
 
 class NewFeaturesDialog extends StatelessWidget {
   final VoidCallback? onExploreNow;

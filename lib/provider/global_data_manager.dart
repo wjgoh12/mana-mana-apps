@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/model/OwnerPropertyList.dart';
+import 'package:mana_mana_app/model/owner_property_list.dart';
 import 'package:mana_mana_app/model/occupancy_rate.dart';
-import 'package:mana_mana_app/model/propertyState.dart';
+import 'package:mana_mana_app/model/property_state.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/repository/property_list.dart';

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
-import 'package:mana_mana_app/screens/All_Property/View/all_property_new.dart';
-import 'package:mana_mana_app/screens/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/widgets/responsive.dart';
+import 'package:mana_mana_app/screens/all_properties/view/all_properties_view.dart';
+import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
+import 'package:mana_mana_app/core/utils/responsive.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
-import 'package:mana_mana_app/widgets/size_utils.dart';
-import 'package:mana_mana_app/screens/Dashboard_v3/ViewModel/new_dashboardVM_v3.dart';
+import 'package:mana_mana_app/core/utils/size_utils.dart';
+import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
 import 'package:provider/provider.dart';
 
 class OverviewCard extends StatelessWidget {

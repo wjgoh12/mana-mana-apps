@@ -1,4 +1,4 @@
-import 'package:mana_mana_app/model/OwnerPropertyList.dart';
+import 'package:mana_mana_app/model/owner_property_list.dart';
 
 class GlobalOwnerState {
   static final GlobalOwnerState instance = GlobalOwnerState._internal();
