@@ -29,29 +29,56 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
     model.fetchData().then((_) => model.checkRole());
   }
 
-  /// Format identification number: if 12 digits, format as xxxxxx-xx-xxxx
+  Widget _buildSectionCard({required Widget child}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.fSize),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildIcon(String image) {
+    const grey = Color(0xFF606060);
+    return CircleAvatar(
+      radius: ResponsiveSize.scaleWidth(20),
+      backgroundColor: grey,
+      child: Image.asset(
+        image,
+        width: ResponsiveSize.scaleWidth(25),
+        color: const Color(0xFFFFFFFF),
+        height: ResponsiveSize.scaleHeight(25),
+      ),
+    );
+  }
+
   String _formatIdentificationNumber(String idNumber) {
-    // Remove any existing dashes or spaces
     final cleanId = idNumber.replaceAll(RegExp(r'[-\s]'), '');
 
-    // Check if it's exactly 12 digits
     if (cleanId.length == 12 && RegExp(r'^\d{12}$').hasMatch(cleanId)) {
       return '${cleanId.substring(0, 6)}-${cleanId.substring(6, 8)}-${cleanId.substring(8, 12)}';
     }
 
-    // Return original if not 12 digits
     return idNumber;
   }
 
   Future<void> _handleRevert() async {
-    if (_isReverting) return; // prevent duplicate presses
+    if (_isReverting) return;
 
     setState(() {
       _isReverting = true;
     });
 
     try {
-      // Get the current user's email before reverting
       final currentUserEmail =
           model.users.isNotEmpty ? model.users.first.email ?? '' : '';
 
@@ -62,16 +89,13 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
 
       await model.cancelUser(currentUserEmail);
 
-      // Clear the switch user flag
       GlobalDataManager().isSwitchUser = false;
 
-      // Refresh the data to load the original user's data
       await model.refreshData();
 
       debugPrint("✅ Successfully reverted to original user");
     } catch (e) {
       debugPrint("❌ Revert failed: $e");
-      // You might want to show an error dialog here
     } finally {
       if (mounted) {
         setState(() {
@@ -82,7 +106,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
   }
 
   Future<void> _handleLogout() async {
-    if (_isLoggingOut) return; // prevent duplicate presses
+    if (_isLoggingOut) return;
 
     setState(() {
       _isLoggingOut = true;
@@ -325,12 +349,9 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
     final screenHeight = MediaQuery.of(context).size.height;
     const grey = Color(0xFF606060);
 
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
+    double responsiveHeight(double value) => (value / 812.0) * screenHeight;
+    double responsiveFont(double value) => (value / 812.0) * screenHeight;
 
     return ListenableBuilder(
         listenable: model,
@@ -347,7 +368,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    radius: 20.fSize, // or tweak size as needed
+                    radius: 20.fSize,
                     backgroundImage: const AssetImage(
                       'assets/images/mana2logo1.png',
                     ),
@@ -365,7 +386,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         ),
                       )),
                   const Spacer(),
-                  // Revert impersonation button (visible only when impersonating)
                   if (GlobalDataManager().isSwitchUser) ...[
                     TextButton(
                       onPressed: _isReverting ? null : _handleRevert,
@@ -399,8 +419,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                     ),
                     SizedBox(width: ResponsiveSize.scaleWidth(8)),
                   ],
-
-                  // Logout button
                   TextButton(
                     onPressed: _isLoggingOut ? null : _handleLogout,
                     style: ButtonStyle(
@@ -445,20 +463,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                   padding: EdgeInsets.all(responsiveHeight(10)),
                   child: Column(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12.fSize),
-                            boxShadow: [
-                              BoxShadow(
-                                // ignore: deprecated_member_use
-                                color: Colors.grey.withOpacity(0.3),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(
-                                    0, 3), // changes position of shadow
-                              ),
-                            ]),
+                      _buildSectionCard(
                         child: Column(
                           children: [
                             SizedBox(height: ResponsiveSize.scaleHeight(20)),
@@ -513,16 +518,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             Row(
                               children: [
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
-                                CircleAvatar(
-                                  radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: grey,
-                                  child: Image.asset(
-                                    'assets/images/ic_icon.png',
-                                    width: ResponsiveSize.scaleWidth(25),
-                                    color: const Color(0xFFFFFFFF),
-                                    height: ResponsiveSize.scaleHeight(25),
-                                  ),
-                                ),
+                                _buildIcon('assets/images/ic_icon.png'),
                                 SizedBox(width: ResponsiveSize.scaleWidth(10)),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -570,15 +566,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
-                                CircleAvatar(
-                                  radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: grey,
-                                  child: Image.asset(
-                                    'assets/images/profile_personal_email.png',
-                                    width: ResponsiveSize.scaleWidth(25),
-                                    color: const Color(0xFFFFFFFF),
-                                  ),
-                                ),
+                                _buildIcon(
+                                    'assets/images/profile_personal_email.png'),
                                 SizedBox(width: ResponsiveSize.scaleWidth(10)),
                                 Expanded(
                                   child: Row(
@@ -633,15 +622,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
-                                            CircleAvatar(
-                                              radius:
-                                                  ResponsiveSize.scaleWidth(20),
-                                              backgroundColor: grey,
-                                              child: Image.asset(
-                                                'assets/images/profile_phone.png',
-                                                color: const Color(0xFFFFFFFF),
-                                              ),
-                                            ),
+                                            _buildIcon(
+                                                'assets/images/profile_phone.png'),
                                             SizedBox(
                                                 width:
                                                     ResponsiveSize.scaleWidth(
@@ -698,14 +680,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
-                                CircleAvatar(
-                                  radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: grey,
-                                  child: Image.asset(
-                                    'assets/images/profile_address.png',
-                                    color: const Color(0xFFFFFFFF),
-                                  ),
-                                ),
+                                _buildIcon('assets/images/profile_address.png'),
                                 SizedBox(width: ResponsiveSize.scaleWidth(10)),
                                 Expanded(
                                   child: Column(
@@ -746,20 +721,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         ),
                       ),
                       SizedBox(height: ResponsiveSize.scaleHeight(20)),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12.fSize),
-                            boxShadow: [
-                              BoxShadow(
-                                // ignore: deprecated_member_use
-                                color: Colors.grey.withOpacity(0.3),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(
-                                    0, 3), // changes position of shadow
-                              ),
-                            ]),
+                      _buildSectionCard(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -778,18 +740,16 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 ),
                               ],
                             ),
-
-                            // Financial details content (building + unit + bank/account)
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: ResponsiveSize.scaleWidth(9.0),
                                   vertical: 15.fSize),
-                              child: buildFinancialDetails(model),
+                              child: buildFinancialDetails(
+                                  model, _buildSectionCard),
                             ),
                           ],
                         ),
                       ),
-
                       SizedBox(height: 25.fSize),
                       Container(
                         decoration: BoxDecoration(
@@ -801,8 +761,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 color: Colors.grey.withOpacity(0.3),
                                 spreadRadius: 2,
                                 blurRadius: 5,
-                                offset: const Offset(
-                                    0, 3), // changes position of shadow
+                                offset: const Offset(0, 3),
                               ),
                             ]),
                         child: Column(
@@ -857,12 +816,10 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                           ],
                         ),
                       ),
-
                       SizedBox(height: 12.fSize),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // If the user can switch, show Switch User button
                           if (model.canSwitchUser) ...[
                             TextButton(
                               onPressed: () {
@@ -891,8 +848,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         ],
                       ),
                       SizedBox(height: 35.fSize),
-
-                      //terms and conditions and privacy policy
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1030,7 +985,7 @@ Widget buildInfoInRow(String info) {
   );
 }
 
-Widget buildFinancialDetails(OwnerProfileVM model) {
+Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
   final Map<String, List<dynamic>> grouped = {};
   for (final unit in model.ownerUnits) {
     final key = (unit.location ?? 'Unknown').toString().trim();
@@ -1055,7 +1010,6 @@ Widget buildFinancialDetails(OwnerProfileVM model) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       for (final entry in grouped.entries) ...[
-        // Building title
         Text(
           entry.key,
           style: TextStyle(
@@ -1065,7 +1019,6 @@ Widget buildFinancialDetails(OwnerProfileVM model) {
           ),
         ),
         SizedBox(height: 6.fSize),
-
         Column(
           children: entry.value.map((unit) {
             final bank = (unit?.bank as String?) ?? model.getBankInfo();
@@ -1075,20 +1028,7 @@ Widget buildFinancialDetails(OwnerProfileVM model) {
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 25.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      // ignore: deprecated_member_use
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
+              child: buildSectionCard(
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(

@@ -10,15 +10,12 @@ import 'package:mana_mana_app/provider/api_service.dart';
 class PropertyListRepository {
   final ApiService _apiService = ApiService();
   Future<List<OwnerPropertyList>> getOwnerUnit({String? email}) async {
-    // If an email is provided, pass it to the API so the backend can
-    // return owner units for that email (useful for impersonation flows).
     final Map<String, dynamic>? data =
         (email != null && email.isNotEmpty) ? {'email': email} : null;
 
     return await _apiService
         .post(ApiEndpoint.ownerUnit, data: data)
         .then((res) {
-      // debugPrint('🏢 getOwnerUnit response received: ${res?.length} items');
       List<dynamic> value = res ?? [];
       List<OwnerPropertyList> _ = [];
       for (int i = 0; i < value.length; i++) {

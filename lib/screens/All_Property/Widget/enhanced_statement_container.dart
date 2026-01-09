@@ -188,7 +188,6 @@ class _EnhancedStatementContainerState
           print(
               'Filter criteria: Property=$currentProperty, Type=$currentType, Unit=$currentUnit, Year=$currentYear, Month=$currentMonth');
 
-          // Print details of filtered items
           // ignore: unused_local_variable
           for (var item in filteredItems) {}
         }

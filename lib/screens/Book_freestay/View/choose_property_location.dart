@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
@@ -8,7 +7,6 @@ import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/Book_freestay/View/select_date_room/select_date_room.dart';
-
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
 class ChoosePropertyLocation extends StatefulWidget {
@@ -35,8 +33,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
   @override
   void initState() {
     super.initState();
-    // Defer data loading until after first frame to avoid calling setState
-    // during the initial build cycle which can trigger Flutter warnings.
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadDataInBackground();
     });
@@ -48,7 +45,6 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
     debugPrint('📍 Location screen: Starting data load...');
 
     try {
-      // Check if states are already loaded (from dashboard preload)
       if (globalData.availableStates.isEmpty) {
         debugPrint('🔄 Loading states...');
         await globalData.fetchRedemptionStatesAndLocations();
@@ -57,7 +53,6 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
             '✅ States already loaded: ${globalData.availableStates.length}');
       }
 
-      // Check if any locations are already cached
       final cachedLocations = globalData.getAllLocationsFromAllStates();
       if (cachedLocations.isNotEmpty) {
         debugPrint('✅ Using ${cachedLocations.length} cached locations');
@@ -67,7 +62,6 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
         return;
       }
 
-      // Load locations for all states with a timeout
       debugPrint('🔄 Loading locations for all states...');
 
       final loadFuture = Future.wait(
@@ -76,7 +70,6 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
         ),
       );
 
-      // Wait max 3 seconds for locations to load
       await loadFuture.timeout(
         const Duration(seconds: 3),
         onTimeout: () {
@@ -97,7 +90,6 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
         setState(() => _isLoadingData = false);
       }
     } finally {
-      // Always clear loading flag
       globalData.clearLocationLoadingFlag();
     }
   }
@@ -149,7 +141,6 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
       ),
       body: Consumer<GlobalDataManager>(
         builder: (context, globalData, child) {
-          // Show loading indicator while data is being fetched
           if (_isLoadingData) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -239,8 +230,7 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                               left: BorderSide(color: Colors.grey.shade500),
                               right: BorderSide(color: Colors.grey.shade500),
                               bottom: BorderSide(color: Colors.grey.shade500),
-                              top: BorderSide
-                                  .none, // No top border for seamless connection
+                              top: BorderSide.none,
                             ),
                             boxShadow: [
                               BoxShadow(
@@ -272,11 +262,10 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
                       childAspectRatio:
-                          MediaQuery.of(context).size.width >= 600 ? 1.0 : 0.7,
+                          MediaQuery.of(context).size.width >= 600 ? 1.0 : 0.65,
                     ),
                     padding: const EdgeInsets.all(26),
                     itemCount: locationsToShow.length,
-                    // Add cache extent to reduce memory pressure
                     cacheExtent: 400,
                     itemBuilder: (context, index) {
                       final location = locationsToShow[index];
@@ -303,14 +292,12 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
 
   void _handleStateSelection(GlobalDataManager globalData, String state) {
     if (state == ALL_STATES) {
-      // No need to fetch - all locations are already preloaded!
     } else {
       globalData.fetchLocationsByState(state);
     }
   }
 }
 
-// Separate StatefulWidget for better memory management
 class LocationCard extends StatefulWidget {
   final String? locationName;
   final String? picBase64;
@@ -341,7 +328,7 @@ class _LocationCardState extends State<LocationCard>
   bool _isDecoded = false;
 
   @override
-  bool get wantKeepAlive => true; // Keep state alive to avoid re-decoding
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -356,7 +343,6 @@ class _LocationCardState extends State<LocationCard>
     }
 
     try {
-      // Decode in a separate isolate/compute to avoid blocking UI
       Uint8List? result;
 
       if (widget.picBase64!.startsWith("data:image")) {
@@ -379,13 +365,13 @@ class _LocationCardState extends State<LocationCard>
 
   @override
   void dispose() {
-    _decodedImage = null; // Clear memory
+    _decodedImage = null;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    super.build(context);
 
     return InkWell(
       onTap: () async {
@@ -401,7 +387,7 @@ class _LocationCardState extends State<LocationCard>
         await ownerVM.fetchUserAvailablePoints();
 
         // ignore: use_build_context_synchronously
-        Navigator.pop(context); // Remove loading dialog
+        Navigator.pop(context);
 
         Navigator.push(
           // ignore: use_build_context_synchronously

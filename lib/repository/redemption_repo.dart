@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:http/http.dart' as _apiService;
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/bookingHistory.dart';
 import 'package:mana_mana_app/model/bookingRoom.dart';
@@ -30,7 +28,7 @@ class RedemptionRepository {
       case "PAXT":
         return "PAXTONZ";
       default:
-        return code; // Return original code if no match found
+        return code;
     }
   }
 
@@ -67,7 +65,6 @@ class RedemptionRepository {
     }
 
     if (res is List) {
-      // debugPrint("✅ Response is a List with length: ${res.length}");
       return res.map((json) => UnitAvailablePoint.fromJson(json)).toList();
     }
 
@@ -241,7 +238,6 @@ class RedemptionRepository {
       if (locations.isNotEmpty) {
         _stateLocationsCache![state] = locations;
       } else {
-        // keep debug visibility when a state has no locations
         debugPrint('ℹ️ No locations for state $state, skipping cache entry.');
       }
     } catch (e) {
@@ -251,7 +247,6 @@ class RedemptionRepository {
 
   Future<List<PropertyState>> getAllLocationsByState(String state) async {
     try {
-      // ✅ Check cache first
       if (_isCacheValid && _stateLocationsCache != null) {
         final cached = _stateLocationsCache![state];
         if (cached != null) {
@@ -260,7 +255,6 @@ class RedemptionRepository {
         }
       }
 
-      // ✅ If not cached, fetch and cache
       await _fetchLocationsForState(state);
       return _stateLocationsCache?[state] ?? [];
     } catch (e) {
@@ -269,7 +263,6 @@ class RedemptionRepository {
     }
   }
 
-  // Method to clear cache if needed
   void clearLocationCache() {
     _stateLocationsCache = null;
     _cacheTime = null;
@@ -283,12 +276,9 @@ class RedemptionRepository {
 
     List<CalendarBlockedDate> allDates = [];
 
-    // If API returns a List directly
     if (res is List) {
       allDates = res.map((e) => CalendarBlockedDate.fromJson(e)).toList();
-    }
-    // If API returns a Map with 'data' field
-    else if (res is Map && res['data'] is List) {
+    } else if (res is Map && res['data'] is List) {
       allDates = (res['data'] as List)
           .map((e) => CalendarBlockedDate.fromJson(e))
           .toList();
@@ -321,7 +311,6 @@ class RedemptionRepository {
     }
 
     if (res is Map) {
-      // ✅ Case 1: API wrapped in 'data' list
       if (res['data'] is List) {
         return (res['data'] as List)
             .map((json) => RedemptionBalancePoints.fromJson(
@@ -374,8 +363,6 @@ class RedemptionRepository {
       data: body,
     );
 
-    // debugPrint("🔍 Raw API Response for Room Types: $res");
-
     if (res == null) return [];
 
     if (res is List) {
@@ -409,7 +396,6 @@ class RedemptionRepository {
           "🏠 PropertyState: location='${ps.locationName}', state='${ps.stateName}'");
     }
 
-    // Match location → state (owner property’s state)
     final matchingState = propertyStates.firstWhere(
       (state) =>
           state.locationName.toUpperCase() ==
@@ -419,8 +405,7 @@ class RedemptionRepository {
 
     final body = {
       "stateName": matchingState.stateName,
-      "locationName": _getLocationName(
-          point.location), // ✅ use full location name like "SCARLETZ"
+      "locationName": _getLocationName(point.location),
       "unitNo": point.unitNo,
       "bookingLocationName": bookingRoom.bookingLocationName,
       "typeName": bookingRoom.roomType.roomTypeName,
@@ -428,8 +413,8 @@ class RedemptionRepository {
           checkIn != null ? DateFormat('yyyy-MM-dd').format(checkIn) : "",
       "departureDate":
           checkOut != null ? DateFormat('yyyy-MM-dd').format(checkOut) : "",
-      "rooms": quantity.toString(), // ✅ cast to string
-      "totalRate": points.toInt().toString(), // ✅ cast to string
+      "rooms": quantity.toString(),
+      "totalRate": points.toInt().toString(),
       "guestName": guestName.trim(),
       "remark": remark.trim(),
     };

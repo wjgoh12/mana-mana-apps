@@ -9,16 +9,17 @@ import 'package:mana_mana_app/widgets/new_features_dialog.dart';
 import 'package:mana_mana_app/widgets/notice_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: camel_case_types
 class NewDashboardVM_v3 extends ChangeNotifier {
   static const String _hasExploredFeaturesKey = 'has_explored_new_features';
-  static const String _hasSeenNoticeDialogKey = 'has_seen_notice_dialog_v1'; // v1 to track version
+  static const String _hasSeenNoticeDialogKey = 'has_seen_notice_dialog_v1';
 
   bool contractTypeLoaded = false;
   bool occupancyRateLoaded = false;
   bool _hasShownNewFeaturesDialog = false;
   bool _hasShownNoticeDialog = false;
-  bool _userHasExploredFeatures = false; // Track if user clicked "Explore Now"
-  bool _userHasSeenNotice = false; // Track if user has seen the notice dialog
+  bool _userHasExploredFeatures = false;
+  bool _userHasSeenNotice = false;
 
   bool isLoading = true;
   final GlobalDataManager _globalDataManager = GlobalDataManager();
@@ -30,7 +31,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     _loadNoticeDialogState();
   }
 
-  // Load saved state from SharedPreferences
   Future<void> _loadExploredFeaturesState() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -42,7 +42,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
-  // Load notice dialog state from SharedPreferences
   Future<void> _loadNoticeDialogState() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -53,7 +52,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
-  // Save state to SharedPreferences
   Future<void> _saveExploredFeaturesState() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -63,7 +61,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
-  // Save notice dialog state to SharedPreferences
   Future<void> _saveNoticeDialogState() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -73,7 +70,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
-  // Optional: Method to reset the dialog state for testing
   Future<void> resetNewFeaturesDialog() async {
     _userHasExploredFeatures = false;
     _hasShownNewFeaturesDialog = false;
@@ -88,7 +84,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Getters that delegate to GlobalDataManager
   String get userNameAccount => _globalDataManager.userNameAccount;
   List<User> get users => _globalDataManager.users;
   List<OwnerPropertyList> get ownerUnits => _globalDataManager.ownerUnits;
@@ -100,8 +95,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       _globalDataManager.getMonthlyProfitOwner();
   List<Map<String, dynamic>> get totalByMonth =>
       _globalDataManager.totalByMonth;
-  List<Map<String, dynamic>> get newsletters =>
-      []; // TODO: Add to GlobalDataManager if needed
+  List<Map<String, dynamic>> get newsletters => [];
   List<Map<String, dynamic>> get monthlyBlcOwner =>
       _globalDataManager.getMonthlyBlcOwner();
   List<Map<String, dynamic>> get locationByMonth =>
@@ -123,14 +117,11 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Initialize global data if not already done
       await _globalDataManager.initializeData();
 
-      // Set loading flags based on data availability
       contractTypeLoaded = _globalDataManager.propertyContractType.isNotEmpty;
       occupancyRateLoaded = _globalDataManager.propertyOccupancy.isNotEmpty;
 
-      // Preload location data in background after dashboard loads
       _preloadLocationDataInBackground();
     } catch (e) {
       print('Error fetching dashboard data: $e');
@@ -142,25 +133,17 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
-  // Preload location data in background after dashboard is ready
   void _preloadLocationDataInBackground() async {
     try {
-      print('🔄 Starting background preload of location data...');
-
-      // Fetch available states
       await _globalDataManager.fetchRedemptionStatesAndLocations();
-      print('✅ States loaded: ${_globalDataManager.availableStates.length}');
 
-      // Then preload all locations for all states in parallel
       if (_globalDataManager.availableStates.isNotEmpty) {
-        print('🔄 Preloading locations for all states...');
         await Future.wait(
           _globalDataManager.availableStates.map(
             (state) => _globalDataManager.preloadLocationsForState(state),
           ),
         );
 
-        // Clear the loading flag after all states are done
         _globalDataManager.clearLocationLoadingFlag();
 
         int totalLocations =
@@ -170,16 +153,12 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       }
     } catch (e) {
       print('❌ Error preloading location data: $e');
-      // Make sure to clear loading flag even on error
+
       _globalDataManager.clearLocationLoadingFlag();
     }
   }
 
   void checkAndShowNewFeaturesDialog(BuildContext context) {
-    // Only show dialog if:
-    // 1. Loading is complete
-    // 2. Dialog hasn't been shown yet
-    // 3. User hasn't explored features yet
     if (!isLoading &&
         !_hasShownNewFeaturesDialog &&
         !_userHasExploredFeatures) {
@@ -189,10 +168,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   }
 
   void checkAndShowNoticeDialog(BuildContext context) {
-    // Only show dialog if:
-    // 1. Loading is complete
-    // 2. Dialog hasn't been shown yet in this session
-    // 3. User hasn't seen the notice before (persistent check)
     if (!isLoading && !_hasShownNoticeDialog && !_userHasSeenNotice) {
       _showNoticeDialog(context);
       _hasShownNoticeDialog = true;
@@ -206,14 +181,12 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       builder: (BuildContext context) {
         return NewFeaturesDialog(
           onExploreNow: () async {
-            _userHasExploredFeatures = true; // Mark as explored
-            await _saveExploredFeaturesState(); // Save to SharedPreferences
+            _userHasExploredFeatures = true;
+            await _saveExploredFeaturesState();
             Navigator.pushReplacement(
                 context,
                 _createRoute(const AllPropertyNewScreen(),
                     transitionType: 'fade'));
-            // You can add navigation to features page here
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => FeaturesPage()));
           },
         );
       },
@@ -225,11 +198,9 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return NoticeDialog();
+        return const NoticeDialog();
       },
     ).then((_) async {
-      // When dialog is dismissed (either by OK button or barrier tap),
-      // mark it as seen and save to SharedPreferences
       _userHasSeenNotice = true;
       await _saveNoticeDialogState();
       notifyListeners();
@@ -239,7 +210,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   Future<void> refreshData() async {
     await _globalDataManager.refreshData();
 
-    // Update loading flags
     contractTypeLoaded = _globalDataManager.propertyContractType.isNotEmpty;
     occupancyRateLoaded = _globalDataManager.propertyOccupancy.isNotEmpty;
 
@@ -250,15 +220,12 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     return _globalDataManager.getContractType(location);
   }
 
-  // Use cached data instead of making API calls
   Future<String> getUnitOccupancy(String location, String unitNo) async {
-    // Return cached data immediately instead of making API call
     return getUnitOccupancyFromCache(location, unitNo);
   }
 
   Future<String> getUnitOccupancyMonthYear(
       String location, String unitNo) async {
-    // Use cached data for month/year info
     if (propertyOccupancy.containsKey(location)) {
       final locationData = propertyOccupancy[location];
       if (locationData is Map<String, dynamic> &&
@@ -279,14 +246,12 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       }
     }
 
-    // fallback to current month/year if cached data missing
     final now = DateTime.now();
     final monthName = _monthNumberToName[now.month] ?? '';
     return '$monthName ${now.year}';
   }
 
   Future<String> getAverageOccupancyByLocation(String location) async {
-    // Use cached data instead of making individual API calls per unit
     if (propertyOccupancy.containsKey(location)) {
       final locationData = propertyOccupancy[location];
       if (locationData is Map<String, dynamic> &&
@@ -301,7 +266,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   }
 
   Future<String> getTotalAverageOccupancyRate() async {
-    // Use cached data for total calculation
     Set<String> locations = propertyContractType
         .map((property) => property['location'] as String)
         .toSet();
@@ -326,7 +290,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   }
 
   Future<String> calculateTotalOccupancyForLocation(String location) async {
-    // Use cached data instead of making fresh API calls
     return getAverageOccupancyByLocation(location);
   }
 
@@ -345,23 +308,18 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     12: 'Dec',
   };
 
-  // Get occupancy for a specific unit from cached data
   String getUnitOccupancyFromCache(String location, String unitNo) {
-    // Check if propertyOccupancy contains error response
     if (propertyOccupancy.containsKey('status')) {
       return '0';
     }
 
-    // Try to get occupancy from propertyOccupancy map
     if (propertyOccupancy.containsKey(location)) {
       final locationData = propertyOccupancy[location];
       if (locationData is Map<String, dynamic>) {
-        // Check for direct amount field (current data structure)
         if (locationData.containsKey('amount')) {
           return locationData['amount']?.toString() ?? '0';
         }
 
-        // Check for nested units structure (fallback)
         if (locationData.containsKey('units') &&
             locationData['units'] is Map<String, dynamic>) {
           final units = locationData['units'] as Map<String, dynamic>;
@@ -376,14 +334,11 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       }
     }
 
-    // Fallback: calculate from contract-based owners data
     return _calculateOccupancyFromOwners(location, unitNo);
   }
 
-  // Helper method to calculate occupancy from owners/contract data
   String _calculateOccupancyFromOwners(String location, String unitNo) {
     try {
-      // Get location data from locationByMonth which contains owners info
       final currentLocation = locationByMonth.firstWhere(
         (loc) => loc['location'] == location,
         orElse: () => {},
@@ -393,17 +348,14 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         final owners = currentLocation['owners'] as List<dynamic>;
         final now = DateTime.now();
 
-        // Count active contracts
         int activeContracts = 0;
         int totalUnits = 0;
 
         for (var owner in owners) {
           if (owner is Map<String, dynamic>) {
-            // Count total units for this location
             if (owner.containsKey('unitNo')) {
               totalUnits++;
 
-              // Check if contract is active
               final startDateStr = owner['startDate'] as String?;
               final endDateStr = owner['endDate'] as String?;
               final contractType = owner['contractType'] as String?;
@@ -415,19 +367,16 @@ class NewDashboardVM_v3 extends ChangeNotifier {
                   final startDate = DateTime.parse(startDateStr);
                   final endDate = DateTime.parse(endDateStr);
 
-                  // Check if contract is currently active
                   if (now.isAfter(startDate) && now.isBefore(endDate)) {
                     activeContracts++;
                   }
-                } catch (e) {
-                  // Skip invalid dates
-                }
+                  // ignore: empty_catches
+                } catch (e) {}
               }
             }
           }
         }
 
-        // Calculate occupancy percentage
         if (totalUnits > 0) {
           final occupancyRate = (activeContracts / totalUnits) * 100;
           return occupancyRate.toStringAsFixed(2);
@@ -467,7 +416,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
     propertyOccupancy.forEach((key, value) {
       if (value is Map<String, dynamic>) {
-        // ✅ only accept if it has units and average/amount > 0
         if (value.containsKey('units') && (value['units'] as Map).isNotEmpty) {
           if (value.containsKey('average') && value['average'] is num) {
             final avg = value['average'] as num;
@@ -492,7 +440,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     return averageOccupancyRate.toStringAsFixed(1);
   }
 
-//GET AVERAGE OCCUPANCY FROM MONTH
   double getAverageOccupancyByMonthCached(int month, int year) {
     double total = 0;
     int count = 0;
@@ -516,7 +463,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     return total / count;
   }
 
-//GET AVERAGE OCCUPANCY FROM QUARTER
   double getAverageOccupancyByQuarterCached(int quarter, int year) {
     int startMonth = (quarter - 1) * 3 + 1;
     double total = 0;
@@ -534,7 +480,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     return total / count;
   }
 
-//GET AVERAGE OCCUPANCY FROM EACH YEAR
   double getAverageOccupancyByYearCached(int year) {
     double total = 0;
     int count = 0;
@@ -567,7 +512,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       unitNo: unitNo,
       period: period,
     );
-    notifyListeners(); // Notify listeners in case they're listening to this VM
+    notifyListeners();
   }
 
   List<OccupancyRate> getOccupancyDataForPeriod(String period) {
@@ -613,7 +558,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
               child: child,
             );
 
-          default: // 'slide' - slide from right
+          default:
             return SlideTransition(
               position: Tween<Offset>(
                 begin: const Offset(1.0, 0.0),

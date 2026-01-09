@@ -23,32 +23,32 @@ class PdfViewerFromMemory extends StatelessWidget {
 
   void share(RenderBox box) async {
     Directory dir = await getApplicationDocumentsDirectory();
-    File file = File('${dir.absolute.path}/${property}_${unitNo}_${getMonthName(month!)}_$year.pdf');
+    File file = File(
+        '${dir.absolute.path}/${property}_${unitNo}_${getMonthName(month!)}_$year.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
     Rect sharePositionOrigin = box.localToGlobal(Offset.zero) & box.size;
-    ShareResult result = await Share.shareXFiles([XFile(file.absolute.path)],
+    await Share.shareXFiles([XFile(file.absolute.path)],
         sharePositionOrigin: sharePositionOrigin);
   }
 
   String getMonthName(String month) {
-  Map<String, String> monthMap = {
-    '1': 'Jan',
-    '2': 'Feb',
-    '3': 'Mar',
-    '4': 'Apr',
-    '5': 'May',
-    '6': 'Jun',
-    '7': 'Jul',
-    '8': 'Aug',
-    '9': 'Sep',
-    '10': 'Oct',
-    '11': 'Nov',
-    '12': 'Dec'
-  };
-  return monthMap[month] ?? month;
-}
-
+    Map<String, String> monthMap = {
+      '1': 'Jan',
+      '2': 'Feb',
+      '3': 'Mar',
+      '4': 'Apr',
+      '5': 'May',
+      '6': 'Jun',
+      '7': 'Jul',
+      '8': 'Aug',
+      '9': 'Sep',
+      '10': 'Oct',
+      '11': 'Nov',
+      '12': 'Dec'
+    };
+    return monthMap[month] ?? month;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,10 @@ class PdfViewerFromMemory extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('$property $unitNo - ${getMonthName(month ?? '')} $year',style: const TextStyle(fontSize: 17),),
+        title: Text(
+          '$property $unitNo - ${getMonthName(month ?? '')} $year',
+          style: const TextStyle(fontSize: 17),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: _shareButton,

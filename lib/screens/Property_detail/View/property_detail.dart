@@ -5,9 +5,9 @@ import 'package:mana_mana_app/screens/Property_detail/View/Widget/unit_revenue.d
 import 'package:mana_mana_app/screens/Property_detail/ViewModel/property_detailVM.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/widgets/property_app_bar.dart';
-import 'package:mana_mana_app/widgets/property_stack.dart';
 import 'package:mana_mana_app/widgets/size_utils.dart';
 
+// ignore: must_be_immutable
 class PropertyDetail extends StatelessWidget {
   List<Map<String, dynamic>> locationByMonth;
   PropertyDetail({required this.locationByMonth, Key? key}) : super(key: key);
@@ -45,34 +45,14 @@ class PropertyDetail extends StatelessWidget {
                           child: Column(
                             children: [
                               SizedBox(height: 2.height),
-                              // PropertyStack(
-                              //   locationByMonth: locationByMonth,
-                              //   // image: model.property,
-                              //   // text1: model.property,
-                              //   // text2: model.locationRoad,
-                              //   // width: 86.width,
-                              //   // height: 12.height,
-                              // ),
                               SizedBox(height: 2.height),
-                              // _buildOverallRevenue(),
-                              // SizedBox(height: 2.height),
                               TypeUnitSelection(model: model),
                               SizedBox(height: 2.height),
                               UnitRevenue(model: model),
-                              // // SizedBox(height: 1.height),
-                              // // _buildStatisticsSection(),
-                              // // SizedBox(height: 5.height),
                               _buildTitleSection('Monthly Statement'),
                               SizedBox(height: 1.height),
                               MonthlyStatementContainer(model: model),
                               SizedBox(height: 1.height),
-                              // _buildTitleSection('Annual Statement'),
-                              // SizedBox(height: 1.height),
-                              // AnnualStatementContainer(model: model),
-                              // // _buildAgreementsSection(),
-                              // SizedBox(height: 3.height),
-                              // // _buildAgreementContainer(),
-                              // SizedBox(height: 10.height),
                             ],
                           ),
                         ),
@@ -97,11 +77,7 @@ Widget _buildTitleSection(String title) {
         ),
       ),
       const Spacer(),
-      // IconButton(
-      //   onPressed: () => Navigator.of(context)
-      //       .push(MaterialPageRoute(builder: (_) => const StatementPage())),
-      //   iconSize: 4.height,
-      //   icon: const Icon(Icons.arrow_right_rounded),
+
       // ),
       Image.asset(
         'assets/images/patterns.png',
@@ -141,7 +117,6 @@ class MonthlyStatementContainer extends StatelessWidget {
               LayoutBuilder(
                 builder: (context, constraints) {
                   if (model.isLoading) {
-                    // Check if data is still loading
                     return Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -149,8 +124,7 @@ class MonthlyStatementContainer extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.all(16),
                       child: const Center(
-                        child:
-                            CircularProgressIndicator(),
+                        child: CircularProgressIndicator(),
                       ),
                     );
                   }
@@ -198,20 +172,6 @@ class MonthlyStatementContainer extends StatelessWidget {
               SizedBox(height: 4.height),
               ElevatedButton(
                 onPressed: () => model.downloadPdfStatement(context),
-                // () async {
-                // print(property);
-                // print(selectedYearValue);
-                // print(selectedMonthValue);
-                // print(selectedType);
-                // print(selectedUnitNo);
-                // await ownerPropertyList_repository.downloadPdfStatement(
-                //     context,
-                //     property,
-                //     selectedYearValue,
-                //     selectedMonthValue,
-                //     selectedType,
-                //     selectedUnitNo);
-                // },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0XFF4313E9),
                   shape: RoundedRectangleBorder(
@@ -240,7 +200,6 @@ class MonthlyStatementContainer extends StatelessWidget {
                         ),
                 ),
               )
-              // _buildMonthlyStatementContent(),
             ],
           ),
         ),
@@ -277,7 +236,6 @@ class AnnualStatementContainer extends StatelessWidget {
               LayoutBuilder(
                 builder: (context, constraints) {
                   if (model.isLoading) {
-                    // Check if data is still loading
                     return Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -285,8 +243,7 @@ class AnnualStatementContainer extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.all(16),
                       child: const Center(
-                        child:
-                            CircularProgressIndicator(), // Display a loading spinner
+                        child: CircularProgressIndicator(),
                       ),
                     );
                   }
@@ -311,22 +268,6 @@ class AnnualStatementContainer extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            // Row(
-                            //   mainAxisSize: MainAxisSize.min,
-                            //   children: [
-                            //     _buildGradientText('Month'),
-                            //     SizedBox(width: 2.width),
-                            //     model.isMonthLoadng
-                            //         ? const CircularProgressIndicator() // Display a loading spinner
-                            //         : TypeUnitSelectionDropdown(
-                            //             label: 'Month',
-                            //             list: model.monthItems,
-                            //             onChanged: (_) {
-                            //               model.updateSelectedMonth(_!);
-                            //             },
-                            //           ),
-                            //   ],
-                            // )
                           ],
                         );
                 },
@@ -334,20 +275,6 @@ class AnnualStatementContainer extends StatelessWidget {
               SizedBox(height: 4.height),
               ElevatedButton(
                 onPressed: () => model.downloadAnnualPdfStatement(context),
-                // () async {
-                // print(property);
-                // print(selectedYearValue);
-                // print(selectedMonthValue);
-                // print(selectedType);
-                // print(selectedUnitNo);
-                // await ownerPropertyList_repository.downloadPdfStatement(
-                //     context,
-                //     property,
-                //     selectedYearValue,
-                //     selectedMonthValue,
-                //     selectedType,
-                //     selectedUnitNo);
-                // },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0XFF4313E9),
                   shape: RoundedRectangleBorder(
@@ -376,7 +303,6 @@ class AnnualStatementContainer extends StatelessWidget {
                         ),
                 ),
               )
-              // _buildMonthlyStatementContent(),
             ],
           ),
         ),

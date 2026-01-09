@@ -20,11 +20,10 @@ class NewDashboardV3 extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: GlobalDataManager()),
-        // Dashboard ViewModel
         ChangeNotifierProvider(
           create: (_) {
             final model = NewDashboardVM_v3();
-            // Initialize data once in dashboard
+
             model.fetchData();
             return model;
           },
@@ -34,19 +33,17 @@ class NewDashboardV3 extends StatelessWidget {
         builder: (context, model, child) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             model.checkAndShowNewFeaturesDialog(context);
-            // model.checkAndShowNoticeDialog(context);
           });
 
           final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
           final isMobile = MediaQuery.of(context).size.width < 600;
           final screenWidth = MediaQuery.of(context).size.width;
 
-          final horizontalPadding = screenWidth * 0.05; // 5% of screen width
+          final horizontalPadding = screenWidth * 0.05;
 
           final screenHeight = MediaQuery.of(context).size.height;
 
-          double responsiveFont(double value) =>
-              (value / 812.0) * screenHeight; // font scaling
+          double responsiveFont(double value) => (value / 812.0) * screenHeight;
 
           ResponsiveSize.init(context);
 
@@ -112,7 +109,6 @@ class NewDashboardV3 extends StatelessWidget {
                               color: Colors.white,
                               child: Column(
                                 children: [
-                                  // Greeting
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -127,7 +123,6 @@ class NewDashboardV3 extends StatelessWidget {
                                     ],
                                   ),
                                   SizedBox(height: 2.height),
-
                                   Row(
                                     children: [
                                       Text(
@@ -200,7 +195,7 @@ class NewDashboardV3 extends StatelessWidget {
                 child: AbsorbPointer(
                   // ignore: deprecated_member_use
                   ignoringSemantics: false,
-                  absorbing: model.isLoading, // Disable bottom nav when loading
+                  absorbing: model.isLoading,
                   child: Opacity(
                     opacity: model.isLoading ? 0.3 : 1.0,
                     child: const BottomNavBar(currentIndex: 0),
@@ -217,7 +212,7 @@ class NewDashboardV3 extends StatelessWidget {
 
   double _getExpandedHeight(BuildContext context) {
     final statusBarHeight = MediaQuery.of(context).padding.top;
-    const topBarHeight = 60.0; // Approximate height of topBar
+    const topBarHeight = 60.0;
 
     return statusBarHeight + topBarHeight;
   }
@@ -255,7 +250,7 @@ class _SmartLoadingDialog extends StatelessWidget {
     return RepaintBoundary(
       child: Container(
         padding: const EdgeInsets.all(20),
-        width: 200, // Fixed width for better performance
+        width: 200,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),

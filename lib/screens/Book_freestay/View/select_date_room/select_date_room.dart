@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/calendarBlockedDate.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/screens/Book_freestay/View/room_details.dart';
+import 'package:mana_mana_app/screens/Book_freestay/View/select_date_room/widget/calendar.dart';
 import 'package:mana_mana_app/screens/Book_freestay/View/select_date_room/widget/sticky_bottom_bar.dart';
 import 'package:mana_mana_app/screens/Profile/ViewModel/owner_profileVM.dart';
 import 'package:mana_mana_app/screens/Book_freestay/Widget/roomtype_card.dart';
@@ -18,7 +19,6 @@ class SelectDateRoom extends StatefulWidget {
   final String location;
   final String state;
   final double points;
-  // Optional: control the border width of the range start / end decorations
   final double rangeStartBorderWidth;
   final double rangeEndBorderWidth;
 
@@ -178,7 +178,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         _selectedDay = null;
         _selectedQuantity = 1;
         _hasPendingChanges = false;
-        // Keep the room selection
       });
       return;
     }
@@ -219,11 +218,10 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
       } else {
         _rangeStart = start;
         _rangeEnd = end;
-        _selectedQuantity = 1; // Reset quantity when date range changes
+        _selectedQuantity = 1;
         _hasPendingChanges = true;
-        // Don't clear room selection, it will be validated in _restoreRoomSelection
       }
-    }); // Only fetch if BOTH dates are selected
+    });
     if (start != null && end != null) {
       _fetchDebounce?.cancel();
       _fetchDebounce = Timer(const Duration(milliseconds: 400), () {
@@ -233,9 +231,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     }
   }
 
-  // Enhanced room type fetching with immediate selection availability
   Future<void> _fetchRoomTypesAndMaintainSelection() async {
-    // If no dates selected, use default range
     final start = _rangeStart ?? DateTime.now().add(const Duration(days: 7));
     final end = _rangeEnd ?? start.add(const Duration(days: 1));
 
@@ -250,7 +246,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         departureDate: _toDateOnly(end),
       );
 
-      // Update tracking parameters
       setState(() {
         _lastFetchedStart = start;
         _lastFetchedEnd = end;
@@ -258,7 +253,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         _hasPendingChanges = false;
       });
 
-      // Try to maintain the current room selection if exists
       if (_selectedRoomId != null) {
         _restoreRoomSelection();
       }
@@ -313,7 +307,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     debugPrint("✅ Room found: ${matchingRoom.roomTypeName}");
     debugPrint("🔍 Room points: ${matchingRoom.roomTypePoints}");
 
-    // Room is available, check if user has enough points
     final isAffordable = isRoomAffordable(
       matchingRoom,
       1,
@@ -369,16 +362,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
     );
   }
 
-  bool _isGreyDay(DateTime day) {
-    final d = _toDateOnly(day);
-    return _blockedDates.any(
-      (bd) =>
-          bd.contentType.toLowerCase() == "grey" &&
-          !d.isBefore(_toDateOnly(bd.dateFrom)) &&
-          !d.isAfter(_toDateOnly(bd.dateTo)),
-    );
-  }
-
   DateTime getInitialFocusedDay() {
     final today = DateTime.now();
     final sevenDaysFromNow = today.add(const Duration(days: 7));
@@ -414,22 +397,12 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
         ? _vm.UserPointBalance.first.redemptionBalancePoints
         : 0;
 
-    // Calculate total points: room points × quantity
     final totalPoints = room.roomTypePoints;
     final isAffordable = totalPoints <= userPoints;
-
-    debugPrint("💰 Affordability check:");
-    debugPrint("   Room: ${room.roomTypeName}");
-    debugPrint("   Points per room: ${room.roomTypePoints}");
-    debugPrint("   Quantity: $quantity");
-    debugPrint("   Total points needed: $totalPoints");
-    debugPrint("   User points: $userPoints");
-    debugPrint("   Affordable: $isAffordable");
 
     return isAffordable;
   }
 
-  // 🆕 Check if current selection matches last fetch
   bool _isDataStale() {
     if (_rangeStart == null || _rangeEnd == null) return false;
 
@@ -446,12 +419,10 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
   Widget build(BuildContext context) {
     final vm = context.watch<OwnerProfileVM>();
 
-    // Calculate total points: room points × quantity
     final String formattedPoints = _selectedRoom != null
         ? NumberFormat('#,###').format(_selectedRoom!.roomTypePoints)
         : '0';
 
-    // 🆕 Check if data is stale
     final bool dataIsStale = _isDataStale();
 
     if (_isLoadingBlockedDates) {
@@ -556,276 +527,21 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   ),
                 ),
                 const SizedBox(height: 3),
-                // Calendar
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: TableCalendar(
-                    firstDay: DateTime.utc(2010, 1, 1),
-                    lastDay: DateTime.utc(2035, 12, 31),
-                    focusedDay: _focusedDay ?? getInitialFocusedDay(),
-                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                    enabledDayPredicate: (day) {
-                      final today = DateTime.now();
-                      final sevenDaysFromNow =
-                          today.add(const Duration(days: 7));
-
-                      if (day.isBefore(sevenDaysFromNow)) return false;
-                      if (_isBlackoutDay(day)) return false;
-
-                      return true;
-                    },
-                    calendarBuilders: CalendarBuilders(
-                      disabledBuilder: (context, day, focusedDay) {
-                        if (_isBlackoutDay(day)) {
-                          const color = Colors.black;
-
-                          bool isStart = _blockedDates.any(
-                            (bd) =>
-                                (bd.contentType.toLowerCase() == "black") &&
-                                isSameDay(bd.dateFrom, day),
-                          );
-                          bool isEnd = _blockedDates.any(
-                            (bd) =>
-                                (bd.contentType.toLowerCase() == "black") &&
-                                isSameDay(bd.dateTo, day),
-                          );
-
-                          if (isStart || isEnd) {
-                            return Container(
-                              width: double.infinity,
-                              height: double.infinity,
-                              margin: EdgeInsets.zero,
-                              decoration: BoxDecoration(
-                                // ignore: deprecated_member_use
-                                color: color.withOpacity(0.2),
-                              ),
-                              child: Center(
-                                child: Container(
-                                  width: 35,
-                                  height: 35,
-                                  decoration: const BoxDecoration(
-                                    color: color,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${day.day}',
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return Container(
-                              width: double.infinity,
-                              height: double.infinity,
-                              margin: EdgeInsets.zero,
-                              decoration: BoxDecoration(
-                                // ignore: deprecated_member_use
-                                color: color.withOpacity(0.2),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${day.day}',
-                                  style: TextStyle(
-                                    // ignore: deprecated_member_use
-                                    color: color.withOpacity(0.8),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                        return null;
-                      },
-                      // Custom smaller widgets for range start / end so we can scale them down
-                      rangeStartBuilder: (context, day, focusedDay) {
-                        final size = ResponsiveSize.scaleWidth(28);
-                        // Center the marker so it lines up vertically with other day widgets
-                        return Center(
-                          child: SizedBox(
-                            width: size,
-                            height: size,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF606060),
-                                borderRadius: BorderRadius.circular(5),
-                                shape: BoxShape.rectangle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${day.day}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      rangeHighlightBuilder: (context, day, isWithinRange) {
-                        if (!isWithinRange) return null;
-
-                        final bandHeight = ResponsiveSize.scaleHeight(14);
-                        final bandColor = Colors.grey.shade300;
-
-                        // Single-day range: small centered connector under the
-                        // marker so start/end markers remain visible.
-                        if (_rangeStart != null &&
-                            _rangeEnd != null &&
-                            isSameDay(day, _rangeStart!) &&
-                            isSameDay(day, _rangeEnd!)) {
-                          return Center(
-                            child: Container(
-                              width: ResponsiveSize.scaleWidth(28),
-                              height: bandHeight,
-                              decoration: BoxDecoration(
-                                color: bandColor,
-                                // borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          );
-                        }
-
-                        // Start cell: connector anchored to the right so it begins
-                        // immediately after the start marker.
-                        if (_rangeStart != null &&
-                            isSameDay(day, _rangeStart!)) {
-                          return Align(
-                            alignment: Alignment.centerRight,
-                            child: Container(
-                              width: ResponsiveSize.scaleWidth(20),
-                              height: bandHeight,
-                              decoration: BoxDecoration(
-                                color: bandColor,
-                                // borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          );
-                        }
-
-                        // End cell: connector anchored to the left so it ends
-                        // immediately before the end marker.
-                        if (_rangeEnd != null && isSameDay(day, _rangeEnd!)) {
-                          return Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              width: ResponsiveSize.scaleWidth(20),
-                              height: bandHeight,
-                              decoration: BoxDecoration(
-                                color: bandColor,
-                                // borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          );
-                        }
-
-                        // Intermediate days: full-width thin band between anchors.
-                        return Center(
-                          child: Container(
-                            width: double.infinity,
-                            height: bandHeight,
-                            margin: EdgeInsets.zero,
-                            decoration: BoxDecoration(
-                              color: bandColor,
-                              // borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                        );
-                      },
-
-                      rangeEndBuilder: (context, day, focusedDay) {
-                        final size = ResponsiveSize.scaleWidth(28);
-                        return Center(
-                          child: SizedBox(
-                            width: size,
-                            height: size,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF606060),
-                                borderRadius: BorderRadius.circular(5),
-                                shape: BoxShape.rectangle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${day.day}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      defaultBuilder: (context, day, focusedDay) {
-                        if (_isGreyDay(day)) {
-                          return Container(
-                            margin: const EdgeInsets.all(4),
-                            width: ResponsiveSize.scaleWidth(30),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFFCF00),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${day.day}',
-                                style: TextStyle(
-                                  color: Colors.grey.shade700,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                        return null;
-                      },
-                    ),
-                    calendarFormat: _calendarFormat,
-                    availableCalendarFormats: const {
-                      CalendarFormat.month: 'Month'
-                    },
-                    startingDayOfWeek: StartingDayOfWeek.monday,
-                    onDaySelected: _onDaySelected,
-                    rangeStartDay: _rangeStart,
-                    onRangeSelected: _onRangeSelected,
-                    rangeSelectionMode: RangeSelectionMode.toggledOn,
-                    rangeEndDay: _rangeEnd,
-                    calendarStyle: CalendarStyle(
-                      outsideDaysVisible: false,
-                      selectedDecoration: const BoxDecoration(
-                        color: Color(0xFF606060),
-                        shape: BoxShape.circle,
-                      ),
-                      todayDecoration: BoxDecoration(
-                        // ignore: deprecated_member_use
-                        color: Theme.of(context).primaryColor.withOpacity(1),
-                        shape: BoxShape.circle,
-                      ),
-                      rangeStartDecoration: const BoxDecoration(
-                        color: Colors.transparent,
-                        shape: BoxShape.rectangle,
-                      ),
-                      rangeEndDecoration: const BoxDecoration(
-                        color: Colors.transparent,
-                        shape: BoxShape.rectangle,
-                      ),
-                      withinRangeDecoration: const BoxDecoration(
-                        color: Colors.transparent,
-                        shape: BoxShape.rectangle,
-                      ),
-                      rangeHighlightColor: Colors.grey.shade300,
-                    ),
-                    onPageChanged: (focusedDay) => _focusedDay = focusedDay,
-                  ),
+                CalendarWidget(
+                  focusedDay: _focusedDay ?? DateTime.now(),
+                  selectedDay: _selectedDay,
+                  rangeStart: _rangeStart,
+                  rangeEnd: _rangeEnd,
+                  calendarFormat: _calendarFormat,
+                  blockedDates: _blockedDates,
+                  onDaySelected: _onDaySelected,
+                  onRangeSelected: _onRangeSelected,
+                  onPageChanged: (focusedDay) {
+                    setState(() {
+                      _focusedDay = focusedDay;
+                    });
+                  },
                 ),
-
                 const SizedBox(height: 10),
 
                 Padding(
@@ -881,7 +597,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                   ),
                 SizedBox(height: ResponsiveSize.scaleHeight(26)),
                 Padding(
-                  padding: EdgeInsets.only(left: 18, bottom: 8),
+                  padding: const EdgeInsets.only(left: 18, bottom: 8),
                   child: Text(
                     'Available Room Types',
                     style: TextStyle(
@@ -929,7 +645,6 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                       final isSelected = displayName == (_selectedRoomId ?? '');
                       final effectiveQuantity =
                           isSelected ? _selectedQuantity : 1;
-                      // Calculate unit price (points per 1 room) for display
                       double displayedPoints = room.roomTypePoints;
                       if (!isSelected && _selectedQuantity > 1) {
                         displayedPoints =

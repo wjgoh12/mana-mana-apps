@@ -41,4 +41,7 @@ class ApiEndpoint {
   static const String validateUser = '/mobile/dash/admin/valid-user';
   static const String confirmUser = '/mobile/dash/admin/switch-user';
   static const String cancelSwitchUser = '/mobile/dash/admin/stop-impersonate';
+
+  //pop out
+  static const String getPopout = '/mobile/enqs/getPopOut';
 }

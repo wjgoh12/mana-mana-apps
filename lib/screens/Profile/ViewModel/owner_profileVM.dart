@@ -274,13 +274,11 @@ class OwnerProfileVM extends ChangeNotifier {
     debugPrint('📍 Starting to fetch redemption points...');
 
     try {
-      // First check if we have any available points
       if (_unitAvailablePoints.isEmpty) {
         debugPrint('⚠️ Fetching available points first...');
         await fetchUserAvailablePoints();
       }
 
-      // Use provided location/unit or fall back to first available
       String effectiveLocation = location.isNotEmpty
           ? location
           : _unitAvailablePoints.firstOrNull?.location ?? '';
@@ -342,13 +340,10 @@ class OwnerProfileVM extends ChangeNotifier {
     }
   }
 
-  // Cache for room types
   Map<String, List<RoomType>> _roomTypeCache = {};
 
-  // Role-based flags
   bool _canSwitchUser = false;
 
-  /// Whether the current user is allowed to see the "Switch User" button
   bool get canSwitchUser => _canSwitchUser;
 
   String _getRoomTypeCacheKey(
@@ -507,12 +502,11 @@ class OwnerProfileVM extends ChangeNotifier {
       case "STAL":
         return "STALLIONZ";
       default:
-        return code; // Return original code if no match found
+        return code;
     }
   }
 
   void clearSelectionCache() {
-    // Clear any selection-related state variables
     _selectedState = '';
     _locationsInState.clear();
     _roomTypes.clear();

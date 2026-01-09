@@ -1,7 +1,3 @@
-// ============================================
-// FILE: user_repo.dart
-// ============================================
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -25,12 +21,10 @@ class UserRepository {
             "✅ API call succeeded for ownerUserData; \nraw response: $res");
         print(res['ownersinfo']);
 
-        // NEW: Check if response is a malformed string and extract token if present
         if (res is String) {
           debugPrint(
               '🔧 getUsers response is malformed string, checking for token');
 
-          // Look for JWT token pattern in the string
           final tokenRegex = RegExp(r'token:\s*([A-Za-z0-9_.-]+)');
           final tokenMatch = tokenRegex.firstMatch(res);
 
@@ -39,12 +33,10 @@ class UserRepository {
             debugPrint(
                 '🔑 Found token in getUsers response: ${newToken?.substring(0, 20)}...');
 
-            // Update stored token
             final AuthService authService = AuthService();
             authService.updateTokens(accessToken: newToken!);
             debugPrint('✅ Updated token from getUsers response');
           } else {
-            // Try alternative pattern
             final altTokenRegex = RegExp(r'eyJ[A-Za-z0-9_.-]+');
             final altTokenMatch = altTokenRegex.firstMatch(res);
 
@@ -59,14 +51,11 @@ class UserRepository {
             }
           }
 
-          // For malformed string, try to parse user data from it
-          // This is a fallback - the response should be proper JSON
           debugPrint(
               '⚠️ getUsers returned malformed string, cannot parse user data properly');
           return [];
         }
 
-        // Support both Map and List responses — prefer first item if List
         Map<String, dynamic> userMap;
         if (res is List && res.isNotEmpty) {
           userMap = Map<String, dynamic>.from(res.first as Map);
@@ -80,7 +69,6 @@ class UserRepository {
 
         final user = User.fromJson(userMap);
 
-        // Diagnostic: log both userId and email reported by server (if present)
         try {
           final serverUserId = userMap['userId']?.toString();
           final serverEmail = userMap['email']?.toString();
@@ -88,7 +76,6 @@ class UserRepository {
           debugPrint(
               '🔎 ownerUserData parsed: userId=$serverUserId, email=$serverEmail, token_present=${token != null}');
 
-          // If there's a token in the response, update it
           if (token != null && token.isNotEmpty) {
             debugPrint(
                 '🔑 Found token in getUsers JSON response, updating stored token');
@@ -108,23 +95,19 @@ class UserRepository {
     });
   }
 
-  /// Validate switch user request before confirming
   Future<Map<String, dynamic>> validateSwitchUser(
       String switchUserEmail) async {
     try {
       final response = await _apiService.post(
         ApiEndpoint.validateUser,
         data: {'switchUserEmail': switchUserEmail},
-        // autoLogoutOnAuthFailure: false,
       );
 
       debugPrint('🔁 validateSwitchUser response: $response');
 
-      // Normalize response to always return Map
       if (response is Map<String, dynamic>) {
         return response;
       } else if (response is String) {
-        // Convert string response to structured format
         if (response.toLowerCase().contains('not allowed') ||
             response.contains('403')) {
           return {'statusCode': 403, 'body': response, 'success': false};
@@ -150,8 +133,6 @@ class UserRepository {
       });
       debugPrint('🔁 confirmSwitchUser response: $response');
 
-      // The confirmUser API just returns a confirmation message
-      // The actual token switching happens when we call getUsers()
       debugPrint('� User switch confirmed, now fetching updated user data...');
 
       return {
@@ -178,12 +159,10 @@ class UserRepository {
     return response;
   }
 
-  /// Fetch a single user by email. Returns null if not found or error.
   Future<User?> getUserByEmail(String email) async {
     try {
       debugPrint('🔍 getUserByEmail: Fetching user for email: $email');
 
-      // Strategy 1: Try with email parameter in request body
       final possiblePayloads = [
         {'email': email},
         {'switchUserEmail': email},
@@ -210,7 +189,6 @@ class UserRepository {
         }
       }
 
-      // Strategy 2: If no response, try fetching all users and search locally
       if (res == null) {
         debugPrint(
             '🔍 No direct response, fetching all users and searching locally');
@@ -230,9 +208,7 @@ class UserRepository {
         }
       }
 
-      // Strategy 3: Parse the response
       try {
-        // Handle List response
         if (res is List && res.isNotEmpty) {
           debugPrint('📋 Response is a List with ${res.length} items');
           final user = User.fromJson(res.first as Map<String, dynamic>);
@@ -240,18 +216,16 @@ class UserRepository {
           return user;
         }
 
-        // Handle Map response
         if (res is Map<String, dynamic>) {
           debugPrint('📦 Response is a Map');
           final user = User.fromJson(res);
           debugPrint('✅ Parsed user from map: ${user.email}');
 
-          // Verify we got the correct user (case-insensitive)
           if ((user.email ?? '').toLowerCase() == email.toLowerCase()) {
             return user;
           } else {
             debugPrint('⚠️ Email mismatch: got ${user.email}, expected $email');
-            // Backend might not support email parameter, return anyway
+
             return user;
           }
         }
@@ -270,7 +244,6 @@ class UserRepository {
     }
   }
 
-  /// Returns true if user exists, false otherwise
   Future<bool> userExists(String email) async {
     try {
       final user = await getUserByEmail(email);
@@ -282,10 +255,6 @@ class UserRepository {
   }
 
   Future<List<User>> getSwitchedUser(String email) async {
-    // Try multiple possible parameter names — some backends expect a different
-    // key for the target email. Probe several common keys and log the raw
-    // response for each attempt to help backend teams diagnose which payload
-    // shape they expect.
     final possiblePayloads = [
       {'email': email},
       {'switchUserEmail': email},
@@ -312,12 +281,9 @@ class UserRepository {
         }
       } catch (e) {
         debugPrint('⚠️ getSwitchedUser attempt failed for $payload: $e');
-        // continue to next payload
       }
     }
 
-    // If we still have no response, try one final time with empty body to let
-    // the backend derive target from headers/session.
     if (res == null) {
       try {
         debugPrint('🔁 No payloads succeeded; trying empty body');
@@ -341,7 +307,6 @@ class UserRepository {
       debugPrint(
           "✅ API call succeeded for switched ownerUserData; raw response: $res");
 
-      // Support both Map and List responses — prefer first item if List
       Map<String, dynamic> userMap;
       if (res is List && res.isNotEmpty) {
         userMap = Map<String, dynamic>.from(res.first as Map);
@@ -355,7 +320,6 @@ class UserRepository {
 
       final user = User.fromJson(userMap);
 
-      // Log diagnostic info so backend team can see where fields disagree
       try {
         final serverUserId = userMap['userId']?.toString();
         final serverEmail = userMap['email']?.toString();
@@ -363,7 +327,6 @@ class UserRepository {
         debugPrint(
             '🔎 getSwitchedUser parsed: userId=$serverUserId, email=$serverEmail, token_present=${token != null}');
 
-        // If token present, attempt to decode payload.sub to verify identity
         if (token != null && token.isNotEmpty) {
           try {
             final parts = token.split('.');

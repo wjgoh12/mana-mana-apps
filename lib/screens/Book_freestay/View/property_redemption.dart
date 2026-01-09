@@ -18,40 +18,31 @@ class PropertyRedemption extends StatefulWidget {
 }
 
 class _PropertyRedemptionState extends State<PropertyRedemption> {
-  String selectedFilter = 'All'; // Filter state
-  bool _isLoadingLocations = true; // Track location loading state
+  String selectedFilter = 'All';
+  bool _isLoadingLocations = true;
 
-  // ✅ Add image cache to avoid repeated lookups
   final Map<String, String> _imageCache = {};
 
-  // Helper method to get property image by location name - OPTIMIZED
   String _getPropertyImageByLocation(String locationName) {
-    // ✅ Check cache first
     if (_imageCache.containsKey(locationName)) {
       return _imageCache[locationName]!;
     }
 
     final globalData = Provider.of<GlobalDataManager>(context, listen: false);
 
-    // Clean the booking location name (remove special characters, whitespace, newlines, make uppercase)
     final cleanBookingLocation = locationName
         .toUpperCase()
-        .replaceAll(
-            RegExp(r'\s+'), '') // Remove all whitespace including newlines
-        .replaceAll(RegExp(r'[^A-Z0-9]'), ''); // Remove special characters
+        .replaceAll(RegExp(r'\s+'), '')
+        .replaceAll(RegExp(r'[^A-Z0-9]'), '');
 
-    // Search through all states and locations to find matching location
     for (var state in globalData.locationsByState.keys) {
       final locations = globalData.locationsByState[state] ?? [];
       for (var location in locations) {
-        // Clean the global location name for comparison (remove whitespace, newlines, special chars)
         final cleanGlobalLocation = location.locationName
             .toUpperCase()
-            .replaceAll(
-                RegExp(r'\s+'), '') // Remove all whitespace including newlines
-            .replaceAll(RegExp(r'[^A-Z0-9]'), ''); // Remove special characters
+            .replaceAll(RegExp(r'\s+'), '')
+            .replaceAll(RegExp(r'[^A-Z0-9]'), '');
 
-        // Check if cleaned names match or if the booking location starts with the global location prefix
         if (cleanGlobalLocation.startsWith(cleanBookingLocation) ||
             cleanBookingLocation.startsWith(cleanGlobalLocation) ||
             cleanGlobalLocation.contains(cleanBookingLocation)) {
@@ -59,27 +50,23 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               ? location.pic
               : 'assets/images/booking_confirmed.png';
 
-          // ✅ Cache the result
           _imageCache[locationName] = imageUrl;
           return imageUrl;
         }
       }
     }
 
-    // Fallback to default image if location not found
     const defaultImage = 'assets/images/booking_confirmed.png';
     _imageCache[locationName] = defaultImage;
     return defaultImage;
   }
 
-  // Helper method to remove prefix uppercase letters
   String _sanitizeRoomTypeName(String raw) {
     final s = raw.trim();
     if (s.isEmpty) return s;
 
     final firstToken = s.split(RegExp(r'\s+'))[0];
 
-    // Check if first token is all uppercase and between 2-5 characters
     final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
     if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 5) {
       return s.substring(firstToken.length).trim();
@@ -94,25 +81,16 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     _initializeData();
   }
 
-  // Initialize all required data - OPTIMIZED VERSION
   Future<void> _initializeData() async {
     final globalData = Provider.of<GlobalDataManager>(context, listen: false);
 
-    // ✅ DON'T clear caches - use existing data if available
-    // ownerVM.clearSelectionCache(); // Removed
-    // globalData.clearLocationCache(); // Removed
-
-    // ✅ Load booking data and locations in PARALLEL
     setState(() {
       _isLoadingLocations = true;
     });
 
     try {
-      // Run all data fetching operations in parallel
       await Future.wait([
-        // Load booking-related data
         _loadBookingData(),
-        // Load locations in background (for confirmation dialog images)
         globalData.fetchRedemptionStatesAndLocations(),
       ]);
 
@@ -131,14 +109,12 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     }
   }
 
-  // Method to load/refresh booking data - OPTIMIZED VERSION
   Future<void> _loadBookingData() async {
     if (!mounted) return;
 
     try {
       final ownerVM = Provider.of<OwnerProfileVM>(context, listen: false);
 
-      // ✅ Run all fetches in PARALLEL instead of sequential
       await Future.wait([
         ownerVM.fetchData(),
         ownerVM.fetchUserAvailablePoints(),
@@ -149,7 +125,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     }
   }
 
-  // Filter tabs widget
   Widget _buildFilterTab(String label) {
     final isSelected = selectedFilter == label;
     return GestureDetector(
@@ -206,18 +181,13 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
       }).toList();
     }
 
-    // ✅ No need to sort here - repository already sorts by createdAt descending
-    // The bookings from ownerVM.bookingHistory are already sorted newest-first
     return filteredList;
   }
 
   List<Widget> _buildGroupedBookings(List<dynamic> bookings) {
-    // Don't sort here - bookings are already sorted by _getFilteredBookings
-    // by submission time (latest first)
     return bookings.map((booking) => _buildBookingCard(booking)).toList();
   }
 
-  // Build booking card
   Widget _buildBookingCard(dynamic booking) {
     return InkWell(
       onTap: () {
@@ -230,7 +200,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
             builder: (_) {
               return Dialog(
                 backgroundColor: Colors.transparent,
-                insetPadding: EdgeInsets.all(20),
+                insetPadding: const EdgeInsets.all(20),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
@@ -285,9 +255,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
 
                         const Spacer(),
 
-                        // Booking details with gradient background
                         ClipRRect(
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(20),
                             bottomRight: Radius.circular(20),
                           ),
@@ -358,10 +327,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                       ),
                                     ],
                                   ),
-                                  Divider(color: Colors.white30, thickness: 1),
+                                  const Divider(
+                                      color: Colors.white30, thickness: 1),
                                   const SizedBox(height: 12),
 
-                                  // Check-in and Check-out dates
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -385,7 +354,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            // Check-in Date
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -418,7 +386,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 height:
                                                     ResponsiveSize.scaleHeight(
                                                         12)),
-                                            // Check-out Date
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -455,11 +422,11 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
 
                                   const SizedBox(height: 16),
 
-                                  Divider(color: Colors.white30, thickness: 1),
+                                  const Divider(
+                                      color: Colors.white30, thickness: 1),
 
                                   const SizedBox(height: 16),
 
-                                  // Points Info
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -528,7 +495,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
-                                          child: Text('Close')),
+                                          child: const Text('Close')),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       }),
@@ -551,7 +518,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Color(0xFF000241).withOpacity(0.15),
+              // ignore: deprecated_member_use
+              color: const Color(0xFF000241).withOpacity(0.15),
               blurRadius: 10,
             )
           ],
@@ -569,11 +537,11 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 height: ResponsiveSize.scaleHeight(37),
                 width: ResponsiveSize.scaleWidth(33),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFF2B9),
+                  color: const Color(0xFFFFF2B9),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(Icons.hotel,
-                    color: Color(0xFFFFCF00),
+                    color: const Color(0xFFFFCF00),
                     size: ResponsiveSize.scaleWidth(16)),
               ),
               SizedBox(width: ResponsiveSize.scaleWidth(16)),
@@ -603,10 +571,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: booking.status == 'Confirmed'
-                                ? Color(0xFFDCFCE7)
+                                ? const Color(0xFFDCFCE7)
                                 : booking.status == 'Pending'
-                                    ? Color(0xFFFFF696)
-                                    : Color(0xFFFEE2E1),
+                                    ? const Color(0xFFFFF696)
+                                    : const Color(0xFFFEE2E1),
                           ),
                           child: Text(
                             booking.status,
@@ -614,10 +582,10 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                               fontSize: ResponsiveSize.text(10),
                               fontFamily: 'outfit',
                               color: booking.status == 'Confirmed'
-                                  ? Color(0xFF2A7446)
+                                  ? const Color(0xFF2A7446)
                                   : booking.status == 'Pending'
-                                      ? Color(0xFF926021)
-                                      : Color(0xFFA63636),
+                                      ? const Color(0xFF926021)
+                                      : const Color(0xFFA63636),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -708,21 +676,16 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               onTap: () {
                 Navigator.of(context).pop();
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: const Icon(
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Icon(
                   Icons.arrow_back_ios,
                   color: Colors.black,
                   size: 24,
                 ),
               ),
             ),
-            SizedBox(width: 10),
-            // CircleAvatar(
-            //   radius: 20.fSize,
-            //   backgroundImage: const AssetImage('assets/images/mana2logo1.png'),
-            //   backgroundColor: Colors.transparent,
-            // ),
+            const SizedBox(width: 10),
             Padding(
                 padding: const EdgeInsets.only(left: 10, top: 10),
                 child: Text(
@@ -733,21 +696,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     fontSize: ResponsiveSize.text(18),
                     fontWeight: FontWeight.w700,
                   ),
-                )
-                // GradientText1(
-                //   text: 'Free Stay Redemptions',
-                //   style: TextStyle(
-                //     fontFamily: 'outfit',
-                //     fontSize: 20.fSize,
-                //     fontWeight: FontWeight.w800,
-                //   ),
-                //   gradient: const LinearGradient(
-                //     begin: Alignment.centerLeft,
-                //     end: Alignment.centerRight,
-                //     colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-                //   ),
-                // ),
-                ),
+                )),
             const Spacer(),
             TextButton(
               onPressed: () {
@@ -789,7 +738,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // SizedBox(height: ResponsiveSize.scaleHeight(10)),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -987,8 +935,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               ),
             ),
             SizedBox(height: ResponsiveSize.scaleHeight(10)),
-
-            // Filter Tabs
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -999,7 +945,6 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               ],
             ),
             SizedBox(height: ResponsiveSize.scaleHeight(10)),
-
             Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
@@ -1016,17 +961,16 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 ),
                 child: Builder(
                   builder: (context) {
-                    // Show loading indicator while locations are being loaded
                     if (_isLoadingLocations) {
-                      return Center(
+                      return const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CircularProgressIndicator(
-                              color: const Color(0xFF3E51FF),
+                              color: Color(0xFF3E51FF),
                             ),
-                            const SizedBox(height: 16),
-                            const Text(
+                            SizedBox(height: 16),
+                            Text(
                               "Loading property locations...",
                               style: TextStyle(fontFamily: 'outfit'),
                             ),
