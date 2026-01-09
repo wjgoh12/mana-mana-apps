@@ -5,8 +5,8 @@ import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
-import 'package:mana_mana_app/screens/property_detail/view/AnnualStatementPdfViewerScreen.dart';
-import 'package:mana_mana_app/screens/property_detail/view/PdfViewerScreen.dart';
+import 'package:mana_mana_app/screens/property_detail/view/annual_statement_pdf_viewer_screen.dart';
+import 'package:mana_mana_app/screens/property_detail/view/pdf_viewer_screen.dart';
 
 class PropertyDetailVM extends ChangeNotifier {
   double total = 0.0;

@@ -6,7 +6,7 @@ import 'package:gradient_icon/gradient_icon.dart';
 import 'package:mana_mana_app/screens/statements/view_model/statement_view_model.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
-import 'package:mana_mana_app/screens/statements/view/DropdownButton.dart';
+import 'package:mana_mana_app/screens/statements/view/dropdown_button.dart';
 
 class StatementPage extends StatefulWidget {
   const StatementPage({super.key});
