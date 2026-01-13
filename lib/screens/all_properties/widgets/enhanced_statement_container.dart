@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/property_detail/view_model/property_detail_view_model.dart';
 import 'package:mana_mana_app/screens/all_properties/widgets/statement_card.dart';
@@ -221,8 +223,8 @@ class _EnhancedStatementContainerState
                   Text(
                     'No statements found for this unit!',
                     style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: ResponsiveSize.text(16),
+                      fontFamily: AppFonts.outfit,
+                      fontSize: AppDimens.fontSizeBig,
                       color: Colors.grey.shade600,
                     ),
                   ),

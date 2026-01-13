@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
@@ -40,12 +41,12 @@ class _OccupancyTextState extends State<OccupancyPercentageText> {
           }
 
           if (viewModel.isLoading) {
-            return const Text('Loading...', style: TextStyle(fontSize: 11));
+            return const Text('Loading...', style: TextStyle(fontSize: AppDimens.fontSizeSmall));
           }
 
-          return Text('$occupancy%', style: const TextStyle(fontSize: 11));
+          return Text('$occupancy%', style: const TextStyle(fontSize: AppDimens.fontSizeSmall));
         } catch (e) {
-          return const Text('0%', style: TextStyle(fontSize: 11));
+          return const Text('0%', style: TextStyle(fontSize: AppDimens.fontSizeSmall));
         }
       },
     );

@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:intl/intl.dart';
 // import 'package:dropdown_button2/dropdown_button2.dart';
@@ -161,7 +163,7 @@
 //               SizedBox(height: 16),
 //               Text(
 //                 'No property data available',
-//                 style: TextStyle(fontSize: 18, color: Colors.grey),
+//                 style: TextStyle(fontSize: AppDimens.fontSizeBig, color: Colors.grey),
 //               ),
 //             ],
 //           ),
@@ -212,7 +214,7 @@
 //                                 const Text(
 //                                   'eStatements',
 //                                   style: TextStyle(
-//                                       fontSize: 20,
+//                                       fontSize: AppDimens.fontSizeBig,
 //                                       fontWeight: FontWeight.bold),
 //                                 ),
 //                                 const Spacer(),
@@ -311,8 +313,8 @@
 //                                         ?.toString() ??
 //                                     'Unknown Property',
 //                                 style: TextStyle(
-//                                     fontSize: ResponsiveSize.text(30),
-//                                     fontFamily: 'outfit'),
+//                                     fontSize: AppDimens.fontSizeBig,
+//                                     fontFamily: AppFonts.outfit),
 //                               ),
 //                               Row(
 //                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -321,8 +323,8 @@
 //                                       width: 14.fSize, height: 17.fSize),
 //                                   Text(model.locationRoad,
 //                                       style: TextStyle(
-//                                         fontSize: ResponsiveSize.text(14),
-//                                         fontFamily: 'outfit',
+//                                         fontSize: AppDimens.fontSizeBig,
+//                                         fontFamily: AppFonts.outfit,
 //                                       )),
 //                                 ],
 //                               ),
@@ -370,8 +372,8 @@
 //                               const Text(
 //                                 'Property(s)',
 //                                 style: TextStyle(
-//                                     fontFamily: 'outfit',
-//                                     fontSize: 20,
+//                                     fontFamily: AppFonts.outfit,
+//                                     fontSize: AppDimens.fontSizeBig,
 //                                     fontWeight: FontWeight.bold),
 //                               ),
 //                             ],
@@ -560,7 +562,7 @@
 //                         'Download PDF',
 //                         style: TextStyle(
 //                           color: Colors.white,
-//                           fontSize: 16.fSize,
+//                           fontSize: AppDimens.fontSizeBig,
 //                           fontWeight: FontWeight.w600,
 //                         ),
 //                       ),
@@ -661,7 +663,7 @@
 //                         'Download PDF',
 //                         style: TextStyle(
 //                           color: Colors.white,
-//                           fontSize: 16.fSize,
+//                           fontSize: AppDimens.fontSizeBig,
 //                           fontWeight: FontWeight.w600,
 //                         ),
 //                       ),
@@ -781,8 +783,8 @@
 //               //     '${model.isLoading ? 0 : model.unitByMonth.where((unit) => unit.slocation == locationByMonth.first['location'] && (unit.sunitno?.isNotEmpty ?? false)).map((unit) => unit.sunitno).toSet().toList().length}',
 //               subtitle: Text('$shortMonth $year',
 //                   style: const TextStyle(
-//                     fontSize: 12,
-//                     fontFamily: 'outfit',
+//                     fontSize: AppDimens.fontSizeSmall,
+//                     fontFamily: AppFonts.outfit,
 //                   )),
 //               responsiveFont: responsiveFont,
 //             ),
@@ -829,8 +831,8 @@
 //                   return '$shortMonth $year';
 //                 }()}',
 //                 style: const TextStyle(
-//                   fontSize: 9.0,
-//                   fontFamily: 'outfit',
+//                   fontSize: AppDimens.fontSizeSmall,
+//                   fontFamily: AppFonts.outfit,
 //                   fontWeight: FontWeight.normal,
 //                 ),
 //               ),
@@ -845,7 +847,7 @@
 //                     return const Text(
 //                       'No location data',
 //                       style: TextStyle(
-//                         fontSize: 12,
+//                         fontSize: AppDimens.fontSizeSmall,
 //                         fontWeight: FontWeight.bold,
 //                       ),
 //                     );
@@ -856,8 +858,8 @@
 //                   return Text(
 //                     '$occupancy%',
 //                     style: const TextStyle(
-//                       fontFamily: 'outfit',
-//                       fontSize: 12,
+//                       fontFamily: AppFonts.outfit,
+//                       fontSize: AppDimens.fontSizeSmall,
 //                       fontWeight: FontWeight.bold,
 //                       color: Colors.black,
 //                     ),
@@ -879,8 +881,8 @@
 //               title: 'Monthly Profit',
 //               subtitle: Text('$shortMonth $year',
 //                   style: TextStyle(
-//                     fontSize: responsiveFont(12),
-//                     fontFamily: 'outfit',
+//                     fontSize: AppDimens.fontSizeSmall,
+//                     fontFamily: AppFonts.outfit,
 //                   )),
 //               child: RichText(
 //                 text: TextSpan(
@@ -893,10 +895,10 @@
 //                         child: Text(
 //                           'RM',
 //                           style: TextStyle(
-//                             fontSize: responsiveFont(12),
+//                             fontSize: AppDimens.fontSizeSmall,
 //                             fontWeight: FontWeight.bold,
 //                             color: Colors.black,
-//                             fontFamily: 'outfit',
+//                             fontFamily: AppFonts.outfit,
 //                           ),
 //                         ),
 //                       ),
@@ -910,7 +912,7 @@
 //                                   (m) => '${m[1]},')
 //                           : '${model.selectedUnitPro?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},') ?? '0.00'}',
 //                       style: TextStyle(
-//                         fontSize: responsiveFont(16),
+//                         fontSize: AppDimens.fontSizeBig,
 //                         fontWeight: FontWeight.bold,
 //                         color: Colors.black,
 //                       ),
@@ -931,8 +933,8 @@
 //               title: 'Total Net After POB',
 //               subtitle: Text('$shortMonth $year',
 //                   style: TextStyle(
-//                     fontSize: responsiveFont(12),
-//                     fontFamily: 'outfit',
+//                     fontSize: AppDimens.fontSizeSmall,
+//                     fontFamily: AppFonts.outfit,
 //                   )),
 //               child: RichText(
 //                 text: TextSpan(
@@ -945,8 +947,8 @@
 //                         child: Text(
 //                           'RM',
 //                           style: TextStyle(
-//                             fontFamily: 'outfit',
-//                             fontSize: responsiveFont(12),
+//                             fontFamily: AppFonts.outfit,
+//                             fontSize: AppDimens.fontSizeSmall,
 //                             fontWeight: FontWeight.bold,
 //                             color: Colors.black,
 //                           ),
@@ -962,8 +964,8 @@
 //                                   (m) => '${m[1]},')
 //                           : '${model.selectedUnitBlc?.total?.toStringAsFixed(2).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},') ?? '0.00'}',
 //                       style: TextStyle(
-//                         fontFamily: 'outfit',
-//                         fontSize: responsiveFont(16),
+//                         fontFamily: AppFonts.outfit,
+//                         fontSize: AppDimens.fontSizeBig,
 //                         fontWeight: FontWeight.bold,
 //                         color: Colors.black,
 //                       ),
@@ -1013,12 +1015,12 @@
 //           SizedBox(height: responsiveFont(5)),
 //           Text(title,
 //               style: TextStyle(
-//                   fontSize: responsiveFont(12), fontFamily: 'outfit')),
+//                   fontSize: AppDimens.fontSizeSmall, fontFamily: AppFonts.outfit)),
 //           if (value != null)
 //             Text(value,
 //                 style: TextStyle(
-//                   fontFamily: 'outfit',
-//                   fontSize: responsiveFont(14),
+//                   fontFamily: AppFonts.outfit,
+//                   fontSize: AppDimens.fontSizeBig,
 //                   fontWeight: FontWeight.bold,
 //                   color: Colors.black,
 //                 )),
@@ -1093,8 +1095,8 @@
 //                         child: Text(
 //                           'Contract Type  ',
 //                           style: TextStyle(
-//                               fontSize: responsiveFont(10),
-//                               fontFamily: 'outfit'),
+//                               fontSize: AppDimens.fontSizeSmall,
+//                               fontFamily: AppFonts.outfit),
 //                           overflow: TextOverflow.ellipsis,
 //                           softWrap: false,
 //                         ),
@@ -1120,8 +1122,8 @@
 //                           })(),
 
 //                           style: TextStyle(
-//                             fontFamily: 'outfit',
-//                             fontSize: responsiveFont(11),
+//                             fontFamily: AppFonts.outfit,
+//                             fontSize: AppDimens.fontSizeSmall,
 //                             color: const Color(0xFF5092FF),
 //                             fontWeight: FontWeight.bold,
 //                           ),
@@ -1155,8 +1157,8 @@
 //                         child: Text(
 //                           'Contract End Date  ',
 //                           style: TextStyle(
-//                               fontFamily: 'outfit',
-//                               fontSize: responsiveFont(8)),
+//                               fontFamily: AppFonts.outfit,
+//                               fontSize: AppDimens.fontSizeSmall,
 //                           overflow: TextOverflow.ellipsis,
 //                           softWrap: false,
 //                         ),
@@ -1193,8 +1195,8 @@
 //                             return matches.join(', ');
 //                           })(),
 //                           style: TextStyle(
-//                             fontFamily: 'outfit',
-//                             fontSize: responsiveFont(9),
+//                             fontFamily: AppFonts.outfit,
+//                             fontSize: AppDimens.fontSizeSmall,
 //                             color: const Color(0xFF5092FF),
 //                             fontWeight: FontWeight.bold,
 //                           ),
@@ -1301,8 +1303,8 @@
 //                     padding: EdgeInsets.only(left: responsivePadding, top: 1),
 //                     child: Text('Owner(s)',
 //                         style: TextStyle(
-//                           fontFamily: 'outfit',
-//                           fontSize: responsiveFont(12),
+//                           fontFamily: AppFonts.outfit,
+//                           fontSize: AppDimens.fontSizeSmall,
 //                         )),
 //                   )
 //                 ],
@@ -1334,7 +1336,7 @@
 //                                     getInitials(ownerName),
 //                                     style: const TextStyle(
 //                                       color: Colors.white,
-//                                       fontSize: 12,
+//                                       fontSize: AppDimens.fontSizeSmall,
 //                                       fontWeight: FontWeight.bold,
 //                                     ),
 //                                   ),
@@ -1357,7 +1359,7 @@
 //                                     getInitials(coOwnerName),
 //                                     style: const TextStyle(
 //                                       color: Colors.white,
-//                                       fontSize: 12,
+//                                       fontSize: AppDimens.fontSizeSmall,
 //                                       fontWeight: FontWeight.bold,
 //                                     ),
 //                                   ),
@@ -1418,16 +1420,16 @@
 //                               Text(
 //                                 'Occupancy Rate',
 //                                 style: TextStyle(
-//                                   fontFamily: 'outfit',
-//                                   fontSize: responsiveFont(11),
+//                                   fontFamily: AppFonts.outfit,
+//                                   fontSize: AppDimens.fontSizeSmall,
 //                                 ),
 //                               ),
 //                               // Use cached data instead of FutureBuilder
 //                               Text(
 //                                 '${model2.getUnitOccupancyFromCache(location, unitNo)}%',
 //                                 style: TextStyle(
-//                                   fontFamily: 'outfit',
-//                                   fontSize: responsiveFont(10),
+//                                   fontFamily: AppFonts.outfit,
+//                                   fontSize: AppDimens.fontSizeSmall,
 //                                   fontWeight: FontWeight.bold,
 //                                 ),
 //                               ),
@@ -1437,8 +1439,8 @@
 //                                 child: Text(
 //                                   'As of Month $shortMonth $year',
 //                                   style: const TextStyle(
-//                                     fontSize: 8.0,
-//                                     fontFamily: 'outfit',
+//                                     fontSize: AppDimens.fontSizeSmall,
+//                                     fontFamily: AppFonts.outfit,
 //                                     fontWeight: FontWeight.normal,
 //                                   ),
 //                                 ),
@@ -1481,8 +1483,8 @@
 //                               Text(
 //                                 'Monthly Profit',
 //                                 style: TextStyle(
-//                                   fontFamily: 'outfit',
-//                                   fontSize: responsiveFont(11),
+//                                   fontFamily: AppFonts.outfit,
+//                                   fontSize: AppDimens.fontSizeSmall,
 //                                 ),
 //                               ),
 //                               RichText(
@@ -1496,8 +1498,8 @@
 //                                         child: Text(
 //                                           'RM',
 //                                           style: TextStyle(
-//                                             fontFamily: 'outfit',
-//                                             fontSize: responsiveFont(10),
+//                                             fontFamily: AppFonts.outfit,
+//                                             fontSize: AppDimens.fontSizeSmall,
 //                                             fontWeight: FontWeight.bold,
 //                                             color: Colors.black,
 //                                           ),
@@ -1507,8 +1509,8 @@
 //                                     TextSpan(
 //                                       text: '$formattedTotalPro',
 //                                       style: TextStyle(
-//                                         fontFamily: 'outfit',
-//                                         fontSize: responsiveFont(15),
+//                                         fontFamily: AppFonts.outfit,
+//                                         fontSize: AppDimens.fontSizeBig,
 //                                         fontWeight: FontWeight.bold,
 //                                         color: Colors.black,
 //                                       ),
@@ -1520,8 +1522,8 @@
 //                               Text(
 //                                 '$shortMonth $year',
 //                                 style: TextStyle(
-//                                   fontFamily: 'outfit',
-//                                   fontSize: responsiveFont(10),
+//                                   fontFamily: AppFonts.outfit,
+//                                   fontSize: AppDimens.fontSizeSmall,
 //                                 ),
 //                               ),
 //                             ],
@@ -1562,8 +1564,8 @@
 //                               Text(
 //                                 'Net After POB',
 //                                 style: TextStyle(
-//                                   fontFamily: 'outfit',
-//                                   fontSize: responsiveFont(11),
+//                                   fontFamily: AppFonts.outfit,
+//                                   fontSize: AppDimens.fontSizeSmall,
 //                                 ),
 //                               ),
 //                               RichText(
@@ -1577,8 +1579,8 @@
 //                                         child: Text(
 //                                           'RM',
 //                                           style: TextStyle(
-//                                             fontFamily: 'outfit',
-//                                             fontSize: responsiveFont(10),
+//                                             fontFamily: AppFonts.outfit,
+//                                             fontSize: AppDimens.fontSizeSmall,
 //                                             fontWeight: FontWeight.bold,
 //                                             color: Colors.black,
 //                                           ),
@@ -1588,8 +1590,8 @@
 //                                     TextSpan(
 //                                       text: '$formattedTotalBlc',
 //                                       style: TextStyle(
-//                                         fontFamily: 'outfit',
-//                                         fontSize: responsiveFont(15),
+//                                         fontFamily: AppFonts.outfit,
+//                                         fontSize: AppDimens.fontSizeBig,
 //                                         fontWeight: FontWeight.bold,
 //                                         color: Colors.black,
 //                                       ),
@@ -1599,8 +1601,8 @@
 //                               ),
 //                               Text('$shortMonth $year',
 //                                   style: TextStyle(
-//                                     fontFamily: 'outfit',
-//                                     fontSize: responsiveFont(10),
+//                                     fontFamily: AppFonts.outfit,
+//                                     fontSize: AppDimens.fontSizeSmall,
 //                                   )),
 //                             ],
 //                           ),
@@ -1695,8 +1697,8 @@
 //                     Text(
 //                       'No statements found !',
 //                       style: TextStyle(
-//                         fontFamily: 'outfit',
-//                         fontSize: 16,
+//                         fontFamily: AppFonts.outfit,
+//                         fontSize: AppDimens.fontSizeBig,
 //                         color: Colors.grey.shade600,
 //                       ),
 //                     ),
@@ -1758,8 +1760,8 @@
 //                               Text(
 //                                 '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
 //                                 style: TextStyle(
-//                                   fontFamily: 'outfit',
-//                                   fontSize: 12,
+//                                   fontFamily: AppFonts.outfit,
+//                                   fontSize: AppDimens.fontSizeSmall,
 //                                 ),
 //                               ),
 //                             ],
@@ -1795,8 +1797,8 @@
 //                         Text(
 //                           '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
 //                           style: const TextStyle(
-//                             fontFamily: 'outfit',
-//                             fontSize: 12,
+//                             fontFamily: AppFonts.outfit,
+//                             fontSize: AppDimens.fontSizeSmall,
 //                           ),
 //                         ),
 //                       ],
@@ -1865,8 +1867,8 @@
 //                 child: Text(
 //                   locationByMonth.first['location'] ?? '',
 //                   style: TextStyle(
-//                       fontFamily: 'outfit',
-//                       fontSize: ResponsiveSize.text(16),
+//                       fontFamily: AppFonts.outfit,
+//                       fontSize: AppDimens.fontSizeBig,
 //                       fontWeight: FontWeight.bold),
 //                 ),
 //               ),
@@ -1887,8 +1889,8 @@
 //                             isExpanded: true,
 //                             underline: const SizedBox(),
 //                             style: TextStyle(
-//                                 fontFamily: 'outfit',
-//                                 fontSize: ResponsiveSize.text(14),
+//                                 fontFamily: AppFonts.outfit,
+//                                 fontSize: AppDimens.fontSizeBig,
 //                                 color: Colors.black),
 //                             dropdownStyleData: DropdownStyleData(
 //                               width: ResponsiveSize.scaleWidth(237.5),
@@ -1992,16 +1994,16 @@
 //               const Text(
 //                 'eStatements',
 //                 style: TextStyle(
-//                     fontSize: 18,
+//                     fontSize: AppDimens.fontSizeBig,
 //                     fontWeight: FontWeight.bold,
-//                     fontFamily: 'outfit'),
+//                     fontFamily: AppFonts.outfit),
 //               ),
 //               const Spacer(),
 //               const Text('Year',
 //                   style: TextStyle(
-//                       fontSize: 15,
+//                       fontSize: AppDimens.fontSizeBig,
 //                       fontWeight: FontWeight.bold,
-//                       fontFamily: 'outfit')),
+//                       fontFamily: AppFonts.outfit)),
 //               const SizedBox(width: 8),
 //               DropdownButton2<String>(
 //                 underline: const SizedBox(),
@@ -2021,24 +2023,24 @@
 //                     ? const Text(
 //                         'Select Year',
 //                         style: TextStyle(
-//                             fontSize: 10,
+//                             fontSize: AppDimens.fontSizeSmall,
 //                             decoration: TextDecoration.none,
-//                             fontFamily: 'outfit'),
+//                             fontFamily: AppFonts.outfit),
 //                       )
 //                     : const Text(
 //                         '-',
 //                         style: TextStyle(
-//                             fontSize: 10,
+//                             fontSize: AppDimens.fontSizeSmall,
 //                             decoration: TextDecoration.none,
-//                             fontFamily: 'outfit'),
+//                             fontFamily: AppFonts.outfit),
 //                       ),
 //                 items: widget.yearOptions
 //                     .map((year) => DropdownMenuItem(
 //                           value: year,
 //                           child: Text(year,
 //                               style: const TextStyle(
-//                                   fontFamily: 'outfit',
-//                                   fontSize: 12,
+//                                   fontFamily: AppFonts.outfit,
+//                                   fontSize: AppDimens.fontSizeSmall,
 //                                   decoration: TextDecoration.none)),
 //                         ))
 //                     .toList(),
@@ -2081,8 +2083,8 @@
 //   return GradientText1(
 //     text: text,
 //     style: TextStyle(
-//       fontFamily: 'outfit',
-//       fontSize: 17.fSize,
+//       fontFamily: AppFonts.outfit,
+//       fontSize: AppDimens.fontSizeBig,
 //       fontWeight: FontWeight.w700,
 //     ),
 //     gradient: const LinearGradient(
@@ -2139,10 +2141,10 @@
 //     ],
 //   );
 
-//   static const _textStyle = TextStyle(fontSize: 12, fontFamily: 'outfit');
+//   static const _textStyle = TextStyle(fontSize: AppDimens.fontSizeSmall, fontFamily: AppFonts.outfit);
 //   static const _hintText = Text('Select Unit');
 //   static const _loadingText =
-//       Text('Loading...', style: TextStyle(fontSize: 12, color: Colors.grey));
+//       Text('Loading...', style: TextStyle(fontSize: AppDimens.fontSizeSmall, color: Colors.grey));
 
 //   @override
 //   Widget build(BuildContext context) {

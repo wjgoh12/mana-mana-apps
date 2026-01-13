@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -72,7 +73,7 @@ class PdfViewerFromMemory extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           '$property $unitNo - ${getMonthName(month ?? '')} $year',
-          style: const TextStyle(fontSize: 17),
+          style: const TextStyle(fontSize: AppDimens.fontSizeBig,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,

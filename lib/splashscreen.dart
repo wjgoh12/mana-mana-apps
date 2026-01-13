@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/config/AppAuth/native_auth_service.dart';
@@ -142,19 +144,19 @@ class _SplashScreenState extends State<Splashscreen>
                 const Text(
                   'Simple, Timeless',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF606060),
-                    fontFamily: 'Outfit',
+                    fontFamily: AppFonts.outfit,
                   ),
                 ),
                 const Text(
                   'Assets Management',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF606060),
-                    fontFamily: 'Outfit',
+                    fontFamily: AppFonts.outfit,
                   ),
                 ),
                 const SizedBox(height: 40),

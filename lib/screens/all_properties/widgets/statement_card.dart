@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
@@ -43,8 +45,8 @@ class StatementCard extends StatelessWidget {
                     Text(
                       '$month Statement',
                       style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: ResponsiveSize.text(14),
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeBig,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF606060),
                       ),
@@ -53,8 +55,8 @@ class StatementCard extends StatelessWidget {
                     Text(
                       statementAmount,
                       style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: ResponsiveSize.text(13),
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeSmall,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -73,8 +75,8 @@ class StatementCard extends StatelessWidget {
                         Text(
                           'Statement',
                           style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: ResponsiveSize.text(12),
+                            fontFamily: AppFonts.outfit,
+                            fontSize: AppDimens.fontSizeSmall,
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
                           ),

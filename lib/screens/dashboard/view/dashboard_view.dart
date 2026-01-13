@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -76,7 +78,7 @@ class NewDashboardV3 extends StatelessWidget {
                             ? Text(
                                 'Dashboard',
                                 style: TextStyle(
-                                  fontSize: ResponsiveSize.text(20),
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontFamily: 'Open Sans',
                                   fontWeight: FontWeight.w800,
                                   color: Colors.black,
@@ -115,7 +117,7 @@ class NewDashboardV3 extends StatelessWidget {
                                       Text(
                                         'Hey, ${model.userNameAccount} 👋',
                                         style: GoogleFonts.outfit(
-                                          fontSize: responsiveFont(15),
+                                          fontSize: AppDimens.fontSizeBig,
                                           fontWeight: FontWeight.w500,
                                           color: const Color(0xFF383838),
                                         ),
@@ -128,7 +130,7 @@ class NewDashboardV3 extends StatelessWidget {
                                       Text(
                                         'Simple, Timeless \nAssets Management',
                                         style: GoogleFonts.outfit(
-                                          fontSize: responsiveFont(28),
+                                          fontSize: AppDimens.fontSizeBig,
                                           fontWeight: FontWeight.w700,
                                           color: const Color(0xFF606060),
                                         ),
@@ -232,8 +234,8 @@ class NewDashboardV3 extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-          fontFamily: 'Outfit',
-          fontSize: 24.fSize,
+          fontFamily: AppFonts.outfit,
+          fontSize: AppDimens.fontSizeBig,
           fontWeight: FontWeight.w600,
           color: const Color(0XFF000000),
         ),
@@ -277,9 +279,9 @@ class _SmartLoadingDialog extends StatelessWidget {
             Text(
               "Loading...",
               style: TextStyle(
-                fontSize: 14,
+                fontSize: AppDimens.fontSizeBig,
                 fontWeight: FontWeight.w500,
-                fontFamily: 'outfit',
+                fontFamily: AppFonts.outfit,
                 color: Colors.black87,
               ),
             ),

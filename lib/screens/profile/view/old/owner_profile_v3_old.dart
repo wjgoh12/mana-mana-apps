@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/profile/view/old/financial_details.dart';
 import 'package:mana_mana_app/screens/profile/view/personal_information.dart';
@@ -55,8 +57,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                       child: GradientText1(
                           text: 'Profile',
                           style: TextStyle(
-                            fontFamily: 'outfit',
-                            fontSize: responsiveFont(20),
+                            fontFamily: AppFonts.outfit,
+                            fontSize: AppDimens.fontSizeBig,
                             fontWeight: FontWeight.w800,
                           ),
                           gradient: const LinearGradient(
@@ -100,8 +102,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                                     ? Text(
                                         model.users.first.ownerFullName ?? '',
                                         style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: responsiveFont(20),
+                                          fontFamily: AppFonts.outfit,
+                                          fontSize: AppDimens.fontSizeBig,
                                           fontWeight: FontWeight.bold,
                                           foreground: Paint()
                                             ..shader = const LinearGradient(
@@ -121,8 +123,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                                 Text(
                                   'Property Owner',
                                   style: TextStyle(
-                                      fontFamily: 'outfit',
-                                      fontSize: ResponsiveSize.text(14),
+                                      fontFamily: AppFonts.outfit,
+                                      fontSize: AppDimens.fontSizeBig,
                                       fontWeight: FontWeight.w300),
                                 ),
                               ],
@@ -176,15 +178,15 @@ class OwnerProfile_v3 extends StatelessWidget {
                       //                   Text(
                       //                     '12,500',
                       //                     style: TextStyle(
-                      //                         fontFamily: 'outfit',
+                      //                         fontFamily: AppFonts.outfit,
                       //                         fontWeight: FontWeight.bold,
-                      //                         fontSize: responsiveFont(12)),
+                      //                         fontSize: AppDimens.fontSizeSmall,
                       //                   ),
                       //                   Text(
                       //                     ' Point',
                       //                     style: TextStyle(
-                      //                         fontFamily: 'outfit',
-                      //                         fontSize: responsiveFont(12)),
+                      //                         fontFamily: AppFonts.outfit,
+                      //                         fontSize: AppDimens.fontSizeSmall,
                       //                   )
                       //                 ],
                       //               ),
@@ -192,8 +194,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                       //             Text(
                       //               'Expired on 31/12/2023',
                       //               style: TextStyle(
-                      //                 fontFamily: 'outfit',
-                      //                 fontSize: responsiveFont(10),
+                      //                 fontFamily: AppFonts.outfit,
+                      //                 fontSize: AppDimens.fontSizeSmall,
                       //               ),
                       //             ),
                       //           ],
@@ -210,8 +212,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                             child: Text('My Profile',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 18.fSize,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.bold,
                                 )),
                           ),
@@ -268,8 +270,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                               Text(
                                 'Personal Information',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 16.fSize,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -307,8 +309,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                               Text(
                                 'Financial Details',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 16.fSize,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -327,8 +329,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                             child: Text('Redemption',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 18.fSize,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.bold,
                                 )),
                           ),
@@ -363,8 +365,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                               Text(
                                 'Property Redemption',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 16.fSize,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -384,8 +386,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                             child: Text('Contact Us',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 18.fSize,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.bold,
                                 )),
                           ),
@@ -424,8 +426,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                               Text(
                                 'Email',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 16.fSize,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -460,8 +462,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                               Text(
                                 'Telephone',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 16.fSize,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -496,8 +498,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                               Text(
                                 'Whatsapp',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 16.fSize,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -528,7 +530,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                                   ))),
                               child: const Text('Logout',
                                   style: TextStyle(
-                                    fontFamily: 'outfit',
+                                    fontFamily: AppFonts.outfit,
                                   ))),
                         ],
                       ),
@@ -559,8 +561,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                             child: Text(
                               'Terms and Conditions',
                               style: TextStyle(
-                                fontFamily: 'outfit',
-                                fontSize: 14.fSize,
+                                fontFamily: AppFonts.outfit,
+                                fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.w400,
                                 color: const Color(0xFF3E51FF),
                               ),
@@ -580,8 +582,8 @@ class OwnerProfile_v3 extends StatelessWidget {
                             child: Text(
                               'Privacy Policy',
                               style: TextStyle(
-                                fontFamily: 'outfit',
-                                fontSize: 14.fSize,
+                                fontFamily: AppFonts.outfit,
+                                fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.w400,
                                 color: const Color(0xFF3E51FF),
                               ),
@@ -618,7 +620,7 @@ Widget buildInfoRow(IconData icon, String info) {
         Expanded(
           child: Text(
             info,
-            style: const TextStyle(fontSize: 12, color: Color(0XFF555555)),
+            style: const TextStyle(fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
           ),
         ),
       ],
@@ -635,7 +637,7 @@ Widget buildInfoInRow(String info) {
           child: Text(
             info,
             style: const TextStyle(
-                fontSize: 15,
+                fontSize: AppDimens.fontSizeBig,
                 color: Color(0XFF4313E9),
                 fontWeight: FontWeight.w600),
           ),

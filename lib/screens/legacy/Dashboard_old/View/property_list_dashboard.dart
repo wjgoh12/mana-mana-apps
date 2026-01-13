@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:intl/intl.dart';
 // import 'package:mana_mana_app/screens/all_properties/view/all_property.dart';
@@ -204,7 +205,7 @@
 //                           style: TextStyle(
 //                             fontFamily: 'Open Sans',
 //                             fontWeight: FontWeight.w700,
-//                             fontSize: 20.fSize,
+//                             fontSize: AppDimens.fontSizeBig,
 //                             color: const Color(0XFF4313E9),
 //                           ),
 //                         ),
@@ -213,7 +214,7 @@
 //                           style: TextStyle(
 //                             fontFamily: 'Open Sans',
 //                             fontWeight: FontWeight.w300,
-//                             fontSize: 11.fSize,
+//                             fontSize: AppDimens.fontSizeSmall,
 //                             fontStyle: FontStyle.italic,
 //                             color: const Color(0XFF4313E9),
 //                           ),
@@ -227,7 +228,7 @@
 //                               style: TextStyle(
 //                                 fontFamily: 'Open Sans',
 //                                 fontWeight: FontWeight.w600,
-//                                 fontSize: 10.fSize,
+//                                 fontSize: AppDimens.fontSizeSmall,
 //                                 color: const Color(0XFF4313E9),
 //                               ),
 //                             ),
@@ -237,7 +238,7 @@
 //                               style: TextStyle(
 //                                 fontFamily: 'Open Sans',
 //                                 fontWeight: FontWeight.w600,
-//                                 fontSize: 20.fSize,
+//                                 fontSize: AppDimens.fontSizeBig,
 //                                 color: const Color(0XFF4313E9),
 //                               ),
 //                             ),
@@ -248,7 +249,7 @@
 //                           style: TextStyle(
 //                             fontFamily: 'Open Sans',
 //                             fontWeight: FontWeight.w400,
-//                             fontSize: 10.fSize,
+//                             fontSize: AppDimens.fontSizeSmall,
 //                             color: const Color(0XFF4313E9),
 //                           ),
 //                         ),
@@ -324,7 +325,7 @@
 //               style: TextStyle(
 //                 fontFamily: 'Open Sans',
 //                 fontWeight: FontWeight.w700,
-//                 fontSize: 20.fSize,
+//                 fontSize: AppDimens.fontSizeBig,
 //                 color: const Color(0XFF4313E9),
 //               ),
 //             ),
@@ -333,7 +334,7 @@
 //               style: TextStyle(
 //                 fontFamily: 'Open Sans',
 //                 fontWeight: FontWeight.w300,
-//                 fontSize: 10.fSize,
+//                 fontSize: AppDimens.fontSizeSmall,
 //                 fontStyle: FontStyle.italic,
 //                 color: const Color(0XFF4313E9),
 //               ),

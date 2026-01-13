@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/dashboard/view/dashboard_view.dart';
 import 'package:mana_mana_app/screens/profile/view_model/owner_profile_view_model.dart';
@@ -147,8 +149,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                     const Text(
                       'Switch User',
                       style: TextStyle(
-                          fontFamily: 'outfit',
-                          fontSize: 18,
+                          fontFamily: AppFonts.outfit,
+                          fontSize: AppDimens.fontSizeBig,
                           fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 12.fSize),
@@ -165,7 +167,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         border: OutlineInputBorder(),
                         labelText: 'Enter User Email',
                         labelStyle: TextStyle(
-                          fontFamily: 'outfit',
+                          fontFamily: AppFonts.outfit,
                         ),
                       ),
                     ),
@@ -195,7 +197,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             Navigator.of(context).pop();
                           },
                           child: const Text('Cancel',
-                              style: TextStyle(fontFamily: 'Outfit')),
+                              style: TextStyle(fontFamily: AppFonts.outfit)),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
@@ -234,14 +236,14 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   return AlertDialog(
                                     backgroundColor: Colors.white,
                                     title: const Text('Confirm Switch',
-                                        style: TextStyle(fontFamily: 'Outfit')),
+                                        style: TextStyle(fontFamily: AppFonts.outfit)),
                                     content: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
                                             'Are you sure you want to switch to "$email"?',
                                             style: const TextStyle(
-                                                fontFamily: 'Outfit')),
+                                                fontFamily: AppFonts.outfit)),
                                       ],
                                     ),
                                     actions: [
@@ -250,7 +252,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             Navigator.of(ctx).pop(false),
                                         child: const Text('No',
                                             style: TextStyle(
-                                                fontFamily: 'Outfit')),
+                                                fontFamily: AppFonts.outfit)),
                                       ),
                                       TextButton(
                                         onPressed: () async {
@@ -265,7 +267,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                         },
                                         child: const Text('Yes',
                                             style: TextStyle(
-                                                fontFamily: 'Outfit')),
+                                                fontFamily: AppFonts.outfit)),
                                       ),
                                     ],
                                   );
@@ -287,7 +289,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                 (route) => false);
                           },
                           child: const Text('Confirm',
-                              style: TextStyle(fontFamily: 'Outfit')),
+                              style: TextStyle(fontFamily: AppFonts.outfit)),
                         ),
                       ],
                     ),
@@ -330,8 +332,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
             Text(
               label,
               style: TextStyle(
-                fontFamily: 'outfit',
-                fontSize: 16.fSize,
+                fontFamily: AppFonts.outfit,
+                fontSize: AppDimens.fontSizeBig,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -380,8 +382,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         'Profile',
                         style: TextStyle(
                           color: grey,
-                          fontFamily: 'outfit',
-                          fontSize: ResponsiveSize.text(20),
+                          fontFamily: AppFonts.outfit,
+                          fontSize: AppDimens.fontSizeBig,
                           fontWeight: FontWeight.w700,
                         ),
                       )),
@@ -411,7 +413,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               child: const Text(
                                 'Revert',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
+                                  fontFamily: AppFonts.outfit,
                                   color: grey,
                                 ),
                               ),
@@ -443,7 +445,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             child: const Text(
                               'Logout',
                               style: TextStyle(
-                                fontFamily: 'outfit',
+                                fontFamily: AppFonts.outfit,
                                 color: grey,
                               ),
                             ),
@@ -488,8 +490,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                         Text(
                                           'Property Owner',
                                           style: TextStyle(
-                                              fontFamily: 'outfit',
-                                              fontSize: ResponsiveSize.text(14),
+                                              fontFamily: AppFonts.outfit,
+                                              fontSize: AppDimens.fontSizeBig,
                                               fontWeight: FontWeight.w300),
                                         ),
                                         model.users.isNotEmpty
@@ -498,9 +500,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                         .ownerFullName ??
                                                     '',
                                                 style: TextStyle(
-                                                    fontFamily: 'outfit',
-                                                    fontSize:
-                                                        responsiveFont(20),
+                                                    fontFamily: AppFonts.outfit,
+                                                    fontSize: AppDimens.fontSizeBig,
                                                     fontWeight: FontWeight.bold,
                                                     color: const Color(
                                                         0xFF606060)),
@@ -526,8 +527,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                     Text(
                                       'Identification',
                                       style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: AppFonts.outfit,
+                                          fontSize: AppDimens.fontSizeSmall,
                                           fontWeight: FontWeight.w400),
                                     ),
                                     SizedBox(width: responsiveWidth(8)),
@@ -540,9 +541,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             overflow: TextOverflow.visible,
                                             softWrap: true,
                                             style: TextStyle(
-                                                fontFamily: 'outfit',
-                                                fontSize:
-                                                    ResponsiveSize.text(12),
+                                                fontFamily: AppFonts.outfit,
+                                                fontSize: AppDimens.fontSizeSmall,
                                                 fontWeight: FontWeight.w400),
                                           )
                                         : Text(
@@ -551,9 +551,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             overflow: TextOverflow.visible,
                                             softWrap: true,
                                             style: TextStyle(
-                                                fontFamily: 'outfit',
-                                                fontSize:
-                                                    ResponsiveSize.text(12),
+                                                fontFamily: AppFonts.outfit,
+                                                fontSize: AppDimens.fontSizeSmall,
                                                 fontWeight: FontWeight.w400),
                                           ),
                                   ],
@@ -583,9 +582,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             Text(
                                               'Email',
                                               style: TextStyle(
-                                                fontFamily: 'outfit',
-                                                fontSize:
-                                                    ResponsiveSize.text(11),
+                                                fontFamily: AppFonts.outfit,
+                                                fontSize: AppDimens.fontSizeSmall,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -603,7 +601,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                         TextOverflow.visible,
                                                     softWrap: true,
                                                     style: TextStyle(
-                                                        fontFamily: 'outfit',
+                                                        fontFamily: AppFonts.outfit,
                                                         fontSize:
                                                             ResponsiveSize.text(
                                                                 12),
@@ -635,9 +633,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                 Text(
                                                   'Contact No.',
                                                   style: TextStyle(
-                                                    fontFamily: 'outfit',
-                                                    fontSize:
-                                                        ResponsiveSize.text(11),
+                                                    fontFamily: AppFonts.outfit,
+                                                    fontSize: AppDimens.fontSizeSmall,
                                                     fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
@@ -689,8 +686,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                     children: [
                                       Text('Address',
                                           style: TextStyle(
-                                            fontFamily: 'outfit',
-                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: AppFonts.outfit,
+                                            fontSize: AppDimens.fontSizeSmall,
                                             fontWeight: FontWeight.w400,
                                           )),
                                       SizedBox(
@@ -704,9 +701,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                               overflow: TextOverflow.visible,
                                               softWrap: true,
                                               style: TextStyle(
-                                                  fontFamily: 'outfit',
-                                                  fontSize:
-                                                      ResponsiveSize.text(12),
+                                                  fontFamily: AppFonts.outfit,
+                                                  fontSize: AppDimens.fontSizeSmall,
                                                   fontWeight: FontWeight.w400),
                                             )
                                           : const Text('Loading...'),
@@ -733,8 +729,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   child: Text('Financial Details',
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
-                                        fontFamily: 'outfit',
-                                        fontSize: ResponsiveSize.text(15),
+                                        fontFamily: AppFonts.outfit,
+                                        fontSize: AppDimens.fontSizeBig,
                                         fontWeight: FontWeight.bold,
                                       )),
                                 ),
@@ -774,8 +770,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   child: Text('Contact Us',
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
-                                        fontFamily: 'outfit',
-                                        fontSize: ResponsiveSize.text(15),
+                                        fontFamily: AppFonts.outfit,
+                                        fontSize: AppDimens.fontSizeBig,
                                         fontWeight: FontWeight.bold,
                                       )),
                                 ),
@@ -838,7 +834,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               child: const Text(
                                 'Switch User',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
+                                  fontFamily: AppFonts.outfit,
                                   color: grey,
                                 ),
                               ),
@@ -881,8 +877,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               child: Text(
                                 'Terms and Conditions',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: ResponsiveSize.text(9),
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeSmall,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -913,8 +909,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               child: Text(
                                 'Privacy Policy',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: ResponsiveSize.text(11),
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeSmall,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -958,7 +954,7 @@ Widget buildInfoRow(IconData icon, String info) {
         Expanded(
           child: Text(
             info,
-            style: const TextStyle(fontSize: 12, color: Color(0XFF555555)),
+            style: const TextStyle(fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
           ),
         ),
       ],
@@ -975,7 +971,7 @@ Widget buildInfoInRow(String info) {
           child: Text(
             info,
             style: const TextStyle(
-                fontSize: 15,
+                fontSize: AppDimens.fontSizeBig,
                 color: Color(0XFF4313E9),
                 fontWeight: FontWeight.w600),
           ),
@@ -998,8 +994,8 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
       children: [
         Text('No financial details available',
             style: TextStyle(
-              fontFamily: 'outfit',
-              fontSize: ResponsiveSize.text(12),
+              fontFamily: AppFonts.outfit,
+              fontSize: AppDimens.fontSizeSmall,
               color: Colors.grey.shade700,
             )),
       ],
@@ -1013,8 +1009,8 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
         Text(
           entry.key,
           style: TextStyle(
-            fontFamily: 'outfit',
-            fontSize: ResponsiveSize.text(14),
+            fontFamily: AppFonts.outfit,
+            fontSize: AppDimens.fontSizeBig,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -1039,8 +1035,8 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                           Text(
                             'Unit No.',
                             style: TextStyle(
-                              fontFamily: 'outfit',
-                              fontSize: ResponsiveSize.text(12),
+                              fontFamily: AppFonts.outfit,
+                              fontSize: AppDimens.fontSizeSmall,
                               fontWeight: FontWeight.w500,
                               color: Colors.grey.shade700,
                             ),
@@ -1048,8 +1044,8 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                           Text(
                             ' $unitNo',
                             style: TextStyle(
-                              fontFamily: 'outfit',
-                              fontSize: ResponsiveSize.text(12),
+                              fontFamily: AppFonts.outfit,
+                              fontSize: AppDimens.fontSizeSmall,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -1073,8 +1069,8 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                               children: [
                                 Text('Bank',
                                     style: TextStyle(
-                                      fontFamily: 'outfit',
-                                      fontSize: ResponsiveSize.text(11),
+                                      fontFamily: AppFonts.outfit,
+                                      fontSize: AppDimens.fontSizeSmall,
                                       fontWeight: FontWeight.w400,
                                       color: Colors.grey.shade800,
                                     )),
@@ -1085,8 +1081,8 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                                   overflow: TextOverflow.ellipsis,
                                   softWrap: true,
                                   style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontSize: ResponsiveSize.text(12),
+                                    fontFamily: AppFonts.outfit,
+                                    fontSize: AppDimens.fontSizeSmall,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -1110,8 +1106,8 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                               children: [
                                 Text('Account No.',
                                     style: TextStyle(
-                                      fontFamily: 'outfit',
-                                      fontSize: ResponsiveSize.text(11),
+                                      fontFamily: AppFonts.outfit,
+                                      fontSize: AppDimens.fontSizeSmall,
                                       fontWeight: FontWeight.w400,
                                       color: Colors.grey.shade800,
                                     )),
@@ -1122,8 +1118,8 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                                   overflow: TextOverflow.ellipsis,
                                   softWrap: true,
                                   style: TextStyle(
-                                    fontFamily: 'outfit',
-                                    fontSize: ResponsiveSize.text(12),
+                                    fontFamily: AppFonts.outfit,
+                                    fontSize: AppDimens.fontSizeSmall,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),

@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:mana_mana_app/screens/all_properties/widgets/occupancy_rate_dropdown.dart';
 import 'package:mana_mana_app/screens/all_properties/widgets/occupancy_line_chart.dart';
 import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
@@ -82,8 +84,8 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
                       child: Text(
                         'Occupancy Rate',
                         style: TextStyle(
-                          fontFamily: 'outfit',
-                          fontSize: ResponsiveSize.text(15),
+                          fontFamily: AppFonts.outfit,
+                          fontSize: AppDimens.fontSizeBig,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -130,8 +132,8 @@ class _OccupancyRateBoxState extends State<OccupancyRateBox> {
           child: Text(
             'Close',
             style: TextStyle(
-              fontFamily: 'outfit',
-              fontSize: ResponsiveSize.text(14),
+              fontFamily: AppFonts.outfit,
+              fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.w600,
             ),
           ),

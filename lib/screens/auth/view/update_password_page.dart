@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mana_mana_app/config/AppAuth/native_auth_service.dart';
@@ -146,19 +148,19 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                         Text(
                           'Simple, Timeless',
                           style: TextStyle(
-                            fontSize: 32,
+                            fontSize: AppDimens.fontSizeBig,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF606060),
-                            fontFamily: 'Outfit',
+                            fontFamily: AppFonts.outfit,
                           ),
                         ),
                         Text(
                           'Assets Management',
                           style: TextStyle(
-                            fontSize: 32,
+                            fontSize: AppDimens.fontSizeBig,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF606060),
-                            fontFamily: 'Outfit',
+                            fontFamily: AppFonts.outfit,
                           ),
                         ),
                       ],
@@ -191,19 +193,19 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                             const Text(
                               "Update Password",
                               style: TextStyle(
-                                fontSize: 28,
+                                fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF606060),
-                                fontFamily: 'Outfit',
+                                fontFamily: AppFonts.outfit,
                               ),
                             ),
                             const SizedBox(height: 10),
                             Text(
                               'Please set your new password',
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: AppDimens.fontSizeBig,
                                 color: Colors.grey[600],
-                                fontFamily: 'Outfit',
+                                fontFamily: AppFonts.outfit,
                               ),
                             ),
                             const SizedBox(height: 40),
@@ -214,10 +216,10 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                               child: Text(
                                 'New Password',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.grey[700],
-                                  fontFamily: 'Outfit',
+                                  fontFamily: AppFonts.outfit,
                                 ),
                               ),
                             ),
@@ -261,10 +263,10 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                               child: Text(
                                 'Confirm Password',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.grey[700],
-                                  fontFamily: 'Outfit',
+                                  fontFamily: AppFonts.outfit,
                                 ),
                               ),
                             ),
@@ -317,10 +319,10 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                                 child: const Text(
                                   'Back to Login',
                                   style: TextStyle(
-                                    fontSize: 13,
+                                    fontSize: AppDimens.fontSizeSmall,
                                     color: Color(0xFF606060),
                                     fontWeight: FontWeight.w600,
-                                    fontFamily: 'Outfit',
+                                    fontFamily: AppFonts.outfit,
                                   ),
                                 ),
                               ),
@@ -355,10 +357,10 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                                     : const Text(
                                         'Update Password',
                                         style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: AppDimens.fontSizeBig,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.white,
-                                          fontFamily: 'Outfit',
+                                          fontFamily: AppFonts.outfit,
                                         ),
                                       ),
                               ),

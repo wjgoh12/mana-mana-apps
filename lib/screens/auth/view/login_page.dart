@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -228,19 +230,19 @@ class LoginPageState extends State<LoginPage> {
                             Text(
                               'Simple, Timeless',
                               style: TextStyle(
-                                fontSize: 32,
+                                fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF606060),
-                                fontFamily: 'Outfit',
+                                fontFamily: AppFonts.outfit,
                               ),
                             ),
                             Text(
                               'Assets Management',
                               style: TextStyle(
-                                fontSize: 32,
+                                fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF606060),
-                                fontFamily: 'Outfit',
+                                fontFamily: AppFonts.outfit,
                               ),
                             ),
                           ],
@@ -272,19 +274,19 @@ class LoginPageState extends State<LoginPage> {
                                   const Text(
                                     "Owner's Portal",
                                     style: TextStyle(
-                                      fontSize: 28,
+                                      fontSize: AppDimens.fontSizeBig,
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFF606060),
-                                      fontFamily: 'Outfit',
+                                      fontFamily: AppFonts.outfit,
                                     ),
                                   ),
                                   const SizedBox(height: 10),
                                   Text(
                                     'Please login to continue',
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: AppDimens.fontSizeBig,
                                       color: Colors.grey[600],
-                                      fontFamily: 'Outfit',
+                                      fontFamily: AppFonts.outfit,
                                     ),
                                   ),
                                   const SizedBox(height: 40),
@@ -294,10 +296,10 @@ class LoginPageState extends State<LoginPage> {
                                     child: Text(
                                       'E-mail',
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: AppDimens.fontSizeBig,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.grey[700],
-                                        fontFamily: 'Outfit',
+                                        fontFamily: AppFonts.outfit,
                                       ),
                                     ),
                                   ),
@@ -341,10 +343,10 @@ class LoginPageState extends State<LoginPage> {
                                           child: Text(
                                             'Password',
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: AppDimens.fontSizeBig,
                                               fontWeight: FontWeight.w500,
                                               color: Colors.grey[700],
-                                              fontFamily: 'Outfit',
+                                              fontFamily: AppFonts.outfit,
                                             ),
                                           ),
                                         ),
@@ -406,10 +408,10 @@ class LoginPageState extends State<LoginPage> {
                                       child: const Text(
                                         'Forgot Password',
                                         style: TextStyle(
-                                          fontSize: 13,
+                                          fontSize: AppDimens.fontSizeSmall,
                                           color: Color(0xFF606060),
                                           fontWeight: FontWeight.w600,
-                                          fontFamily: 'Outfit',
+                                          fontFamily: AppFonts.outfit,
                                         ),
                                       ),
                                     ),
@@ -447,10 +449,10 @@ class LoginPageState extends State<LoginPage> {
                                           : const Text(
                                               'Login',
                                               style: TextStyle(
-                                                fontSize: 16,
+                                                fontSize: AppDimens.fontSizeBig,
                                                 fontWeight: FontWeight.w600,
                                                 color: Colors.white,
-                                                fontFamily: 'Outfit',
+                                                fontFamily: AppFonts.outfit,
                                               ),
                                             ),
                                     ),

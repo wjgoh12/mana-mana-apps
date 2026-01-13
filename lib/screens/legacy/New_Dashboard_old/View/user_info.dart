@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
 import 'package:mana_mana_app/screens/settings/view/setting_page.dart';
@@ -30,7 +31,7 @@ class UserInfo extends StatelessWidget {
                     model.userNameAccount,
                     style: TextStyle(
                       fontFamily: 'Open Sans',
-                      fontSize: 20.fSize,
+                      fontSize: AppDimens.fontSizeBig,
                       fontWeight: FontWeight.w600,
                       color: const Color(0XFF4313E9),
                     ),
@@ -39,7 +40,7 @@ class UserInfo extends StatelessWidget {
                     'Property Owner',
                     style: TextStyle(
                       fontFamily: 'Open Sans',
-                      fontSize: 15.fSize,
+                      fontSize: AppDimens.fontSizeBig,
                       fontWeight: FontWeight.w300,
                       fontStyle: FontStyle.italic,
                       color: const Color(0XFF555555),

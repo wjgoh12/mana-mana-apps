@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/profile/view_model/owner_profile_view_model.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
@@ -47,7 +48,7 @@ class OwnerProfile extends StatelessWidget {
                               child: Text(
                                 'My Info',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w400,
                                   color: model.showMyInfo
                                       ? const Color(0XFF4313E9)
@@ -66,7 +67,7 @@ class OwnerProfile extends StatelessWidget {
                               child: Text(
                                 'Banking Info',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w400,
                                   color: model.showMyInfo
                                       ? const Color(0xFFBBBCBE)
@@ -140,7 +141,7 @@ class OwnerProfile extends StatelessWidget {
                                         '',
                                         // users.first.ownerFullName ?? '',
                                         style: TextStyle(
-                                            fontSize: 10,
+                                            fontSize: AppDimens.fontSizeSmall,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -194,7 +195,7 @@ class OwnerProfile extends StatelessWidget {
                                       Text(
                                         '',
                                         style: TextStyle(
-                                            fontSize: 10,
+                                            fontSize: AppDimens.fontSizeSmall,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -235,7 +236,7 @@ Widget buildInfoRow(IconData icon, String info) {
         Expanded(
           child: Text(
             info,
-            style: const TextStyle(fontSize: 12, color: Color(0XFF555555)),
+            style: const TextStyle(fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
           ),
         ),
       ],
@@ -252,7 +253,7 @@ Widget buildInfoInRow(String info) {
           child: Text(
             info,
             style: const TextStyle(
-                fontSize: 15,
+                fontSize: AppDimens.fontSizeBig,
                 color: Color(0XFF4313E9),
                 fontWeight: FontWeight.w600),
           ),

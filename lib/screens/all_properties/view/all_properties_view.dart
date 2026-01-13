@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
@@ -58,8 +60,8 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
               Text(
                 title,
                 style: TextStyle(
-                  fontFamily: 'outfit',
-                  fontSize: ResponsiveSize.text(11),
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeSmall,
                 ),
               ),
               RichText(
@@ -74,8 +76,8 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
                           child: Text(
                             'RM',
                             style: TextStyle(
-                              fontFamily: 'outfit',
-                              fontSize: ResponsiveSize.text(10),
+                              fontFamily: AppFonts.outfit,
+                              fontSize: AppDimens.fontSizeSmall,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
@@ -85,8 +87,8 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
                     TextSpan(
                       text: value,
                       style: TextStyle(
-                        fontFamily: 'outfit',
-                        fontSize: ResponsiveSize.text(15),
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeBig,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -98,8 +100,8 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
               Text(
                 footer,
                 style: TextStyle(
-                  fontFamily: 'outfit',
-                  fontSize: ResponsiveSize.text(10),
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeSmall,
                 ),
               ),
             ],
@@ -273,9 +275,9 @@ Widget _quickLinks(BuildContext context) {
         child: Text(
           'Quick Links',
           style: TextStyle(
-            fontSize: ResponsiveSize.text(18),
+            fontSize: AppDimens.fontSizeBig,
             fontWeight: FontWeight.bold,
-            fontFamily: 'Outfit',
+            fontFamily: AppFonts.outfit,
           ),
         ),
       ),
@@ -338,10 +340,10 @@ Widget _quickLinks(BuildContext context) {
                                   maxLines: 2,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: ResponsiveSize.text(12),
+                                    fontSize: AppDimens.fontSizeSmall,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w700,
-                                    fontFamily: 'Outfit',
+                                    fontFamily: AppFonts.outfit,
                                   ),
                                 ),
                               ],
@@ -430,8 +432,8 @@ Widget _quickLinks(BuildContext context) {
                                     maxLines: 2,
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                      fontSize: ResponsiveSize.text(12),
-                                      fontFamily: 'Outfit',
+                                      fontSize: AppDimens.fontSizeSmall,
+                                      fontFamily: AppFonts.outfit,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
@@ -504,8 +506,8 @@ class PropertyOverviewSection extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontFamily: 'outfit',
-                  fontSize: ResponsiveSize.text(11),
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeSmall,
                 ),
               ),
               RichText(
@@ -520,8 +522,8 @@ class PropertyOverviewSection extends StatelessWidget {
                           child: Text(
                             'RM',
                             style: TextStyle(
-                              fontFamily: 'outfit',
-                              fontSize: ResponsiveSize.text(10),
+                              fontFamily: AppFonts.outfit,
+                              fontSize: AppDimens.fontSizeSmall,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
@@ -531,8 +533,8 @@ class PropertyOverviewSection extends StatelessWidget {
                     TextSpan(
                       text: value,
                       style: TextStyle(
-                        fontFamily: 'outfit',
-                        fontSize: ResponsiveSize.text(15),
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeBig,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -544,8 +546,8 @@ class PropertyOverviewSection extends StatelessWidget {
               Text(
                 footer,
                 style: TextStyle(
-                  fontFamily: 'outfit',
-                  fontSize: ResponsiveSize.text(10),
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeSmall,
                 ),
               ),
             ],
@@ -835,8 +837,8 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                     child: DropdownButton2<String>(
                       value: selectedProperty,
                       style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: ResponsiveSize.text(18),
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeBig,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
@@ -850,8 +852,8 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                           child: Text(
                             property ?? '',
                             style: TextStyle(
-                                fontFamily: 'Outfit',
-                                fontSize: ResponsiveSize.text(12),
+                                fontFamily: AppFonts.outfit,
+                                fontSize: AppDimens.fontSizeSmall,
                                 fontWeight: FontWeight.bold),
                           ),
                         );
@@ -934,8 +936,8 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                     child: DropdownButton2<String>(
                       value: selectedUnit,
                       style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: ResponsiveSize.text(14),
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeBig,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -949,8 +951,8 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                           child: Text(
                             unit,
                             style: TextStyle(
-                                fontFamily: 'Outfit',
-                                fontSize: ResponsiveSize.text(12)),
+                                fontFamily: AppFonts.outfit,
+                                fontSize: AppDimens.fontSizeSmall,
                           ),
                         );
                       }).toList(),
@@ -1067,8 +1069,8 @@ class _EStatementContainerState extends State<EStatementContainer> {
                     Text(
                       'No statements found !',
                       style: TextStyle(
-                        fontFamily: 'outfit',
-                        fontSize: 16,
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeBig,
                         color: Colors.grey.shade600,
                       ),
                     ),
@@ -1130,8 +1132,8 @@ class _EStatementContainerState extends State<EStatementContainer> {
                               Text(
                                 '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 12,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeSmall,
                                 ),
                               ),
                             ],
@@ -1167,8 +1169,8 @@ class _EStatementContainerState extends State<EStatementContainer> {
                         Text(
                           '${item.slocation} ${item.sunitno} ${monthNumberToName(item.imonth ?? 0)} ${item.iyear}',
                           style: const TextStyle(
-                            fontFamily: 'outfit',
-                            fontSize: 12,
+                            fontFamily: AppFonts.outfit,
+                            fontSize: AppDimens.fontSizeSmall,
                           ),
                         ),
                       ],

@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
@@ -27,16 +29,16 @@ Widget topBar(context, function) {
                 'Owner\'s Portal',
                 style: TextStyle(
                   color: const Color(0xFF606060),
-                  fontFamily: 'outfit',
-                  fontSize: ResponsiveSize.text(25),
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeBig,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               // GradientText1(
               //   text: 'Owner\'s Portal',
               //   style: TextStyle(
-              //     fontFamily: 'outfit',
-              //     fontSize: ResponsiveSize.text(25),
+              //     fontFamily: AppFonts.outfit,
+              //     fontSize: AppDimens.fontSizeBig,
               //     fontWeight: FontWeight.w700,
               //   ),
               //   gradient: const LinearGradient(

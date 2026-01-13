@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
@@ -42,15 +44,15 @@ Widget StickyBottomBar({
                   Text(
                     'Number of Rooms Selected:  ',
                     style: TextStyle(
-                      fontSize: ResponsiveSize.text(10),
-                      fontFamily: 'outfit',
+                      fontSize: AppDimens.fontSizeSmall,
+                      fontFamily: AppFonts.outfit,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
                   Text('$selectedQuantity',
                       style: TextStyle(
-                        fontSize: ResponsiveSize.text(12),
-                        fontFamily: 'outfit',
+                        fontSize: AppDimens.fontSizeSmall,
+                        fontFamily: AppFonts.outfit,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       )),
@@ -58,16 +60,16 @@ Widget StickyBottomBar({
                   Text(
                     'Total: ',
                     style: TextStyle(
-                      fontSize: ResponsiveSize.text(12),
-                      fontFamily: 'outfit',
+                      fontSize: AppDimens.fontSizeSmall,
+                      fontFamily: AppFonts.outfit,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
                   Text(
                     '$formattedPoints points',
                     style: TextStyle(
-                      fontSize: ResponsiveSize.text(12),
-                      fontFamily: 'outfit',
+                      fontSize: AppDimens.fontSizeSmall,
+                      fontFamily: AppFonts.outfit,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
                     ),
@@ -104,13 +106,13 @@ Widget StickyBottomBar({
               child: Text(
                 dataIsStale ? 'Updating Prices...' : 'Next',
                 style: TextStyle(
-                  fontFamily: 'outfit',
+                  fontFamily: AppFonts.outfit,
                   color: dataIsStale
                       ? Colors.grey.shade600
                       : (hasRoomSelected && hasDatesSelected
                           ? grey
                           : Colors.white),
-                  fontSize: 16,
+                  fontSize: AppDimens.fontSizeBig,
                 ),
               ),
             ),

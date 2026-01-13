@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
@@ -96,8 +97,8 @@ class RevenueContainer extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Open Sans',
             fontWeight: FontWeight.w700,
-            // fontSize: 12.fSize,
-            fontSize: 16.fSize,
+            // fontSize: AppDimens.fontSizeSmall,
+            fontSize: AppDimens.fontSizeBig,
             color: const Color(0xFF4313E9),
           ),
         ),
@@ -144,7 +145,7 @@ class RevenueContainer extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Open Sans',
             fontWeight: FontWeight.w700,
-            fontSize: 15.fSize,
+            fontSize: AppDimens.fontSizeBig,
             color: const Color(0XFF2900B7),
           ),
         ),
@@ -161,7 +162,7 @@ class RevenueContainer extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Open Sans',
                   fontWeight: FontWeight.w700,
-                  fontSize: 20.fSize,
+                  fontSize: AppDimens.fontSizeBig,
                   color: const Color(0XFF2900B7),
                 ),
               );

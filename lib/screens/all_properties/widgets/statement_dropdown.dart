@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/property_detail/view_model/property_detail_view_model.dart';
@@ -40,16 +42,16 @@ class _StatementDropdownState extends State<StatementDropdown> {
               Text(
                 'Statements',
                 style: TextStyle(
-                    fontSize: ResponsiveSize.text(18),
+                    fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'outfit'),
+                    fontFamily: AppFonts.outfit),
               ),
               const Spacer(),
               const Text('Year',
                   style: TextStyle(
-                      fontSize: 15,
+                      fontSize: AppDimens.fontSizeBig,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'outfit')),
+                      fontFamily: AppFonts.outfit)),
               const SizedBox(width: 8),
               DropdownButton2<String>(
                 underline: const SizedBox(),
@@ -69,24 +71,24 @@ class _StatementDropdownState extends State<StatementDropdown> {
                     ? const Text(
                         'Select Year',
                         style: TextStyle(
-                            fontSize: 10,
+                            fontSize: AppDimens.fontSizeSmall,
                             decoration: TextDecoration.none,
-                            fontFamily: 'outfit'),
+                            fontFamily: AppFonts.outfit),
                       )
                     : const Text(
                         '-',
                         style: TextStyle(
-                            fontSize: 10,
+                            fontSize: AppDimens.fontSizeSmall,
                             decoration: TextDecoration.none,
-                            fontFamily: 'outfit'),
+                            fontFamily: AppFonts.outfit),
                       ),
                 items: widget.yearOptions
                     .map((year) => DropdownMenuItem(
                           value: year,
                           child: Text(year,
                               style: const TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: 12,
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeSmall,
                                   decoration: TextDecoration.none)),
                         ))
                     .toList(),

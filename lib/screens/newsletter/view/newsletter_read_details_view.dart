@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -45,7 +46,7 @@ class NewsletterReadDetails extends StatelessWidget {
                           Text(
                             'Newsletter',
                             style: TextStyle(
-                              fontSize: 20.fSize,
+                              fontSize: AppDimens.fontSizeBig,
                               fontWeight: FontWeight.bold,
                               foreground: Paint()
                                 ..style = PaintingStyle.stroke
@@ -56,7 +57,7 @@ class NewsletterReadDetails extends StatelessWidget {
                           Text(
                             'Newsletter',
                             style: TextStyle(
-                              fontSize: 20.fSize,
+                              fontSize: AppDimens.fontSizeBig,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
@@ -84,7 +85,7 @@ class NewsletterReadDetails extends StatelessWidget {
                       child: Text(
                         'Scarletz Suites: Your Chic Urban Stay in the Heart of Kuala Lumpur',
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: AppDimens.fontSizeBig,
                         ),
                         maxLines: 6,
                         textAlign: TextAlign.center,
@@ -107,7 +108,7 @@ class NewsletterReadDetails extends StatelessWidget {
                           child: Column(children: [
                             Text(DateTime.now().day.toString(),
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 23.fSize)),
+                                    color: Colors.white, fontSize: AppDimens.fontSizeBig,
                             Text(
                               [
                                 'January',
@@ -125,7 +126,7 @@ class NewsletterReadDetails extends StatelessWidget {
                               ][DateTime.now().month - 1],
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 11.fSize,
+                                fontSize: AppDimens.fontSizeSmall,
                               ),
                             )
                           ]),
@@ -147,7 +148,7 @@ class NewsletterReadDetails extends StatelessWidget {
                                 const SizedBox(width: 2),
                                 const Text(
                                   '2 min read',
-                                  style: TextStyle(fontSize: 12),
+                                  style: TextStyle(fontSize: AppDimens.fontSizeSmall,
                                 ),
                               ],
                             ),
@@ -167,7 +168,7 @@ class NewsletterReadDetails extends StatelessWidget {
                         ),
                         child: const Text(
                           'Looking for a stylish and convenient stay right next to KLCC? ✨ Whether you\' re in town for a quick business trip, long-term project, or simply working remotely — Scarletz Suites by Mana Mana offers a modern, flexible living experience right in the city center. \n\nWhy Stay at Scarletz Suites, Mana Mana?',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: AppDimens.fontSizeBig,
                           textAlign: TextAlign.justify,
                         ),
                       ),

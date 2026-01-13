@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -161,7 +162,7 @@ class _StatementPageState extends State<StatementPage> {
                         style: TextStyle(
                           color: const Color(0XFF4313E9),
                           fontFamily: 'Open Sans',
-                          fontSize: 14.fSize,
+                          fontSize: AppDimens.fontSizeBig,
                           fontWeight: FontWeight.w600,
                         ),
                         cursorColor: const Color(0XFF4313E9),
@@ -188,7 +189,7 @@ class _StatementPageState extends State<StatementPage> {
                           hintStyle: TextStyle(
                             color: const Color(0XFF4313E9),
                             fontFamily: 'Open Sans',
-                            fontSize: 12.fSize,
+                            fontSize: AppDimens.fontSizeSmall,
                             fontWeight: FontWeight.w600,
                           ),
                           border: InputBorder.none,
@@ -201,7 +202,7 @@ class _StatementPageState extends State<StatementPage> {
                     hint: Text(
                       'Select Unit',
                       style: TextStyle(
-                        fontSize: 12.fSize,
+                        fontSize: AppDimens.fontSizeSmall,
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Open Sans',
                         color: const Color(0XFF0044CC).withOpacity(0.8),
@@ -213,7 +214,7 @@ class _StatementPageState extends State<StatementPage> {
                               child: Text(
                                 item,
                                 style: TextStyle(
-                                  fontSize: 15.fSize,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.w700,
                                   fontFamily: 'Open Sans',
                                   color:
@@ -321,7 +322,7 @@ class _StatementPageState extends State<StatementPage> {
             style: TextStyle(
               fontFamily: 'Open Sans',
               fontWeight: FontWeight.w600,
-              fontSize: 12.fSize,
+              fontSize: AppDimens.fontSizeSmall,
               color: const Color(0XFFFFFFFF),
             ),
           ),
@@ -343,7 +344,7 @@ class _StatementPageState extends State<StatementPage> {
                   style: TextStyle(
                     color: const Color(0XFF0044CC).withOpacity(0.8),
                     fontFamily: 'Open Sans',
-                    fontSize: 12.fSize,
+                    fontSize: AppDimens.fontSizeSmall,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -353,7 +354,7 @@ class _StatementPageState extends State<StatementPage> {
                   style: TextStyle(
                       color: const Color(0XFF0044CC).withOpacity(0.8),
                       fontFamily: 'Open Sans',
-                      fontSize: 15.fSize,
+                      fontSize: AppDimens.fontSizeBig,
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
                       decorationColor:
@@ -390,7 +391,7 @@ class _StatementPageState extends State<StatementPage> {
             text: 'Statements',
             style: TextStyle(
               fontFamily: 'Open Sans',
-              fontSize: 20.fSize,
+              fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.w800,
             ),
             gradient: const LinearGradient(

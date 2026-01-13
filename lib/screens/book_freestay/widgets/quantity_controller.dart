@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 
 class QuantityController extends StatefulWidget {
@@ -77,7 +78,7 @@ class _QuantityControllerState extends State<QuantityController> {
           ),
           child: Text(
             '$_quantity',
-            style: const TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: AppDimens.fontSizeBig,
           ),
         ),
         IconButton(

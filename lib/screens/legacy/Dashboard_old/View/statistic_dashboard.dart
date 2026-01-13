@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:mana_mana_app/screens/legacy/Dashboard_old/ViewModel/dashboardVM.dart';
 // import 'package:mana_mana_app/widgets/bar_chart.dart';
@@ -42,7 +43,7 @@
 //                         'Monthly Overall Earnings',
 //                         style: TextStyle(
 //                           fontFamily: 'Open Sans',
-//                           fontSize: 14.fSize,
+//                           fontSize: AppDimens.fontSizeBig,
 //                           fontWeight: FontWeight.w700,
 //                           color: const Color(0XFF2900B7),
 //                         ),
@@ -52,7 +53,7 @@
 //                       //   '(Ringgit in thousands)',
 //                       //   style: TextStyle(
 //                       //     fontFamily: 'Open Sans',
-//                       //     fontSize: 6.fSize,
+//                       //     fontSize: AppDimens.fontSizeSmall,
 //                       //     fontWeight: FontWeight.w600,
 //                       //     color: const Color(0XFF4313E9),
 //                       //   ),
@@ -72,7 +73,7 @@
 //                               "Scroll to view more data",
 //                               style: TextStyle(
 //                                 color: Color(0XFF888888),
-//                                 fontSize: 12,
+//                                 fontSize: AppDimens.fontSizeSmall,
 //                               ),
 //                             ),
 //                           ),
@@ -117,7 +118,7 @@
 //         text,
 //         style: TextStyle(
 //           fontFamily: 'Open Sans',
-//           fontSize: 11.fSize,
+//           fontSize: AppDimens.fontSizeSmall,
 //           fontWeight: FontWeight.w600,
 //           color: const Color(0XFF888888),
 //         ),
@@ -210,7 +211,7 @@
 //     text,
 //     style: TextStyle(
 //       color: const Color(0XFF888888),
-//       fontSize: 10.fSize,
+//       fontSize: AppDimens.fontSizeSmall,
 //       fontWeight: FontWeight.w600,
 //       fontFamily: 'Open Sans',
 //     ),
@@ -227,7 +228,7 @@
 //           style: TextStyle(
 //             fontFamily: 'Open Sans',
 //             fontWeight: FontWeight.w600,
-//             fontSize: 15.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             color: const Color(0XFF888888),
 //           ),
 //         ),
@@ -249,7 +250,7 @@
 //     text,
 //     style: TextStyle(
 //       color: const Color(0XFF4313E9),
-//       fontSize: 15.fSize,
+//       fontSize: AppDimens.fontSizeBig,
 //       fontWeight: FontWeight.w600,
 //       fontFamily: 'Open Sans',
 //     ),

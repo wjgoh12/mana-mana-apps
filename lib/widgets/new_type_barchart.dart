@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
@@ -195,7 +196,7 @@ class BarChartSample extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                                 color: rod.color,
                                 fontFamily: 'Open Sans',
-                                fontSize: 15.fSize,
+                                fontSize: AppDimens.fontSizeBig,
                                 shadows: const [
                                   Shadow(
                                     color: Colors.black26,
@@ -216,7 +217,7 @@ class BarChartSample extends StatelessWidget {
                       child: Text(
                         'No Records',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: AppDimens.fontSizeBig,
                           color: Colors.grey,
                         ),
                       ),
@@ -264,13 +265,13 @@ class ColoredSideTitleWidget extends StatelessWidget {
         children: [
           GradientText1(
             text: monthNames[index],
-            style: TextStyle(fontSize: 15.fSize),
+            style: TextStyle(fontSize: AppDimens.fontSizeBig,
             gradient: monthColors,
           ),
           if (monthNames[index].isNotEmpty)
             GradientText1(
               text: year.toString(),
-              style: TextStyle(fontSize: 12.fSize),
+              style: TextStyle(fontSize: AppDimens.fontSizeSmall,
               gradient: monthColors,
             ),
         ],

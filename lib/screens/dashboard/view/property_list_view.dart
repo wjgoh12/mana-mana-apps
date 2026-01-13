@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
 // import 'package:mana_mana_app/screens/property_detail/view/property_detail_v3_view.dart';
@@ -262,8 +264,8 @@
 //                                   Text(
 //                                     '$totalUnits Total ',
 //                                     style: TextStyle(
-//                                       fontFamily: 'outfit',
-//                                       fontSize: ResponsiveSize.text(13),
+//                                       fontFamily: AppFonts.outfit,
+//                                       fontSize: AppDimens.fontSizeSmall,
 //                                       fontWeight: FontWeight.bold,
 //                                     ),
 //                                   ),
@@ -277,9 +279,8 @@
 //                                           ConnectionState.waiting) {
 //                                         return Text('Loading...',
 //                                             style: TextStyle(
-//                                                 fontFamily: 'outfit',
-//                                                 fontSize:
-//                                                     ResponsiveSize.text(13)));
+//                                                 fontFamily: AppFonts.outfit,
+//                                                 fontSize: AppDimens.fontSizeSmall;
 //                                       }
 //                                       if (snapshot.hasError) {
 //                                         return const Text('Error');
@@ -287,10 +288,9 @@
 //                                       final occupancy = snapshot.data ?? '0.0';
 //                                       return Text('($occupancy% Occupancy)',
 //                                           style: TextStyle(
-//                                               fontFamily: 'outfit',
+//                                               fontFamily: AppFonts.outfit,
 //                                               fontWeight: FontWeight.w300,
-//                                               fontSize:
-//                                                   ResponsiveSize.text(13)));
+//                                               fontSize: AppDimens.fontSizeSmall;
 //                                     },
 //                                   )
 //                                 ],
@@ -313,8 +313,8 @@
 //                           Text(
 //                             'Owner(s)',
 //                             style: TextStyle(
-//                               fontFamily: 'Outfit',
-//                               fontSize: ResponsiveSize.text(15),
+//                               fontFamily: AppFonts.outfit,
+//                               fontSize: AppDimens.fontSizeBig,
 //                               fontWeight: FontWeight.w600,
 //                               color: const Color(0xff383838),
 //                             ),
@@ -361,7 +361,7 @@
 //                                                     getInitials(ownerName),
 //                                                     style: const TextStyle(
 //                                                       color: Colors.white,
-//                                                       fontSize: 12,
+//                                                       fontSize: AppDimens.fontSizeSmall,
 //                                                       fontWeight:
 //                                                           FontWeight.w600,
 //                                                       letterSpacing: 0.5,
@@ -384,8 +384,8 @@
 //                       child: Text(
 //                         locationByMonth.first['location'] ?? '',
 //                         style: TextStyle(
-//                           fontFamily: 'outfit',
-//                           fontSize: ResponsiveSize.text(21),
+//                           fontFamily: AppFonts.outfit,
+//                           fontSize: AppDimens.fontSizeBig,
 //                           fontWeight: FontWeight.w500,
 //                           color: Colors.black,
 //                         ),
@@ -401,8 +401,8 @@
 //                           Text(
 //                             locationRoad,
 //                             style: TextStyle(
-//                               fontFamily: 'outfit',
-//                               fontSize: ResponsiveSize.text(13),
+//                               fontFamily: AppFonts.outfit,
+//                               fontSize: AppDimens.fontSizeSmall,
 //                               fontWeight: FontWeight.w500,
 //                             ),
 //                           ),
@@ -443,16 +443,16 @@
 //                               Text(
 //                                 'Total Net After POB',
 //                                 style: TextStyle(
-//                                   fontFamily: 'Outfit',
+//                                   fontFamily: AppFonts.outfit,
 //                                   fontWeight: FontWeight.w400,
-//                                   fontSize: ResponsiveSize.text(13),
+//                                   fontSize: AppDimens.fontSizeSmall,
 //                                 ),
 //                               ),
 //                               Text(
 //                                 'RM ${locationByMonth.first['total']}',
 //                                 style: TextStyle(
-//                                   fontSize: ResponsiveSize.text(15),
-//                                   fontFamily: 'Outfit',
+//                                   fontSize: AppDimens.fontSizeBig,
+//                                   fontFamily: AppFonts.outfit,
 //                                   fontWeight: FontWeight.w700,
 //                                 ),
 //                               ),
@@ -487,8 +487,8 @@
 //                                   Text(
 //                                     'Details',
 //                                     style: TextStyle(
-//                                         fontSize: ResponsiveSize.text(12),
-//                                         fontFamily: 'Outfit',
+//                                         fontSize: AppDimens.fontSizeSmall,
+//                                         fontFamily: AppFonts.outfit,
 //                                         fontWeight: FontWeight.w600,
 //                                         color: Colors.black),
 //                                   ),
@@ -504,8 +504,8 @@
 //                                       Text(
 //                                         'Jom',
 //                                         style: TextStyle(
-//                                             fontFamily: 'Outfit',
-//                                             fontSize: 12.fSize,
+//                                             fontFamily: AppFonts.outfit,
+//                                             fontSize: AppDimens.fontSizeSmall,
 //                                             fontWeight: FontWeight.w700),
 //                                       ),
 //                                     ],

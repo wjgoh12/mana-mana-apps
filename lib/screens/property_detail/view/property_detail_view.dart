@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/property_detail/widgets/typeunit_selection.dart';
 import 'package:mana_mana_app/screens/property_detail/widgets/typeunit_selection_dropdown.dart';
@@ -71,7 +72,7 @@ Widget _buildTitleSection(String title) {
         title,
         style: TextStyle(
           fontFamily: 'Open Sans',
-          fontSize: 20.fSize,
+          fontSize: AppDimens.fontSizeBig,
           fontWeight: FontWeight.w800,
           color: const Color(0XFF4313E9),
         ),
@@ -194,7 +195,7 @@ class MonthlyStatementContainer extends StatelessWidget {
                           'Download PDF',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16.fSize,
+                            fontSize: AppDimens.fontSizeBig,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -297,7 +298,7 @@ class AnnualStatementContainer extends StatelessWidget {
                           'Download PDF',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16.fSize,
+                            fontSize: AppDimens.fontSizeBig,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -316,7 +317,7 @@ Widget _buildGradientText(String text) {
     text: text,
     style: TextStyle(
       fontFamily: 'Open Sans',
-      fontSize: 17.fSize,
+      fontSize: AppDimens.fontSizeBig,
       fontWeight: FontWeight.w700,
     ),
     gradient: const LinearGradient(

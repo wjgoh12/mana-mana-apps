@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:mana_mana_app/screens/all_properties/widgets/occupancy_rate_dropdown.dart';
 import 'package:mana_mana_app/screens/dashboard/view/profit_chart.dart';
 import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
@@ -82,8 +84,8 @@ class _ProfitBoxState extends State<ProfitBox> {
                           child: Text(
                             'Accumulated Profit',
                             style: TextStyle(
-                              fontFamily: 'outfit',
-                              fontSize: ResponsiveSize.text(15),
+                              fontFamily: AppFonts.outfit,
+                              fontSize: AppDimens.fontSizeBig,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

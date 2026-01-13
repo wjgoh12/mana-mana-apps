@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
@@ -25,7 +26,7 @@ class DropdownButtonStatement extends StatelessWidget {
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
           style: TextStyle(
-            fontSize: 14.fSize,
+            fontSize: AppDimens.fontSizeBig,
             fontWeight: FontWeight.w700,
             fontFamily: 'Open Sans',
             color: const Color(0XFF0044CC).withOpacity(0.8),
@@ -34,7 +35,7 @@ class DropdownButtonStatement extends StatelessWidget {
           hint: Text(
             label,
             style: TextStyle(
-              fontSize: 15.fSize,
+              fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.w700,
               fontFamily: 'Open Sans',
               color: const Color(0XFF0044CC).withOpacity(0.8),

@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/profile/view_model/owner_profile_view_model.dart';
@@ -44,10 +46,10 @@ class _FinancialDetailsState extends State<FinancialDetails> {
               title: Text(
                 'Financial Details',
                 style: TextStyle(
-                  fontFamily: 'outfit',
+                  fontFamily: AppFonts.outfit,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: ResponsiveSize.text(20),
+                  fontSize: AppDimens.fontSizeBig,
                 ),
               ),
               bottom: PreferredSize(
@@ -110,8 +112,8 @@ class _FinancialDetailsState extends State<FinancialDetails> {
             SizedBox(width: responsiveWidth(10)),
             Text('$label ',
                 style: TextStyle(
-                    fontFamily: 'outfit',
-                    fontSize: responsiveFont(16),
+                    fontFamily: AppFonts.outfit,
+                    fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.w500)),
           ],
         ),
@@ -127,8 +129,8 @@ Widget _buildData({required String value}) {
       value,
       maxLines: 2,
       style: TextStyle(
-          fontFamily: 'outfit',
-          fontSize: ResponsiveSize.text(15),
+          fontFamily: AppFonts.outfit,
+          fontSize: AppDimens.fontSizeBig,
           fontWeight: FontWeight.bold),
       overflow: TextOverflow.ellipsis,
     ),

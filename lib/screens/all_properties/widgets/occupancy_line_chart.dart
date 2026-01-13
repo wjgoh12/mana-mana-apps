@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/occupancy_rate.dart';
@@ -237,9 +239,9 @@ class OccupancyLineChart extends StatelessWidget {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
-      fontFamily: 'outfit',
+      fontFamily: AppFonts.outfit,
       fontWeight: FontWeight.bold,
-      fontSize: 10,
+      fontSize: AppDimens.fontSizeSmall,
     );
 
     // Only render labels on whole-number ticks to avoid duplicates near the end padding
@@ -296,9 +298,9 @@ class OccupancyLineChart extends StatelessWidget {
         reservedSize: 40,
         getTitlesWidget: (value, meta) {
           const style = TextStyle(
-            fontFamily: 'outfit',
+            fontFamily: AppFonts.outfit,
             fontWeight: FontWeight.bold,
-            fontSize: 12,
+            fontSize: AppDimens.fontSizeSmall,
           );
           switch (value.toInt()) {
             case 0:
@@ -334,7 +336,7 @@ class OccupancyLineChart extends StatelessWidget {
                 const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14),
+                    fontSize: AppDimens.fontSizeBig,
               );
             }).toList();
           },

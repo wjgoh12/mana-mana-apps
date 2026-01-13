@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -124,8 +126,8 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
               'Choose Property Location',
               style: TextStyle(
                 color: const Color(0xFF000241),
-                fontFamily: 'outfit',
-                fontSize: ResponsiveSize.text(18),
+                fontFamily: AppFonts.outfit,
+                fontSize: AppDimens.fontSizeBig,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -191,10 +193,10 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                                 child: Text(
                                   state,
                                   style: TextStyle(
-                                    fontSize: 20.fSize,
+                                    fontSize: AppDimens.fontSizeBig,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
-                                    fontFamily: 'outfit',
+                                    fontFamily: AppFonts.outfit,
                                   ),
                                 ),
                               ),
@@ -441,9 +443,9 @@ class _LocationCardState extends State<LocationCard>
             Text(
               widget.locationName ?? "Unknown Location",
               style: TextStyle(
-                fontSize: ResponsiveSize.text(13),
+                fontSize: AppDimens.fontSizeSmall,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Outfit',
+                fontFamily: AppFonts.outfit,
                 color: Colors.black,
               ),
               maxLines: 2,
@@ -454,9 +456,9 @@ class _LocationCardState extends State<LocationCard>
               Text(
                 widget.propertyState ?? "Unknown State",
                 style: TextStyle(
-                  fontSize: ResponsiveSize.text(11),
+                  fontSize: AppDimens.fontSizeSmall,
                   fontWeight: FontWeight.w500,
-                  fontFamily: 'Outfit',
+                  fontFamily: AppFonts.outfit,
                   color: Colors.black,
                 ),
               ),

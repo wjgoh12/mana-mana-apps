@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -181,7 +183,7 @@ class _RoomDetailsState extends State<RoomDetails> {
             const SizedBox(width: 10),
             const Text('Confirmation of Booking',
                 style: TextStyle(
-                    fontFamily: 'Outfit',
+                    fontFamily: AppFonts.outfit,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF010367))),
           ],
@@ -217,13 +219,13 @@ class _RoomDetailsState extends State<RoomDetails> {
                   children: [
                     // Text('Room Type',
                     //     style: TextStyle(
-                    //         fontSize: ResponsiveSize.text(15),
-                    //         fontFamily: 'Outfit',
+                    //         fontSize: AppDimens.fontSizeBig,
+                    //         fontFamily: AppFonts.outfit,
                     //         fontWeight: FontWeight.bold)),
                     // Text(displayRoom,
                     //     style: TextStyle(
-                    //         fontSize: ResponsiveSize.text(20),
-                    //         fontFamily: 'Outfit',
+                    //         fontSize: AppDimens.fontSizeBig,
+                    //         fontFamily: AppFonts.outfit,
                     //         color: Color(0xFF3E51FF),
                     //         fontWeight: FontWeight.bold)),
                     // const SizedBox(height: 20),
@@ -275,16 +277,16 @@ class _RoomDetailsState extends State<RoomDetails> {
                         Text(
                           'Guest Name',
                           style: TextStyle(
-                              fontSize: ResponsiveSize.text(13),
-                              fontFamily: 'Outfit',
+                              fontSize: AppDimens.fontSizeSmall,
+                              fontFamily: AppFonts.outfit,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           ' *',
                           style: TextStyle(
-                              fontSize: ResponsiveSize.text(13),
+                              fontSize: AppDimens.fontSizeSmall,
                               color: Colors.red,
-                              fontFamily: 'Outfit',
+                              fontFamily: AppFonts.outfit,
                               fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -302,8 +304,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                             Text(
                               'Enter Guest Name',
                               style: TextStyle(
-                                fontSize: ResponsiveSize.text(14),
-                                fontFamily: 'Outfit',
+                                fontSize: AppDimens.fontSizeBig,
+                                fontFamily: AppFonts.outfit,
                                 color: Colors.grey,
                               ),
                             ),
@@ -312,15 +314,15 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 Text(
                                   'Compulsory',
                                   style: TextStyle(
-                                    fontSize: ResponsiveSize.text(12),
-                                    fontFamily: 'Outfit',
+                                    fontSize: AppDimens.fontSizeSmall,
+                                    fontFamily: AppFonts.outfit,
                                   ),
                                 ),
                                 Text('*',
                                     style: TextStyle(
-                                      fontSize: ResponsiveSize.text(12),
+                                      fontSize: AppDimens.fontSizeSmall,
                                       color: Colors.red,
-                                      fontFamily: 'Outfit',
+                                      fontFamily: AppFonts.outfit,
                                     )),
                               ],
                             ),
@@ -332,8 +334,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                     const SizedBox(height: 16),
                     Text('Remarks',
                         style: TextStyle(
-                            fontSize: ResponsiveSize.text(13),
-                            fontFamily: 'Outfit',
+                            fontSize: AppDimens.fontSizeSmall,
+                            fontFamily: AppFonts.outfit,
                             fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
 
@@ -345,8 +347,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                         ),
                         hintText: 'Enter Remarks',
                         hintStyle: TextStyle(
-                            fontSize: ResponsiveSize.text(14),
-                            fontFamily: 'Outfit'),
+                            fontSize: AppDimens.fontSizeBig,
+                            fontFamily: AppFonts.outfit),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -366,8 +368,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                     Text(
                       'Booking request will be submitted for review.',
                       style: TextStyle(
-                        fontSize: ResponsiveSize.text(12),
-                        fontFamily: 'Outfit',
+                        fontSize: AppDimens.fontSizeSmall,
+                        fontFamily: AppFonts.outfit,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -471,9 +473,9 @@ class _RoomDetailsState extends State<RoomDetails> {
                                               const Text(
                                                 'Request Received!',
                                                 style: TextStyle(
-                                                    fontSize: 16,
+                                                    fontSize: AppDimens.fontSizeBig,
                                                     fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Outfit'),
+                                                    fontFamily: AppFonts.outfit),
                                               ),
                                               SizedBox(
                                                   height: ResponsiveSize
@@ -482,8 +484,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                                 'You will be notified once your booking is confirmed​',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontFamily: 'Outfit'),
+                                                    fontSize: AppDimens.fontSizeSmall,
+                                                    fontFamily: AppFonts.outfit),
                                               ),
                                             ],
                                           ),
@@ -505,7 +507,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                                   'OK',
                                                   style: TextStyle(
                                                       color: Colors.white,
-                                                      fontFamily: 'Outfit'),
+                                                      fontFamily: AppFonts.outfit),
                                                 ),
                                               ),
                                             ),
@@ -519,7 +521,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                           content: Text(
                                             'Failed to submit booking. Please try again.',
                                             style:
-                                                TextStyle(fontFamily: 'Outfit'),
+                                                TextStyle(fontFamily: AppFonts.outfit),
                                           ),
                                           backgroundColor: Colors.red,
                                         ),
@@ -557,10 +559,10 @@ class _RoomDetailsState extends State<RoomDetails> {
                             : Text(
                                 'Submit',
                                 style: TextStyle(
-                                    fontFamily: 'Outfit',
+                                    fontFamily: AppFonts.outfit,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF606060),
-                                    fontSize: ResponsiveSize.text(12)),
+                                    fontSize: AppDimens.fontSizeSmall,
                               ),
                       ),
                     ),
@@ -599,13 +601,13 @@ class _RoomDetailsState extends State<RoomDetails> {
           children: [
             Text(title,
                 style: TextStyle(
-                    fontSize: ResponsiveSize.text(11), fontFamily: 'Outfit')),
+                    fontSize: AppDimens.fontSizeSmall, fontFamily: AppFonts.outfit)),
             Text(
               date != null ? DateFormat('EEE, MMM d, yyyy').format(date) : '-',
               style: TextStyle(
-                fontSize: ResponsiveSize.text(10.5),
+                fontSize: AppDimens.fontSizeSmall,
                 fontWeight: FontWeight.w600,
-                fontFamily: 'Outfit',
+                fontFamily: AppFonts.outfit,
               ),
             ),
           ],
@@ -622,11 +624,11 @@ class _RoomDetailsState extends State<RoomDetails> {
         children: [
           Text(title,
               style: TextStyle(
-                  fontSize: ResponsiveSize.text(11), fontFamily: 'Outfit')),
+                  fontSize: AppDimens.fontSizeSmall, fontFamily: AppFonts.outfit)),
           Text(value,
               style: TextStyle(
-                  fontSize: ResponsiveSize.text(13),
-                  fontFamily: 'Outfit',
+                  fontSize: AppDimens.fontSizeSmall,
+                  fontFamily: AppFonts.outfit,
                   fontWeight: FontWeight.w600)),
         ],
       ),
@@ -704,8 +706,8 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
                             ? 'Hide Terms & Conditions'
                             : 'View Terms & Conditions',
                         style: TextStyle(
-                          fontSize: ResponsiveSize.text(13),
-                          fontFamily: 'Outfit',
+                          fontSize: AppDimens.fontSizeSmall,
+                          fontFamily: AppFonts.outfit,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF010367),
                         ),
@@ -728,8 +730,8 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
                       Text(
                         'Terms & Conditions',
                         style: TextStyle(
-                          fontSize: ResponsiveSize.text(14),
-                          fontFamily: 'Outfit',
+                          fontSize: AppDimens.fontSizeBig,
+                          fontFamily: AppFonts.outfit,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -808,8 +810,8 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
                 child: Text(
                   'I have read and agree to the T&C',
                   style: TextStyle(
-                    fontSize: ResponsiveSize.text(13),
-                    fontFamily: 'Outfit',
+                    fontSize: AppDimens.fontSizeSmall,
+                    fontFamily: AppFonts.outfit,
                   ),
                 ),
               ),
@@ -829,8 +831,8 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
           Text(
             '• $title',
             style: TextStyle(
-              fontSize: ResponsiveSize.text(12),
-              fontFamily: 'Outfit',
+              fontSize: AppDimens.fontSizeSmall,
+              fontFamily: AppFonts.outfit,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.justify,
@@ -841,8 +843,8 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
             child: Text(
               content,
               style: TextStyle(
-                fontSize: ResponsiveSize.text(11),
-                fontFamily: 'Outfit',
+                fontSize: AppDimens.fontSizeSmall,
+                fontFamily: AppFonts.outfit,
                 color: Colors.black,
                 height: 1.4,
               ),

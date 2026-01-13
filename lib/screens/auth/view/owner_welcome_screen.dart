@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/auth/view_model/owner_welcome_screen_view_model.dart';
 
@@ -49,7 +50,7 @@ class OnboardingScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: const Color(0xFFC3B9FF),                  
-                          fontSize: isSmallScreen ? 32 : 40,
+                          fontSize: AppDimens.fontSizeBig,
                           fontWeight: FontWeight.w700,
                           fontFamily: 'Open Sans'
                         ),
@@ -60,7 +61,7 @@ class OnboardingScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: isSmallScreen ? 14 : 16,
+                          fontSize: AppDimens.fontSizeBig,
                           fontFamily: 'Open Sans',
                           fontWeight: FontWeight.w600,
                         ),
@@ -89,7 +90,7 @@ class OnboardingScreen extends StatelessWidget {
                     child: Text(
                       'Login >>>',
                       style: TextStyle(
-                        fontSize: isSmallScreen ? 24 : 30,
+                        fontSize: AppDimens.fontSizeBig,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFFC3B9FF))
                       ),

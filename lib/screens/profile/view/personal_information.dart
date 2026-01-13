@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/profile/view_model/owner_profile_view_model.dart';
@@ -52,10 +54,10 @@ class _PersonalInformationState extends State<PersonalInformation> {
               title: Text(
                 'Personal Information',
                 style: TextStyle(
-                  fontFamily: 'outfit',
+                  fontFamily: AppFonts.outfit,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: responsiveFont(20),
+                  fontSize: AppDimens.fontSizeBig,
                 ),
               ),
               bottom: PreferredSize(
@@ -135,7 +137,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
             Text(
               label,
               style:
-                  TextStyle(fontFamily: 'outfit', fontSize: responsiveFont(13)),
+                  TextStyle(fontFamily: AppFonts.outfit, fontSize: AppDimens.fontSizeSmall,
             ),
           ],
         ),
@@ -160,8 +162,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
         data,
         maxLines: 6,
         style: TextStyle(
-            fontFamily: 'outfit',
-            fontSize: responsiveFont(14),
+            fontFamily: AppFonts.outfit,
+            fontSize: AppDimens.fontSizeBig,
             fontWeight: FontWeight.bold),
       ),
     );

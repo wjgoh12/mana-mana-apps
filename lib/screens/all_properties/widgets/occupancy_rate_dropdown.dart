@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
@@ -61,8 +63,8 @@ class _OccupancyPeriodDropdownState extends State<OccupancyPeriodDropdown> {
                   child: Text(
                     entry.value,
                     style: TextStyle(
-                      fontFamily: 'outfit',
-                      fontSize: ResponsiveSize.text(14),
+                      fontFamily: AppFonts.outfit,
+                      fontSize: AppDimens.fontSizeBig,
                       color: Colors.black,
                     ),
                   ),

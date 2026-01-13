@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:math';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -62,7 +63,7 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown2> 
       final textSpan = TextSpan(
         text: widget.label == "Month" ? _getMonthName(item) : item,
         style: TextStyle(
-          fontSize: 15.fSize,
+          fontSize: AppDimens.fontSizeBig,
           fontFamily: 'Open Sans',
           fontWeight: FontWeight.w600,
         ),
@@ -84,7 +85,7 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown2> 
           style: TextStyle(
             color: const Color(0XFF4313E9),
             fontFamily: 'Open Sans',
-            fontSize: 14.fSize,
+            fontSize: AppDimens.fontSizeBig,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -97,7 +98,7 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown2> 
                   style: TextStyle(
                     color: const Color(0XFF4313E9),
                     fontFamily: 'Open Sans',
-                    fontSize: 14.fSize,
+                    fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

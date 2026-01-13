@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
 // import 'package:mana_mana_app/screens/property_detail/view/property_detail_v3_view.dart';
@@ -26,7 +27,7 @@
 //             const Text(
 //               'Recent Activity',
 //               style: TextStyle(
-//                 fontSize: 20,
+//                 fontSize: AppDimens.fontSizeBig,
 //                 fontWeight: FontWeight.bold,
 //               ),
 //             ),
@@ -106,7 +107,7 @@
 //                     child: Text(
 //                       'Statement for Unit $unitName has been issued for $propertyName',
 //                       style: TextStyle(
-//                         fontSize: 10.1.fSize,
+//                         fontSize: AppDimens.fontSizeSmall,
 //                         color: Color(0xFF888888),
 //                       ),
 //                     ),

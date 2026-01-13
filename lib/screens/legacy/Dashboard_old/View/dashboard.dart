@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:mana_mana_app/screens/legacy/Dashboard_old/View/property_list_dashboard.dart';
 // import 'package:mana_mana_app/screens/legacy/Dashboard_old/View/revenue_dashboard.dart';
@@ -144,7 +145,7 @@
 //         Text(
 //           'Main Dashboard',
 //           style: TextStyle(
-//             fontSize: 20.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             color: const Color(0xFFC3B9FF),
 //             fontFamily: 'Open Sans',
 //             fontWeight: FontWeight.w800,
@@ -195,7 +196,7 @@
 //                         DashboardVM().userNameAccount,
 //                         style: TextStyle(
 //                           fontFamily: 'Open Sans',
-//                           fontSize: 20.fSize,
+//                           fontSize: AppDimens.fontSizeBig,
 //                           fontWeight: FontWeight.w600,
 //                           color: const Color(0XFF4313E9),
 //                         ),
@@ -204,7 +205,7 @@
 //                         'Property Owner',
 //                         style: TextStyle(
 //                           fontFamily: 'Open Sans',
-//                           fontSize: 15.fSize,
+//                           fontSize: AppDimens.fontSizeBig,
 //                           fontWeight: FontWeight.w300,
 //                           fontStyle: FontStyle.italic,
 //                           color: const Color(0XFF555555),
@@ -249,7 +250,7 @@
 //         title,
 //         style: TextStyle(
 //           fontFamily: 'Open Sans',
-//           fontSize: 20.fSize,
+//           fontSize: AppDimens.fontSizeBig,
 //           fontWeight: FontWeight.w800,
 //           color: const Color(0XFF4313E9),
 //         ),

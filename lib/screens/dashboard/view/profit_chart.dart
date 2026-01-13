@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -24,8 +26,8 @@ class ProfitChart extends StatelessWidget {
         child: Text(
           'No profit data available for ${period.toLowerCase()} view',
           style: const TextStyle(
-            fontFamily: 'outfit',
-            fontSize: 14,
+            fontFamily: AppFonts.outfit,
+            fontSize: AppDimens.fontSizeBig,
             color: Colors.grey,
             fontWeight: FontWeight.w500,
           ),
@@ -51,9 +53,9 @@ class ProfitChart extends StatelessWidget {
             return Text(
               label,
               style: const TextStyle(
-                fontFamily: 'outfit',
+                fontFamily: AppFonts.outfit,
                 fontWeight: FontWeight.bold,
-                fontSize: 12,
+                fontSize: AppDimens.fontSizeSmall,
                 color: Colors.black,
               ),
             );
@@ -174,8 +176,8 @@ class ProfitChart extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          fontFamily: 'outfit',
+                          fontSize: AppDimens.fontSizeBig,
+                          fontFamily: AppFonts.outfit,
                         ),
                       ),
                     ),
@@ -354,9 +356,9 @@ class ProfitChart extends StatelessWidget {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
-      fontFamily: 'outfit',
+      fontFamily: AppFonts.outfit,
       fontWeight: FontWeight.bold,
-      fontSize: 10,
+      fontSize: AppDimens.fontSizeSmall,
     );
 
     final nearest = value.round();
@@ -454,9 +456,9 @@ class ProfitChart extends StatelessWidget {
         reservedSize: 40,
         getTitlesWidget: (value, meta) {
           const style = TextStyle(
-            fontFamily: 'outfit',
+            fontFamily: AppFonts.outfit,
             fontWeight: FontWeight.bold,
-            fontSize: 12,
+            fontSize: AppDimens.fontSizeSmall,
           );
           switch (value.toInt()) {
             case 0:
@@ -491,7 +493,7 @@ class ProfitChart extends StatelessWidget {
                 const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14),
+                    fontSize: AppDimens.fontSizeBig,
               );
             }).toList();
           },

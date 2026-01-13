@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 
 class NoticeDialog extends StatelessWidget {
@@ -23,9 +25,9 @@ class NoticeDialog extends StatelessWidget {
               const Text(
                 'Notice',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: AppDimens.fontSizeBig,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Outfit',
+                  fontFamily: AppFonts.outfit,
                 ),
               ),
               const SizedBox(height: 16),
@@ -36,8 +38,8 @@ class NoticeDialog extends StatelessWidget {
                   maxLines: null,
                   textAlign: TextAlign.justify,
                   style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Outfit',
+                    fontSize: AppDimens.fontSizeBig,
+                    fontFamily: AppFonts.outfit,
                     height: 1.5,
                   ),
                 ),
@@ -61,9 +63,9 @@ class NoticeDialog extends StatelessWidget {
                   child: const Text(
                     'OK',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: AppDimens.fontSizeBig,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Outfit',
+                      fontFamily: AppFonts.outfit,
                     ),
                   ),
                 ),

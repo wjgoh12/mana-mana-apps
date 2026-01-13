@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
@@ -109,8 +111,8 @@ class UnitOverviewContainer extends StatelessWidget {
               Text(
                 'No data available for this unit',
                 style: TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: ResponsiveSize.text(16),
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeBig,
                   color: Colors.grey.shade600,
                 ),
               ),
@@ -219,8 +221,8 @@ class UnitOverviewContainer extends StatelessWidget {
                           child: Text(
                             title,
                             style: TextStyle(
-                              fontFamily: 'outfit',
-                              fontSize: ResponsiveSize.text(10),
+                              fontFamily: AppFonts.outfit,
+                              fontSize: AppDimens.fontSizeSmall,
                               color: Color(int.parse(fontColor)),
                             ),
                           ),
@@ -238,8 +240,8 @@ class UnitOverviewContainer extends StatelessWidget {
                                     child: Text(
                                       'RM',
                                       style: TextStyle(
-                                        fontFamily: 'outfit',
-                                        fontSize: ResponsiveSize.text(10),
+                                        fontFamily: AppFonts.outfit,
+                                        fontSize: AppDimens.fontSizeSmall,
                                         fontWeight: FontWeight.bold,
                                         color: Color(int.parse(fontColor)),
                                       ),
@@ -249,8 +251,8 @@ class UnitOverviewContainer extends StatelessWidget {
                               TextSpan(
                                 text: value,
                                 style: TextStyle(
-                                  fontFamily: 'outfit',
-                                  fontSize: ResponsiveSize.text(15),
+                                  fontFamily: AppFonts.outfit,
+                                  fontSize: AppDimens.fontSizeBig,
                                   fontWeight: FontWeight.bold,
                                   color: Color(int.parse(fontColor)),
                                 ),

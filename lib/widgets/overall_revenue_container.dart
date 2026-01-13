@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 
@@ -60,7 +61,7 @@ final Color backgroundColor;
                                       color: color,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w400,
-                                      fontSize: 10.fSize),
+                                      fontSize: AppDimens.fontSizeSmall,
                                 ),
                                 Text(
                                   text2,
@@ -68,7 +69,7 @@ final Color backgroundColor;
                                       color: color,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 15.fSize),
+                                      fontSize: AppDimens.fontSizeBig,
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +80,7 @@ final Color backgroundColor;
                                           color: color,
                                           fontFamily: 'Open Sans',
                                           fontWeight: FontWeight.w400,
-                                          fontSize: 10.fSize),
+                                          fontSize: AppDimens.fontSizeSmall,
                                     ),
                                     Icon(
                                       Icons.arrow_drop_up,
@@ -112,7 +113,7 @@ final Color backgroundColor;
                                       color: color,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w400,
-                                      fontSize: 10.fSize),
+                                      fontSize: AppDimens.fontSizeSmall,
                                 ),
                                 Text(
                                   text5,
@@ -120,7 +121,7 @@ final Color backgroundColor;
                                       color: color,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 15.fSize),
+                                      fontSize: AppDimens.fontSizeBig,
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +132,7 @@ final Color backgroundColor;
                                           color: color,
                                           fontFamily: 'Open Sans',
                                           fontWeight: FontWeight.w400,
-                                          fontSize: 10.fSize),
+                                          fontSize: AppDimens.fontSizeSmall,
                                     ),
                                     Icon(
                                       Icons.arrow_drop_up,

@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/property_detail/widgets/typeunit_selection_drop_down.dart';
 import 'package:mana_mana_app/screens/property_detail/view_model/property_detail_view_model.dart';
@@ -34,7 +35,7 @@ Widget _buildGradientText(String text) {
     text: text,
     style: TextStyle(
       fontFamily: 'Open Sans',
-      fontSize: 17.fSize,
+      fontSize: AppDimens.fontSizeBig,
       fontWeight: FontWeight.w700,
     ),
     gradient: const LinearGradient(

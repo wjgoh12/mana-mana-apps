@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'dart:math';
 // import 'package:flutter/material.dart';
 // // import 'package:intl/intl.dart';
@@ -299,7 +300,7 @@
 //       text: text,
 //       style: TextStyle(
 //         fontFamily: 'Open Sans',
-//         fontSize: 17.fSize,
+//         fontSize: AppDimens.fontSizeBig,
 //         fontWeight: FontWeight.w700,
 //       ),
 //       gradient: const LinearGradient(
@@ -405,7 +406,7 @@
 //           'Statistics',
 //           style: TextStyle(
 //             fontFamily: 'Open Sans',
-//             fontSize: 20.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             fontWeight: FontWeight.w800,
 //             color: const Color(0XFF4313E9),
 //           ),
@@ -423,7 +424,7 @@
 //           'Monthly Statement',
 //           style: TextStyle(
 //             fontFamily: 'Open Sans',
-//             fontSize: 20.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             fontWeight: FontWeight.w800,
 //             color: const Color(0XFF4313E9),
 //           ),
@@ -503,7 +504,7 @@
 //           'Download PDF',
 //           style: TextStyle(
 //             color: Colors.white,
-//             fontSize: 16.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             fontWeight: FontWeight.w600,
 //           ),
 //         ),
@@ -590,7 +591,7 @@
 //           style: TextStyle(
 //             fontFamily: 'Open Sans',
 //             fontWeight: FontWeight.w600,
-//             fontSize: 15.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             color: const Color(0XFF888888),
 //           ),
 //         ),
@@ -615,7 +616,7 @@
 //           style: TextStyle(
 //             color: const Color(0XFF0044CC).withOpacity(0.8),
 //             fontFamily: 'Open Sans',
-//             fontSize: 15.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             fontWeight: FontWeight.w600,
 //           ),
 //         ),
@@ -625,7 +626,7 @@
 //           style: TextStyle(
 //             color: const Color(0XFF0044CC).withOpacity(0.8),
 //             fontFamily: 'Open Sans',
-//             fontSize: 15.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             fontWeight: FontWeight.w600,
 //             decoration: TextDecoration.underline,
 //             decorationColor: const Color(0XFF0044CC).withOpacity(0.8),
@@ -649,7 +650,7 @@
 //           'Agreement(s)',
 //           style: TextStyle(
 //             fontFamily: 'Open Sans',
-//             fontSize: 20.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             fontWeight: FontWeight.w800,
 //             color: const Color(0XFF4313E9),
 //           ),
@@ -689,7 +690,7 @@
 //             style: TextStyle(
 //               color: const Color(0XFF0044CC).withOpacity(0.8),
 //               fontFamily: 'Open Sans',
-//               fontSize: 15.fSize,
+//               fontSize: AppDimens.fontSizeBig,
 //               fontWeight: FontWeight.w600,
 //             ),
 //           ),
@@ -699,7 +700,7 @@
 //             style: TextStyle(
 //               color: const Color(0XFF0044CC).withOpacity(0.8),
 //               fontFamily: 'Open Sans',
-//               fontSize: 15.fSize,
+//               fontSize: AppDimens.fontSizeBig,
 //               fontWeight: FontWeight.w600,
 //               decoration: TextDecoration.underline,
 //               decorationColor: const Color(0XFF0044CC).withOpacity(0.8),
@@ -718,7 +719,7 @@
 //           style: TextStyle(
 //             fontFamily: 'Open Sans',
 //             fontWeight: FontWeight.w600,
-//             fontSize: 15.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             color: const Color(0XFF888888),
 //           ),
 //         ),
@@ -762,7 +763,7 @@
 // //                   'Monthly Overall Earnings',
 // //                   style: TextStyle(
 // //                     fontFamily: 'Open Sans',
-// //                     fontSize: 8.fSize,
+// //                     fontSize: AppDimens.fontSizeSmall,
 // //                     fontWeight: FontWeight.w600,
 // //                     color: const Color(0XFF4313E9),
 // //                   ),
@@ -781,7 +782,7 @@
 // //                   'Overall Revenue',
 // //                   style: TextStyle(
 // //                     fontFamily: 'Open Sans',
-// //                     fontSize: 8.fSize,
+// //                     fontSize: AppDimens.fontSizeSmall,
 // //                     fontWeight: FontWeight.w600,
 // //                     color: const Color(0XFF888888),
 // //                   ),
@@ -800,7 +801,7 @@
 // //                   'Overall Revenue',
 // //                   style: TextStyle(
 // //                     fontFamily: 'Open Sans',
-// //                     fontSize: 8.fSize,
+// //                     fontSize: AppDimens.fontSizeSmall,
 // //                     fontWeight: FontWeight.w600,
 // //                     color: const Color(0XFF888888),
 // //                   ),
@@ -814,7 +815,7 @@
 // //               '(Ringgit in thousands)',
 // //               style: TextStyle(
 // //                 fontFamily: 'Open Sans',
-// //                 fontSize: 6.fSize,
+// //                 fontSize: AppDimens.fontSizeSmall,
 // //                 fontWeight: FontWeight.w600,
 // //                 color: const Color(0XFF4313E9),
 // //               ),
@@ -836,7 +837,7 @@
 // //                         'Monthly Revenue',
 // //                         style: TextStyle(
 // //                           color: const Color(0XFF888888),
-// //                           fontSize: 8.fSize,
+// //                           fontSize: AppDimens.fontSizeSmall,
 // //                           fontWeight: FontWeight.w600,
 // //                           fontFamily: 'Open Sans',
 // //                         ),
@@ -849,7 +850,7 @@
 // //                         'Monthly Rental Income',
 // //                         style: TextStyle(
 // //                           color: const Color(0XFF888888),
-// //                           fontSize: 8.fSize,
+// //                           fontSize: AppDimens.fontSizeSmall,
 // //                           fontWeight: FontWeight.w600,
 // //                           fontFamily: 'Open Sans',
 // //                         ),
@@ -951,7 +952,7 @@
 //       final textSpan = TextSpan(
 //         text: widget.label == "Month" ? _getMonthName(item) : item,
 //         style: TextStyle(
-//           fontSize: 15.fSize,
+//           fontSize: AppDimens.fontSizeBig,
 //           fontFamily: 'Open Sans',
 //           fontWeight: FontWeight.w600,
 //         ),
@@ -973,7 +974,7 @@
 //           style: TextStyle(
 //             color: const Color(0XFF4313E9),
 //             fontFamily: 'Open Sans',
-//             fontSize: 14.fSize,
+//             fontSize: AppDimens.fontSizeBig,
 //             fontWeight: FontWeight.w600,
 //           ),
 //         ),
@@ -986,7 +987,7 @@
 //                   style: TextStyle(
 //                     color: const Color(0XFF4313E9),
 //                     fontFamily: 'Open Sans',
-//                     fontSize: 14.fSize,
+//                     fontSize: AppDimens.fontSizeBig,
 //                     fontWeight: FontWeight.w600,
 //                   ),
 //                 ),

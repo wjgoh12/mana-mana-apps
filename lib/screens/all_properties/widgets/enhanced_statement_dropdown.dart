@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/property_detail/view_model/property_detail_view_model.dart';
@@ -74,9 +76,9 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
           Text(
             'Statements',
             style: TextStyle(
-              fontSize: ResponsiveSize.text(16),
+              fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.bold,
-              fontFamily: 'Outfit',
+              fontFamily: AppFonts.outfit,
               // color: const Color(0xFF3E51FF),
             ),
           ),
@@ -91,8 +93,8 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               value: selectedMonth,
               hint: Text(selectedMonth == null ? 'All' : 'Month'),
               style: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: ResponsiveSize.text(13),
+                fontFamily: AppFonts.outfit,
+                fontSize: AppDimens.fontSizeSmall,
                 color: Color(0xFF606060),
               ),
               buttonStyleData: ButtonStyleData(
@@ -146,8 +148,8 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                   child: Text(
                     'All',
                     style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: ResponsiveSize.text(13),
+                      fontFamily: AppFonts.outfit,
+                      fontSize: AppDimens.fontSizeSmall,
                     ),
                   ),
                 ),
@@ -158,8 +160,8 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                     child: Text(
                       getMonthName(month),
                       style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: ResponsiveSize.text(13),
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeSmall,
                       ),
                     ),
                   );
@@ -182,8 +184,8 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               value: selectedYear,
               hint: const Text('Year'),
               style: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: ResponsiveSize.text(12),
+                fontFamily: AppFonts.outfit,
+                fontSize: AppDimens.fontSizeSmall,
                 color: Color(0xFF606060),
               ),
               buttonStyleData: ButtonStyleData(
@@ -235,8 +237,8 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                         child: Text(
                           'No Data',
                           style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: ResponsiveSize.text(12),
+                            fontFamily: AppFonts.outfit,
+                            fontSize: AppDimens.fontSizeSmall,
                           ),
                         ),
                       ),
@@ -247,8 +249,8 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                         child: Text(
                           year,
                           style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: ResponsiveSize.text(12),
+                            fontFamily: AppFonts.outfit,
+                            fontSize: AppDimens.fontSizeSmall,
                           ),
                         ),
                       );

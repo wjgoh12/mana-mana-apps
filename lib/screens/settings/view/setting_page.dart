@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/screens/profile/view/owner_profile_view.dart';
@@ -72,7 +73,7 @@ class SettingPage extends StatelessWidget {
                                 ? model.users.first.ownerFullName ?? '-'
                                 : '-',
                             style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0XFF4313E9)),
                           ),
@@ -104,7 +105,7 @@ class SettingPage extends StatelessWidget {
                   // Text(
                   //   'My Earnings',
                   //   style: TextStyle(
-                  //       fontSize: 18,
+                  //       fontSize: AppDimens.fontSizeBig,
                   //       fontWeight: FontWeight.bold,
                   //       color: Color(0XFF4313E9)),
                   // ),
@@ -148,7 +149,7 @@ class SettingPage extends StatelessWidget {
                   const Text(
                     'My Profile',
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: AppDimens.fontSizeBig,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF4313E9)),
                   ),
@@ -172,7 +173,7 @@ class SettingPage extends StatelessWidget {
                   const Text(
                     'Contact Us',
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: AppDimens.fontSizeBig,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF4313E9)),
                   ),
@@ -290,7 +291,7 @@ class SettingPage extends StatelessWidget {
                       child: const Text(
                         'Log Out',
                         style:
-                            TextStyle(color: Color(0XFF4313E9), fontSize: 20),
+                            TextStyle(color: Color(0XFF4313E9), fontSize: AppDimens.fontSizeBig,
                       ),
                     ),
                   ),
@@ -309,14 +310,14 @@ class SettingPage extends StatelessWidget {
                               'Terms & Conditions',
                               style: TextStyle(
                                   color: Color(0XFF4313E9),
-                                  fontSize: 16,
+                                  fontSize: AppDimens.fontSizeBig,
                                   decoration: TextDecoration.underline),
                             ),
                           ),
                           const Text(
                             ' | ',
                             style: TextStyle(
-                                color: Color(0XFF4313E9), fontSize: 16),
+                                color: Color(0XFF4313E9), fontSize: AppDimens.fontSizeBig,
                           ),
                           TextButton(
                             onPressed: () {
@@ -327,7 +328,7 @@ class SettingPage extends StatelessWidget {
                               'Privacy Policy',
                               style: TextStyle(
                                   color: Color(0XFF4313E9),
-                                  fontSize: 16,
+                                  fontSize: AppDimens.fontSizeBig,
                                   decoration: TextDecoration.underline),
                             ),
                           ),

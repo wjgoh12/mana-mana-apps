@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -138,8 +140,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
           Text(
             label,
             style: TextStyle(
-              fontFamily: 'outfit',
-              fontSize: ResponsiveSize.text(14),
+              fontFamily: AppFonts.outfit,
+              fontSize: AppDimens.fontSizeBig,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               color: isSelected ? const Color(0xFF010367) : Colors.grey,
             ),
@@ -244,8 +246,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                             child: Text(
                               'Booking Confirmation',
                               style: TextStyle(
-                                fontFamily: 'outfit',
-                                fontSize: ResponsiveSize.text(15),
+                                fontFamily: AppFonts.outfit,
+                                fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.w800,
                               ),
                               textAlign: TextAlign.center,
@@ -277,16 +279,16 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                       Text(
                                         'Location',
                                         style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: ResponsiveSize.text(12),
+                                          fontFamily: AppFonts.outfit,
+                                          fontSize: AppDimens.fontSizeSmall,
                                           color: Colors.white70,
                                         ),
                                       ),
                                       Text(
                                         booking.bookingLocation,
                                         style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: ResponsiveSize.text(15),
+                                          fontFamily: AppFonts.outfit,
+                                          fontSize: AppDimens.fontSizeBig,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
@@ -306,8 +308,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                       Text(
                                         'Room Type',
                                         style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: ResponsiveSize.text(12),
+                                          fontFamily: AppFonts.outfit,
+                                          fontSize: AppDimens.fontSizeSmall,
                                           color: Colors.white70,
                                         ),
                                       ),
@@ -316,8 +318,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                           _sanitizeRoomTypeName(
                                               booking.typeRoom),
                                           style: TextStyle(
-                                            fontFamily: 'outfit',
-                                            fontSize: ResponsiveSize.text(15),
+                                            fontFamily: AppFonts.outfit,
+                                            fontSize: AppDimens.fontSizeBig,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           ),
@@ -362,9 +364,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 Text(
                                                   'Check-in Date',
                                                   style: TextStyle(
-                                                    fontFamily: 'outfit',
-                                                    fontSize:
-                                                        ResponsiveSize.text(12),
+                                                    fontFamily: AppFonts.outfit,
+                                                    fontSize: AppDimens.fontSizeSmall,
                                                     color: Colors.white70,
                                                   ),
                                                 ),
@@ -373,9 +374,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                       .format(
                                                           booking.arrivalDate),
                                                   style: TextStyle(
-                                                    fontFamily: 'outfit',
-                                                    fontSize:
-                                                        ResponsiveSize.text(15),
+                                                    fontFamily: AppFonts.outfit,
+                                                    fontSize: AppDimens.fontSizeBig,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
                                                   ),
@@ -394,9 +394,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 Text(
                                                   'Check-out Date',
                                                   style: TextStyle(
-                                                    fontFamily: 'outfit',
-                                                    fontSize:
-                                                        ResponsiveSize.text(12),
+                                                    fontFamily: AppFonts.outfit,
+                                                    fontSize: AppDimens.fontSizeSmall,
                                                     color: Colors.white70,
                                                   ),
                                                 ),
@@ -405,9 +404,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                       .format(booking
                                                           .departureDate),
                                                   style: TextStyle(
-                                                    fontFamily: 'outfit',
-                                                    fontSize:
-                                                        ResponsiveSize.text(15),
+                                                    fontFamily: AppFonts.outfit,
+                                                    fontSize: AppDimens.fontSizeBig,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
                                                   ),
@@ -434,16 +432,16 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                       Text(
                                         'Points Redeem From',
                                         style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: ResponsiveSize.text(12),
+                                          fontFamily: AppFonts.outfit,
+                                          fontSize: AppDimens.fontSizeSmall,
                                           color: Colors.white70,
                                         ),
                                       ),
                                       Text(
                                         booking.unitNo ?? 'N/A',
                                         style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: ResponsiveSize.text(15),
+                                          fontFamily: AppFonts.outfit,
+                                          fontSize: AppDimens.fontSizeBig,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
@@ -461,8 +459,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                       Text(
                                         'Total Point Spend',
                                         style: TextStyle(
-                                          fontFamily: 'outfit',
-                                          fontSize: ResponsiveSize.text(12),
+                                          fontFamily: AppFonts.outfit,
+                                          fontSize: AppDimens.fontSizeSmall,
                                           color: Colors.white70,
                                         ),
                                       ),
@@ -474,8 +472,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                           Text(
                                             '${booking.pointUsed}',
                                             style: TextStyle(
-                                              fontFamily: 'outfit',
-                                              fontSize: ResponsiveSize.text(15),
+                                              fontFamily: AppFonts.outfit,
+                                              fontSize: AppDimens.fontSizeBig,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
                                             ),
@@ -556,8 +554,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                           child: Text(
                             _sanitizeRoomTypeName(booking.typeRoom),
                             style: TextStyle(
-                              fontSize: ResponsiveSize.text(11),
-                              fontFamily: 'outfit',
+                              fontSize: AppDimens.fontSizeSmall,
+                              fontFamily: AppFonts.outfit,
                               fontWeight: FontWeight.bold,
                             ),
                             maxLines: 2,
@@ -579,8 +577,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                           child: Text(
                             booking.status,
                             style: TextStyle(
-                              fontSize: ResponsiveSize.text(10),
-                              fontFamily: 'outfit',
+                              fontSize: AppDimens.fontSizeSmall,
+                              fontFamily: AppFonts.outfit,
                               color: booking.status == 'Confirmed'
                                   ? const Color(0xFF2A7446)
                                   : booking.status == 'Pending'
@@ -596,8 +594,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     Text(
                       booking.bookingLocation,
                       style: TextStyle(
-                        fontSize: ResponsiveSize.text(10),
-                        fontFamily: 'outfit',
+                        fontSize: AppDimens.fontSizeSmall,
+                        fontFamily: AppFonts.outfit,
                         color: Colors.grey.shade600,
                       ),
                     ),
@@ -608,8 +606,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                         Text(
                           'Dates: ${DateFormat('yyyy-MM-dd').format(booking.arrivalDate)} to ${DateFormat('yyyy-MM-dd').format(booking.departureDate)}',
                           style: TextStyle(
-                            fontSize: ResponsiveSize.text(11),
-                            fontFamily: 'outfit',
+                            fontSize: AppDimens.fontSizeSmall,
+                            fontFamily: AppFonts.outfit,
                             color: Colors.grey.shade600,
                           ),
                         ),
@@ -621,8 +619,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                             Text(
                               '${booking.pointUsed}',
                               style: TextStyle(
-                                fontSize: ResponsiveSize.text(10),
-                                fontFamily: 'outfit',
+                                fontSize: AppDimens.fontSizeSmall,
+                                fontFamily: AppFonts.outfit,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -634,8 +632,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     // Text(
                     //   'Submitted: ${DateFormat('dd MMM yyyy HH:mm').format(booking.createdAt)}',
                     //   style: TextStyle(
-                    //     fontSize: ResponsiveSize.text(11),
-                    //     fontFamily: 'outfit',
+                    //     fontSize: AppDimens.fontSizeSmall,
+                    //     fontFamily: AppFonts.outfit,
                     //     color: Colors.grey.shade500,
                     //     fontStyle: FontStyle.italic,
                     //   ),
@@ -692,8 +690,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                   'Free Stay Redemptions',
                   style: TextStyle(
                     color: const Color(0xFF606060),
-                    fontFamily: 'outfit',
-                    fontSize: ResponsiveSize.text(18),
+                    fontFamily: AppFonts.outfit,
+                    fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.w700,
                   ),
                 )),
@@ -720,7 +718,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                     child: Text(
                       "FAQ",
                       style: TextStyle(
-                        fontFamily: 'outfit',
+                        fontFamily: AppFonts.outfit,
                         color: Colors.white,
                       ),
                     ),
@@ -743,8 +741,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               child: Text(
                 'Redemption List',
                 style: TextStyle(
-                  fontFamily: 'outfit',
-                  fontSize: ResponsiveSize.text(18),
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeBig,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -769,7 +767,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                             "No available points found.",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'outfit'),
+                                fontFamily: AppFonts.outfit),
                           ),
                         )
                       : SingleChildScrollView(
@@ -810,8 +808,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                           Text(
                                             '${unit.location} - ${unit.unitNo}',
                                             style: TextStyle(
-                                              fontFamily: 'outfit',
-                                              fontSize: ResponsiveSize.text(15),
+                                              fontFamily: AppFonts.outfit,
+                                              fontSize: AppDimens.fontSizeBig,
                                               fontWeight: FontWeight.w700,
                                               fontFamilyFallback: const [
                                                 'outfit'
@@ -840,9 +838,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 Text(
                                                   'Available Points',
                                                   style: TextStyle(
-                                                    fontSize:
-                                                        ResponsiveSize.text(12),
-                                                    fontFamily: 'outfit',
+                                                    fontSize: AppDimens.fontSizeSmall,
+                                                    fontFamily: AppFonts.outfit,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -854,10 +851,9 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 Text(
                                                   '${unit.redemptionBalancePoints.toInt()}/${unit.redemptionPoints.toInt()}',
                                                   style: TextStyle(
-                                                    fontSize:
-                                                        ResponsiveSize.text(12),
+                                                    fontSize: AppDimens.fontSizeSmall,
                                                     fontWeight: FontWeight.bold,
-                                                    fontFamily: 'outfit',
+                                                    fontFamily: AppFonts.outfit,
                                                   ),
                                                 ),
                                               ],
@@ -908,7 +904,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                             child: Text(
                                               "Book Now",
                                               style: TextStyle(
-                                                fontFamily: 'outfit',
+                                                fontFamily: AppFonts.outfit,
                                                 color: Colors.white,
                                               ),
                                             ),
@@ -928,8 +924,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               child: Text(
                 'Booking History',
                 style: TextStyle(
-                  fontFamily: 'outfit',
-                  fontSize: ResponsiveSize.text(18),
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeBig,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -972,7 +968,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                             SizedBox(height: 16),
                             Text(
                               "Loading property locations...",
-                              style: TextStyle(fontFamily: 'outfit'),
+                              style: TextStyle(fontFamily: AppFonts.outfit),
                             ),
                           ],
                         ),
@@ -989,7 +985,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                           children: [
                             const Text(
                               "No booking history found.",
-                              style: TextStyle(fontFamily: 'outfit'),
+                              style: TextStyle(fontFamily: AppFonts.outfit),
                             ),
                             const SizedBox(height: 10),
                             TextButton.icon(

@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mana_mana_app/screens/all_properties/view/all_properties_view.dart';
@@ -118,7 +119,7 @@ class NewFeaturesDialog extends StatelessWidget {
                       child: Text(
                         '🎉 New Features Added!',
                         style: GoogleFonts.outfit(
-                          fontSize: 24,
+                          fontSize: AppDimens.fontSizeBig,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -174,7 +175,7 @@ class NewFeaturesDialog extends StatelessWidget {
                   //     child: Text(
                   //       'Maybe Later',
                   //       style: GoogleFonts.outfit(
-                  //         fontSize: 14,
+                  //         fontSize: AppDimens.fontSizeBig,
                   //         fontWeight: FontWeight.w600,
                   //         color: const Color(0xFF3E51FF),
                   //       ),
@@ -202,7 +203,7 @@ class NewFeaturesDialog extends StatelessWidget {
                       child: Text(
                         'Explore Now',
                         style: GoogleFonts.outfit(
-                          fontSize: 14,
+                          fontSize: AppDimens.fontSizeBig,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -259,7 +260,7 @@ class NewFeaturesDialog extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              fontSize: 16,
+              fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF2C2C2C),
             ),
@@ -269,7 +270,7 @@ class NewFeaturesDialog extends StatelessWidget {
             description,
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              fontSize: 13,
+              fontSize: AppDimens.fontSizeSmall,
               fontWeight: FontWeight.w400,
               color: const Color(0xFF666666),
               height: 1.4,

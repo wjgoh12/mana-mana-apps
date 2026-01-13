@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
@@ -79,7 +80,7 @@ class newsletterStack extends StatelessWidget {
                             child: Column(children: [
                               Text(DateTime.now().day.toString(),
                                   style: TextStyle(
-                                      color: Colors.white, fontSize: 20.fSize)),
+                                      color: Colors.white, fontSize: AppDimens.fontSizeBig,
                               Text(
                                 [
                                   'Jan',
@@ -97,7 +98,7 @@ class newsletterStack extends StatelessWidget {
                                 ][DateTime.now().month - 1],
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 11.fSize,
+                                  fontSize: AppDimens.fontSizeSmall,
                                 ),
                               )
                             ]),
@@ -119,7 +120,7 @@ class newsletterStack extends StatelessWidget {
                             ),
                             SizedBox(width: 2.fSize),
                             Text('Anis Shazwani',
-                                style: TextStyle(fontSize: 14.fSize))
+                                style: TextStyle(fontSize: AppDimens.fontSizeBig
                           ]),
                         ),
                         const SizedBox(height: 2),
@@ -131,7 +132,7 @@ class newsletterStack extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: AppDimens.fontSizeSmall,
                             ),
                           ),
                         ),
@@ -152,7 +153,7 @@ class newsletterStack extends StatelessWidget {
                                     Text(
                                       'Read More',
                                       style: TextStyle(
-                                        fontSize: 11.fSize,
+                                        fontSize: AppDimens.fontSizeSmall,
                                         color: Colors.black,
                                       ),
                                     ),
@@ -168,7 +169,7 @@ class newsletterStack extends StatelessWidget {
                                         Text(
                                           'Jom',
                                           style: TextStyle(
-                                            fontSize: 9.fSize,
+                                            fontSize: AppDimens.fontSizeSmall,
                                             color: Colors.black,
                                           ),
                                         ),
@@ -190,13 +191,13 @@ class newsletterStack extends StatelessWidget {
                             children: [
                               const Text('60 Views',
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: AppDimens.fontSizeSmall,
                                   )),
                               SizedBox(width: 2.fSize),
                               const Text(
                                 '10 Comments',
                                 style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: AppDimens.fontSizeSmall,
                                 ),
                               ),
                               SizedBox(width: 2.fSize),

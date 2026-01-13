@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
@@ -73,8 +75,8 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
         Text(
           'Unit:',
           style: TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: ResponsiveSize.text(18),
+            fontFamily: AppFonts.outfit,
+            fontSize: AppDimens.fontSizeBig,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -85,8 +87,8 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
           child: DropdownButton2<String>(
             value: selectedProperty,
             style: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: ResponsiveSize.text(18),
+              fontFamily: AppFonts.outfit,
+              fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.w500,
               color: Colors.black,
             ),
@@ -97,7 +99,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                 child: Text(
                   property ?? '',
                   style: TextStyle(
-                      fontFamily: 'Outfit', fontSize: ResponsiveSize.text(14)),
+                      fontFamily: AppFonts.outfit, fontSize: AppDimens.fontSizeBig,
                 ),
               );
             }).toList(),
@@ -133,8 +135,8 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
         // Text(
         //   ' > ',
         //   style: TextStyle(
-        //     fontFamily: 'Outfit',
-        //     fontSize: ResponsiveSize.text(18),
+        //     fontFamily: AppFonts.outfit,
+        //     fontSize: AppDimens.fontSizeBig,
         //     fontWeight: FontWeight.w500,
         //   ),
         // ),
@@ -143,8 +145,8 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
           child: DropdownButton2<String>(
             value: selectedUnit,
             style: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: ResponsiveSize.text(14),
+              fontFamily: AppFonts.outfit,
+              fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.w500,
               color: Colors.black,
             ),
@@ -155,7 +157,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                 child: Text(
                   unit ?? '',
                   style: TextStyle(
-                      fontFamily: 'Outfit', fontSize: ResponsiveSize.text(14)),
+                      fontFamily: AppFonts.outfit, fontSize: AppDimens.fontSizeBig,
                 ),
               );
             }).toList(),
@@ -195,8 +197,8 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
         //           child: Text(
         //             unit ?? '',
         //             style: TextStyle(
-        //               fontFamily: 'Outfit',
-        //               fontSize: ResponsiveSize.text(16),
+        //               fontFamily: AppFonts.outfit,
+        //               fontSize: AppDimens.fontSizeBig,
         //             ),
         //           ),
         //         );

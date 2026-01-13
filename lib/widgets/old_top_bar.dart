@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 
@@ -21,7 +22,7 @@ class TopBar extends StatelessWidget {
         Text(
           'Main Dashboard',
           style: TextStyle(
-            fontSize: 20.fSize,
+            fontSize: AppDimens.fontSizeBig,
             color: const Color(0xFFC3B9FF),
             fontFamily: 'Open Sans',
             fontWeight: FontWeight.w800,

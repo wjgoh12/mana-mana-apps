@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:intl/intl.dart';
 // import 'package:mana_mana_app/screens/legacy/Dashboard_old/ViewModel/dashboardVM.dart';
@@ -107,8 +108,8 @@
 //           style: TextStyle(
 //             fontFamily: 'Open Sans',
 //             fontWeight: FontWeight.w700,
-//             // fontSize: 12.fSize,
-//             fontSize: 16.fSize,
+//             // fontSize: AppDimens.fontSizeSmall,
+//             fontSize: AppDimens.fontSizeBig,
 //             color: const Color(0xFF4313E9),
 //           ),
 //         ),
@@ -170,7 +171,7 @@
 //               style: TextStyle(
 //                 fontFamily: 'Open Sans',
 //                 fontWeight: FontWeight.w700,
-//                 fontSize: 15.fSize,
+//                 fontSize: AppDimens.fontSizeBig,
 //                 color: const Color(0XFF2900B7),
 //               ),
 //             ),
@@ -199,7 +200,7 @@
 //                     style: TextStyle(
 //                       fontFamily: 'Open Sans',
 //                       fontWeight: FontWeight.w700,
-//                       fontSize: 20.fSize,
+//                       fontSize: AppDimens.fontSizeBig,
 //                       color: const Color(0XFF2900B7),
 //                     ),
 //                   );
@@ -219,7 +220,7 @@
 //         style: TextStyle(
 //           fontFamily: 'Open Sans',
 //           fontWeight: FontWeight.w400,
-//           fontSize: 10.fSize,
+//           fontSize: AppDimens.fontSizeSmall,
 //           color: const Color(0XFF2900B7),
 //         ),
 //         children: <InlineSpan>[

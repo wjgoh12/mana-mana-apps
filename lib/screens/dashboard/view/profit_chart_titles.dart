@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class LineTitles {
               final style = const TextStyle(
                 color: Color(0xff68737d),
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: AppDimens.fontSizeBig,
               );
               String text;
               switch (value.toInt()) {
@@ -42,7 +43,7 @@ class LineTitles {
               final style = const TextStyle(
                 color: Color(0xff67727d),
                 fontWeight: FontWeight.bold,
-                fontSize: 15,
+                fontSize: AppDimens.fontSizeBig,
               );
               String text;
               switch (value.toInt()) {

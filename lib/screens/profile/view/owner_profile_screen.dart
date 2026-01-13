@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:mana_mana_app/model/owner_property_list.dart';
 // import 'package:mana_mana_app/model/user_model.dart';
@@ -62,7 +63,7 @@
 //                           child: Text(
 //                             'My Info',
 //                             style: TextStyle(
-//                               fontSize: 20,
+//                               fontSize: AppDimens.fontSizeBig,
 //                               fontWeight: FontWeight.w400,
 //                               color: _showMyInfo
 //                                   ? const Color(0XFF4313E9)
@@ -83,7 +84,7 @@
 //                           child: Text(
 //                             'Banking Info',
 //                             style: TextStyle(
-//                               fontSize: 20,
+//                               fontSize: AppDimens.fontSizeBig,
 //                               fontWeight: FontWeight.w400,
 //                               color: _showMyInfo
 //                                   ? const Color(0xFFBBBCBE)
@@ -157,7 +158,7 @@
 //                                     '',
 //                                     // users.first.ownerFullName ?? '',
 //                                     style: TextStyle(
-//                                         fontSize: 10,
+//                                         fontSize: AppDimens.fontSizeSmall,
 //                                         fontWeight: FontWeight.bold),
 //                                   ),
 //                                 ],
@@ -229,7 +230,7 @@
 //                                     '',
 //                                     // users.first.ownerFullName ?? '',
 //                                     style: TextStyle(
-//                                         fontSize: 10,
+//                                         fontSize: AppDimens.fontSizeSmall,
 //                                         fontWeight: FontWeight.bold),
 //                                   ),
 //                                 ],
@@ -265,7 +266,7 @@
 //                 // All Agreements
 //                 // Text(
 //                 //   'All Agreement(s)',
-//                 //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//                 //   style: TextStyle(fontSize: AppDimens.fontSizeBig, fontWeight: FontWeight.bold),
 //                 // ),
 //                 // SizedBox(height: 8),
 //                 // Card(
@@ -274,10 +275,10 @@
 //                 //   ),
 //                 //   elevation: 2,
 //                 //   child: ListTile(
-//                 //     title: Text('SAMPLE - SCARLETZ -Type_A-11-03 Agreement',style: TextStyle(color: Color(0xFF0044CC),fontSize: 15,fontWeight: FontWeight.w600)),
+//                 //     title: Text('SAMPLE - SCARLETZ -Type_A-11-03 Agreement',style: TextStyle(color: Color(0xFF0044CC),fontSize: AppDimens.fontSizeBig,fontWeight: FontWeight.w600)),
 //                 //     trailing: Text(
 //                 //       'PDF',
-//                 //       style: TextStyle(color: Color(0xFF0044CC),fontSize: 15,fontWeight: FontWeight.w600),
+//                 //       style: TextStyle(color: Color(0xFF0044CC),fontSize: AppDimens.fontSizeBig,fontWeight: FontWeight.w600),
 //                 //     ),
 //                 //     onTap: () {
 //                 //       // Handle PDF tap
@@ -289,7 +290,7 @@
 //                 // Payout Overtime
 //                 // Text(
 //                 //   'Payout Overtime',
-//                 //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//                 //   style: TextStyle(fontSize: AppDimens.fontSizeBig, fontWeight: FontWeight.bold),
 //                 // ),
 //               ],
 //             ),
@@ -308,7 +309,7 @@
 //           Expanded(
 //             child: Text(
 //               info,
-//               style: const TextStyle(fontSize: 12, color: Color(0XFF555555)),
+//               style: const TextStyle(fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
 //             ),
 //           ),
 //         ],
@@ -325,7 +326,7 @@
 //             child: Text(
 //               info,
 //               style: const TextStyle(
-//                   fontSize: 15,
+//                   fontSize: AppDimens.fontSizeBig,
 //                   color: Color(0XFF4313E9),
 //                   fontWeight: FontWeight.w600),
 //             ),

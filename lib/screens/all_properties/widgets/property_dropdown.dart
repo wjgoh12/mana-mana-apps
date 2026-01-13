@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:dropdown_button2/dropdown_button2.dart';
 // import 'package:flutter/material.dart';
 // import 'package:mana_mana_app/screens/all_properties/view/old/all_property.dart';
@@ -97,7 +98,7 @@
 //             value: item,
 //             child: Text(item,
 //                 style: TextStyle(
-//                   fontSize: ResponsiveSize.text(14),
+//                   fontSize: AppDimens.fontSizeBig,
 //                   color: Colors.black,
 //                 )),
 //           );
@@ -111,7 +112,7 @@
 //           getDisplayText(),
 //           style: const TextStyle(
 //             color: Colors.black,
-//             fontSize: 18,
+//             fontSize: AppDimens.fontSizeBig,
 //           ),
 //         ),
 //       ),

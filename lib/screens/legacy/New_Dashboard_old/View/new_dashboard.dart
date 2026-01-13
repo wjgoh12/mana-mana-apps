@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/View/property_list.dart';
 // import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/View/revenue_dashboard.dart';
@@ -118,7 +119,7 @@
 //       title,
 //       style: TextStyle(
 //         fontFamily: 'Open Sans',
-//         fontSize: 20.fSize,
+//         fontSize: AppDimens.fontSizeBig,
 //         fontWeight: FontWeight.w800,
 //         color: const Color(0XFF4313E9),
 //       ),

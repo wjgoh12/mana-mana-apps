@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -450,8 +452,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 'Select Date and Room',
                 style: TextStyle(
                   color: const Color(0xFF606060),
-                  fontFamily: 'outfit',
-                  fontSize: ResponsiveSize.text(18),
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeBig,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -487,8 +489,8 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               'Select Date and Room',
               style: TextStyle(
                 color: const Color(0xFF606060),
-                fontFamily: 'outfit',
-                fontSize: ResponsiveSize.text(18),
+                fontFamily: AppFonts.outfit,
+                fontSize: AppDimens.fontSizeBig,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -517,7 +519,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                           child: Text(
                             '* The yellow icon indicates the peak dates',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: AppDimens.fontSizeBig,
                               color: Color(0xFFFFCF00),
                             ),
                           ),
@@ -586,7 +588,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                               'Room prices are updating...',
                               style: TextStyle(
                                 color: Colors.orange.shade900,
-                                fontSize: 13,
+                                fontSize: AppDimens.fontSizeSmall,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -618,7 +620,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                           : Text(
                               'No rooms available',
                               style: TextStyle(
-                                fontSize: ResponsiveSize.text(14),
+                                fontSize: AppDimens.fontSizeBig,
                                 color: Colors.grey[700],
                                 fontWeight: FontWeight.w500,
                               ),
@@ -760,7 +762,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     ? DateFormat('EEE, MMM d, yyyy').format(date)
                     : '-',
                 style: const TextStyle(
-                  fontSize: 13,
+                  fontSize: AppDimens.fontSizeSmall,
                   color: Color(0xFF606060),
                   fontWeight: FontWeight.bold,
                 ),
@@ -790,7 +792,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
           Text(
             'Available Point Balance:  ',
             style: TextStyle(
-              fontSize: ResponsiveSize.text(13),
+              fontSize: AppDimens.fontSizeSmall,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -798,7 +800,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             formattedPoints,
             style: TextStyle(
               color: const Color(0xFF606060),
-              fontSize: ResponsiveSize.text(15),
+              fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.bold,
             ),
           ),

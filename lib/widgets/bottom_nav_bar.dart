@@ -1,3 +1,5 @@
+import 'package:mana_mana_app/core/constants/app_fonts.dart';
+import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/all_properties/view/all_properties_view.dart';
 import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
@@ -233,7 +235,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 style: TextStyle(
                   color:
                       isSelected ? const Color(0xFFFFCF00) : Colors.transparent,
-                  fontSize: 10.fSize,
+                  fontSize: AppDimens.fontSizeSmall,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
                 child: isSelected
@@ -250,9 +252,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         child: Text(
                           label,
                           style: TextStyle(
-                            fontFamily: 'outfit',
+                            fontFamily: AppFonts.outfit,
                             color: Colors.white,
-                            fontSize: 10.fSize,
+                            fontSize: AppDimens.fontSizeSmall,
                             fontWeight: FontWeight.normal,
                           ),
                           textAlign: TextAlign.center,
