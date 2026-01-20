@@ -97,10 +97,8 @@ class _FinancialDetailsState extends State<FinancialDetails> {
     required String label,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     double responsiveWidth(double value) => (value / 375.0) * screenWidth;
-    double responsiveFont(double value) => (value / 812.0) * screenHeight;
 
     return SizedBox(
       width: responsiveWidth(160),

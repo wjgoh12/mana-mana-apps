@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
@@ -274,7 +275,7 @@ class LoginPageState extends State<LoginPage> {
                                   const Text(
                                     "Owner's Portal",
                                     style: TextStyle(
-                                      fontSize: AppDimens.fontSizeBig,
+                                      fontSize: AppDimens.fontSizeLarge,
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFF606060),
                                       fontFamily: AppFonts.outfit,
@@ -424,8 +425,7 @@ class LoginPageState extends State<LoginPage> {
                                     height: 50,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFF606060),
+                                        backgroundColor: AppColors.primaryGrey,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(8),

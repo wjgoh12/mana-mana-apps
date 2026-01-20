@@ -1,5 +1,3 @@
-import 'package:mana_mana_app/core/constants/app_fonts.dart';
-import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:intl/intl.dart';
 // import 'package:dropdown_button2/dropdown_button2.dart';

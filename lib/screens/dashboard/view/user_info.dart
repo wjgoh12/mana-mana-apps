@@ -1,7 +1,6 @@
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/screens/settings/view/setting_page.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 
 class UserInfo extends StatelessWidget {
@@ -49,21 +48,21 @@ class UserInfo extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SettingPage()));
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(top: 2.height, right: 2.width),
-                  child: Image.asset(
-                    'assets/images/arrow_button.png',
-                    width: 7.width,
-                    height: 5.height,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.of(context).push(
+              //         MaterialPageRoute(builder: (_) => const SettingPage()));
+              //   },
+              //   child: Padding(
+              //     padding: EdgeInsets.only(top: 2.height, right: 2.width),
+              //     child: Image.asset(
+              //       'assets/images/arrow_button.png',
+              //       width: 7.width,
+              //       height: 5.height,
+              //       fit: BoxFit.cover,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           SizedBox(height: 2.height),

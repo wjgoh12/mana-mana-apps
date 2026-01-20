@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
+import 'package:mana_mana_app/model/popout_notification.dart';
 
 class UserRepository {
   final ApiService _apiService = ApiService();
@@ -352,6 +353,23 @@ class UserRepository {
     } catch (e) {
       print("❌ Error parsing user data: $e");
       print("❌ Raw response that failed to parse: $res");
+      return [];
+    }
+  }
+
+  Future<List<PopoutNotification>> getPopoutNotifications() async {
+    try {
+      final response = await _apiService.get(ApiEndpoint.getPopout);
+      debugPrint("getPopoutNotifications response: $response");
+
+      if (response != null && response is List) {
+        return response
+            .map((e) => PopoutNotification.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      debugPrint("Error fetching popouts: $e");
       return [];
     }
   }

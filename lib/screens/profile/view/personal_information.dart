@@ -18,26 +18,19 @@ class _PersonalInformationState extends State<PersonalInformation> {
   @override
   void initState() {
     super.initState();
-    // Initialize data once - it will use cached data if already loaded
+
     model.fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-// base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
 
     return MultiProvider(
       providers: [
-        // Provide the global data manager
         ChangeNotifierProvider.value(value: GlobalDataManager()),
-        // Provide the profile view model
         ChangeNotifierProvider.value(value: model),
       ],
       child: Consumer<OwnerProfileVM>(
@@ -116,13 +109,10 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
   Widget _buildRow({required String icon, required String label}) {
     final screenWidth = MediaQuery.of(context).size.width;
+    // ignore: unused_local_variable
     final screenHeight = MediaQuery.of(context).size.height;
 
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-// base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
 
     return SizedBox(
       width: responsiveWidth(140),
@@ -136,8 +126,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
             SizedBox(width: responsiveWidth(10)),
             Text(
               label,
-              style:
-                  TextStyle(fontFamily: AppFonts.outfit, fontSize: AppDimens.fontSizeSmall),
+              style: TextStyle(
+                  fontFamily: AppFonts.outfit,
+                  fontSize: AppDimens.fontSizeSmall),
             ),
           ],
         ),
@@ -147,14 +138,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
   Widget _buildData({required String data}) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-
-// base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
 
     return SizedBox(
       width: responsiveWidth(190),

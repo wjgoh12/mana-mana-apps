@@ -1,5 +1,3 @@
-import 'package:mana_mana_app/core/constants/app_fonts.dart';
-import 'package:mana_mana_app/core/constants/app_dimens.dart';
 // import 'package:flutter/material.dart';
 // import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
 // import 'package:mana_mana_app/screens/property_detail/view/property_detail_v3_view.dart';

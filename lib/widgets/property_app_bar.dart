@@ -1,7 +1,6 @@
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 
 PreferredSizeWidget propertyAppBar(context, function) {
@@ -31,23 +30,10 @@ PreferredSizeWidget propertyAppBar(context, function) {
                 style: TextStyle(
                   color: const Color(0xFF000241),
                   fontFamily: AppFonts.outfit,
-                  fontSize: AppDimens.fontSizeBig,
+                  fontSize: AppDimens.fontSizeTopBar,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              // GradientText1(
-              //   text: 'Property(s)',
-              //   style: TextStyle(
-              //     fontFamily: AppFonts.outfit,
-              //     fontSize: AppDimens.fontSizeBig,
-              //     fontWeight: FontWeight.w800,
-              //   ),
-              //   gradient: const LinearGradient(
-              //     begin: Alignment.centerLeft,
-              //     end: Alignment.centerRight,
-              //     colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-              //   ),
-              // ),
             ),
           ],
         ),

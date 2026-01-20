@@ -5,7 +5,6 @@ import 'package:mana_mana_app/screens/all_properties/widgets/occupancy_line_char
 import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';

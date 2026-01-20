@@ -1,34 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/model/owner_property_list.dart';
 import 'package:mana_mana_app/model/occupancy_rate.dart';
+import 'package:mana_mana_app/model/popout_notification.dart';
 import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
+import 'package:mana_mana_app/repository/user_repo.dart';
 import 'package:mana_mana_app/screens/all_properties/view/all_properties_view.dart';
 import 'package:mana_mana_app/widgets/new_features_dialog.dart';
 import 'package:mana_mana_app/widgets/notice_dialog.dart';
+import 'package:mana_mana_app/widgets/popout_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: camel_case_types
 class NewDashboardVM_v3 extends ChangeNotifier {
   static const String _hasExploredFeaturesKey = 'has_explored_new_features';
   static const String _hasSeenNoticeDialogKey = 'has_seen_notice_dialog_v1';
+  static const String _hasSeenPopoutKey = 'has_seen_popout_dialog_v1';
 
   bool contractTypeLoaded = false;
   bool occupancyRateLoaded = false;
   bool _hasShownNewFeaturesDialog = false;
   bool _hasShownNoticeDialog = false;
+  bool _hasShownPopoutDialog = false;
   bool _userHasExploredFeatures = false;
   bool _userHasSeenNotice = false;
+  bool _userHasSeenPopouts = false;
+  bool _popoutStateLoaded = false;
 
   bool isLoading = true;
   final GlobalDataManager _globalDataManager = GlobalDataManager();
   final PropertyListRepository ownerPropertyListRepository =
       PropertyListRepository();
+  final UserRepository _userRepository = UserRepository();
+
+  List<PopoutNotification> validPopouts = [];
 
   NewDashboardVM_v3() {
     _loadExploredFeaturesState();
     _loadNoticeDialogState();
+    _loadPopoutState();
   }
 
   Future<void> _loadExploredFeaturesState() async {
@@ -52,6 +63,21 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
+  Future<void> _loadPopoutState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _userHasSeenPopouts = prefs.getBool(_hasSeenPopoutKey) ?? false;
+      _popoutStateLoaded = true;
+      debugPrint(
+          '🔔 Popout: Loaded state from prefs, _userHasSeenPopouts=$_userHasSeenPopouts');
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading popout state: $e');
+      _popoutStateLoaded = true; // Still mark as loaded to avoid blocking
+      notifyListeners();
+    }
+  }
+
   Future<void> _saveExploredFeaturesState() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -70,6 +96,15 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
+  Future<void> _savePopoutState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_hasSeenPopoutKey, _userHasSeenPopouts);
+    } catch (e) {
+      print('Error saving popout state: $e');
+    }
+  }
+
   Future<void> resetNewFeaturesDialog() async {
     _userHasExploredFeatures = false;
     _hasShownNewFeaturesDialog = false;
@@ -82,6 +117,14 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     _hasShownNoticeDialog = false;
     await _saveNoticeDialogState();
     notifyListeners();
+  }
+
+  Future<void> resetPopoutDialog() async {
+    _userHasSeenPopouts = false;
+    _hasShownPopoutDialog = false;
+    await _savePopoutState();
+    notifyListeners();
+    debugPrint('🔔 Popout dialog state reset');
   }
 
   String get userNameAccount => _globalDataManager.userNameAccount;
@@ -116,8 +159,53 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
+    await resetPopoutDialog(); // Force reset to show popout again for debugging
+    debugPrint('🔔 DEBUG: Popout state has been reset for testing');
+
     try {
       await _globalDataManager.initializeData();
+
+      // Fetch Popouts
+      final allPopouts = await _userRepository.getPopoutNotifications();
+      debugPrint('🔔 Popout: Fetched ${allPopouts.length} popouts from API');
+      for (var p in allPopouts) {
+        debugPrint(
+            '🔔 Popout item: title=${p.title}, status=${p.status}, start=${p.startDate}, end=${p.endDate}');
+      }
+
+      final now = DateTime.now();
+      debugPrint('🔔 Popout: Current time is $now');
+
+      validPopouts = allPopouts.where((n) {
+        if (n.status != true) {
+          debugPrint(
+              '🔔 Popout "${n.title}" filtered out: status is not true (${n.status})');
+          return false;
+        }
+
+        if (n.startDate != null) {
+          final start = DateTime.tryParse(n.startDate!);
+          if (start != null && now.isBefore(start)) {
+            debugPrint(
+                '🔔 Popout "${n.title}" filtered out: now is before startDate ($start)');
+            return false;
+          }
+        }
+
+        if (n.endDate != null) {
+          final end = DateTime.tryParse(n.endDate!);
+          if (end != null && now.isAfter(end)) {
+            debugPrint(
+                '🔔 Popout "${n.title}" filtered out: now is after endDate ($end)');
+            return false;
+          }
+        }
+        debugPrint('🔔 Popout "${n.title}" is valid and will be shown');
+        return true;
+      }).toList();
+
+      debugPrint(
+          '🔔 Popout: ${validPopouts.length} valid popouts after filtering');
 
       contractTypeLoaded = _globalDataManager.propertyContractType.isNotEmpty;
       occupancyRateLoaded = _globalDataManager.propertyOccupancy.isNotEmpty;
@@ -174,6 +262,22 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     }
   }
 
+  void checkAndShowPopoutDialog(BuildContext context) {
+    debugPrint(
+        '🔔 checkAndShowPopoutDialog called: isLoading=$isLoading, _popoutStateLoaded=$_popoutStateLoaded, _hasShownPopoutDialog=$_hasShownPopoutDialog, _userHasSeenPopouts=$_userHasSeenPopouts, validPopouts.length=${validPopouts.length}');
+    if (!isLoading &&
+        _popoutStateLoaded &&
+        !_hasShownPopoutDialog &&
+        !_userHasSeenPopouts &&
+        validPopouts.isNotEmpty) {
+      debugPrint('🔔 Showing popout dialog!');
+      _showPopoutDialog(context);
+      _hasShownPopoutDialog = true;
+    } else {
+      debugPrint('🔔 NOT showing popout dialog - conditions not met');
+    }
+  }
+
   void _showNewFeaturesDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -205,6 +309,43 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       await _saveNoticeDialogState();
       notifyListeners();
     });
+  }
+
+  void _showPopoutDialog(BuildContext context) {
+    _showPopoutAtIndex(context, 0);
+  }
+
+  void _showPopoutAtIndex(BuildContext context, int index) {
+    if (index >= validPopouts.length) {
+      // All popouts shown, mark as seen
+      _userHasSeenPopouts = true;
+      _savePopoutState();
+      notifyListeners();
+      debugPrint('🔔 All ${validPopouts.length} popouts have been shown');
+      return;
+    }
+
+    final notification = validPopouts[index];
+    debugPrint(
+        '🔔 Showing popout ${index + 1} of ${validPopouts.length}: "${notification.title}"');
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Force user to click OK
+      builder: (BuildContext dialogContext) {
+        return PopoutDialog(
+          notification: notification,
+          onDismiss: () {
+            // Show the next notification after a short delay
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (context.mounted) {
+                _showPopoutAtIndex(context, index + 1);
+              }
+            });
+          },
+        );
+      },
+    );
   }
 
   Future<void> refreshData() async {

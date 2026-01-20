@@ -8,11 +8,10 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final isSmallScreen = screenSize.width < 600;
 
     return Scaffold(
       body: Container(
-        color: const Color(0xFF2900B7),        
+        color: const Color(0xFF2900B7),
         child: SafeArea(
           child: Padding(
             padding: EdgeInsets.all(screenSize.width * 0.04),
@@ -49,11 +48,10 @@ class OnboardingScreen extends StatelessWidget {
                         'Welcome Back!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: const Color(0xFFC3B9FF),                  
-                          fontSize: AppDimens.fontSizeBig,
-                          fontWeight: FontWeight.w700,
-                          fontFamily: 'Open Sans'
-                        ),
+                            color: const Color(0xFFC3B9FF),
+                            fontSize: AppDimens.fontSizeBig,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'Open Sans'),
                       ),
                       SizedBox(height: screenSize.height * 0.02),
                       Text(
@@ -74,7 +72,8 @@ class OnboardingScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.02),
+                      padding: EdgeInsets.symmetric(
+                          vertical: screenSize.height * 0.02),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: const BorderSide(color: Colors.white),
@@ -83,19 +82,16 @@ class OnboardingScreen extends StatelessWidget {
                     ),
                     onPressed: () {
                       loginAuthenticate(
-                          context,
-                        );
-                      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=> LoginPage()));
+                        context,
+                      );
                     },
-                    child: Text(
-                      'Login >>>',
-                      style: TextStyle(
-                        fontSize: AppDimens.fontSizeBig,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFFC3B9FF))
-                      ),
-                    ),
+                    child: Text('Login >>>',
+                        style: TextStyle(
+                            fontSize: AppDimens.fontSizeBig,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFFC3B9FF))),
                   ),
+                ),
                 SizedBox(height: screenSize.height * 0.03),
               ],
             ),

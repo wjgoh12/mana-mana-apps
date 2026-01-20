@@ -2,7 +2,6 @@ import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 
 class ProfitDropdown extends StatefulWidget {
@@ -43,7 +42,6 @@ class _ProfitDropdownState extends State<ProfitDropdown> {
       child: Padding(
         padding: EdgeInsets.only(right: 10.fSize, top: 10.fSize),
         child: Container(
-          // width: 130.fSize,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.fSize),
             color: const Color(0xFFF0F2FD),

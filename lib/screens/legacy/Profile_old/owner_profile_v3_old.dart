@@ -1,13 +1,12 @@
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/screens/profile/view/old/financial_details.dart';
+import 'package:mana_mana_app/screens/legacy/Profile_old/financial_details.dart';
 import 'package:mana_mana_app/screens/profile/view/personal_information.dart';
 import 'package:mana_mana_app/screens/book_freestay/view/property_redemption.dart';
 import 'package:mana_mana_app/screens/profile/view_model/owner_profile_view_model.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/gradient_text.dart';
-import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 // ignore: depend_on_referenced_packages
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
@@ -24,12 +23,8 @@ class OwnerProfile_v3 extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    double responsiveWidth(double value) =>
-        (value / 375.0) * screenWidth; // base width
-    double responsiveHeight(double value) =>
-        (value / 812.0) * screenHeight; // base height
-    double responsiveFont(double value) =>
-        (value / 812.0) * screenHeight; // font scaling
+    double responsiveWidth(double value) => (value / 375.0) * screenWidth;
+    double responsiveHeight(double value) => (value / 812.0) * screenHeight;
 
     return ListenableBuilder(
         listenable: model,
@@ -46,7 +41,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
-                      radius: 20.fSize, // or tweak size as needed
+                      radius: 20.fSize,
                       backgroundImage: const AssetImage(
                         'assets/images/mana2logo1.png',
                       ),
@@ -133,77 +128,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20.fSize),
-                      // Padding(
-                      //   padding: EdgeInsets.only(left: 42.fSize),
-                      //   child: Container(
-                      //     alignment: Alignment.centerLeft,
-                      //     width: responsiveWidth(300),
-                      //     height: responsiveHeight(60),
-                      //     decoration: BoxDecoration(
-                      //       color: const Color(0xFFD5D5FF),
-                      //       borderRadius: const BorderRadius.all(
-                      //         Radius.circular(10),
-                      //       ),
-                      //       border: Border.all(
-                      //         color: const Color(0xFFB6B6FF),
-                      //         width: 2,
-                      //       ),
-                      //     ),
-                      //     child: Row(
-                      //       children: [
-                      //         Padding(
-                      //           padding: const EdgeInsets.symmetric(
-                      //               vertical: 8.0, horizontal: 8.0),
-                      //           child: CircleAvatar(
-                      //             radius: 20,
-                      //             backgroundColor: const Color(0xFFF9F8FF),
-                      //             child: Image.asset(
-                      //               'assets/images/property_wallet.png',
-                      //               width: 42.fSize,
-                      //               height: 42.fSize,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //         SizedBox(width: 15.fSize),
-                      //         Column(
-                      //           crossAxisAlignment: CrossAxisAlignment.start,
-                      //           mainAxisAlignment: MainAxisAlignment.start,
-                      //           children: [
-                      //             Padding(
-                      //               padding: const EdgeInsets.only(top: 8.0),
-                      //               child: Row(
-                      //                 mainAxisAlignment:
-                      //                     MainAxisAlignment.start,
-                      //                 children: [
-                      //                   Text(
-                      //                     '12,500',
-                      //                     style: TextStyle(
-                      //                         fontFamily: AppFonts.outfit,
-                      //                         fontWeight: FontWeight.bold,
-                      //                         fontSize: AppDimens.fontSizeSmall,
-                      //                   ),
-                      //                   Text(
-                      //                     ' Point',
-                      //                     style: TextStyle(
-                      //                         fontFamily: AppFonts.outfit,
-                      //                         fontSize: AppDimens.fontSizeSmall,
-                      //                   )
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //             Text(
-                      //               'Expired on 31/12/2023',
-                      //               style: TextStyle(
-                      //                 fontFamily: AppFonts.outfit,
-                      //                 fontSize: AppDimens.fontSizeSmall,
-                      //               ),
-                      //             ),
-                      //           ],
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
+
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -223,7 +148,6 @@ class OwnerProfile_v3 extends StatelessWidget {
 
                       InkWell(
                         highlightColor: Colors.transparent,
-                        //this widget responds to touch actions
                         onTap: () {
                           Navigator.of(context).push(
                             PageRouteBuilder(
@@ -284,7 +208,6 @@ class OwnerProfile_v3 extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       InkWell(
-                        //this widget responds to touch actions
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -340,7 +263,6 @@ class OwnerProfile_v3 extends StatelessWidget {
                       InkWell(
                         focusColor: Colors.transparent,
                         highlightColor: Colors.transparent,
-                        //this widget responds to touch actions
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -398,11 +320,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                       InkWell(
                         focusColor: Colors.transparent,
                         highlightColor: Colors.transparent,
-                        //this widget responds to touch actions
                         onTap: () {
-                          //   Navigator.of(context).push(
-                          //     MaterialPageRoute(builder: (_) => OwnerProfile_v3()),
-                          //   );
                           final Uri emailLaunchUri = Uri(
                             scheme: 'mailto',
                             path: 'admin@manamanasuites.com',
@@ -620,7 +538,8 @@ Widget buildInfoRow(IconData icon, String info) {
         Expanded(
           child: Text(
             info,
-            style: const TextStyle(fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
+            style: const TextStyle(
+                fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
           ),
         ),
       ],

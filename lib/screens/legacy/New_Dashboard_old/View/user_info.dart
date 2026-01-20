@@ -49,21 +49,21 @@ class UserInfo extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SettingPage()));
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(top: 2.height, right: 2.width),
-                  child: Image.asset(
-                    'assets/images/arrow_button.png',
-                    width: 7.width,
-                    height: 5.height,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.of(context).push(
+              //         MaterialPageRoute(builder: (_) => const SettingPage()));
+              //   },
+              //   child: Padding(
+              //     padding: EdgeInsets.only(top: 2.height, right: 2.width),
+              //     child: Image.asset(
+              //       'assets/images/arrow_button.png',
+              //       width: 7.width,
+              //       height: 5.height,
+              //       fit: BoxFit.cover,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           SizedBox(height: 2.height),

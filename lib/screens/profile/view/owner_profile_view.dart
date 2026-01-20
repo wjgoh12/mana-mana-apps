@@ -236,7 +236,8 @@ Widget buildInfoRow(IconData icon, String info) {
         Expanded(
           child: Text(
             info,
-            style: const TextStyle(fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
+            style: const TextStyle(
+                fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
           ),
         ),
       ],

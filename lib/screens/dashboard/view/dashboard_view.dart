@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,7 @@ class NewDashboardV3 extends StatelessWidget {
         builder: (context, model, child) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             model.checkAndShowNewFeaturesDialog(context);
+            model.checkAndShowPopoutDialog(context);
           });
 
           final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
@@ -42,10 +44,6 @@ class NewDashboardV3 extends StatelessWidget {
           final screenWidth = MediaQuery.of(context).size.width;
 
           final horizontalPadding = screenWidth * 0.05;
-
-          final screenHeight = MediaQuery.of(context).size.height;
-
-          double responsiveFont(double value) => (value / 812.0) * screenHeight;
 
           ResponsiveSize.init(context);
 
@@ -130,9 +128,9 @@ class NewDashboardV3 extends StatelessWidget {
                                       Text(
                                         'Simple, Timeless \nAssets Management',
                                         style: GoogleFonts.outfit(
-                                          fontSize: AppDimens.fontSizeBig,
+                                          fontSize: AppDimens.fontSizeLarge,
                                           fontWeight: FontWeight.w700,
-                                          color: const Color(0xFF606060),
+                                          color: AppColors.primaryGrey,
                                         ),
                                       ).animate(
                                         onPlay: (controller) {
@@ -179,6 +177,7 @@ class NewDashboardV3 extends StatelessWidget {
                         duration: const Duration(milliseconds: 200),
                         opacity: model.isLoading ? 1.0 : 0.0,
                         child: Container(
+                          // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.5),
                           child: const Center(
                             child: RepaintBoundary(

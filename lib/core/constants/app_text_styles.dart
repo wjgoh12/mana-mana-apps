@@ -1,8 +1,6 @@
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
-import 'app_fonts.dart';
-import 'app_dimens.dart';
 
 class AppTextStyles {
   static const TextStyle small = TextStyle(

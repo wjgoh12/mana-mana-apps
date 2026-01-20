@@ -1,7 +1,7 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
-import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 
 Widget topBar(context, function) {
@@ -17,7 +17,7 @@ Widget topBar(context, function) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const CircleAvatar(
-              radius: 25, // or tweak size as needed
+              radius: 25,
               backgroundImage: AssetImage(
                 'assets/images/mana2logo1.png',
               ),
@@ -28,40 +28,15 @@ Widget topBar(context, function) {
               child: Text(
                 'Owner\'s Portal',
                 style: TextStyle(
-                  color: const Color(0xFF606060),
+                  color: AppColors.primaryGrey,
                   fontFamily: AppFonts.outfit,
-                  fontSize: AppDimens.fontSizeBig,
+                  fontSize: AppDimens.fontSizeTopBar,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              // GradientText1(
-              //   text: 'Owner\'s Portal',
-              //   style: TextStyle(
-              //     fontFamily: AppFonts.outfit,
-              //     fontSize: AppDimens.fontSizeBig,
-              //     fontWeight: FontWeight.w700,
-              //   ),
-              //   gradient: const LinearGradient(
-              //     begin: Alignment.centerLeft,
-              //     end: Alignment.centerRight,
-              //     colors: [Color(0xFFB82B7D), Color(0xFF3E51FF)],
-              //   ),
-              // ),
             ),
           ],
         ),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () => print('Notification button pressed'),
-        //     icon: Image.asset(
-        //       'assets/images/Notification.png',
-        //       width: 50,
-        //       //opacity: const AlwaysStoppedAnimation(0),
-        //       height: 50,
-        //       fit: BoxFit.contain,
-        //     ),
-        //   ),
-        // ],
       ),
     ),
   );

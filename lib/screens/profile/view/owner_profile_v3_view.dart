@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
@@ -236,7 +237,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   return AlertDialog(
                                     backgroundColor: Colors.white,
                                     title: const Text('Confirm Switch',
-                                        style: TextStyle(fontFamily: AppFonts.outfit)),
+                                        style: TextStyle(
+                                            fontFamily: AppFonts.outfit)),
                                     content: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -353,7 +355,6 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
 
     double responsiveWidth(double value) => (value / 375.0) * screenWidth;
     double responsiveHeight(double value) => (value / 812.0) * screenHeight;
-    double responsiveFont(double value) => (value / 812.0) * screenHeight;
 
     return ListenableBuilder(
         listenable: model,
@@ -501,7 +502,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                     '',
                                                 style: TextStyle(
                                                     fontFamily: AppFonts.outfit,
-                                                    fontSize: AppDimens.fontSizeBig,
+                                                    fontSize:
+                                                        AppDimens.fontSizeBig,
                                                     fontWeight: FontWeight.bold,
                                                     color: const Color(
                                                         0xFF606060)),
@@ -542,7 +544,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             softWrap: true,
                                             style: TextStyle(
                                                 fontFamily: AppFonts.outfit,
-                                                fontSize: AppDimens.fontSizeSmall,
+                                                fontSize:
+                                                    AppDimens.fontSizeSmall,
                                                 fontWeight: FontWeight.w400),
                                           )
                                         : Text(
@@ -552,7 +555,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             softWrap: true,
                                             style: TextStyle(
                                                 fontFamily: AppFonts.outfit,
-                                                fontSize: AppDimens.fontSizeSmall,
+                                                fontSize:
+                                                    AppDimens.fontSizeSmall,
                                                 fontWeight: FontWeight.w400),
                                           ),
                                   ],
@@ -583,7 +587,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                               'Email',
                                               style: TextStyle(
                                                 fontFamily: AppFonts.outfit,
-                                                fontSize: AppDimens.fontSizeSmall,
+                                                fontSize:
+                                                    AppDimens.fontSizeSmall,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -601,7 +606,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                         TextOverflow.visible,
                                                     softWrap: true,
                                                     style: TextStyle(
-                                                        fontFamily: AppFonts.outfit,
+                                                        fontFamily:
+                                                            AppFonts.outfit,
                                                         fontSize:
                                                             ResponsiveSize.text(
                                                                 12),
@@ -634,7 +640,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                                   'Contact No.',
                                                   style: TextStyle(
                                                     fontFamily: AppFonts.outfit,
-                                                    fontSize: AppDimens.fontSizeSmall,
+                                                    fontSize:
+                                                        AppDimens.fontSizeSmall,
                                                     fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
@@ -702,7 +709,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                               softWrap: true,
                                               style: TextStyle(
                                                   fontFamily: AppFonts.outfit,
-                                                  fontSize: AppDimens.fontSizeSmall,
+                                                  fontSize:
+                                                      AppDimens.fontSizeSmall,
                                                   fontWeight: FontWeight.w400),
                                             )
                                           : const Text('Loading...'),
@@ -849,7 +857,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
-                            width: ResponsiveSize.scaleWidth(130),
+                            width: ResponsiveSize.scaleWidth(140),
                             height: ResponsiveSize.scaleHeight(35),
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
@@ -954,7 +962,8 @@ Widget buildInfoRow(IconData icon, String info) {
         Expanded(
           child: Text(
             info,
-            style: const TextStyle(fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
+            style: const TextStyle(
+                fontSize: AppDimens.fontSizeSmall, color: Color(0XFF555555)),
           ),
         ),
       ],
@@ -1057,7 +1066,7 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                           SizedBox(width: ResponsiveSize.scaleWidth(9)),
                           CircleAvatar(
                             radius: ResponsiveSize.scaleWidth(20),
-                            backgroundColor: const Color(0xFF606060),
+                            backgroundColor: AppColors.primaryGrey,
                             child: Image.asset('assets/images/profile_card.png',
                                 color: const Color(0xFFFFCF00)),
                           ),
@@ -1092,7 +1101,7 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                           SizedBox(width: ResponsiveSize.scaleWidth(10)),
                           CircleAvatar(
                             radius: ResponsiveSize.scaleWidth(20),
-                            backgroundColor: const Color(0xFF606060),
+                            backgroundColor: AppColors.primaryGrey,
                             child: Image.asset(
                               'assets/images/profile_card.png',
                               color: const Color(0xFFFFCF00),
