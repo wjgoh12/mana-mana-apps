@@ -473,9 +473,11 @@ class _RoomDetailsState extends State<RoomDetails> {
                                               const Text(
                                                 'Request Received!',
                                                 style: TextStyle(
-                                                    fontSize: AppDimens.fontSizeBig,
+                                                    fontSize:
+                                                        AppDimens.fontSizeBig,
                                                     fontWeight: FontWeight.bold,
-                                                    fontFamily: AppFonts.outfit),
+                                                    fontFamily:
+                                                        AppFonts.outfit),
                                               ),
                                               SizedBox(
                                                   height: ResponsiveSize
@@ -484,8 +486,10 @@ class _RoomDetailsState extends State<RoomDetails> {
                                                 'You will be notified once your booking is confirmed​',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
-                                                    fontSize: AppDimens.fontSizeSmall,
-                                                    fontFamily: AppFonts.outfit),
+                                                    fontSize:
+                                                        AppDimens.fontSizeSmall,
+                                                    fontFamily:
+                                                        AppFonts.outfit),
                                               ),
                                             ],
                                           ),
@@ -507,7 +511,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                                   'OK',
                                                   style: TextStyle(
                                                       color: Colors.white,
-                                                      fontFamily: AppFonts.outfit),
+                                                      fontFamily:
+                                                          AppFonts.outfit),
                                                 ),
                                               ),
                                             ),
@@ -520,8 +525,8 @@ class _RoomDetailsState extends State<RoomDetails> {
                                         const SnackBar(
                                           content: Text(
                                             'Failed to submit booking. Please try again.',
-                                            style:
-                                                TextStyle(fontFamily: AppFonts.outfit),
+                                            style: TextStyle(
+                                                fontFamily: AppFonts.outfit),
                                           ),
                                           backgroundColor: Colors.red,
                                         ),
@@ -559,10 +564,11 @@ class _RoomDetailsState extends State<RoomDetails> {
                             : Text(
                                 'Submit',
                                 style: TextStyle(
-                                    fontFamily: AppFonts.outfit,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF606060),
-                                    fontSize: AppDimens.fontSizeSmall,
+                                  fontFamily: AppFonts.outfit,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF606060),
+                                  fontSize: AppDimens.fontSizeSmall,
+                                ),
                               ),
                       ),
                     ),
@@ -601,7 +607,8 @@ class _RoomDetailsState extends State<RoomDetails> {
           children: [
             Text(title,
                 style: TextStyle(
-                    fontSize: AppDimens.fontSizeSmall, fontFamily: AppFonts.outfit)),
+                    fontSize: AppDimens.fontSizeSmall,
+                    fontFamily: AppFonts.outfit)),
             Text(
               date != null ? DateFormat('EEE, MMM d, yyyy').format(date) : '-',
               style: TextStyle(
@@ -624,7 +631,8 @@ class _RoomDetailsState extends State<RoomDetails> {
         children: [
           Text(title,
               style: TextStyle(
-                  fontSize: AppDimens.fontSizeSmall, fontFamily: AppFonts.outfit)),
+                  fontSize: AppDimens.fontSizeSmall,
+                  fontFamily: AppFonts.outfit)),
           Text(value,
               style: TextStyle(
                   fontSize: AppDimens.fontSizeSmall,

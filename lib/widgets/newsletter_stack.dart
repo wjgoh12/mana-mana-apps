@@ -80,7 +80,7 @@ class newsletterStack extends StatelessWidget {
                             child: Column(children: [
                               Text(DateTime.now().day.toString(),
                                   style: TextStyle(
-                                      color: Colors.white, fontSize: AppDimens.fontSizeBig,
+                                      color: Colors.white, fontSize: AppDimens.fontSizeBig)),
                               Text(
                                 [
                                   'Jan',
@@ -120,7 +120,7 @@ class newsletterStack extends StatelessWidget {
                             ),
                             SizedBox(width: 2.fSize),
                             Text('Anis Shazwani',
-                                style: TextStyle(fontSize: AppDimens.fontSizeBig
+                                style: TextStyle(fontSize: AppDimens.fontSizeBig)),
                           ]),
                         ),
                         const SizedBox(height: 2),

@@ -61,7 +61,7 @@ final Color backgroundColor;
                                       color: color,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w400,
-                                      fontSize: AppDimens.fontSizeSmall,
+                                      fontSize: AppDimens.fontSizeSmall),
                                 ),
                                 Text(
                                   text2,
@@ -69,7 +69,7 @@ final Color backgroundColor;
                                       color: color,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w700,
-                                      fontSize: AppDimens.fontSizeBig,
+                                      fontSize: AppDimens.fontSizeBig),
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +80,7 @@ final Color backgroundColor;
                                           color: color,
                                           fontFamily: 'Open Sans',
                                           fontWeight: FontWeight.w400,
-                                          fontSize: AppDimens.fontSizeSmall,
+                                          fontSize: AppDimens.fontSizeSmall),
                                     ),
                                     Icon(
                                       Icons.arrow_drop_up,
@@ -113,7 +113,7 @@ final Color backgroundColor;
                                       color: color,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w400,
-                                      fontSize: AppDimens.fontSizeSmall,
+                                      fontSize: AppDimens.fontSizeSmall),
                                 ),
                                 Text(
                                   text5,
@@ -121,7 +121,7 @@ final Color backgroundColor;
                                       color: color,
                                       fontFamily: 'Open Sans',
                                       fontWeight: FontWeight.w700,
-                                      fontSize: AppDimens.fontSizeBig,
+                                      fontSize: AppDimens.fontSizeBig),
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +132,7 @@ final Color backgroundColor;
                                           color: color,
                                           fontFamily: 'Open Sans',
                                           fontWeight: FontWeight.w400,
-                                          fontSize: AppDimens.fontSizeSmall,
+                                          fontSize: AppDimens.fontSizeSmall),
                                     ),
                                     Icon(
                                       Icons.arrow_drop_up,

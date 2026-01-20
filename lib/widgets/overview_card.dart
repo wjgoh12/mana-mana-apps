@@ -1,14 +1,12 @@
-import 'package:mana_mana_app/core/constants/app_fonts.dart';
-import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mana_mana_app/core/utils/responsive.dart';
 import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/screens/all_properties/view/all_properties_view.dart';
-import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
-import 'package:mana_mana_app/core/utils/responsive.dart';
-import 'package:mana_mana_app/widgets/responsive_size.dart';
-import 'package:mana_mana_app/core/utils/size_utils.dart';
 import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
+import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
+
+import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:provider/provider.dart';
 
 class OverviewCard extends StatelessWidget {
@@ -206,7 +204,8 @@ class OverviewCard extends StatelessWidget {
                                               return Text(
                                                 '0',
                                                 style: TextStyle(
-                                                  fontSize: AppDimens.fontSizeBig,
+                                                  fontSize:
+                                                      ResponsiveSize.text(50),
                                                   fontWeight: FontWeight.bold,
                                                   color: Color(0xFF606060),
                                                 ),
@@ -216,7 +215,8 @@ class OverviewCard extends StatelessWidget {
                                               return Text(
                                                 '0',
                                                 style: TextStyle(
-                                                  fontSize: AppDimens.fontSizeBig,
+                                                  fontSize:
+                                                      ResponsiveSize.text(50),
                                                   fontWeight: FontWeight.bold,
                                                   color: Color(0xFF606060),
                                                 ),
@@ -227,7 +227,8 @@ class OverviewCard extends StatelessWidget {
                                             return Text(
                                               '$totalCount',
                                               style: TextStyle(
-                                                fontSize: AppDimens.fontSizeBig,
+                                                fontSize:
+                                                    ResponsiveSize.text(50),
                                                 fontWeight: FontWeight.bold,
                                                 color: Color(0xFF606060),
                                               ),
@@ -260,9 +261,9 @@ class OverviewCard extends StatelessWidget {
                                         child: Text(
                                           'Total Properties',
                                           style: TextStyle(
-                                            fontFamily: AppFonts.outfit,
+                                            fontFamily: 'outfit',
                                             color: const Color(0xFF606060),
-                                            fontSize: AppDimens.fontSizeSmall,
+                                            fontSize: ResponsiveSize.text(12),
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -311,7 +312,7 @@ class OverviewCard extends StatelessWidget {
                                                   return Text(
                                                     'Managed: $totalCount',
                                                     style: TextStyle(
-                                                      fontFamily: AppFonts.outfit,
+                                                      fontFamily: 'Outfit',
                                                       fontSize:
                                                           ResponsiveSize.text(
                                                               18),
@@ -372,8 +373,8 @@ class OverviewCard extends StatelessWidget {
                                     child: Text(
                                       'Monthly Profit',
                                       style: TextStyle(
-                                        fontSize: AppDimens.fontSizeSmall,
-                                        fontFamily: AppFonts.outfit,
+                                        fontSize: ResponsiveSize.text(10),
+                                        fontFamily: 'outfit',
                                         fontWeight: FontWeight.normal,
                                         color: Colors.white,
                                       ),
@@ -426,7 +427,7 @@ class OverviewCard extends StatelessWidget {
                                                         fontSize:
                                                             ResponsiveSize.text(
                                                                 11),
-                                                        fontFamily: AppFonts.outfit,
+                                                        fontFamily: 'outfit',
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.white,
@@ -437,8 +438,9 @@ class OverviewCard extends StatelessWidget {
                                                 TextSpan(
                                                   text: formatted,
                                                   style: TextStyle(
-                                                    fontSize: AppDimens.fontSizeBig,
-                                                    fontFamily: AppFonts.outfit,
+                                                    fontSize:
+                                                        ResponsiveSize.text(15),
+                                                    fontFamily: 'outfit',
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
                                                   ),
@@ -454,8 +456,8 @@ class OverviewCard extends StatelessWidget {
                                           child: Text(
                                             'RM0.00',
                                             style: TextStyle(
-                                              fontSize: AppDimens.fontSizeBig,
-                                              fontFamily: AppFonts.outfit,
+                                              fontSize: ResponsiveSize.text(15),
+                                              fontFamily: 'outfit',
                                               fontWeight: FontWeight.bold,
                                               color: Colors.black,
                                             ),
@@ -536,7 +538,7 @@ class RevenueContainer extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: responsivePadding),
                 child: Column(
                   children: [
-                    SizedBox(height: (0.5).height),
+                    SizedBox(height: 0.5),
                     _buildTitleRow(),
                     _buildAmountText(context),
                     Row(
@@ -571,8 +573,8 @@ class RevenueContainer extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            fontFamily: AppFonts.outfit,
-            fontSize: AppDimens.fontSizeSmall,
+            fontFamily: 'outfit',
+            fontSize: ResponsiveSize.text(9),
             color: Colors.white,
           ),
         ),
@@ -596,8 +598,8 @@ class RevenueContainer extends StatelessWidget {
                   child: Text(
                     'RM',
                     style: TextStyle(
-                      fontSize: AppDimens.fontSizeSmall,
-                      fontFamily: AppFonts.outfit,
+                      fontSize: ResponsiveSize.text(11),
+                      fontFamily: 'outfit',
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
@@ -617,9 +619,9 @@ class RevenueContainer extends StatelessWidget {
               return Text(
                 NumberFormat('#,##0.00').format(value),
                 style: TextStyle(
-                  fontFamily: AppFonts.outfit,
+                  fontFamily: 'outfit',
                   fontWeight: FontWeight.bold,
-                  fontSize: AppDimens.fontSizeBig,
+                  fontSize: ResponsiveSize.text(15),
                   color: Colors.white,
                 ),
               );

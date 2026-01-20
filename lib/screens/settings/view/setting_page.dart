@@ -291,7 +291,7 @@ class SettingPage extends StatelessWidget {
                       child: const Text(
                         'Log Out',
                         style:
-                            TextStyle(color: Color(0XFF4313E9), fontSize: AppDimens.fontSizeBig,
+                            TextStyle(color: Color(0XFF4313E9), fontSize: AppDimens.fontSizeBig),
                       ),
                     ),
                   ),
@@ -317,7 +317,7 @@ class SettingPage extends StatelessWidget {
                           const Text(
                             ' | ',
                             style: TextStyle(
-                                color: Color(0XFF4313E9), fontSize: AppDimens.fontSizeBig,
+                                color: Color(0XFF4313E9), fontSize: AppDimens.fontSizeBig),
                           ),
                           TextButton(
                             onPressed: () {

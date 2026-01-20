@@ -137,7 +137,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
             Text(
               label,
               style:
-                  TextStyle(fontFamily: AppFonts.outfit, fontSize: AppDimens.fontSizeSmall,
+                  TextStyle(fontFamily: AppFonts.outfit, fontSize: AppDimens.fontSizeSmall),
             ),
           ],
         ),

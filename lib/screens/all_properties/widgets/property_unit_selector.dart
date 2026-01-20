@@ -99,7 +99,9 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                 child: Text(
                   property ?? '',
                   style: TextStyle(
-                      fontFamily: AppFonts.outfit, fontSize: AppDimens.fontSizeBig,
+                    fontFamily: AppFonts.outfit,
+                    fontSize: AppDimens.fontSizeBig,
+                  ),
                 ),
               );
             }).toList(),
@@ -157,7 +159,9 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                 child: Text(
                   unit ?? '',
                   style: TextStyle(
-                      fontFamily: AppFonts.outfit, fontSize: AppDimens.fontSizeBig,
+                    fontFamily: AppFonts.outfit,
+                    fontSize: AppDimens.fontSizeBig,
+                  ),
                 ),
               );
             }).toList(),

@@ -334,9 +334,10 @@ class OccupancyLineChart extends StatelessWidget {
               return LineTooltipItem(
                 '$label  ${percentage.toStringAsFixed(1)}%',
                 const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: AppDimens.fontSizeBig,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: AppDimens.fontSizeBig,
+                ),
               );
             }).toList();
           },

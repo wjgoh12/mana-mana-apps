@@ -78,7 +78,7 @@ class _QuantityControllerState extends State<QuantityController> {
           ),
           child: Text(
             '$_quantity',
-            style: const TextStyle(fontSize: AppDimens.fontSizeBig,
+            style: const TextStyle(fontSize: AppDimens.fontSizeBig),
           ),
         ),
         IconButton(

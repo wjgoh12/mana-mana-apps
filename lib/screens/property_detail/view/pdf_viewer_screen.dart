@@ -73,7 +73,7 @@ class PdfViewerFromMemory extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           '$property $unitNo - ${getMonthName(month ?? '')} $year',
-          style: const TextStyle(fontSize: AppDimens.fontSizeBig,
+          style: const TextStyle(fontSize: AppDimens.fontSizeBig),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,

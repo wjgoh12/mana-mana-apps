@@ -108,7 +108,8 @@ class NewsletterReadDetails extends StatelessWidget {
                           child: Column(children: [
                             Text(DateTime.now().day.toString(),
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: AppDimens.fontSizeBig,
+                                    color: Colors.white,
+                                    fontSize: AppDimens.fontSizeBig)),
                             Text(
                               [
                                 'January',
@@ -148,7 +149,7 @@ class NewsletterReadDetails extends StatelessWidget {
                                 const SizedBox(width: 2),
                                 const Text(
                                   '2 min read',
-                                  style: TextStyle(fontSize: AppDimens.fontSizeSmall,
+                                  style: TextStyle(fontSize: AppDimens.fontSizeSmall),
                                 ),
                               ],
                             ),
@@ -167,8 +168,8 @@ class NewsletterReadDetails extends StatelessWidget {
                           maxWidth: contentWidth,
                         ),
                         child: const Text(
-                          'Looking for a stylish and convenient stay right next to KLCC? ✨ Whether you\' re in town for a quick business trip, long-term project, or simply working remotely — Scarletz Suites by Mana Mana offers a modern, flexible living experience right in the city center. \n\nWhy Stay at Scarletz Suites, Mana Mana?',
-                          style: TextStyle(fontSize: AppDimens.fontSizeBig,
+                          'Looking for a stylish and convenient stay right next to KLCC? ✨ Whether you\'re in town for a quick business trip, long-term project, or simply working remotely — Scarletz Suites by Mana Mana offers a modern, flexible living experience right in the city center. \n\nWhy Stay at Scarletz Suites, Mana Mana?',
+                          style: TextStyle(fontSize: AppDimens.fontSizeBig),
                           textAlign: TextAlign.justify,
                         ),
                       ),

@@ -72,7 +72,7 @@ class AnnualStatementPdfViewerFromMemory extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           '$property $unitType($unitNo) - $year',
-          style: const TextStyle(fontSize: AppDimens.fontSizeBig,
+          style: const TextStyle(fontSize: AppDimens.fontSizeBig),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,

@@ -951,8 +951,9 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                           child: Text(
                             unit,
                             style: TextStyle(
-                                fontFamily: AppFonts.outfit,
-                                fontSize: AppDimens.fontSizeSmall,
+                              fontFamily: AppFonts.outfit,
+                              fontSize: AppDimens.fontSizeSmall,
+                            ),
                           ),
                         );
                       }).toList(),

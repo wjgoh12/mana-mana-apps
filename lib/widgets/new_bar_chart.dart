@@ -301,13 +301,13 @@ class ColoredSideTitleWidget extends StatelessWidget {
         children: [
           GradientText1(
             text: monthNames[index],
-            style: TextStyle(fontSize: AppDimens.fontSizeBig,
+            style: TextStyle(fontSize: AppDimens.fontSizeBig),
             gradient: monthColors,
           ),
           if (monthNames[index].isNotEmpty) // Only show year if month exists
             GradientText1(
               text: year.toString(),
-              style: TextStyle(fontSize: AppDimens.fontSizeSmall,
+              style: TextStyle(fontSize: AppDimens.fontSizeSmall),
               gradient: monthColors,
             ),
         ],

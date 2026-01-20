@@ -489,12 +489,12 @@ class ProfitChart extends StatelessWidget {
               final label = _labelForXInstance(barSpot.x, period);
               final rm = NumberFormat('#,##0.00').format(barSpot.y);
               return LineTooltipItem(
-                '$label  RM$rm',
-                const TextStyle(
+                  '$label  RM$rm',
+                  const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: AppDimens.fontSizeBig,
-              );
+                  ));
             }).toList();
           },
         ),
