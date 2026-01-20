@@ -451,7 +451,7 @@
 //     return Container(
 //       width: 90.width,
 //       decoration: BoxDecoration(
-//         color: const Color(0XFFFFFFFF),
+//         color: const AppColors.white,
 //         borderRadius: BorderRadius.circular(20),
 //         boxShadow: [
 //           BoxShadow(
@@ -583,7 +583,7 @@
 //     return Container(
 //       width: 90.width,
 //       decoration: BoxDecoration(
-//         color: const Color(0XFFFFFFFF),
+//         color: const AppColors.white,
 //         borderRadius: BorderRadius.circular(20),
 //         boxShadow: [
 //           BoxShadow(
@@ -996,7 +996,7 @@
 //       width: width,
 //       height: height,
 //       decoration: BoxDecoration(
-//         color: const Color(0XFFFFFFFF),
+//         color: const AppColors.white,
 //         borderRadius: BorderRadius.circular(12),
 //         boxShadow: [
 //           BoxShadow(

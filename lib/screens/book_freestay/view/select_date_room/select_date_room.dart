@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:async';
@@ -451,7 +452,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
               Text(
                 'Select Date and Room',
                 style: TextStyle(
-                  color: const Color(0xFF606060),
+                  color: AppColors.primaryGrey,
                   fontFamily: AppFonts.outfit,
                   fontSize: AppDimens.fontSizeBig,
                   fontWeight: FontWeight.w700,
@@ -488,7 +489,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
             Text(
               'Select Date and Room',
               style: TextStyle(
-                color: const Color(0xFF606060),
+                color: AppColors.primaryGrey,
                 fontFamily: AppFonts.outfit,
                 fontSize: AppDimens.fontSizeBig,
                 fontWeight: FontWeight.w700,
@@ -507,7 +508,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                 const SizedBox(height: 3),
                 Container(
                   decoration: const BoxDecoration(
-                    color: Color(0xFF606060),
+                    color: AppColors.primaryGrey,
                   ),
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -763,7 +764,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
                     : '-',
                 style: const TextStyle(
                   fontSize: AppDimens.fontSizeSmall,
-                  color: Color(0xFF606060),
+                  color: AppColors.primaryGrey,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -799,7 +800,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
           Text(
             formattedPoints,
             style: TextStyle(
-              color: const Color(0xFF606060),
+              color: AppColors.primaryGrey,
               fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.bold,
             ),

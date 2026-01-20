@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/legacy/New_Dashboard_old/ViewModel/new_dashboardVM.dart';
@@ -12,7 +13,7 @@ class StatisticTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0XFFFFFFFF),
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -37,7 +38,7 @@ class StatisticTable extends StatelessWidget {
                     fontFamily: 'Open Sans',
                     fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0XFF2900B7),
+                    color: AppColors.blue,
                   ),
                 ),
                 SizedBox(height: 1.height),

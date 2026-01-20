@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -95,7 +96,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               style: TextStyle(
                 fontFamily: AppFonts.outfit,
                 fontSize: AppDimens.fontSizeSmall,
-                color: Color(0xFF606060),
+                color: AppColors.primaryGrey,
               ),
               buttonStyleData: ButtonStyleData(
                 height: 40,
@@ -186,7 +187,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               style: TextStyle(
                 fontFamily: AppFonts.outfit,
                 fontSize: AppDimens.fontSizeSmall,
-                color: Color(0xFF606060),
+                color: AppColors.primaryGrey,
               ),
               buttonStyleData: ButtonStyleData(
                 height: 40,

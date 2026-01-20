@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
@@ -136,8 +137,7 @@ class _SplashScreenState extends State<Splashscreen>
                 const CircleAvatar(
                   radius: 80,
                   backgroundColor: Colors.transparent,
-                  backgroundImage:
-                      AssetImage('assets/images/mana2logo1.png'),
+                  backgroundImage: AssetImage('assets/images/mana2logo1.png'),
                 ),
                 const SizedBox(height: 40),
                 // Title text
@@ -146,7 +146,7 @@ class _SplashScreenState extends State<Splashscreen>
                   style: TextStyle(
                     fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF606060),
+                    color: AppColors.primaryGrey,
                     fontFamily: AppFonts.outfit,
                   ),
                 ),
@@ -155,7 +155,7 @@ class _SplashScreenState extends State<Splashscreen>
                   style: TextStyle(
                     fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF606060),
+                    color: AppColors.primaryGrey,
                     fontFamily: AppFonts.outfit,
                   ),
                 ),
@@ -163,7 +163,7 @@ class _SplashScreenState extends State<Splashscreen>
                 // Loading indicator
                 if (_isLoading)
                   const CircularProgressIndicator(
-                    color: Color(0xFF606060),
+                    color: AppColors.primaryGrey,
                   ),
               ],
             ),

@@ -57,7 +57,7 @@
 //               final double scaleH = screenHeight / baseHeight;
 
 //               return Scaffold(
-//                 backgroundColor: const Color(0XFFFFFFFF),
+//                 backgroundColor: AppColors.white,
 //                 appBar: propertyAppBar(
 //                   context,
 //                   () => Navigator.of(context).pop(),

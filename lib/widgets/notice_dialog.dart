@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,7 @@ class NoticeDialog extends StatelessWidget {
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF606060),
+                    backgroundColor: AppColors.primaryGrey,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(

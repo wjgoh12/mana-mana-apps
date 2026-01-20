@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ Widget StickyBottomBar({
   required bool hasRoomSelected,
   required bool hasDatesSelected,
 }) {
-  final grey = const Color(0xFF606060);
+  final grey = AppColors.primaryGrey;
   return Container(
     color: Colors.white,
     child: Column(
@@ -98,7 +99,7 @@ Widget StickyBottomBar({
                   dataIsStale
                       ? Colors.grey.shade300
                       : (hasRoomSelected && hasDatesSelected
-                          ? const Color(0xFFFFCF00)
+                          ? AppColors.primaryYellow
                           : grey),
                 ),
                 fixedSize: WidgetStateProperty.all(const Size(300, 40)),

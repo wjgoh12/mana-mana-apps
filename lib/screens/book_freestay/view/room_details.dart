@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:convert';
@@ -185,7 +186,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                 style: TextStyle(
                     fontFamily: AppFonts.outfit,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF010367))),
+                    color: AppColors.primaryBlue)),
           ],
         ),
       ),
@@ -497,7 +498,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                             TextButton(
                                               style: TextButton.styleFrom(
                                                 backgroundColor:
-                                                    Color(0xFF606060),
+                                                    AppColors.primaryGrey,
                                               ),
                                               onPressed: () {
                                                 Navigator.pop(context);
@@ -549,7 +550,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 }
                               },
                         style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFCF00),
+                          backgroundColor: AppColors.primaryYellow,
                           fixedSize: const Size(300, 40),
                         ),
                         child: _isSubmitting
@@ -566,7 +567,7 @@ class _RoomDetailsState extends State<RoomDetails> {
                                 style: TextStyle(
                                   fontFamily: AppFonts.outfit,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF606060),
+                                  color: AppColors.primaryGrey,
                                   fontSize: AppDimens.fontSizeSmall,
                                 ),
                               ),
@@ -706,7 +707,7 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
                     children: [
                       Icon(
                         isExpanded ? Icons.expand_less : Icons.expand_more,
-                        color: const Color(0xFF010367),
+                        color: AppColors.primaryBlue,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -717,7 +718,7 @@ class _ExpandableTermsWidgetState extends State<ExpandableTermsWidget> {
                           fontSize: AppDimens.fontSizeSmall,
                           fontFamily: AppFonts.outfit,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF010367),
+                          color: AppColors.primaryBlue,
                         ),
                       ),
                     ],

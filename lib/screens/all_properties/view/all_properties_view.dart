@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -295,7 +296,7 @@ Widget _quickLinks(BuildContext context) {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -326,7 +327,7 @@ Widget _quickLinks(BuildContext context) {
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                 CircleAvatar(
                                   radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: Color(0xFF606060),
+                                  backgroundColor: AppColors.primaryGrey,
                                   child: Image.asset(
                                     'assets/images/Calendar_booking.png',
                                     width: ResponsiveSize.scaleWidth(20),
@@ -375,7 +376,7 @@ Widget _quickLinks(BuildContext context) {
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -416,7 +417,7 @@ Widget _quickLinks(BuildContext context) {
                                 SizedBox(width: ResponsiveSize.scaleWidth(9)),
                                 CircleAvatar(
                                   radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: Color(0XFF606060),
+                                  backgroundColor: AppColors.primaryGrey,
                                   child: Image.asset(
                                     'assets/images/pillow_free_redemption.png',
                                     width: ResponsiveSize.scaleWidth(25),
@@ -826,7 +827,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                   radius: MediaQuery.of(context).size.width >= 600
                       ? ResponsiveSize.scaleWidth(15)
                       : null,
-                  backgroundColor: Color(0xFF606060),
+                  backgroundColor: AppColors.primaryGrey,
                   child: Image.asset('assets/images/building.png',
                       width: ResponsiveSize.scaleWidth(20),
                       height: ResponsiveSize.scaleWidth(20)),
@@ -923,7 +924,7 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
                   radius: MediaQuery.of(context).size.width >= 600
                       ? ResponsiveSize.scaleWidth(15)
                       : null,
-                  backgroundColor: Color(0xFF606060),
+                  backgroundColor: AppColors.primaryGrey,
                   child: Image.asset('assets/images/unit.png',
                       width: isMobile
                           ? ResponsiveSize.scaleWidth(20)

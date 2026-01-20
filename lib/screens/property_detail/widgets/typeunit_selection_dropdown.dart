@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:math';
 
@@ -140,11 +141,11 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown> {
         buttonStyleData: ButtonStyleData(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: const Color(0XFFFFFFFF),
+            color: AppColors.white,
             border: Border.all(color: const Color(0XFF999999)),
             borderRadius: BorderRadius.circular(5),
           ),
-          width: maxTextWidth + 60, // Add padding for icon and margins
+          width: maxTextWidth + 60,
           height: (3.5).height,
         ),
         dropdownStyleData: DropdownStyleData(

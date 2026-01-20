@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -87,7 +88,7 @@ class ProfitChart extends StatelessWidget {
         lineBarsData: [
           LineChartBarData(
             isCurved: !isSingleDataPoint,
-            color: const Color(0XFFFFCF00),
+            color: AppColors.primaryYellow,
             barWidth: 5,
             isStrokeCapRound: true,
             dotData: FlDotData(
@@ -96,14 +97,14 @@ class ProfitChart extends StatelessWidget {
                 if (isSingleDataPoint) {
                   return FlDotCirclePainter(
                     radius: 8,
-                    color: const Color(0XFFFFCF00),
+                    color: AppColors.primaryYellow,
                     strokeWidth: 3,
                     strokeColor: Colors.white,
                   );
                 }
                 return FlDotCirclePainter(
                   radius: 4,
-                  color: const Color(0XFFFFCF60),
+                  color: AppColors.primaryYellow,
                   strokeWidth: 2,
                   strokeColor: Colors.white,
                 );
@@ -113,8 +114,8 @@ class ProfitChart extends StatelessWidget {
               show: isSingleDataPoint,
               gradient: LinearGradient(
                 colors: [
-                  const Color(0XFFFFCF00).withOpacity(0.3),
-                  const Color(0XFFFFCF00).withOpacity(0.05),
+                  AppColors.primaryYellow.withOpacity(0.3),
+                  AppColors.primaryYellow.withOpacity(0.05),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -125,7 +126,6 @@ class ProfitChart extends StatelessWidget {
             curveSmoothness: 0.35,
           ),
         ],
-        // Fit all data in view with padding
         minX: spots.isEmpty ? 0 : spots.first.x - 0.5,
         maxX: spots.isEmpty ? 0 : spots.last.x + 0.5,
         maxY: maxY,
@@ -135,7 +135,7 @@ class ProfitChart extends StatelessWidget {
                 horizontalLines: [
                   HorizontalLine(
                     y: spots.first.y,
-                    color: const Color(0XFFFFCF60).withOpacity(0.2),
+                    color: AppColors.primaryYellow.withOpacity(0.2),
                     strokeWidth: 1,
                     dashArray: [5, 5],
                   ),
@@ -161,11 +161,11 @@ class ProfitChart extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0XFFFFCF00),
+                        color: AppColors.primaryYellow,
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0XFFFFCF00).withOpacity(0.3),
+                            color: AppColors.primaryYellow.withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -481,7 +481,7 @@ class ProfitChart extends StatelessWidget {
   LineTouchData get lineTouchData => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
-          getTooltipColor: (spot) => Color(0xFF606060).withOpacity(0.8),
+          getTooltipColor: (spot) => AppColors.primaryGrey.withOpacity(0.8),
           tooltipRoundedRadius: 8,
           tooltipPadding: const EdgeInsets.all(8),
           getTooltipItems: (spots) {

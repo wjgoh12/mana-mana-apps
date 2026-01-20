@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/model/calendar_blocked_date.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -142,7 +143,7 @@ class CalendarWidget extends StatelessWidget {
                 height: size,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF606060),
+                    color: AppColors.primaryGrey,
                     borderRadius: BorderRadius.circular(5),
                     shape: BoxShape.rectangle,
                   ),
@@ -227,7 +228,7 @@ class CalendarWidget extends StatelessWidget {
                 height: size,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF606060),
+                    color: AppColors.primaryGrey,
                     borderRadius: BorderRadius.circular(5),
                     shape: BoxShape.rectangle,
                   ),
@@ -278,7 +279,7 @@ class CalendarWidget extends StatelessWidget {
         calendarStyle: CalendarStyle(
           outsideDaysVisible: false,
           selectedDecoration: const BoxDecoration(
-            color: Color(0xFF606060),
+            color: AppColors.primaryGrey,
             shape: BoxShape.circle,
           ),
           todayDecoration: BoxDecoration(

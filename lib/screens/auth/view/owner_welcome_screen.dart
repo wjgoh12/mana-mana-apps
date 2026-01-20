@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/auth/view_model/owner_welcome_screen_view_model.dart';
@@ -11,7 +12,7 @@ class OnboardingScreen extends StatelessWidget {
 
     return Scaffold(
       body: Container(
-        color: const Color(0xFF2900B7),
+        color: AppColors.primaryBlue,
         child: SafeArea(
           child: Padding(
             padding: EdgeInsets.all(screenSize.width * 0.04),
@@ -72,14 +73,13 @@ class OnboardingScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          vertical: screenSize.height * 0.02),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: const BorderSide(color: Colors.white),
-                      ),
-                      backgroundColor: const Color(0xFF2900B7),
-                    ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.02),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: const BorderSide(color: Colors.white),
+                        ),
+                        backgroundColor: AppColors.primaryBlue),
                     onPressed: () {
                       loginAuthenticate(
                         context,

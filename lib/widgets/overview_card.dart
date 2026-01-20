@@ -169,7 +169,7 @@ class OverviewCard extends StatelessWidget {
                               responsiveHeight(10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
-                            color: const Color(0xFFFFCF00),
+                            color: AppColors.primaryYellow,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,7 +210,7 @@ class OverviewCard extends StatelessWidget {
                                                   fontSize: AppDimens
                                                       .fontSizeExtraLarge,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF606060),
+                                                  color: AppColors.primaryGrey,
                                                 ),
                                               );
                                             }
@@ -356,7 +356,7 @@ class OverviewCard extends StatelessWidget {
                                 padding: const EdgeInsets.only(left: 10),
                                 child: CircleAvatar(
                                   radius: ResponsiveSize.scaleWidth(20),
-                                  backgroundColor: const Color(0xFFFFCF00),
+                                  backgroundColor: AppColors.primaryYellow,
                                   child: Image.asset(
                                     'assets/images/OverviewMonthlyProfit.png',
                                     color: AppColors.primaryGrey,
@@ -480,7 +480,7 @@ class OverviewCard extends StatelessWidget {
                         height: cardHeightLarge,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          color: Color(0xFF606060),
+                          color: AppColors.primaryGrey,
                         ),
                         child: SingleChildScrollView(
                           child: Column(
@@ -553,7 +553,7 @@ class RevenueContainer extends StatelessWidget {
                           backgroundColor: Color(0xFFFFCF00),
                           child: Image.asset(
                             'assets/images/OverviewAccumulatedProfit.png',
-                            color: Color(0xFF606060),
+                            color: AppColors.primaryGrey,
                             width: ResponsiveSize.scaleWidth(24),
                             height: ResponsiveSize.scaleHeight(24),
                           ),

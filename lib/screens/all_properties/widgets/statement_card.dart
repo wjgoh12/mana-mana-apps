@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,7 @@ class StatementCard extends StatelessWidget {
                         fontFamily: AppFonts.outfit,
                         fontSize: AppDimens.fontSizeBig,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF606060),
+                        color: AppColors.primaryGrey,
                       ),
                     ),
                     SizedBox(height: ResponsiveSize.scaleHeight(2)),
@@ -65,7 +66,7 @@ class StatementCard extends StatelessWidget {
                 Container(
                   height: ResponsiveSize.scaleHeight(32),
                   decoration: BoxDecoration(
-                    color: Color(0xFF606060),
+                    color: AppColors.primaryGrey,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: TextButton(

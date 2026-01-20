@@ -167,7 +167,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               style: TextStyle(
                                 fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF606060),
+                                color: AppColors.primaryGrey,
                                 fontFamily: AppFonts.outfit,
                               ),
                             ),
@@ -176,7 +176,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               style: TextStyle(
                                 fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF606060),
+                                color: AppColors.primaryGrey,
                                 fontFamily: AppFonts.outfit,
                               ),
                             ),
@@ -217,7 +217,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   style: TextStyle(
                                     fontSize: AppDimens.fontSizeBig,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF606060),
+                                    color: AppColors.primaryGrey,
                                     fontFamily: AppFonts.outfit,
                                   ),
                                 ),
@@ -280,7 +280,8 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
                                       borderSide: const BorderSide(
-                                          color: Color(0xFF606060), width: 1.5),
+                                          color: AppColors.primaryGrey,
+                                          width: 1.5),
                                     ),
                                     errorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -348,7 +349,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                     'Back to Login',
                                     style: TextStyle(
                                       fontSize: AppDimens.fontSizeSmall,
-                                      color: Color(0xFF606060),
+                                      color: AppColors.primaryGrey,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: AppFonts.outfit,
                                     ),

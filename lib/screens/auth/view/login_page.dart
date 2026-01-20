@@ -233,7 +233,7 @@ class LoginPageState extends State<LoginPage> {
                               style: TextStyle(
                                 fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF606060),
+                                color: AppColors.primaryGrey,
                                 fontFamily: AppFonts.outfit,
                               ),
                             ),
@@ -242,7 +242,7 @@ class LoginPageState extends State<LoginPage> {
                               style: TextStyle(
                                 fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF606060),
+                                color: AppColors.primaryGrey,
                                 fontFamily: AppFonts.outfit,
                               ),
                             ),
@@ -277,7 +277,7 @@ class LoginPageState extends State<LoginPage> {
                                     style: TextStyle(
                                       fontSize: AppDimens.fontSizeLarge,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFF606060),
+                                      color: AppColors.primaryGrey,
                                       fontFamily: AppFonts.outfit,
                                     ),
                                   ),
@@ -410,7 +410,7 @@ class LoginPageState extends State<LoginPage> {
                                         'Forgot Password',
                                         style: TextStyle(
                                           fontSize: AppDimens.fontSizeSmall,
-                                          color: Color(0xFF606060),
+                                          color: AppColors.primaryGrey,
                                           fontWeight: FontWeight.w600,
                                           fontFamily: AppFonts.outfit,
                                         ),

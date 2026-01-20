@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:convert';
@@ -96,7 +97,7 @@ class _RoomtypeCardDetailState extends State<RoomtypeCardDetail>
 
   @override
   Widget build(BuildContext context) {
-    final yellow = const Color(0xFFFFCF00);
+    final yellow = AppColors.primaryYellow;
     super.build(context); // for AutomaticKeepAliveClientMixin
 
     // Use the cached _bytes (or placeholder)

@@ -132,7 +132,7 @@
 //           String property = widget.locationByMonth[0]['location'];
 
 //           return Scaffold(
-//             backgroundColor: const Color(0XFFFFFFFF),
+//             backgroundColor: const AppColors.white,
 //             appBar: propertyAppBar(
 //               context,
 //               () => Navigator.of(context).pop(),
@@ -211,7 +211,7 @@
 //       text4: 'Overall Balance To Owner',
 //       text5: 'RM 8,888.88',
 //       text6: '88%',
-//       color: Color(0XFFFFFFFF),
+//       color: AppColors.white,
 //       backgroundColor: Color(0XFF4313E9),
 //     );
 //   }
@@ -392,7 +392,7 @@
 //             // text5: 'RM ${selectedUnitBlc.total?.toStringAsFixed(2) ?? '0.00'}',
 //             text6: '${_getMonthName(unitLatestMonth)} ${unitLatestYear}',
 //             color: const Color(0XFF4313E9),
-//             backgroundColor: const Color(0XFFFFFFFF),
+//             backgroundColor: const AppColors.white,
 //           );
 //         });
 //   }
@@ -449,7 +449,7 @@
 //     return Container(
 //       width: 90.width,
 //       decoration: BoxDecoration(
-//         color: const Color(0XFFFFFFFF),
+//         color: const AppColors.white,
 //         borderRadius: BorderRadius.circular(20),
 //         boxShadow: [
 //           BoxShadow(
@@ -671,7 +671,7 @@
 //       width: 86.width,
 //       height: 6.height,
 //       decoration: BoxDecoration(
-//         color: const Color(0XFFFFFFFF),
+//         color: const AppColors.white,
 //         borderRadius: BorderRadius.circular(9),
 //         boxShadow: [
 //           BoxShadow(
@@ -739,7 +739,7 @@
 // //     width: 90.width,
 // //     height: 30.height,
 // //     decoration: BoxDecoration(
-// //       color: const Color(0XFFFFFFFF),
+// //       color: const AppColors.white,
 // //       borderRadius: BorderRadius.circular(20),
 // //       boxShadow: [
 // //         BoxShadow(
@@ -1003,7 +1003,7 @@
 //         buttonStyleData: ButtonStyleData(
 //           padding: const EdgeInsets.symmetric(horizontal: 10),
 //           decoration: BoxDecoration(
-//             color: const Color(0XFFFFFFFF),
+//             color: const AppColors.white,
 //             border: Border.all(color: const Color(0XFF999999)),
 //             borderRadius: BorderRadius.circular(5),
 //           ),

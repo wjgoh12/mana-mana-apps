@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/screens/property_detail/view_model/property_detail_view_model.dart';
 import 'package:mana_mana_app/widgets/overall_revenue_container.dart';
 
@@ -51,7 +52,7 @@ class UnitRevenue extends StatelessWidget {
       // text5: 'RM ${selectedUnitBlc.total?.toStringAsFixed(2) ?? '0.00'}',
       text6: '${getMonthName(model.unitLatestMonth)} ${model.unitLatestYear}',
       color: const Color(0XFF4313E9),
-      backgroundColor: const Color(0XFFFFFFFF),
+      backgroundColor: AppColors.white,
     );
   }
 }

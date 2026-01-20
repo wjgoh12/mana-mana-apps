@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class BarChartSample extends StatelessWidget {
     Colors.black,
   ];
   final monthColor =
-      LinearGradient(colors: [Color(0xFF2900B7), Color(0xFF120051)]);
+      LinearGradient(colors: [AppColors.primaryBlue, Color(0xFF120051)]);
 
   BarChartGroupData generateBarGroup(
     int x,

@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
@@ -185,7 +186,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         decoration: isSelected
             ? const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xFF606060),
+                color: AppColors.primaryGrey,
               )
             : null,
         child: Column(
@@ -210,7 +211,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             icon,
                             width: 24.fSize,
                             height: 24.fSize,
-                            color: const Color(0xFFFFCF00),
+                            color: AppColors.primaryYellow,
                           )
                         : ShaderMask(
                             shaderCallback: (bounds) => const LinearGradient(
@@ -234,7 +235,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 duration: const Duration(milliseconds: 200),
                 style: TextStyle(
                   color:
-                      isSelected ? const Color(0xFFFFCF00) : Colors.transparent,
+                      isSelected ? AppColors.primaryYellow : Colors.transparent,
                   fontSize: AppDimens.fontSizeSmall,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),

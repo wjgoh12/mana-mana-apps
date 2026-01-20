@@ -79,7 +79,7 @@
 //                         padding: EdgeInsets.all(7.width),
 //                         decoration: const BoxDecoration(
 //                           gradient: LinearGradient(
-//                             colors: [Color(0XFFFFFFFF), Color(0XFFDFD8FF)],
+//                             colors: [AppColors.white, Color(0XFFDFD8FF)],
 //                             begin: Alignment.topCenter,
 //                             end: Alignment.bottomCenter,
 //                           ),

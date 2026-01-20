@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:convert';
@@ -209,7 +210,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             decoration: BoxDecoration(
                               border: isSel
                                   ? Border.all(
-                                      color: const Color(0xFFFFCF00), width: 2)
+                                      color: AppColors.primaryYellow, width: 2)
                                   : null,
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -401,7 +402,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFFCF00),
+                                color: AppColors.primaryYellow,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(

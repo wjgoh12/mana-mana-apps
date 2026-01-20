@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/property_detail/widgets/typeunit_selection.dart';
@@ -21,7 +22,7 @@ class PropertyDetail extends StatelessWidget {
         listenable: model,
         builder: (context, _) {
           return Scaffold(
-            backgroundColor: const Color(0XFFFFFFFF),
+            backgroundColor: AppColors.white,
             appBar: propertyAppBar(
               context,
               () => Navigator.of(context).pop(),
@@ -99,7 +100,7 @@ class MonthlyStatementContainer extends StatelessWidget {
     return Container(
       width: 90.width,
       decoration: BoxDecoration(
-        color: const Color(0XFFFFFFFF),
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -218,7 +219,7 @@ class AnnualStatementContainer extends StatelessWidget {
     return Container(
       width: 90.width,
       decoration: BoxDecoration(
-        color: const Color(0XFFFFFFFF),
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(

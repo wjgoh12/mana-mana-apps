@@ -51,14 +51,14 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
   }
 
   Widget _buildIcon(String image) {
-    const grey = Color(0xFF606060);
+    const grey = AppColors.primaryGrey;
     return CircleAvatar(
       radius: ResponsiveSize.scaleWidth(20),
       backgroundColor: grey,
       child: Image.asset(
         image,
         width: ResponsiveSize.scaleWidth(25),
-        color: const Color(0xFFFFFFFF),
+        color: AppColors.white,
         height: ResponsiveSize.scaleHeight(25),
       ),
     );
@@ -351,7 +351,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    const grey = Color(0xFF606060);
+    const grey = AppColors.primaryGrey;
 
     double responsiveWidth(double value) => (value / 375.0) * screenWidth;
     double responsiveHeight(double value) => (value / 812.0) * screenHeight;
@@ -1068,7 +1068,7 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                             radius: ResponsiveSize.scaleWidth(20),
                             backgroundColor: AppColors.primaryGrey,
                             child: Image.asset('assets/images/profile_card.png',
-                                color: const Color(0xFFFFCF00)),
+                                color: AppColors.primaryYellow),
                           ),
                           SizedBox(width: ResponsiveSize.scaleWidth(15)),
                           Expanded(
@@ -1104,7 +1104,7 @@ Widget buildFinancialDetails(OwnerProfileVM model, buildSectionCard) {
                             backgroundColor: AppColors.primaryGrey,
                             child: Image.asset(
                               'assets/images/profile_card.png',
-                              color: const Color(0xFFFFCF00),
+                              color: AppColors.primaryYellow,
                             ),
                           ),
                           SizedBox(width: ResponsiveSize.scaleWidth(15)),

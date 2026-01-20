@@ -190,7 +190,7 @@
 //                         offset: const Offset(0, 2),
 //                       )
 //                     ],
-//                     color: const Color(0XFFFFFFFF),
+//                     color: AppColors.white,
 //                     borderRadius: const BorderRadius.only(
 //                         bottomLeft: Radius.circular(10)),
 //                   ),

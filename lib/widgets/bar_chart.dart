@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,7 @@ class BarChartSample7 extends StatefulWidget {
     Colors.black,
   ];
   final monthColor =
-      const LinearGradient(colors: [Color(0xFF2900B7), Color(0xFF120051)]);
+      const LinearGradient(colors: [AppColors.primaryBlue, Color(0xFF120051)]);
   @override
   State<BarChartSample7> createState() => _BarChartSample7State();
 }

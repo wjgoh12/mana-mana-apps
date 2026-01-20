@@ -62,7 +62,7 @@
 //                       left: 1.height, top: 1.height, right: 1.height)
 //                   : EdgeInsets.all(1.height),
 //               decoration: BoxDecoration(
-//                 color: const Color(0xFFFFFFFF),
+//                 color: AppColors.white,
 //                 borderRadius: BorderRadius.circular(10),
 //                 boxShadow: [
 //                   BoxShadow(
@@ -141,7 +141,7 @@
 //           ),
 //           child: Icon(
 //             icon,
-//             color: const Color(0XFF2900B7),
+//             color: AppColors.primaryBlue,
 //             size: 4.width,
 //           ),
 //         ),

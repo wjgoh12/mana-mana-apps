@@ -151,7 +151,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                           style: TextStyle(
                             fontSize: AppDimens.fontSizeBig,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF606060),
+                            color: AppColors.primaryGrey,
                             fontFamily: AppFonts.outfit,
                           ),
                         ),
@@ -160,7 +160,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                           style: TextStyle(
                             fontSize: AppDimens.fontSizeBig,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF606060),
+                            color: AppColors.primaryGrey,
                             fontFamily: AppFonts.outfit,
                           ),
                         ),
@@ -196,7 +196,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                               style: TextStyle(
                                 fontSize: AppDimens.fontSizeBig,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF606060),
+                                color: AppColors.primaryGrey,
                                 fontFamily: AppFonts.outfit,
                               ),
                             ),
@@ -321,7 +321,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                                   'Back to Login',
                                   style: TextStyle(
                                     fontSize: AppDimens.fontSizeSmall,
-                                    color: Color(0xFF606060),
+                                    color: AppColors.primaryGrey,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: AppFonts.outfit,
                                   ),

@@ -26,7 +26,7 @@
 //       child: Consumer<NewDashboardVM_v3>(
 //         builder: (context, model, child) {
 //           return Scaffold(
-//             backgroundColor: const Color(0XFFFFFFFF),
+//             backgroundColor: AppColors.white,
 //             appBar: propertyAppBar(
 //               context,
 //               () => Navigator.of(context).pop(),

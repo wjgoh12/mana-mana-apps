@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:math';
 
@@ -18,10 +19,12 @@ class TypeUnitSelectionDropdown2 extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<TypeUnitSelectionDropdown2> createState() => _TypeUnitSelectionDropdownState();
+  State<TypeUnitSelectionDropdown2> createState() =>
+      _TypeUnitSelectionDropdownState();
 }
 
-class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown2> {
+class _TypeUnitSelectionDropdownState
+    extends State<TypeUnitSelectionDropdown2> {
   String? selectedValue;
   final TextEditingController textEditingController = TextEditingController();
 
@@ -80,7 +83,9 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown2> 
         isExpanded: true,
         hint: Text(
           widget.list.isNotEmpty
-              ? (widget.label == "Month" ? _getMonthName(widget.list.first) : widget.list.first.split(" (")[1].replaceAll(")", ""))
+              ? (widget.label == "Month"
+                  ? _getMonthName(widget.list.first)
+                  : widget.list.first.split(" (")[1].replaceAll(")", ""))
               : '',
           style: TextStyle(
             color: const Color(0XFF4313E9),
@@ -94,7 +99,9 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown2> 
               (String item) => DropdownMenuItem<String>(
                 value: item,
                 child: Text(
-                  widget.label == "Month" ? _getMonthName(item) : item.split(" (")[1].replaceAll(")", ""),
+                  widget.label == "Month"
+                      ? _getMonthName(item)
+                      : item.split(" (")[1].replaceAll(")", ""),
                   style: TextStyle(
                     color: const Color(0XFF4313E9),
                     fontFamily: 'Open Sans',
@@ -115,7 +122,7 @@ class _TypeUnitSelectionDropdownState extends State<TypeUnitSelectionDropdown2> 
         buttonStyleData: ButtonStyleData(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: const Color(0XFFFFFFFF),
+            color: AppColors.white,
             border: Border.all(color: const Color(0XFF999999)),
             borderRadius: BorderRadius.circular(5),
           ),

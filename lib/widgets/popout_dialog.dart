@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/model/popout_notification.dart';
 import 'package:mana_mana_app/core/utils/html_formatter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -47,7 +48,7 @@ class PopoutDialog extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            
+
             // Content area
             Flexible(
               child: SingleChildScrollView(
@@ -56,11 +57,13 @@ class PopoutDialog extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Image if available
-                    if (notification.img != null && notification.img!.isNotEmpty)
+                    if (notification.img != null &&
+                        notification.img!.isNotEmpty)
                       _buildImage(notification.img!),
-                    
+
                     // Description
-                    if (notification.description != null && notification.description!.isNotEmpty)
+                    if (notification.description != null &&
+                        notification.description!.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 12),
                         child: _buildClickableText(
@@ -71,7 +74,7 @@ class PopoutDialog extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // OK Button
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -161,7 +164,7 @@ class PopoutDialog extends StatelessWidget {
           style: const TextStyle(
             fontSize: 14,
             fontFamily: 'Outfit',
-            color: Color(0xFF606060),
+            color: AppColors.primaryGrey,
             height: 1.5,
           ),
         ));
@@ -198,7 +201,7 @@ class PopoutDialog extends StatelessWidget {
         style: const TextStyle(
           fontSize: 14,
           fontFamily: 'Outfit',
-          color: Color(0xFF606060),
+          color: AppColors.primaryGrey,
           height: 1.5,
         ),
       ));

@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,7 @@ class _StatementPageState extends State<StatementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0XFFFFFFFF),
+      backgroundColor: AppColors.white,
       appBar: _appBar(context),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -323,7 +324,7 @@ class _StatementPageState extends State<StatementPage> {
               fontFamily: 'Open Sans',
               fontWeight: FontWeight.w600,
               fontSize: AppDimens.fontSizeSmall,
-              color: const Color(0XFFFFFFFF),
+              color: AppColors.white,
             ),
           ),
         ),
@@ -370,7 +371,7 @@ class _StatementPageState extends State<StatementPage> {
 
   PreferredSizeWidget _appBar(BuildContext context) {
     return AppBar(
-      backgroundColor: const Color(0XFFFFFFFF).withOpacity(0),
+      backgroundColor: AppColors.white.withOpacity(0),
       leadingWidth: 15.width,
       centerTitle: true,
       leading: Padding(
@@ -397,7 +398,7 @@ class _StatementPageState extends State<StatementPage> {
             gradient: const LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
-              colors: [Color(0xFF2900B7), Color(0xFF120051)],
+              colors: [AppColors.primaryBlue, Color(0xFF120051)],
             ),
           ),
           SizedBox(

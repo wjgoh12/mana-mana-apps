@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:convert';
@@ -143,7 +144,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               fontFamily: AppFonts.outfit,
               fontSize: AppDimens.fontSizeBig,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? const Color(0xFF010367) : Colors.grey,
+              color: isSelected ? AppColors.primaryBlue : Colors.grey,
             ),
           ),
           const SizedBox(height: 4),
@@ -151,7 +152,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
             height: 3,
             width: 60,
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF010367) : Colors.transparent,
+              color: isSelected ? AppColors.primaryBlue : Colors.transparent,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -160,14 +161,12 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
     );
   }
 
-  // Get filtered bookings - sorted by creation time (latest first)
   List<dynamic> _getFilteredBookings(OwnerProfileVM ownerVM) {
     List<dynamic> filteredList;
 
     if (selectedFilter == 'All') {
       filteredList = ownerVM.bookingHistory;
     } else if (selectedFilter == 'Cancelled') {
-      // Group all cancellation-related statuses
       final cancelledStatuses = [
         'Cancelled',
         'Unavailable',
@@ -365,7 +364,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                   'Check-in Date',
                                                   style: TextStyle(
                                                     fontFamily: AppFonts.outfit,
-                                                    fontSize: AppDimens.fontSizeSmall,
+                                                    fontSize:
+                                                        AppDimens.fontSizeSmall,
                                                     color: Colors.white70,
                                                   ),
                                                 ),
@@ -375,7 +375,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                           booking.arrivalDate),
                                                   style: TextStyle(
                                                     fontFamily: AppFonts.outfit,
-                                                    fontSize: AppDimens.fontSizeBig,
+                                                    fontSize:
+                                                        AppDimens.fontSizeBig,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
                                                   ),
@@ -395,7 +396,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                   'Check-out Date',
                                                   style: TextStyle(
                                                     fontFamily: AppFonts.outfit,
-                                                    fontSize: AppDimens.fontSizeSmall,
+                                                    fontSize:
+                                                        AppDimens.fontSizeSmall,
                                                     color: Colors.white70,
                                                   ),
                                                 ),
@@ -405,7 +407,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                           .departureDate),
                                                   style: TextStyle(
                                                     fontFamily: AppFonts.outfit,
-                                                    fontSize: AppDimens.fontSizeBig,
+                                                    fontSize:
+                                                        AppDimens.fontSizeBig,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
                                                   ),
@@ -539,7 +542,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(Icons.hotel,
-                    color: const Color(0xFFFFCF00),
+                    color: AppColors.primaryYellow,
                     size: ResponsiveSize.scaleWidth(16)),
               ),
               SizedBox(width: ResponsiveSize.scaleWidth(16)),
@@ -689,7 +692,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                 child: Text(
                   'Free Stay Redemptions',
                   style: TextStyle(
-                    color: const Color(0xFF606060),
+                    color: AppColors.primaryGrey,
                     fontFamily: AppFonts.outfit,
                     fontSize: AppDimens.fontSizeBig,
                     fontWeight: FontWeight.w700,
@@ -709,7 +712,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
               child: Container(
                 width: ResponsiveSize.scaleWidth(70),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF606060),
+                  color: AppColors.primaryGrey,
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: const Padding(
@@ -814,7 +817,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                               fontFamilyFallback: const [
                                                 'outfit'
                                               ],
-                                              color: const Color(0xFF606060),
+                                              color: AppColors.primaryGrey,
                                             ),
                                           ),
                                           SizedBox(
@@ -829,7 +832,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                   ResponsiveSize.scaleHeight(6),
                                             ),
                                             decoration: BoxDecoration(
-                                              color: const Color(0xFFFFCF00),
+                                              color: AppColors.primaryYellow,
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
@@ -838,7 +841,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 Text(
                                                   'Available Points',
                                                   style: TextStyle(
-                                                    fontSize: AppDimens.fontSizeSmall,
+                                                    fontSize:
+                                                        AppDimens.fontSizeSmall,
                                                     fontFamily: AppFonts.outfit,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -851,7 +855,8 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                                 Text(
                                                   '${unit.redemptionBalancePoints.toInt()}/${unit.redemptionPoints.toInt()}',
                                                   style: TextStyle(
-                                                    fontSize: AppDimens.fontSizeSmall,
+                                                    fontSize:
+                                                        AppDimens.fontSizeSmall,
                                                     fontWeight: FontWeight.bold,
                                                     fontFamily: AppFonts.outfit,
                                                   ),
@@ -895,7 +900,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                                         ),
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF606060),
+                                            color: AppColors.primaryGrey,
                                             borderRadius:
                                                 BorderRadius.circular(5),
                                           ),

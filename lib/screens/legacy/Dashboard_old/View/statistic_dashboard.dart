@@ -16,7 +16,7 @@
 //         builder: (context, _) {
 //           return Container(
 //             decoration: BoxDecoration(
-//               color: const Color(0XFFFFFFFF),
+//               color: AppColors.white,
 //               borderRadius: BorderRadius.circular(20),
 //               boxShadow: [
 //                 BoxShadow(

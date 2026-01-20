@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -52,7 +53,7 @@ class RevenueContainer extends StatelessWidget {
                       left: 1.height, top: 1.height, right: 1.height)
                   : EdgeInsets.all(1.height),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFFFFF),
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
@@ -121,7 +122,7 @@ class RevenueContainer extends StatelessWidget {
           ),
           child: Icon(
             icon,
-            color: const Color(0XFF2900B7),
+            color: AppColors.primaryBlue,
             size: 4.width,
           ),
         ),
@@ -146,7 +147,7 @@ class RevenueContainer extends StatelessWidget {
             fontFamily: 'Open Sans',
             fontWeight: FontWeight.w700,
             fontSize: AppDimens.fontSizeBig,
-            color: const Color(0XFF2900B7),
+            color: AppColors.primaryBlue,
           ),
         ),
         SizedBox(width: 1.width),
@@ -163,7 +164,7 @@ class RevenueContainer extends StatelessWidget {
                   fontFamily: 'Open Sans',
                   fontWeight: FontWeight.w700,
                   fontSize: AppDimens.fontSizeBig,
-                  color: const Color(0XFF2900B7),
+                  color: AppColors.primaryBlue,
                 ),
               );
             }

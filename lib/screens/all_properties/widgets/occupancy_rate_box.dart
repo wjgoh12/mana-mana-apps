@@ -1,3 +1,4 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:mana_mana_app/screens/all_properties/widgets/occupancy_rate_dropdown.dart';
@@ -9,7 +10,7 @@ import 'package:mana_mana_app/core/utils/size_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 
-const labelColor1 = Color(0XFF2900B7);
+const labelColor1 = AppColors.primaryBlue;
 const barBackgroundColor = Color(0xFFDDD7FF);
 
 class OccupancyRateBox extends StatefulWidget {
