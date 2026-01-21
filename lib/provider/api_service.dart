@@ -8,6 +8,8 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio/dio.dart';
 
+import 'package:flutter/foundation.dart';
+
 // Custom exception for authentication failures
 class AuthenticationException implements Exception {
   final String message;
@@ -28,7 +30,9 @@ class ApiService {
   
   ApiService() {
     if (!_initialized) {
-      _dio.interceptors.add(CookieManager(_cookieJar));
+      if (!kIsWeb) {
+        _dio.interceptors.add(CookieManager(_cookieJar));
+      }
       _initialized = true;
     }
   }

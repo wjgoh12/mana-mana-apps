@@ -80,7 +80,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
               child: child,
             );
 
-          default: // 'slide' - slide from right
+          default:
             return SlideTransition(
               position: Tween<Offset>(
                 begin: const Offset(1.0, 0.0),
@@ -95,8 +95,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   void _onItemTapped(int index) {
-    // print('Tap Item $index');
-
     if (_selectedIndex != index) {
       setState(() {
         _selectedIndex = index;
@@ -120,9 +118,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
               _createRoute(const OwnerProfile_v3(), transitionType: 'fade'));
           break;
         case 3:
-        // Navigator.pushReplacement(context,
-        //             _createRoute(const AllNewsletter(), transitionType: 'fade'));
-        //         break;
       }
     }
   }
@@ -134,11 +129,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
       child: LayoutBuilder(builder: (context, constraints) {
         return Container(
           height:
-              MediaQuery.of(context).size.width >= 600 ? 90.fSize : 70.fSize,
-          width: constraints.maxWidth *
-              0.78, // Use 80% of available width for responsive narrowing
-
-          //use margins to adjust the width
+              MediaQuery.of(context).size.width >= 600 ? 100.fSize : 80.fSize,
+          width: constraints.maxWidth * 0.8,
           margin:
               EdgeInsets.symmetric(horizontal: 85.fSize, vertical: 20.fSize),
           decoration: BoxDecoration(
@@ -161,8 +153,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   _buildNavItem('assets/images/Home.png', 'Home', 0),
                   _buildNavItem(
                       'assets/images/Properties.png', 'Properties', 1),
-                  // _buildNavItem(
-                  //     'assets/images/Newsletter.png', 'Newsletter', 2),
                   _buildNavItem('assets/images/Profile.png', 'Profile', 2),
                 ],
               ),
@@ -181,7 +171,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        width: 70.fSize, // Fixed width instead of Expanded
+        width: 70.fSize,
         height: 70.fSize,
         decoration: isSelected
             ? const BoxDecoration(

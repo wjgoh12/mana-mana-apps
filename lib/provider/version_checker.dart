@@ -1,10 +1,11 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:huawei_hmsavailability/huawei_hmsavailability.dart';
+import 'package:flutter/foundation.dart';
 
 class VersionChecker {
   static const String playStoreId = 'com.mana_mana_app ';
@@ -12,6 +13,8 @@ class VersionChecker {
   static const String huaweiAppId = 'C112273799';
 
   Future<bool> needsUpdate() async {
+    if (kIsWeb) return false;
+
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String currentVersion = packageInfo.version;
 
@@ -89,6 +92,8 @@ class VersionChecker {
   }
 
   void launchUpdate() async {
+    if (kIsWeb) return;
+
     String url = '';
     if (Platform.isAndroid) {
       // Check if device has Huawei Mobile Services
@@ -106,6 +111,7 @@ class VersionChecker {
   }
 
   Future<bool> _checkHuaweiServices() async {
+    if (kIsWeb) return false;
     final hmsChecker = HmsChecker();
     return await hmsChecker.isHmsAvailable();
   }
@@ -113,6 +119,7 @@ class VersionChecker {
 
 class HmsChecker {
   Future<bool> isHmsAvailable() async {
+    if (kIsWeb) return false;
     try {
       final hmsApiAvailability = await HmsApiAvailability().isHMSAvailable();
       return hmsApiAvailability == 0; // 0 means HMS is available

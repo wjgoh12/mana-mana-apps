@@ -129,8 +129,10 @@ class OverviewCard extends StatelessWidget {
 
     getPreviousMonthYear(DateTime.now());
 
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 450) screenWidth = 450;
+    double screenHeight = MediaQuery.of(context).size.height;
+    if (screenHeight > 850) screenHeight = 850;
     final isMobile = Responsive.isMobile(context);
 
     double responsiveWidth(double value) => (value / 375.0) * screenWidth;
@@ -524,7 +526,8 @@ class RevenueContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = Responsive.isMobile(context);
-    final screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 450) screenWidth = 450;
 
     final cardHeightLarge = isMobile ? screenWidth * 0.28 : screenWidth * 0.21;
 

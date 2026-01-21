@@ -168,7 +168,9 @@ class LoginPageState extends State<LoginPage> {
           }
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('❌ Login Error: $e');
+      debugPrint('❌ Stack Trace: $stackTrace');
       if (mounted) {
         setState(() => _isLoading = false);
         TextInput.finishAutofillContext(shouldSave: false);

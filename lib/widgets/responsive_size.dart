@@ -8,8 +8,12 @@ class ResponsiveSize {
   static const double baseHeight = 812.0;
 
   static void init(BuildContext context) {
-    screenWidth = MediaQuery.of(context).size.width;
-    screenHeight = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    if (width > 450.0) width = 450.0;
+    screenWidth = width;
+    double height = MediaQuery.of(context).size.height;
+    if (height > 850.0) height = 850.0;
+    screenHeight = height;
   }
 
   // Scale factor for width-based values
