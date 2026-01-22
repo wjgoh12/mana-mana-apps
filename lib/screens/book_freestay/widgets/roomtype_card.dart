@@ -1,13 +1,10 @@
-import 'package:mana_mana_app/core/constants/app_colors.dart';
-import 'package:mana_mana_app/core/constants/app_fonts.dart';
-import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mana_mana_app/model/roomtype.dart';
-import 'package:mana_mana_app/screens/book_freestay/widgets/quantity_controller.dart';
+import 'package:mana_mana_app/screens/profile/widgets/quantity_controller.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 
 class RoomtypeCard extends StatefulWidget {
@@ -210,7 +207,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             decoration: BoxDecoration(
                               border: isSel
                                   ? Border.all(
-                                      color: AppColors.primaryYellow, width: 2)
+                                      color: const Color(0xFFFFCF00), width: 2)
                                   : null,
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -402,7 +399,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: AppColors.primaryYellow,
+                                color: const Color(0xFFFFCF00),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -410,7 +407,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: AppDimens.fontSizeSmall,
+                                  fontSize: ResponsiveSize.text(12),
                                 ),
                               ),
                             ),
@@ -437,7 +434,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: AppDimens.fontSizeSmall,
+                              fontSize: ResponsiveSize.text(12),
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -446,8 +443,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             '${NumberFormat("#,###").format(widget.displayedPoints ?? widget.roomType.roomTypePoints)} points',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: AppDimens.fontSizeSmall,
-                              fontFamily: AppFonts.outfit,
+                              fontSize: ResponsiveSize.text(12),
+                              fontFamily: 'Outfit',
                             ),
                           ),
                         ],
@@ -529,8 +526,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                           Text(
                             'Room Info',
                             style: TextStyle(
-                              fontSize: AppDimens.fontSizeSmall,
-                              fontFamily: AppFonts.outfit,
+                              fontSize: ResponsiveSize.text(11),
+                              fontFamily: 'Outfit',
                               fontWeight: FontWeight.bold,
                               color: Colors.grey[800],
                             ),
@@ -547,8 +544,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       Text(
                                         'Room 1',
                                         style: TextStyle(
-                                          fontSize: AppDimens.fontSizeSmall,
-                                          fontFamily: AppFonts.outfit,
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
                                           color: Colors.black,
                                         ),
                                       ),
@@ -564,8 +561,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       Text(
                                         '${widget.roomType.bedroomDetails[0].bedtype1} bed ',
                                         style: TextStyle(
-                                          fontSize: AppDimens.fontSizeSmall,
-                                          fontFamily: AppFonts.outfit,
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
                                           color: Colors.grey[600],
                                         ),
                                       ),
@@ -586,8 +583,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                         Text(
                                           '${widget.roomType.bedroomDetails[0].bedtype2} bed ',
                                           style: TextStyle(
-                                            fontSize: AppDimens.fontSizeSmall,
-                                            fontFamily: AppFonts.outfit,
+                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: 'Outfit',
                                             color: Colors.grey[600],
                                           ),
                                         ),
@@ -600,8 +597,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       Text(
                                         'Room 2',
                                         style: TextStyle(
-                                          fontSize: AppDimens.fontSizeSmall,
-                                          fontFamily: AppFonts.outfit,
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
                                           color: Colors.black,
                                         ),
                                       ),
@@ -617,8 +614,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       Text(
                                         '${widget.roomType.bedroomDetails[1].bedtype1} bed ',
                                         style: TextStyle(
-                                          fontSize: AppDimens.fontSizeSmall,
-                                          fontFamily: AppFonts.outfit,
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
                                           color: Colors.grey[600],
                                         ),
                                       ),
@@ -639,8 +636,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                         Text(
                                           '${widget.roomType.bedroomDetails[1].bedtype2} bed ',
                                           style: TextStyle(
-                                            fontSize: AppDimens.fontSizeSmall,
-                                            fontFamily: AppFonts.outfit,
+                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: 'Outfit',
                                             color: Colors.grey[600],
                                           ),
                                         ),
@@ -662,8 +659,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       Text(
                                         'Room 1',
                                         style: TextStyle(
-                                          fontSize: AppDimens.fontSizeSmall,
-                                          fontFamily: AppFonts.outfit,
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
                                           color: Colors.grey[600],
                                         ),
                                       ),
@@ -678,8 +675,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       Text(
                                         '${widget.roomType.bedroomDetails[0].bedtype1} bed ',
                                         style: TextStyle(
-                                          fontSize: AppDimens.fontSizeSmall,
-                                          fontFamily: AppFonts.outfit,
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
                                           color: Colors.grey[600],
                                         ),
                                       ),
@@ -700,8 +697,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                         Text(
                                           '${widget.roomType.bedroomDetails[0].bedtype2} bed ',
                                           style: TextStyle(
-                                            fontSize: AppDimens.fontSizeSmall,
-                                            fontFamily: AppFonts.outfit,
+                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: 'Outfit',
                                             color: Colors.grey[600],
                                           ),
                                         ),
@@ -716,8 +713,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       Text(
                                         'Room 2',
                                         style: TextStyle(
-                                          fontSize: AppDimens.fontSizeSmall,
-                                          fontFamily: AppFonts.outfit,
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
                                           color: Colors.grey[600],
                                         ),
                                       ),
@@ -732,8 +729,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       Text(
                                         '${widget.roomType.bedroomDetails[1].bedtype1} bed ',
                                         style: TextStyle(
-                                          fontSize: AppDimens.fontSizeSmall,
-                                          fontFamily: AppFonts.outfit,
+                                          fontSize: ResponsiveSize.text(11),
+                                          fontFamily: 'Outfit',
                                           color: Colors.grey[600],
                                         ),
                                       ),
@@ -756,8 +753,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                         Text(
                                           '${widget.roomType.bedroomDetails[1].bedtype2} bed ',
                                           style: TextStyle(
-                                            fontSize: AppDimens.fontSizeSmall,
-                                            fontFamily: AppFonts.outfit,
+                                            fontSize: ResponsiveSize.text(11),
+                                            fontFamily: 'Outfit',
                                             color: Colors.grey[600],
                                           ),
                                         ),
@@ -770,8 +767,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             Text(
                               'Null',
                               style: TextStyle(
-                                fontSize: AppDimens.fontSizeSmall,
-                                fontFamily: AppFonts.outfit,
+                                fontSize: ResponsiveSize.text(11),
+                                fontFamily: 'Outfit',
                                 color: Colors.grey[600],
                               ),
                             ),
@@ -785,8 +782,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                         Text(
                           'No of Guests',
                           style: TextStyle(
-                            fontSize: AppDimens.fontSizeSmall,
-                            fontFamily: AppFonts.outfit,
+                            fontSize: ResponsiveSize.text(11),
+                            fontFamily: 'Outfit',
                             fontWeight: FontWeight.bold,
                             color: Colors.grey[800],
                           ),
@@ -803,8 +800,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                             Text(
                               widget.numberofPax.toString(),
                               style: TextStyle(
-                                fontSize: AppDimens.fontSizeSmall,
-                                fontFamily: AppFonts.outfit,
+                                fontSize: ResponsiveSize.text(11),
+                                fontFamily: 'Outfit',
                                 color: Colors.grey[600],
                               ),
                             ),
@@ -826,27 +823,51 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                     Text(
                       'Amenities Available',
                       style: TextStyle(
-                        fontSize: AppDimens.fontSizeSmall,
-                        fontFamily: AppFonts.outfit,
+                        fontSize: ResponsiveSize.text(11),
+                        fontFamily: 'Outfit',
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: widget.roomType.bedroomDetails.isNotEmpty &&
-                              widget.roomType.bedroomDetails[0]
-                                  .bedroomFacilities.isNotEmpty
-                          ? Wrap(
-                              spacing: ResponsiveSize.scaleWidth(12),
-                              runSpacing: ResponsiveSize.scaleHeight(6),
-                              children: widget
-                                  .roomType.bedroomDetails[0].bedroomFacilities
-                                  .map((facility) {
-                                return Row(
+                      child: Builder(builder: (context) {
+                        final bedroomDetails = widget.roomType.bedroomDetails;
+                        final hasAnyFacilities = bedroomDetails.any(
+                            (bedroom) => bedroom.bedroomFacilities.isNotEmpty);
+
+                        if (!hasAnyFacilities) {
+                          return Text(
+                            'None',
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.text(11),
+                              fontFamily: 'Outfit',
+                              color: Colors.grey[600],
+                            ),
+                          );
+                        }
+
+                        // Build facilities grouped by room
+                        List<Widget> roomFacilityWidgets = [];
+                        for (int i = 0; i < bedroomDetails.length; i++) {
+                          final bedroom = bedroomDetails[i];
+                          if (bedroom.bedroomFacilities.isNotEmpty) {
+                            for (final facility in bedroom.bedroomFacilities) {
+                              roomFacilityWidgets.add(
+                                Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    // Decode and display base64 icon
+                                    Text(
+                                      'Room ${i + 1}',
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.text(11),
+                                        fontFamily: 'Outfit',
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        width: ResponsiveSize.scaleWidth(12)),
                                     if (facility.icon.isNotEmpty)
                                       Image.memory(
                                         base64Decode(facility.icon),
@@ -865,27 +886,33 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                       ),
                                     if (facility.icon.isNotEmpty)
                                       SizedBox(
-                                          width: ResponsiveSize.scaleWidth(6)),
+                                          width: ResponsiveSize.scaleWidth(4)),
                                     Text(
-                                      '${facility.facilitiesName}\n',
+                                      facility.facilitiesName,
                                       style: TextStyle(
-                                        fontSize: AppDimens.fontSizeSmall,
-                                        fontFamily: AppFonts.outfit,
+                                        fontSize: ResponsiveSize.text(11),
+                                        fontFamily: 'Outfit',
                                         color: Colors.grey[800],
                                       ),
                                     ),
                                   ],
-                                );
-                              }).toList(),
-                            )
-                          : Text(
-                              'None',
-                              style: TextStyle(
-                                fontSize: AppDimens.fontSizeSmall,
-                                fontFamily: AppFonts.outfit,
-                                color: Colors.grey[600],
-                              ),
-                            ),
+                                ),
+                              );
+                            }
+                          }
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: roomFacilityWidgets.map((widget) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: ResponsiveSize.scaleHeight(6)),
+                              child: widget,
+                            );
+                          }).toList(),
+                        );
+                      }),
                     ),
                     const SizedBox(height: 12),
                     if (displayedSelected)
@@ -902,8 +929,8 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                                   child: Text(
                                     'Number of Rooms:',
                                     style: TextStyle(
-                                      fontSize: AppDimens.fontSizeSmall,
-                                      fontFamily: AppFonts.outfit,
+                                      fontSize: ResponsiveSize.text(11),
+                                      fontFamily: 'Outfit',
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
