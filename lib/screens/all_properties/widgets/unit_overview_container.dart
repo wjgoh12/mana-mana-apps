@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
 import 'package:mana_mana_app/screens/property_detail/view_model/property_detail_view_model.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
+import 'package:flutter/foundation.dart';
 
 class UnitOverviewContainer extends StatelessWidget {
   const UnitOverviewContainer({Key? key}) : super(key: key);
@@ -89,7 +90,11 @@ class UnitOverviewContainer extends StatelessWidget {
 
     if (!hasData || !hasMeaningfulData) {
       return Container(
-        margin: EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(16)),
+        margin: EdgeInsets.only(
+          left: ResponsiveSize.scaleWidth(16),
+          right: ResponsiveSize.scaleWidth(16),
+          top: ResponsiveSize.scaleHeight(16),
+        ),
         padding: EdgeInsets.all(ResponsiveSize.scaleWidth(16)),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -184,9 +189,11 @@ class UnitOverviewContainer extends StatelessWidget {
             elevation: 2,
             color: Color(int.parse(color)),
             child: Container(
-              height: MediaQuery.of(context).size.width >= 600
-                  ? ResponsiveSize.scaleHeight(110)
-                  : ResponsiveSize.scaleHeight(90),
+              height: kIsWeb
+                  ? ResponsiveSize.scaleHeight(105) // Reduced height for Web
+                  : MediaQuery.of(context).size.width >= 600
+                      ? ResponsiveSize.scaleHeight(110)
+                      : ResponsiveSize.scaleHeight(105),
               padding: EdgeInsets.all(ResponsiveSize.scaleWidth(8.0)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,9 +222,9 @@ class UnitOverviewContainer extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: ResponsiveSize.scaleHeight(8)),
+                        SizedBox(height: ResponsiveSize.scaleHeight(4)),
                         Container(
-                          height: ResponsiveSize.scaleHeight(25),
+                          // height: ResponsiveSize.scaleHeight(40),
                           child: Text(
                             title,
                             style: TextStyle(
@@ -227,7 +234,7 @@ class UnitOverviewContainer extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: ResponsiveSize.scaleHeight(8)),
+                        SizedBox(height: ResponsiveSize.scaleHeight(4)),
                         RichText(
                           text: TextSpan(
                             children: [

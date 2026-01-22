@@ -1,0 +1,47 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "mana_mana_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--web-browser-flag",
+                "--window-size=450,850",
+                "--web-browser-flag",
+                "--disable-web-security",
+                "--web-browser-flag",
+                "--user-data-dir=/tmp/flutter_chrome_dev"
+            ]
+        },
+        {
+            "name": "mana_mana_app (profile)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": [
+                "--web-browser-flag",
+                "--window-size=450,850",
+                "--web-browser-flag",
+                "--disable-web-security",
+                "--web-browser-flag",
+                "--user-data-dir=/tmp/flutter_chrome_dev"
+            ]
+        },
+        {
+            "name": "mana_mana_app (release)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": [
+                "--web-browser-flag",
+                "--window-size=450,850",
+                "--web-browser-flag",
+                "--disable-web-security",
+                "--web-browser-flag",
+                "--user-data-dir=/tmp/flutter_chrome_dev"
+            ]
+        }
+    ]
+}

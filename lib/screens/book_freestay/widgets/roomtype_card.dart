@@ -651,7 +651,7 @@ class _RoomtypeCardState extends State<RoomtypeCard>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (widget.roomType.bedroomDetails.length > 0 &&
+                                if (widget.roomType.bedroomDetails.isNotEmpty &&
                                     widget.roomType.bedroomDetails[0].bedtype1
                                         .isNotEmpty)
                                   Row(

@@ -46,7 +46,7 @@ class PropertyListRepository {
     });
   }
 
-  Future<Uint8List?> downloadPdfStatement(
+  Future<Uint8List?> mobileDownloadPdfStatement(
       BuildContext context,
       property,
       selectedYearValue,

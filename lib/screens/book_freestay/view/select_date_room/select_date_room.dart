@@ -719,7 +719,7 @@ class _SelectDateRoomState extends State<SelectDateRoom> {
 
                 SizedBox(
                     height: ResponsiveSize.scaleHeight(
-                        150)), // Space for bottom bar
+                        250)), // Space for bottom bar
               ],
             ),
           ),

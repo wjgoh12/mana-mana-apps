@@ -53,13 +53,10 @@ class _EnhancedStatementContainerState
         )}';
   }
 
-  // Check if statement is available for download
   bool _isStatementAvailable(dynamic item) {
     final currentDate = DateTime.now();
     final statementDate = DateTime(item.iyear ?? 0, item.imonth ?? 0);
 
-    // Statement should be available if it's at least 1 month old
-    // and the total amount is greater than 0
     final isOldEnough =
         statementDate.isBefore(DateTime(currentDate.year, currentDate.month));
     final hasAmount = (item.total ?? 0.0) > 0;
@@ -96,6 +93,7 @@ class _EnhancedStatementContainerState
 
   @override
   Widget build(BuildContext context) {
+    final bool isWeb = false;
     return ListenableBuilder(
       listenable: widget.model,
       builder: (context, child) {
@@ -105,7 +103,6 @@ class _EnhancedStatementContainerState
         final currentUnit = widget.model.selectedUnitNo;
         final currentType = widget.model.selectedType;
 
-        // Track changes
         if (_lastYearValue != currentYear ||
             _lastMonthValue != currentMonth ||
             _lastPropertyValue != currentProperty ||
@@ -125,7 +122,6 @@ class _EnhancedStatementContainerState
           _lastTypeValue = currentType;
         }
 
-        // Check if we have valid selections
         if (widget.model.selectedProperty == null ||
             widget.model.selectedUnitNo == null ||
             widget.model.selectedType == null) {
@@ -141,7 +137,6 @@ class _EnhancedStatementContainerState
           );
         }
 
-        // Get filtered items
         final allItems = widget.model.unitByMonth;
 
         final seen = <String>{};
@@ -171,7 +166,6 @@ class _EnhancedStatementContainerState
             return false;
           }
 
-          // Remove duplicates
           final key =
               '${item.slocation}-${item.stype}-${item.sunitno}-${item.imonth}-${item.iyear}';
           if (seen.contains(key)) {
@@ -182,7 +176,6 @@ class _EnhancedStatementContainerState
           }
         }).toList();
 
-        // Debug logging
         if (_lastYearValue != currentYear || _lastMonthValue != currentMonth) {
           print('📊 Filtering results:');
           print('Total items: ${allItems.length}');
@@ -234,7 +227,6 @@ class _EnhancedStatementContainerState
           );
         }
 
-        // Sort by month (descending)
         filteredItems.sort((a, b) {
           final monthA = a.imonth ?? 0;
           final monthB = b.imonth ?? 0;
@@ -243,7 +235,7 @@ class _EnhancedStatementContainerState
 
         return Container(
           key: ValueKey(
-              '${currentProperty}_${currentType}_${currentUnit}_${currentYear}_${currentMonth}'),
+              '${currentProperty}_${currentType}_${currentUnit}_${currentYear}_$currentMonth'),
           margin: EdgeInsets.only(
             top: ResponsiveSize.scaleHeight(16),
             bottom: ResponsiveSize.scaleHeight(20),
@@ -275,7 +267,6 @@ class _EnhancedStatementContainerState
                       return;
                     }
 
-                    // Download the specific PDF statement
                     widget.model.downloadSpecificPdfStatement(context, item);
                   },
                 ),

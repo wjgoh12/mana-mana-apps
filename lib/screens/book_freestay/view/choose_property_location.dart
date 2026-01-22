@@ -154,8 +154,6 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
             dropdownOptions = [ALL_STATES, ...globalData.availableStates];
 
             if (selectedState == null) {
-              // Set initial selectedState synchronously but defer expensive
-              // fetch work to after build to avoid setState during build.
               selectedState = ALL_STATES;
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) _handleStateSelection(globalData, ALL_STATES);
@@ -328,6 +326,7 @@ class _LocationCardState extends State<LocationCard>
     with AutomaticKeepAliveClientMixin {
   Uint8List? _decodedImage;
   bool _isDecoded = false;
+  bool _isUrl = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -345,12 +344,19 @@ class _LocationCardState extends State<LocationCard>
     }
 
     try {
+      if (widget.picBase64!.startsWith('http')) {
+        if (mounted) setState(() => _isUrl = true);
+        return;
+      }
+
       Uint8List? result;
 
       if (widget.picBase64!.startsWith("data:image")) {
         result = Uri.parse(widget.picBase64!).data?.contentAsBytes();
       } else {
-        result = base64Decode(widget.picBase64!);
+        // Sanitize Base64 string: remove all whitespace/newlines
+        final cleanBase64 = widget.picBase64!.replaceAll(RegExp(r'\s+'), '');
+        result = base64Decode(cleanBase64);
       }
 
       if (mounted) {
@@ -424,21 +430,31 @@ class _LocationCardState extends State<LocationCard>
         child: Column(
           children: [
             Container(
-              height: ResponsiveSize.scaleHeight(195),
+              height: ResponsiveSize.scaleHeight(250),
               width: double.infinity,
-              child: _isDecoded
-                  ? _decodedImage != null
-                      ? Image.memory(
-                          _decodedImage!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            debugPrint(
-                                "❌ Error displaying image for ${widget.locationName}: $error");
-                            return _buildPlaceholder();
-                          },
-                        )
-                      : _buildPlaceholder()
-                  : const Center(child: CircularProgressIndicator()),
+              child: _isUrl
+                  ? Image.network(
+                      widget.picBase64!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        debugPrint(
+                            "❌ Error displaying network image for ${widget.locationName}: $error");
+                        return _buildPlaceholder();
+                      },
+                    )
+                  : _isDecoded
+                      ? _decodedImage != null
+                          ? Image.memory(
+                              _decodedImage!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                debugPrint(
+                                    "❌ Error displaying memory image for ${widget.locationName}: $error");
+                                return _buildPlaceholder();
+                              },
+                            )
+                          : _buildPlaceholder()
+                      : const Center(child: CircularProgressIndicator()),
             ),
             Text(
               widget.locationName ?? "Unknown Location",

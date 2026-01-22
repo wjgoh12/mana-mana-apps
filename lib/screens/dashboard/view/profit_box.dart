@@ -58,7 +58,6 @@ class _ProfitBoxState extends State<ProfitBox> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              // width: width,
               height: height,
               decoration: BoxDecoration(
                 color: Colors.white,

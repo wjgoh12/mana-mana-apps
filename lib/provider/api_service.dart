@@ -31,7 +31,14 @@ class ApiService {
   ApiService() {
     if (!_initialized) {
       if (!kIsWeb) {
+        // Only use CookieManager on Mobile/Desktop (Native).
+        // On Web, the Browser handles cookies automatically.
         _dio.interceptors.add(CookieManager(_cookieJar));
+      } else {
+        // For Web, we rely on Browser cookies.
+        // We might need withCredentials=true for specific servers, 
+        // but for now keeping it disabled to avoid CORS errors on Prod.
+        // _dio.options.extra['withCredentials'] = true;
       }
       _initialized = true;
     }
@@ -141,19 +148,67 @@ class ApiService {
 
     dynamic sendBytesData = data;
 
-    final response = await http.post(
-      Uri.parse('$baseUrl$url'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode(sendBytesData ?? {}),
-    );
+    // Use Dio for binary data to ensure correct handling on Web
+    try {
+      final response = await _dio.post(
+        '$baseUrl$url',
+        data: sendBytesData ?? {},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          responseType: ResponseType.bytes, // Important for PDF
+        ),
+      );
 
-    if (response.body.toString().contains("Incorrect result size")) {
-      return 'Incorrect result size';
-    } else {
-      return response.bodyBytes;
+      // Dio throws on 4xx/5xx by default, so if we are here, it's 2xx.
+      // But we should check content-type just in case.
+      
+      final contentType = response.headers.value('content-type')?.toLowerCase() ?? '';
+      
+      if (contentType.contains('application/json') || 
+          contentType.contains('text/')) {
+         // It returned text/json instead of bytes -> probably an error message
+         // Dio with ResponseType.bytes stores body in response.data as List<int>
+         // We need to decode it to see the error
+         try {
+           final textData = utf8.decode(response.data);
+           debugPrint("⚠️ postWithBytes received Text/JSON instead of PDF: $textData");
+           return textData; // Return the error string
+         } catch(e) {
+           return 'Error decoding response';
+         }
+      }
+
+      // Check for specific error string if it somehow came as bytes
+      // (Unlikely if we checked content-type, but safe to keep logic)
+      try {
+         // Converting huge PDF to string is expensive, so maybe skip this check 
+         // unless we are unsure.
+         // But the original code checked for "Incorrect result size".
+         // Let's assume if it's PDF content-type, it's good.
+      } catch (_) {}
+
+      // response.data is List<int> (Uint8List compatible)
+      return Uint8List.fromList(response.data);
+
+    } catch (e) {
+      if (e is DioError) {
+        debugPrint("❌ postWithBytes Dio error: ${e.message}");
+        if (e.response != null) {
+          // Try to read error body
+           try {
+             // If responseType was bytes, data is bytes.
+             final errText = utf8.decode(e.response!.data);
+             debugPrint("🔧 Error response body: $errText");
+             return errText;
+           } catch (_) {
+             return e.message;
+           }
+        }
+      }
+      rethrow;
     }
   }
 
@@ -194,35 +249,21 @@ class ApiService {
 
     dynamic sendJson = data;
 
-    // try {
-    //   final logHeaders = Map<String, String>.from({
-    //     ...{
-    //       ...extra,
-    //     }
-    //   });
-    //   if (logHeaders.containsKey('Authorization')) {
-    //     logHeaders['Authorization'] = 'Bearer <masked>';
-    //   }
-    //   debugPrint('➡️ ApiService.postJson -> $baseUrl$url');
-    //   debugPrint('   🔑 Token owner: ${tokenOwner ?? "unknown"}');
-    //   debugPrint('   📤 Headers (masked): $logHeaders');
-    //   debugPrint('   📋 Body: ${json.encode(sendJson ?? {})}');
-    // } catch (_) {}
-
-    final response = await http.post(
-      Uri.parse('$baseUrl$url'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode(sendJson ?? {}),
-    );
-
     try {
-      return json.decode(response.body);
+      final response = await _dio.post(
+        '$baseUrl$url',
+        data: sendJson ?? {},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      return response.data; // Dio decodes JSON automatically
     } catch (e) {
-      // debugPrint("❌ JSON decode error: $e");
-      return null;
+       debugPrint("❌ postJson Dio error: $e");
+       return null;
     }
   }
 

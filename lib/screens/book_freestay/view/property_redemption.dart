@@ -206,7 +206,7 @@ class _PropertyRedemptionState extends State<PropertyRedemption> {
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     width: double.maxFinite,
-                    height: MediaQuery.of(context).size.height * 0.55,
+                    height: MediaQuery.of(context).size.height * 0.75,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: propertyImageBase64.startsWith('assets/')

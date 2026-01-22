@@ -1,4 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import 'package:mana_mana_app/model/owner_property_list.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
@@ -368,12 +372,14 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Downloads PDF statement for mobile (navigates to PDF viewer)
   Future<void> downloadPdfStatement(BuildContext context) async {
     try {
       _isDownloading = true;
       notifyListeners();
 
-      final bytes = await ownerPropertyListRepository.downloadPdfStatement(
+      final bytes =
+          await ownerPropertyListRepository.mobileDownloadPdfStatement(
         context,
         property,
         selectedYearValue.toString(),
@@ -425,6 +431,27 @@ class PropertyDetailVM extends ChangeNotifier {
     );
   }
 
+  /// Downloads PDF statement for web (triggers browser download)
+  void _downloadPdfForWeb(Uint8List bytes, String fileName) {
+    if (!kIsWeb) return;
+
+    // Create a blob from the bytes
+    final blob = html.Blob([bytes], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    // Create a temporary anchor element and trigger download
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute('download', fileName)
+      ..style.display = 'none';
+
+    html.document.body?.children.add(anchor);
+    anchor.click();
+
+    // Clean up
+    html.document.body?.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
+  }
+
   Future<void> downloadAnnualPdfStatement(BuildContext context) async {
     _annual_isDownloading = true;
     notifyListeners();
@@ -436,20 +463,30 @@ class PropertyDetailVM extends ChangeNotifier {
         selectedType,
         selectedUnitNo,
         users);
+
     if (bytes != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AnnualStatementPdfViewerFromMemory(
-            property: property,
-            year: selectedYearValue,
-            unitType: selectedType,
-            unitNo: selectedUnitNo,
-            pdfData: bytes,
+      if (kIsWeb) {
+        // For web: trigger download
+        final fileName =
+            'Statement_${property}_${selectedType}_${selectedUnitNo}_Annual_${selectedAnnualYearValue}.pdf';
+        _downloadPdfForWeb(bytes, fileName);
+      } else {
+        // For mobile: navigate to PDF viewer
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AnnualStatementPdfViewerFromMemory(
+              property: property,
+              year: selectedYearValue,
+              unitType: selectedType,
+              unitNo: selectedUnitNo,
+              pdfData: bytes,
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
+
     _annual_isDownloading = false;
     notifyListeners();
   }
@@ -460,13 +497,17 @@ class PropertyDetailVM extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Downloads specific PDF statement (used by statement card)
+  /// For web: triggers browser download
+  /// For mobile: navigates to PDF viewer
   Future<void> downloadSpecificPdfStatement(
       BuildContext context, dynamic item) async {
     try {
       _isDownloading = true;
       notifyListeners();
 
-      final bytes = await ownerPropertyListRepository.downloadPdfStatement(
+      final bytes =
+          await ownerPropertyListRepository.mobileDownloadPdfStatement(
         context,
         item.slocation,
         item.iyear.toString(),
@@ -478,19 +519,36 @@ class PropertyDetailVM extends ChangeNotifier {
       print('📄 PDF downloaded for Year: ${item.iyear}, Month: ${item.imonth}');
 
       if (bytes != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PdfViewerFromMemory(
-              property: item.slocation,
-              year: item.iyear.toString(),
-              month: item.imonth.toString(),
-              unitType: selectedType,
-              unitNo: selectedUnitNo,
-              pdfData: bytes,
+        if (kIsWeb) {
+          // For web (PWA): trigger direct download
+          final fileName =
+              'Statement_${item.slocation}_${selectedType}_${selectedUnitNo}_${item.iyear}_${item.imonth}.pdf';
+          _downloadPdfForWeb(bytes, fileName);
+
+          // Show success message for web
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Statement downloaded successfully'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
             ),
-          ),
-        );
+          );
+        } else {
+          // For mobile: navigate to PDF viewer
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PdfViewerFromMemory(
+                property: item.slocation,
+                year: item.iyear.toString(),
+                month: item.imonth.toString(),
+                unitType: selectedType,
+                unitNo: selectedUnitNo,
+                pdfData: bytes,
+              ),
+            ),
+          );
+        }
       } else {
         // Handle null response
         _showErrorDialog(

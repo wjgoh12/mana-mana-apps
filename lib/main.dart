@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  initApp('dev');
+  initApp('prod');
 
   runApp(
     MultiProvider(
@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
       ),
       builder: (context, child) {
         final mediaQueryData = MediaQuery.of(context);
-        // Force "mobile" width (max 450px, typical for large phones)
+
         final double targetWidth =
             mediaQueryData.size.width > 450 ? 450 : mediaQueryData.size.width;
 

@@ -20,6 +20,8 @@ class StatementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWeb = false;
+
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.scaleWidth(16),
@@ -34,7 +36,6 @@ class StatementCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
-          // onTap: onTap,
           child: Padding(
             padding: EdgeInsets.all(ResponsiveSize.scaleWidth(12)),
             child: Row(

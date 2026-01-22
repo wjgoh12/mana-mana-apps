@@ -282,9 +282,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             }
 
                             if (!mounted) return;
-                            // ignore: use_build_context_synchronously
-                            Navigator.of(context).pop();
-                            // ignore: use_build_context_synchronously
+                            // Replaced redundant pop with direct navigation
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (_) => const NewDashboardV3()),

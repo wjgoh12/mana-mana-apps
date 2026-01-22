@@ -134,7 +134,7 @@ class UserRepository {
       });
       debugPrint('🔁 confirmSwitchUser response: $response');
 
-      debugPrint('� User switch confirmed, now fetching updated user data...');
+      debugPrint('✅ User switch confirmed, now fetching updated user data...');
 
       return {
         'statusCode': 200,

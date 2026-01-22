@@ -1,5 +1,6 @@
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
-import 'dart:io';
+import 'package:universal_io/io.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,14 +24,19 @@ class PdfViewerFromMemory extends StatelessWidget {
       required this.pdfData});
 
   void share(RenderBox box) async {
-    Directory dir = await getApplicationDocumentsDirectory();
-    File file = File(
-        '${dir.absolute.path}/${property}_${unitNo}_${getMonthName(month!)}_$year.pdf');
-    await file.create(recursive: true);
-    await file.writeAsBytes(pdfData);
-    Rect sharePositionOrigin = box.localToGlobal(Offset.zero) & box.size;
-    await Share.shareXFiles([XFile(file.absolute.path)],
-        sharePositionOrigin: sharePositionOrigin);
+    if (kIsWeb) return;
+    try {
+      Directory dir = await getApplicationDocumentsDirectory();
+      File file = File(
+          '${dir.absolute.path}/${property}_${unitNo}_${getMonthName(month!)}_$year.pdf');
+      await file.create(recursive: true);
+      await file.writeAsBytes(pdfData);
+      Rect sharePositionOrigin = box.localToGlobal(Offset.zero) & box.size;
+      await Share.shareXFiles([XFile(file.absolute.path)],
+          sharePositionOrigin: sharePositionOrigin);
+    } catch (e) {
+      debugPrint('Share failed: $e');
+    }
   }
 
   String getMonthName(String month) {
@@ -77,12 +83,13 @@ class PdfViewerFromMemory extends StatelessWidget {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      floatingActionButton: _shareButton,
+      floatingActionButton: kIsWeb ? null : _shareButton,
       body: SfPdfViewer.memory(
         pdfData,
         onDocumentLoadFailed: (details) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to load PDF: ${details.error}')),
+            SnackBar(content: Text(
+                'Failed: ${details.error}\nSize: ${pdfData.length}\nHead: ${String.fromCharCodes(pdfData.take(15))}')),
           );
         },
       ),
