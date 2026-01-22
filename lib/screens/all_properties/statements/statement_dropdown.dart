@@ -5,15 +5,14 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/property_detail/view_model/property_detail_view_model.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
+import 'statement_utils.dart';
 
-class EnhancedStatementDropdown extends StatefulWidget {
-  final VoidCallback onBack;
+class StatementDropdown extends StatefulWidget {
   final List<String> yearOptions;
   final List<String> monthOptions;
   final PropertyDetailVM model;
 
-  const EnhancedStatementDropdown({
-    required this.onBack,
+  const StatementDropdown({
     required this.yearOptions,
     required this.monthOptions,
     required this.model,
@@ -21,51 +20,12 @@ class EnhancedStatementDropdown extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _EnhancedStatementDropdownState createState() =>
-      _EnhancedStatementDropdownState();
+  _StatementDropdownState createState() => _StatementDropdownState();
 }
 
-class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
-  @override
-  void initState() {
-    super.initState();
-    // Don't do anything here, let the model control the state
-  }
-
-  String getMonthName(String month) {
-    switch (month) {
-      case '1':
-        return 'Jan';
-      case '2':
-        return 'Feb';
-      case '3':
-        return 'Mar';
-      case '4':
-        return 'Apr';
-      case '5':
-        return 'May';
-      case '6':
-        return 'Jun';
-      case '7':
-        return 'Jul';
-      case '8':
-        return 'Aug';
-      case '9':
-        return 'Sep';
-      case '10':
-        return 'Oct';
-      case '11':
-        return 'Nov';
-      case '12':
-        return 'Dec';
-      default:
-        return month;
-    }
-  }
-
+class _StatementDropdownState extends State<StatementDropdown> {
   @override
   Widget build(BuildContext context) {
-    // Read values directly from model - no local state
     final selectedYear = widget.model.selectedYearValue;
     final selectedMonth = widget.model.selectedMonthValue;
 
@@ -73,20 +33,15 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
       padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(16)),
       child: Row(
         children: [
-          // Statements Title
           Text(
             'Statements',
             style: TextStyle(
               fontSize: AppDimens.fontSizeBig,
               fontWeight: FontWeight.bold,
               fontFamily: AppFonts.outfit,
-              // color: const Color(0xFF3E51FF),
             ),
           ),
-
           SizedBox(width: ResponsiveSize.scaleWidth(16)),
-
-          // Monthly Dropdown
           Expanded(
             child: DropdownButton2<String>(
               isExpanded: true,
@@ -105,13 +60,11 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                   border: Border.all(color: Colors.grey.shade500, width: 1),
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
-                  // Removed border for seamless look
                 ),
               ),
               dropdownStyleData: DropdownStyleData(
-                maxHeight: 300, // Set max height to prevent overflow
-                isOverButton:
-                    false, // Display below the button instead of overlaying
+                maxHeight: 300,
+                isOverButton: false,
                 scrollbarTheme: ScrollbarThemeData(
                   radius: const Radius.circular(40),
                   thickness: WidgetStateProperty.all(6),
@@ -128,8 +81,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                     left: BorderSide(color: Colors.grey.shade500),
                     right: BorderSide(color: Colors.grey.shade500),
                     bottom: BorderSide(color: Colors.grey.shade500),
-                    top: BorderSide
-                        .none, // No top border for seamless connection
+                    top: BorderSide.none,
                   ),
                   color: Colors.white,
                   boxShadow: [
@@ -143,7 +95,6 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                 offset: const Offset(0, 6),
               ),
               items: [
-                // Add "All" option
                 DropdownMenuItem(
                   value: null,
                   child: Text(
@@ -154,12 +105,11 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                     ),
                   ),
                 ),
-                // Add individual month options
                 ...widget.monthOptions.map((month) {
                   return DropdownMenuItem(
                     value: month,
                     child: Text(
-                      getMonthName(month),
+                      StatementUtils.getMonthName(month),
                       style: TextStyle(
                         fontFamily: AppFonts.outfit,
                         fontSize: AppDimens.fontSizeSmall,
@@ -169,15 +119,11 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                 }),
               ],
               onChanged: (value) {
-                print('📅 Month dropdown changed to: $value');
                 widget.model.updateSelectedMonth(value);
               },
             ),
           ),
-
           SizedBox(width: ResponsiveSize.scaleWidth(10)),
-
-          // Year Dropdown
           Expanded(
             child: DropdownButton2<String>(
               isExpanded: true,
@@ -217,8 +163,7 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
                     left: BorderSide(color: Colors.grey.shade500),
                     right: BorderSide(color: Colors.grey.shade500),
                     bottom: BorderSide(color: Colors.grey.shade500),
-                    top: BorderSide
-                        .none, // No top border for seamless connection
+                    top: BorderSide.none,
                   ),
                   color: Colors.white,
                   boxShadow: [
@@ -259,7 +204,6 @@ class _EnhancedStatementDropdownState extends State<EnhancedStatementDropdown> {
               onChanged: widget.yearOptions.isEmpty
                   ? null
                   : (value) {
-                      print('📅 Year dropdown changed to: $value');
                       if (value != null) {
                         widget.model.updateSelectedYear(value);
                       }

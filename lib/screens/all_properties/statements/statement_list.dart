@@ -1,57 +1,15 @@
+import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/property_detail/view_model/property_detail_view_model.dart';
-import 'package:mana_mana_app/screens/all_properties/widgets/statement_card.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
+import 'statement_utils.dart';
 
-class EnhancedStatementContainer extends StatefulWidget {
+class StatementList extends StatelessWidget {
   final PropertyDetailVM model;
 
-  const EnhancedStatementContainer({Key? key, required this.model})
-      : super(key: key);
-
-  @override
-  State<EnhancedStatementContainer> createState() =>
-      _EnhancedStatementContainerState();
-}
-
-class _EnhancedStatementContainerState
-    extends State<EnhancedStatementContainer> {
-  String? _lastYearValue;
-  String? _lastMonthValue;
-  String? _lastPropertyValue;
-  String? _lastUnitValue;
-  String? _lastTypeValue;
-
-  String monthNumberToName(int month) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
-    return (month >= 1 && month <= 12) ? months[month - 1] : 'Unknown';
-  }
-
-  String formatDate(int day, int month, int year) {
-    return '${day.toString().padLeft(2, '0')}/${month.toString().padLeft(2, '0')}/$year';
-  }
-
-  String formatAmount(double amount) {
-    return 'RM ${amount.toStringAsFixed(2).replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]},',
-        )}';
-  }
+  const StatementList({Key? key, required this.model}) : super(key: key);
 
   bool _isStatementAvailable(dynamic item) {
     final currentDate = DateTime.now();
@@ -93,52 +51,29 @@ class _EnhancedStatementContainerState
 
   @override
   Widget build(BuildContext context) {
-    final bool isWeb = false;
     return ListenableBuilder(
-      listenable: widget.model,
+      listenable: model,
       builder: (context, child) {
-        final currentYear = widget.model.selectedYearValue.toString();
-        final currentMonth = widget.model.selectedMonthValue.toString();
-        final currentProperty = widget.model.selectedProperty;
-        final currentUnit = widget.model.selectedUnitNo;
-        final currentType = widget.model.selectedType;
+        final currentYear = model.selectedYearValue.toString();
+        final currentMonth = model.selectedMonthValue.toString();
+        final currentProperty = model.selectedProperty;
+        final currentUnit = model.selectedUnitNo;
+        final currentType = model.selectedType;
 
-        if (_lastYearValue != currentYear ||
-            _lastMonthValue != currentMonth ||
-            _lastPropertyValue != currentProperty ||
-            _lastUnitValue != currentUnit ||
-            _lastTypeValue != currentType) {
-          print('🔄 Selection changed - StatementContainer updating');
-          print('Year: $_lastYearValue -> $currentYear');
-          print('Month: $_lastMonthValue -> $currentMonth');
-          print('Property: $_lastPropertyValue -> $currentProperty');
-          print('Unit: $_lastUnitValue -> $currentUnit');
-          print('Type: $_lastTypeValue -> $currentType');
-
-          _lastYearValue = currentYear;
-          _lastMonthValue = currentMonth;
-          _lastPropertyValue = currentProperty;
-          _lastUnitValue = currentUnit;
-          _lastTypeValue = currentType;
-        }
-
-        if (widget.model.selectedProperty == null ||
-            widget.model.selectedUnitNo == null ||
-            widget.model.selectedType == null) {
+        if (currentProperty == null || currentUnit == null || currentType == null) {
           return const SizedBox.shrink();
         }
 
-        if (widget.model.isDateLoading) {
-          return Container(
-            height: 200,
+        if (model.isDateLoading) {
+          return SizedBox(
+            height: ResponsiveSize.scaleHeight(200),
             child: const Center(
               child: CircularProgressIndicator(),
             ),
           );
         }
 
-        final allItems = widget.model.unitByMonth;
-
+        final allItems = model.unitByMonth;
         final seen = <String>{};
         final filteredItems = allItems.where((item) {
           final isSameProperty = item.slocation == currentProperty;
@@ -147,7 +82,6 @@ class _EnhancedStatementContainerState
           final isSameYear =
               item.iyear != null && item.iyear.toString() == currentYear;
 
-          // Filter by month if selected
           bool isSameMonth = true;
           if (currentMonth.isNotEmpty) {
             try {
@@ -176,22 +110,11 @@ class _EnhancedStatementContainerState
           }
         }).toList();
 
-        if (_lastYearValue != currentYear || _lastMonthValue != currentMonth) {
-          print('📊 Filtering results:');
-          print('Total items: ${allItems.length}');
-          print('Filtered items: ${filteredItems.length}');
-          print(
-              'Filter criteria: Property=$currentProperty, Type=$currentType, Unit=$currentUnit, Year=$currentYear, Month=$currentMonth');
-
-          // ignore: unused_local_variable
-          for (var item in filteredItems) {}
-        }
-
         if (filteredItems.isEmpty) {
           return Container(
             margin:
                 EdgeInsets.symmetric(horizontal: ResponsiveSize.scaleWidth(16)),
-            height: 200,
+            height: ResponsiveSize.scaleHeight(200),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -234,8 +157,6 @@ class _EnhancedStatementContainerState
         });
 
         return Container(
-          key: ValueKey(
-              '${currentProperty}_${currentType}_${currentUnit}_${currentYear}_$currentMonth'),
           margin: EdgeInsets.only(
             top: ResponsiveSize.scaleHeight(16),
             bottom: ResponsiveSize.scaleHeight(20),
@@ -246,10 +167,10 @@ class _EnhancedStatementContainerState
             itemCount: filteredItems.length,
             itemBuilder: (context, index) {
               final item = filteredItems[index];
-              final monthName = monthNumberToName(item.imonth ?? 0);
+              final monthName = StatementUtils.monthNumberToName(item.imonth ?? 0);
               final statementDate =
-                  formatDate(20, item.imonth ?? 1, item.iyear ?? 2024);
-              final statementAmount = formatAmount(item.total ?? 0.0);
+                  StatementUtils.formatDate(20, item.imonth ?? 1, item.iyear ?? 2024);
+              final statementAmount = StatementUtils.formatAmount(item.total ?? 0.0);
               final isAvailable = _isStatementAvailable(item);
 
               return Opacity(
@@ -259,15 +180,11 @@ class _EnhancedStatementContainerState
                   statementDate: statementDate,
                   statementAmount: statementAmount,
                   onTap: () {
-                    print(
-                        '🎯 Tapped statement: Month=${item.imonth}, Year=${item.iyear}, Total=${item.total}');
-
                     if (!isAvailable) {
                       _showStatementNotAvailableDialog(context, monthName);
                       return;
                     }
-
-                    widget.model.downloadSpecificPdfStatement(context, item);
+                    model.downloadSpecificPdfStatement(context, item);
                   },
                 ),
               );
@@ -275,6 +192,102 @@ class _EnhancedStatementContainerState
           ),
         );
       },
+    );
+  }
+}
+
+class StatementCard extends StatelessWidget {
+  final String month;
+  final String statementDate;
+  final String statementAmount;
+  final VoidCallback onTap;
+
+  const StatementCard({
+    Key? key,
+    required this.month,
+    required this.statementDate,
+    required this.statementAmount,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: ResponsiveSize.scaleWidth(16),
+        vertical: ResponsiveSize.scaleHeight(4),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: EdgeInsets.all(ResponsiveSize.scaleWidth(12)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$month Statement',
+                      style: TextStyle(
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeBig,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryGrey,
+                      ),
+                    ),
+                    SizedBox(height: ResponsiveSize.scaleHeight(2)),
+                    Text(
+                      statementAmount,
+                      style: TextStyle(
+                        fontFamily: AppFonts.outfit,
+                        fontSize: AppDimens.fontSizeSmall,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  height: ResponsiveSize.scaleHeight(32),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryGrey,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: TextButton(
+                    onPressed: onTap,
+                    child: Row(
+                      children: [
+                        Text(
+                          'Statement',
+                          style: TextStyle(
+                            fontFamily: AppFonts.outfit,
+                            fontSize: AppDimens.fontSizeSmall,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: ResponsiveSize.scaleWidth(4)),
+                        Image.asset(
+                          'assets/images/statement_download.png',
+                          width: ResponsiveSize.scaleWidth(16),
+                          height: ResponsiveSize.scaleHeight(16),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
