@@ -129,7 +129,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       child: LayoutBuilder(builder: (context, constraints) {
         return Container(
           height:
-              MediaQuery.of(context).size.width >= 600 ? 100.fSize : 80.fSize,
+              MediaQuery.of(context).size.width >= 600 ? 150.fSize : 100.fSize,
           width: constraints.maxWidth * 0.8,
           margin:
               EdgeInsets.symmetric(horizontal: 85.fSize, vertical: 20.fSize),
@@ -165,14 +165,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   Widget _buildNavItem(dynamic icon, String label, int index) {
     bool isSelected = _selectedIndex == index;
+    final double itemSize =
+        MediaQuery.of(context).size.width >= 600 ? 140.fSize : 100.fSize;
 
     return GestureDetector(
       onTap: () => _onItemTapped(index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        width: 70.fSize,
-        height: 70.fSize,
+        width: itemSize,
+        height: itemSize,
         decoration: isSelected
             ? const BoxDecoration(
                 shape: BoxShape.circle,
@@ -220,7 +222,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             SizedBox(height: 4.fSize),
 
             SizedBox(
-              width: 70.fSize,
+              width: itemSize,
               child: AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 200),
                 style: TextStyle(
