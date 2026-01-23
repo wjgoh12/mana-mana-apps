@@ -30,20 +30,16 @@ class ApiService {
   
   ApiService() {
     if (!_initialized) {
-      // Configure base options for all platforms
-      _dio.options = BaseOptions(
-        sendTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-        connectTimeout: const Duration(seconds: 30),
-      );
-      
       if (!kIsWeb) {
         // Only use CookieManager on Mobile/Desktop (Native).
+        // On Web, the Browser handles cookies automatically.
         _dio.interceptors.add(CookieManager(_cookieJar));
+      } else {
+        // For Web, we rely on Browser cookies.
+        // We might need withCredentials=true for specific servers,
+        // but for now keeping it disabled to avoid CORS errors on Prod.
+        // _dio.options.extra['withCredentials'] = true;
       }
-      // For Web, the Browser handles cookies automatically when withCredentials is enabled
-      // This is set per-request in the Options below
-      
       _initialized = true;
     }
   }
@@ -94,7 +90,6 @@ class ApiService {
             'Content-Type': 'application/json',
           },
           responseType: ResponseType.plain, // Get response as string to handle malformed JSON
-          extra: kIsWeb ? {'withCredentials': true} : {}, // Enable credentials for web to support session cookies
         ),
       );
 
@@ -164,7 +159,6 @@ class ApiService {
             'Content-Type': 'application/json',
           },
           responseType: ResponseType.bytes, // Important for PDF
-          extra: kIsWeb ? {'withCredentials': true} : {}, // Enable credentials for web to support session cookies
         ),
       );
 
@@ -264,7 +258,6 @@ class ApiService {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
-          extra: kIsWeb ? {'withCredentials': true} : {}, // Enable credentials for web to support session cookies
         ),
       );
       return response.data; // Dio decodes JSON automatically

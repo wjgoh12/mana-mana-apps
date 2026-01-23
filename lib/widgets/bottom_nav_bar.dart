@@ -15,7 +15,7 @@ class BottomNavBar extends StatefulWidget {
 
   const BottomNavBar({
     super.key,
-    this.currentIndex = 0,
+    this.currentIndex = 0, // Default index is 0
     this.onTap,
   });
 
@@ -129,7 +129,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       child: LayoutBuilder(builder: (context, constraints) {
         return Container(
           height:
-              MediaQuery.of(context).size.width >= 600 ? 135.fSize : 100.fSize,
+              MediaQuery.of(context).size.width >= 600 ? 100.fSize : 80.fSize,
           width: constraints.maxWidth * 0.8,
           margin:
               EdgeInsets.symmetric(horizontal: 85.fSize, vertical: 20.fSize),
@@ -165,16 +165,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   Widget _buildNavItem(dynamic icon, String label, int index) {
     bool isSelected = _selectedIndex == index;
-    final double itemSize =
-        MediaQuery.of(context).size.width >= 600 ? 125.fSize : 90.fSize;
 
     return GestureDetector(
       onTap: () => _onItemTapped(index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        width: itemSize,
-        height: itemSize,
+        width: 70.fSize,
+        height: 70.fSize,
         decoration: isSelected
             ? const BoxDecoration(
                 shape: BoxShape.circle,
@@ -185,6 +183,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Icon container
             AnimatedScale(
               duration: const Duration(milliseconds: 300),
               scale: isSelected ? 1.2 : 1.0,
@@ -217,9 +216,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
                           ),
               ),
             ),
+
             SizedBox(height: 4.fSize),
+
             SizedBox(
-              width: itemSize,
+              width: 70.fSize,
               child: AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 200),
                 style: TextStyle(
@@ -234,12 +235,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
-                        style: TextStyle(
-                          fontFamily: AppFonts.outfit,
-                          color: AppColors.primaryYellow,
-                          fontSize: AppDimens.fontSizeSmall,
-                          fontWeight: FontWeight.w500,
-                        ),
                       )
                     : ShaderMask(
                         shaderCallback: (bounds) => const LinearGradient(
