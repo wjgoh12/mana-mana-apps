@@ -41,8 +41,8 @@ class NewDashboardV3 extends StatelessWidget {
 
           final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
           final isMobile = MediaQuery.of(context).size.width < 600;
-    double screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth > 450) screenWidth = 450;
+          double screenWidth = MediaQuery.of(context).size.width;
+          if (screenWidth > 450) screenWidth = 450;
 
           final horizontalPadding = screenWidth * 0.05;
 

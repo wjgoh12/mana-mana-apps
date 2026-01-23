@@ -517,7 +517,7 @@ class OwnerProfile_v3 extends StatelessWidget {
                   FloatingActionButtonLocation.centerDocked,
               bottomNavigationBar: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0),
+                  color: Colors.transparent,
                 ),
                 child: const BottomNavBar(
                   currentIndex: 2,

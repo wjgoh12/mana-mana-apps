@@ -1,4 +1,3 @@
-import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +60,9 @@ class StatementList extends StatelessWidget {
         final currentUnit = model.selectedUnitNo;
         final currentType = model.selectedType;
 
-        if (currentProperty == null || currentUnit == null || currentType == null) {
+        if (currentProperty == null ||
+            currentUnit == null ||
+            currentType == null) {
           return const SizedBox.shrink();
         }
 
@@ -168,10 +169,12 @@ class StatementList extends StatelessWidget {
             itemCount: filteredItems.length,
             itemBuilder: (context, index) {
               final item = filteredItems[index];
-              final monthName = StatementUtils.monthNumberToName(item.imonth ?? 0);
-              final statementDate =
-                  StatementUtils.formatDate(20, item.imonth ?? 1, item.iyear ?? 2024);
-              final statementAmount = StatementUtils.formatAmount(item.total ?? 0.0);
+              final monthName =
+                  StatementUtils.monthNumberToName(item.imonth ?? 0);
+              final statementDate = StatementUtils.formatDate(
+                  20, item.imonth ?? 1, item.iyear ?? 2024);
+              final statementAmount =
+                  StatementUtils.formatAmount(item.total ?? 0.0);
               final isAvailable = _isStatementAvailable(item);
 
               return Opacity(

@@ -1,8 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:mana_mana_app/core/utils/download_helper.dart';
 import 'package:mana_mana_app/model/owner_property_list.dart';
 import 'package:mana_mana_app/model/total_bymonth_single_type_unit.dart';
 import 'package:mana_mana_app/model/user_model.dart';
@@ -434,22 +433,7 @@ class PropertyDetailVM extends ChangeNotifier {
   /// Downloads PDF statement for web (triggers browser download)
   void _downloadPdfForWeb(Uint8List bytes, String fileName) {
     if (!kIsWeb) return;
-
-    // Create a blob from the bytes
-    final blob = html.Blob([bytes], 'application/pdf');
-    final url = html.Url.createObjectUrlFromBlob(blob);
-
-    // Create a temporary anchor element and trigger download
-    final anchor = html.AnchorElement(href: url)
-      ..setAttribute('download', fileName)
-      ..style.display = 'none';
-
-    html.document.body?.children.add(anchor);
-    anchor.click();
-
-    // Clean up
-    html.document.body?.children.remove(anchor);
-    html.Url.revokeObjectUrl(url);
+    downloadPdfForWebClient(bytes, fileName);
   }
 
   Future<void> downloadAnnualPdfStatement(BuildContext context) async {

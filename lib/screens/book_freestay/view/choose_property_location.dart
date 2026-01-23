@@ -430,7 +430,7 @@ class _LocationCardState extends State<LocationCard>
         child: Column(
           children: [
             Container(
-              height: ResponsiveSize.scaleHeight(250),
+              height: ResponsiveSize.scaleHeight(200),
               width: double.infinity,
               child: _isUrl
                   ? Image.network(

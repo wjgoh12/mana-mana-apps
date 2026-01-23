@@ -172,7 +172,18 @@ class _AllPropertyNewScreenState extends State<AllPropertyNewScreen> {
                 ),
               ),
             ),
-            bottomNavigationBar: const BottomNavBar(currentIndex: 1),
+            bottomNavigationBar: Container(
+              color: Colors.transparent,
+              child: AbsorbPointer(
+                // ignore: deprecated_member_use
+                ignoringSemantics: false,
+                absorbing: dashboardModel.isLoading,
+                child: Opacity(
+                  opacity: dashboardModel.isLoading ? 0.3 : 1.0,
+                  child: const BottomNavBar(currentIndex: 1),
+                ),
+              ),
+            ),
           );
         },
       ),
@@ -281,16 +292,6 @@ Widget _quickLinks(BuildContext context) {
                           ],
                         ),
                       ),
-                      // Positioned(
-                      //   right: 0,
-                      //   bottom: 5,
-                      //   child: Image.asset(
-                      //     'assets/images/make_booking_deco.png',
-                      //     fit: BoxFit.cover,
-                      //     width: 24,
-                      //     height: 31,
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -320,7 +321,6 @@ Widget _quickLinks(BuildContext context) {
                       InkWell(
                         borderRadius: BorderRadius.circular(12),
                         onTap: () {
-                          // Create and initialize the VM
                           final vm = OwnerProfileVM();
                           vm.fetchBookingHistory();
 
@@ -374,17 +374,6 @@ Widget _quickLinks(BuildContext context) {
                           ],
                         ),
                       ),
-                      // Positioned(
-                      //   right: 0,
-                      //   bottom: 5,
-                      //   child: Image.asset(
-                      //     'assets/images/make_booking_deco.png',
-                      //     fit: BoxFit.cover,
-                      //     width: 24,
-                      //     height: 31,
-                      //   ),
-                      // ),
-                      // position at the right corner
                     ],
                   ),
                 ),
@@ -933,4 +922,3 @@ class _PropertyUnitSelectorState extends State<PropertyUnitSelector> {
     );
   }
 }
-
