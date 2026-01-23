@@ -190,7 +190,7 @@ class UnitOverviewContainer extends StatelessWidget {
             color: Color(int.parse(color)),
             child: Container(
               height: kIsWeb
-                  ? ResponsiveSize.scaleHeight(105) // Reduced height for Web
+                  ? ResponsiveSize.scaleHeight(120) // Increased height for Web to prevent overflow
                   : MediaQuery.of(context).size.width >= 600
                       ? ResponsiveSize.scaleHeight(110)
                       : ResponsiveSize.scaleHeight(105),

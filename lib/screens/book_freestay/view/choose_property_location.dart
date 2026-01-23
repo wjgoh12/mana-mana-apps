@@ -337,6 +337,16 @@ class _LocationCardState extends State<LocationCard>
     _decodeImageAsync();
   }
 
+  @override
+  void didUpdateWidget(LocationCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.picBase64 != oldWidget.picBase64) {
+      _isDecoded = false;
+      _decodedImage = null;
+      _decodeImageAsync();
+    }
+  }
+
   Future<void> _decodeImageAsync() async {
     if (widget.picBase64 == null || widget.picBase64!.isEmpty) {
       if (mounted) setState(() => _isDecoded = true);
@@ -357,6 +367,24 @@ class _LocationCardState extends State<LocationCard>
         // Sanitize Base64 string: remove all whitespace/newlines
         final cleanBase64 = widget.picBase64!.replaceAll(RegExp(r'\s+'), '');
         result = base64Decode(cleanBase64);
+      }
+
+      // Check for HEIC format (not supported on web by default)
+      // HEIC files typically have 'ftypheic' or 'ftypheix' at byte offset 4
+      if (result != null && result.length > 12) {
+        // Check bytes 4-11 for 'ftyp'
+        final isFtyp = result[4] == 0x66 && result[5] == 0x74 &&
+                       result[6] == 0x79 && result[7] == 0x70;
+        
+        if (isFtyp) {
+           // Simply checking for ftyp is a strong indicator of HEIF/HEIC/AVIF container
+           // Browsers support some (AVIF) but not others (HEIC)
+           // Let's log if we see it
+           final subType = String.fromCharCodes(result.sublist(8, 12));
+           if (subType.toLowerCase().contains('heic') || subType.toLowerCase().contains('heix')) {
+             debugPrint("⚠️ Warning: Image for ${widget.locationName} implies HEIC format ($subType), which is not supported in standard browsers.");
+           }
+        }
       }
 
       if (mounted) {
@@ -448,8 +476,8 @@ class _LocationCardState extends State<LocationCard>
                               _decodedImage!,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                debugPrint(
-                                    "❌ Error displaying memory image for ${widget.locationName}: $error");
+                                // Simplified error logging to avoid flooding console with stack traces
+                                // The browser's decoder failure is captured here
                                 return _buildPlaceholder();
                               },
                             )
