@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  initApp('prod');
+  initApp('dev');
 
   runApp(
     MultiProvider(

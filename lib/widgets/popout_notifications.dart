@@ -56,12 +56,6 @@ class PopoutNotifications extends StatelessWidget {
                     notification.title!.isNotEmpty) ...[
                   Text(
                     notification.title!,
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: ResponsiveSize.text(18),
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
                   ),
                   SizedBox(height: ResponsiveSize.scaleHeight(8)),
                 ],
@@ -69,12 +63,6 @@ class PopoutNotifications extends StatelessWidget {
                     notification.description!.isNotEmpty)
                   Text(
                     notification.description!,
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: ResponsiveSize.text(14),
-                      color: Colors.black54,
-                      height: 1.5,
-                    ),
                   ),
               ],
             ),

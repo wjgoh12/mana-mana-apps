@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/model/popout_notification.dart';
-import 'package:mana_mana_app/core/utils/html_formatter.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PopoutDialog extends StatelessWidget {
@@ -34,48 +34,43 @@ class PopoutDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header with title
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
               child: Text(
                 notification.title ?? 'Notification',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Outfit',
-                  color: Color(0xFF3E51FF),
-                ),
                 textAlign: TextAlign.center,
               ),
             ),
-
-            // Content area
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image if available
                     if (notification.img != null &&
                         notification.img!.isNotEmpty)
                       _buildImage(notification.img!),
-
-                    // Description
                     if (notification.description != null &&
                         notification.description!.isNotEmpty)
+
                       Padding(
                         padding: const EdgeInsets.only(top: 12),
-                        child: _buildClickableText(
-                          HtmlFormatter.htmlToText(notification.description!),
+                        child: HtmlWidget(
+                          notification.description!,
+                          onTapUrl: (url) async {
+                            try {
+                              return await launchUrl(Uri.parse(url));
+                            } catch (e) {
+                              debugPrint('Could not launch url: $e');
+                              return false;
+                            }
+                          },
                         ),
                       ),
                   ],
                 ),
               ),
             ),
-
-            // OK Button
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
@@ -148,67 +143,5 @@ class PopoutDialog extends StatelessWidget {
     return const SizedBox.shrink();
   }
 
-  Widget _buildClickableText(String text) {
-    if (text.isEmpty) return const SizedBox.shrink();
 
-    final List<TextSpan> spans = [];
-    final RegExp urlRegExp = RegExp(r'(https?:\/\/[^\s]+)');
-    final Iterable<RegExpMatch> matches = urlRegExp.allMatches(text);
-
-    int lastMatchEnd = 0;
-
-    for (final match in matches) {
-      if (match.start > lastMatchEnd) {
-        spans.add(TextSpan(
-          text: text.substring(lastMatchEnd, match.start),
-          style: const TextStyle(
-            fontSize: 14,
-            fontFamily: 'Outfit',
-            color: AppColors.primaryGrey,
-            height: 1.5,
-          ),
-        ));
-      }
-
-      final String url = text.substring(match.start, match.end);
-
-      spans.add(TextSpan(
-        text: url,
-        style: const TextStyle(
-          fontSize: 14,
-          fontFamily: 'Outfit',
-          color: Colors.blue,
-          decoration: TextDecoration.underline,
-          height: 1.5,
-        ),
-        recognizer: TapGestureRecognizer()
-          ..onTap = () async {
-            try {
-              final uri = Uri.parse(url);
-              await launchUrl(uri);
-            } catch (e) {
-              debugPrint('Could not launch url: $e');
-            }
-          },
-      ));
-
-      lastMatchEnd = match.end;
-    }
-
-    if (lastMatchEnd < text.length) {
-      spans.add(TextSpan(
-        text: text.substring(lastMatchEnd),
-        style: const TextStyle(
-          fontSize: 14,
-          fontFamily: 'Outfit',
-          color: AppColors.primaryGrey,
-          height: 1.5,
-        ),
-      ));
-    }
-
-    return SelectableText.rich(
-      TextSpan(children: spans),
-    );
-  }
 }
