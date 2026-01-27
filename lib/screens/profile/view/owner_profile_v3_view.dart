@@ -790,7 +790,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               onTap: () {
                                 final Uri emailLaunchUri = Uri(
                                   scheme: 'mailto',
-                                  path: 'admin@manamanasuites.com',
+                                  path: 'admin@manamana.my',
                                 );
                                 launchUrl(emailLaunchUri);
                               },
@@ -801,7 +801,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               label: 'Telephone',
                               iconColor: grey,
                               onTap: () {
-                                launchUrl(Uri.parse('tel:+60327795035'));
+                                launchUrl(Uri.parse('tel:+60192628155'));
                               },
                             ),
                             SizedBox(height: 12.fSize),
@@ -811,7 +811,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               iconColor: grey,
                               onTap: () {
                                 launchUrl(
-                                    Uri.parse('https://wa.me/60125626784'));
+                                    Uri.parse('https://wa.me/60192628155'));
                               },
                             ),
                             SizedBox(height: ResponsiveSize.scaleHeight(15)),

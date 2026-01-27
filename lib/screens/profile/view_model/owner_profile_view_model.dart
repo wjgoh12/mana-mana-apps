@@ -451,7 +451,8 @@ class OwnerProfileVM extends ChangeNotifier {
 
       PropertyState? found = _locationsInState
           .where((loc) =>
-              loc.locationName.toLowerCase() == fullLocationName.toLowerCase())
+              loc.locationName.toLowerCase().trim() ==
+              fullLocationName.toLowerCase().trim())
           .firstOrNull;
 
       if (found != null) {
@@ -464,7 +465,8 @@ class OwnerProfileVM extends ChangeNotifier {
       final allLocations = _globalDataManager.getAllLocationsFromAllStates();
       found = allLocations
           .where((loc) =>
-              loc.locationName.toLowerCase() == fullLocationName.toLowerCase())
+              loc.locationName.toLowerCase().trim() ==
+              fullLocationName.toLowerCase().trim())
           .firstOrNull;
 
       if (found != null) {
@@ -473,9 +475,35 @@ class OwnerProfileVM extends ChangeNotifier {
         return found;
       }
 
+      // --- Fuzzy Match Fallback ---
+      // Try matching without 'Z' at the end or removing common prefixes
+      debugPrint("🔍 Trying fuzzy match for '$fullLocationName'...");
+      String searchName = fullLocationName.toLowerCase().trim();
+      
+      // If we're looking for PAXTONZ, also try PAXTON
+      String alternativeName = searchName.endsWith('z') 
+          ? searchName.substring(0, searchName.length - 1)
+          : searchName + 'z';
+
+      found = allLocations.where((loc) {
+        String locName = loc.locationName.toLowerCase().trim();
+        return locName == alternativeName || 
+               locName.contains(searchName) || 
+               searchName.contains(locName) && locName.length > 3;
+      }).firstOrNull;
+
+      if (found != null) {
+        debugPrint("✅ Found via fuzzy match: '${found.locationName}' for '$fullLocationName'");
+        return found;
+      }
+
       debugPrint("❌ Location '$fullLocationName' not found anywhere");
       debugPrint(
           "❌ Available locations in global data: ${allLocations.map((l) => '${l.locationName}(${l.stateName})').toList()}");
+      
+      // Second Fallback: If we really can't find it, but we have some locations, 
+      // maybe return the first one as a last resort OR return a synthetic one?
+      // For now, let's keep it null but log heavily.
       return null;
     } catch (e) {
       debugPrint("❌ Error in findPropertyStateForOwner for $ownerLocation: $e");

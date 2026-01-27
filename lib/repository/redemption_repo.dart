@@ -9,28 +9,10 @@ import 'package:mana_mana_app/model/roomtype.dart';
 import 'package:mana_mana_app/model/unit_available_points.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
 import 'package:mana_mana_app/provider/api_endpoint.dart';
+import 'package:mana_mana_app/provider/global_data_manager.dart';
 
 class RedemptionRepository {
   final ApiService _apiService = ApiService();
-
-  String _getLocationName(String code) {
-    switch (code.toUpperCase()) {
-      case "EXPR":
-        return "EXPRESSIONZ";
-      case "CEYL":
-        return "CEYLONZ";
-      case "SCAR":
-        return "SCARLETZ";
-      case "MILL":
-        return "MILLERZ";
-      case "MOSS":
-        return "MOSSAZ";
-      case "PAXT":
-        return "PAXTONZ";
-      default:
-        return code;
-    }
-  }
 
   Future<List<UnitAvailablePoint>> getUnitAvailablePoints({
     required String email,
@@ -391,24 +373,71 @@ class RedemptionRepository {
     required String guestName,
     String remark = '',
   }) async {
-    for (var ps in propertyStates) {
-      debugPrint(
-          "🏠 PropertyState: location='${ps.locationName}', state='${ps.stateName}'");
-    }
+    final allLocations = GlobalDataManager().getAllLocationsFromAllStates();
 
-    final matchingState = propertyStates.firstWhere(
-      (state) =>
-          state.locationName.toUpperCase() ==
-          _getLocationName(point.location).toUpperCase(),
-      orElse: () => PropertyState(pic: '', stateName: '', locationName: ''),
+    // 1. Resolve Source Property (the hotel the user owns a unit in)
+    final sourceProperty = allLocations.firstWhere(
+      (loc) =>
+          loc.locationName.toUpperCase() == point.location.toUpperCase() ||
+          (point.location.length >= 3 &&
+              loc.locationName
+                  .toUpperCase()
+                  .startsWith(point.location.toUpperCase())),
+      orElse: () =>
+          PropertyState(pic: '', stateName: '', locationName: point.location),
     );
 
+    // 2. For rooms with no specific location, use source property's state
+    //    Otherwise, resolve the destination property
+    // Resolve the stay property (the hotel you are visiting)
+    final destinationProperty = allLocations.firstWhere(
+      (loc) =>
+          loc.locationName.toUpperCase() ==
+          bookingRoom.bookingLocationName.toUpperCase(),
+      orElse: () => PropertyState(
+          pic: '',
+          stateName: bookingRoom.roomType.state ?? '',
+          locationName: bookingRoom.bookingLocationName),
+    );
+
+    // If the room object has its own state/location, use it.
+    // Otherwise, use the hotel you selected (destinationProperty).
+    String effectiveStateName = (bookingRoom.roomType.state != null &&
+            bookingRoom.roomType.state!.isNotEmpty)
+        ? bookingRoom.roomType.state!
+        : destinationProperty.stateName;
+
+    String effectiveBookingLocation =
+        (bookingRoom.roomType.bookingLocationName != null &&
+                bookingRoom.roomType.bookingLocationName!.isNotEmpty)
+            ? bookingRoom.roomType.bookingLocationName!
+            : destinationProperty.locationName;
+
+    debugPrint(
+        "🏨 Final Stay Info: $effectiveBookingLocation ($effectiveStateName)");
+
+    debugPrint("🚀 Booking Submission:");
+    debugPrint(
+        "   📍 Points from: ${sourceProperty.locationName} - Unit: ${point.unitNo}");
+    debugPrint(
+        "   🏨 Booking at: $effectiveBookingLocation ($effectiveStateName)");
+    debugPrint("   🛏️  Room: ${bookingRoom.roomType.roomTypeName}");
+
+    debugPrint("🚀 Booking Submission Details:");
+    debugPrint("   📍 Points Source (locationName): ${point.location}");
+    debugPrint(
+        "   🏨 Stay Location (bookingLocationName): ${bookingRoom.bookingLocationName}");
+    debugPrint(
+        "   🛏️  Room (typeName): ${_sanitizeRoomTypeName(bookingRoom.roomType.roomTypeName)}");
+
     final body = {
-      "stateName": matchingState.stateName,
-      "locationName": _getLocationName(point.location),
+      "stateName": effectiveStateName,
+      "locationName":
+          point.location, // Use short code (e.g. 22M, MOSS) as requested
       "unitNo": point.unitNo,
-      "bookingLocationName": bookingRoom.bookingLocationName,
-      "typeName": bookingRoom.roomType.roomTypeName,
+      "bookingLocationName": effectiveBookingLocation,
+      "typeName": _sanitizeRoomTypeName(
+          bookingRoom.roomType.roomTypeName), // Send clean Description
       "arrivalDate":
           checkIn != null ? DateFormat('yyyy-MM-dd').format(checkIn) : "",
       "departureDate":
@@ -428,5 +457,25 @@ class RedemptionRepository {
     if (res is Map<String, dynamic>) return res;
 
     throw Exception("❌ Unexpected API response format for Booking: $res");
+  }
+
+  String _sanitizeRoomTypeName(String raw) {
+    final s = raw.trim();
+    if (s.isEmpty) return s;
+
+    final firstToken = s.split(RegExp(r'\s+'))[0];
+
+    // 1. Remove digit-starting prefixes (e.g., "22M ")
+    if (RegExp(r'^\d').hasMatch(firstToken)) {
+      return s.substring(firstToken.length).trim();
+    }
+
+    // 2. Remove ALL CAPS alphabetic prefixes of length 2-5 (e.g., "PAX ", "SCA ")
+    final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
+    if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 5) {
+      return s.substring(firstToken.length).trim();
+    }
+
+    return s;
   }
 }

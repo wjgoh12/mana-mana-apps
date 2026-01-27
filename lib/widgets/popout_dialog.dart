@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'package:mana_mana_app/core/constants/app_colors.dart';
 import 'package:mana_mana_app/model/popout_notification.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -36,9 +34,22 @@ class PopoutDialog extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-              child: Text(
-                notification.title ?? 'Notification',
-                textAlign: TextAlign.center,
+              child: Builder(
+                builder: (context) {
+                  final title = notification.title ?? 'Notification';
+                  final double fontSize = title.length > 40 ? 18 : 20;
+
+                  return Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Outfit',
+                      color: const Color(0xFF3E51FF),
+                    ),
+                  );
+                },
               ),
             ),
             Flexible(
@@ -52,11 +63,13 @@ class PopoutDialog extends StatelessWidget {
                       _buildImage(notification.img!),
                     if (notification.description != null &&
                         notification.description!.isNotEmpty)
-
                       Padding(
                         padding: const EdgeInsets.only(top: 12),
                         child: HtmlWidget(
                           notification.description!,
+                          customStylesBuilder: (element) {
+                            return {'text-align': 'justify'};
+                          },
                           onTapUrl: (url) async {
                             try {
                               return await launchUrl(Uri.parse(url));
@@ -107,7 +120,6 @@ class PopoutDialog extends StatelessWidget {
 
   Widget _buildImage(String imgData) {
     try {
-      // Check if it's base64 encoded image data
       if (imgData.length > 100) {
         Uint8List bytes = base64Decode(imgData);
         return ClipRRect(
@@ -142,6 +154,4 @@ class PopoutDialog extends StatelessWidget {
     }
     return const SizedBox.shrink();
   }
-
-
 }
