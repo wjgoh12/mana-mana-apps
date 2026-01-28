@@ -268,7 +268,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     if (!isLoading &&
         _popoutStateLoaded &&
         !_hasShownPopoutDialog &&
-        !_userHasSeenPopouts &&
+        // !_userHasSeenPopouts && // Show every time, even if seen before
         validPopouts.isNotEmpty) {
       debugPrint('🔔 Showing popout dialog!');
       _showPopoutDialog(context);
