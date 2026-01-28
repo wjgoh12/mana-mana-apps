@@ -1,5 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/model/owner_property_list.dart';
 import 'package:mana_mana_app/model/booking_history.dart';
 import 'package:mana_mana_app/model/booking_room.dart';
@@ -479,29 +480,30 @@ class OwnerProfileVM extends ChangeNotifier {
       // Try matching without 'Z' at the end or removing common prefixes
       debugPrint("🔍 Trying fuzzy match for '$fullLocationName'...");
       String searchName = fullLocationName.toLowerCase().trim();
-      
+
       // If we're looking for PAXTONZ, also try PAXTON
-      String alternativeName = searchName.endsWith('z') 
+      String alternativeName = searchName.endsWith('z')
           ? searchName.substring(0, searchName.length - 1)
           : searchName + 'z';
 
       found = allLocations.where((loc) {
         String locName = loc.locationName.toLowerCase().trim();
-        return locName == alternativeName || 
-               locName.contains(searchName) || 
-               searchName.contains(locName) && locName.length > 3;
+        return locName == alternativeName ||
+            locName.contains(searchName) ||
+            searchName.contains(locName) && locName.length > 3;
       }).firstOrNull;
 
       if (found != null) {
-        debugPrint("✅ Found via fuzzy match: '${found.locationName}' for '$fullLocationName'");
+        debugPrint(
+            "✅ Found via fuzzy match: '${found.locationName}' for '$fullLocationName'");
         return found;
       }
 
       debugPrint("❌ Location '$fullLocationName' not found anywhere");
       debugPrint(
           "❌ Available locations in global data: ${allLocations.map((l) => '${l.locationName}(${l.stateName})').toList()}");
-      
-      // Second Fallback: If we really can't find it, but we have some locations, 
+
+      // Second Fallback: If we really can't find it, but we have some locations,
       // maybe return the first one as a last resort OR return a synthetic one?
       // For now, let's keep it null but log heavily.
       return null;
@@ -635,14 +637,25 @@ class OwnerProfileVM extends ChangeNotifier {
 
   Future<String?> switchUserAndReload(String email) async {
     try {
-      await _userRepository.confirmSwitchUser(email).then((confirmRes) async {
-        debugPrint('✅ confirmSwitchUser response: $confirmRes');
+      final confirmRes = await _userRepository.confirmSwitchUser(email);
+      debugPrint('✅ confirmSwitchUser response: $confirmRes');
 
-        _globalDataManager.isSwitchUser = true;
+      // ✅ Update token if server returned one
+      if (confirmRes['token'] != null &&
+          confirmRes['token'].toString().isNotEmpty) {
+        final authService = AuthService();
+        await authService.updateTokens(
+          accessToken: confirmRes['token'],
+        );
+        debugPrint('✅ Updated token for switched user');
+      } else {
+        debugPrint('⚠️ No token in response, relying on session/cookie');
+      }
 
-        await _globalDataManager.initializeData(forceRefresh: true);
-        return;
-      });
+      _globalDataManager.isSwitchUser = true;
+
+      // ✅ Force refresh to get switched user's data
+      await _globalDataManager.initializeData(forceRefresh: true);
 
       debugPrint('✅ switchUserAndReload completed for $email');
       notifyListeners();

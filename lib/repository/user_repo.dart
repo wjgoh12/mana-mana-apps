@@ -134,12 +134,32 @@ class UserRepository {
       });
       debugPrint('🔁 confirmSwitchUser response: $response');
 
-      debugPrint('✅ User switch confirmed, now fetching updated user data...');
+      // ✅ Extract token if present in response
+      String? newToken;
+
+      // Check if response contains token in various formats
+      if (response is Map<String, dynamic>) {
+        newToken = response['token'] ??
+            response['access_token'] ??
+            response['accessToken'];
+      } else if (response is String) {
+        // Try to parse token from string response
+        final tokenRegex =
+            RegExp(r'eyJ[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]*');
+        final tokenMatch = tokenRegex.firstMatch(response);
+        if (tokenMatch != null) {
+          newToken = tokenMatch.group(0);
+          debugPrint('🔑 Extracted token from string response');
+        }
+      }
+
+      debugPrint('✅ User switch confirmed, token present: ${newToken != null}');
 
       return {
         'statusCode': 200,
         'success': true,
         'body': response,
+        'token': newToken, // ✅ Include token in return
       };
     } catch (e) {
       debugPrint('❌ confirmSwitchUser error: $e');

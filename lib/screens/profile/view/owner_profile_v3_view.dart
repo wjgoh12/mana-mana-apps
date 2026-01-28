@@ -229,51 +229,60 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               });
                               return;
                             }
+
                             final doSwitch = await showDialog<bool>(
-                              // ignore: use_build_context_synchronously
                               context: context,
-                              builder: (ctx) => StatefulBuilder(
-                                builder: (ctx, setStateDialog) {
-                                  return AlertDialog(
-                                    backgroundColor: Colors.white,
-                                    title: const Text('Confirm Switch',
+                              builder: (ctx) => AlertDialog(
+                                backgroundColor: Colors.white,
+                                title: const Text('Confirm Switch',
+                                    style:
+                                        TextStyle(fontFamily: AppFonts.outfit)),
+                                content: Text(
+                                    'Are you sure you want to switch to "$email"?',
+                                    style: const TextStyle(
+                                        fontFamily: AppFonts.outfit)),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(false),
+                                    child: const Text('No',
                                         style: TextStyle(
                                             fontFamily: AppFonts.outfit)),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                            'Are you sure you want to switch to "$email"?',
-                                            style: const TextStyle(
-                                                fontFamily: AppFonts.outfit)),
-                                      ],
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(ctx).pop(false),
-                                        child: const Text('No',
-                                            style: TextStyle(
-                                                fontFamily: AppFonts.outfit)),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          setStateDialog(() {});
-                                          await model
-                                              .switchUserAndReload(email);
-                                          if (!mounted) {
-                                            return;
-                                          }
-                                          // ignore: use_build_context_synchronously
-                                          Navigator.of(ctx).pop(true);
-                                        },
-                                        child: const Text('Yes',
-                                            style: TextStyle(
-                                                fontFamily: AppFonts.outfit)),
-                                      ),
-                                    ],
-                                  );
-                                },
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      // ✅ Show loading
+                                      showDialog(
+                                        context: ctx,
+                                        barrierDismissible: false,
+                                        builder: (_) => const Center(
+                                            child: CircularProgressIndicator()),
+                                      );
+
+                                      // ✅ Switch user
+                                      final error = await model
+                                          .switchUserAndReload(email);
+
+                                      // ✅ Close loading dialog
+                                      Navigator.of(ctx).pop();
+
+                                      if (error != null) {
+                                        // Show error
+                                        ScaffoldMessenger.of(ctx).showSnackBar(
+                                            SnackBar(
+                                                content: Text(
+                                                    'Switch failed: $error')));
+                                        Navigator.of(ctx).pop(false);
+                                        return;
+                                      }
+
+                                      Navigator.of(ctx).pop(true);
+                                    },
+                                    child: const Text('Yes',
+                                        style: TextStyle(
+                                            fontFamily: AppFonts.outfit)),
+                                  ),
+                                ],
                               ),
                             );
 
@@ -282,7 +291,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             }
 
                             if (!mounted) return;
-                            // Replaced redundant pop with direct navigation
+
+                            // ✅ Navigate to dashboard with fresh data
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (_) => const NewDashboardV3()),

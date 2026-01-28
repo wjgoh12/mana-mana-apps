@@ -22,12 +22,12 @@ class AuthenticationException implements Exception {
 class ApiService {
   final String baseUrl = EnvConfig.apiBaseUrl;
   String? tokenOwner;
-  
+
   // Add cookie support for session management
   static final Dio _dio = Dio();
   static final CookieJar _cookieJar = CookieJar();
   static bool _initialized = false;
-  
+
   ApiService() {
     if (!_initialized) {
       if (!kIsWeb) {
@@ -52,26 +52,6 @@ class ApiService {
     final AuthService authService = AuthService();
     String? token = await authService.getValidAccessToken();
 
-    // Debug: print token fingerprint so we can tell which token is used
-    try {
-      if (token != null) {
-        // debugPrint('🔐 ApiService.post using token prefix: ${token.substring(0, min(10, token.length))}');
-
-        // Try to decode token to see which user it belongs to (for debugging)
-        try {
-          final decodedPayload = _decodeTokenPayload(token);
-          if (decodedPayload != null) {
-            // debugPrint('🔐 ApiService.post decoded token payload: $decodedPayload');
-            // Token parsing for debugging is available but commented out to avoid lint warnings
-          }
-        } catch (e) {
-          debugPrint('🔐 Could not decode token payload: $e');
-        }
-      } else {
-        // debugPrint('🔐 ApiService.post no token available');
-      }
-    } catch (_) {}
-
     if (token == null) {
       print('❌ No valid token available for API call - session expired');
       throw AuthenticationException('Session expired');
@@ -80,7 +60,6 @@ class ApiService {
     dynamic sendData = data;
 
     try {
-      // Use Dio for cookie support (maintains sessions)
       final response = await _dio.post(
         '$baseUrl$url',
         data: sendData ?? {},
@@ -89,22 +68,48 @@ class ApiService {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
-          responseType: ResponseType.plain, // Get response as string to handle malformed JSON
+          responseType: ResponseType.plain,
         ),
       );
 
       debugPrint("🔧 Raw response body: ${response.data}");
-      
-      // Try to parse as JSON first
+
+      // Try to parse as JSON
       try {
-        return json.decode(response.data.toString());
+        final jsonResponse = json.decode(response.data.toString());
+
+        // ✅ Check if response contains a new token (for switch user scenarios)
+        if (jsonResponse is Map<String, dynamic>) {
+          final newToken = jsonResponse['token'] ??
+              jsonResponse['access_token'] ??
+              jsonResponse['accessToken'];
+
+          if (newToken != null && newToken.toString().isNotEmpty) {
+            debugPrint('🔑 Found new token in API response, updating...');
+            await authService.updateTokens(accessToken: newToken.toString());
+          }
+        }
+
+        return jsonResponse;
       } catch (e) {
         debugPrint("❌ JSON decode error: $e");
-        // Fallback: return raw string when response is not JSON
+
+        // ✅ Try to extract token from string response
+        final responseStr = response.data.toString();
+        final tokenRegex =
+            RegExp(r'eyJ[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]*');
+        final tokenMatch = tokenRegex.firstMatch(responseStr);
+
+        if (tokenMatch != null) {
+          final newToken = tokenMatch.group(0);
+          debugPrint('🔑 Extracted token from string response, updating...');
+          await authService.updateTokens(accessToken: newToken!);
+        }
+
         return response.data.toString();
       }
     } catch (e) {
-      if (e is DioError) {
+      if (e is DioException) {
         debugPrint("❌ Dio error: ${e.message}");
         if (e.response != null) {
           debugPrint("🔧 Error response body: ${e.response?.data}");
@@ -164,48 +169,49 @@ class ApiService {
 
       // Dio throws on 4xx/5xx by default, so if we are here, it's 2xx.
       // But we should check content-type just in case.
-      
-      final contentType = response.headers.value('content-type')?.toLowerCase() ?? '';
-      
-      if (contentType.contains('application/json') || 
+
+      final contentType =
+          response.headers.value('content-type')?.toLowerCase() ?? '';
+
+      if (contentType.contains('application/json') ||
           contentType.contains('text/')) {
-         // It returned text/json instead of bytes -> probably an error message
-         // Dio with ResponseType.bytes stores body in response.data as List<int>
-         // We need to decode it to see the error
-         try {
-           final textData = utf8.decode(response.data);
-           debugPrint("⚠️ postWithBytes received Text/JSON instead of PDF: $textData");
-           return textData; // Return the error string
-         } catch(e) {
-           return 'Error decoding response';
-         }
+        // It returned text/json instead of bytes -> probably an error message
+        // Dio with ResponseType.bytes stores body in response.data as List<int>
+        // We need to decode it to see the error
+        try {
+          final textData = utf8.decode(response.data);
+          debugPrint(
+              "⚠️ postWithBytes received Text/JSON instead of PDF: $textData");
+          return textData; // Return the error string
+        } catch (e) {
+          return 'Error decoding response';
+        }
       }
 
       // Check for specific error string if it somehow came as bytes
       // (Unlikely if we checked content-type, but safe to keep logic)
       try {
-         // Converting huge PDF to string is expensive, so maybe skip this check 
-         // unless we are unsure.
-         // But the original code checked for "Incorrect result size".
-         // Let's assume if it's PDF content-type, it's good.
+        // Converting huge PDF to string is expensive, so maybe skip this check
+        // unless we are unsure.
+        // But the original code checked for "Incorrect result size".
+        // Let's assume if it's PDF content-type, it's good.
       } catch (_) {}
 
       // response.data is List<int> (Uint8List compatible)
       return Uint8List.fromList(response.data);
-
     } catch (e) {
       if (e is DioError) {
         debugPrint("❌ postWithBytes Dio error: ${e.message}");
         if (e.response != null) {
           // Try to read error body
-           try {
-             // If responseType was bytes, data is bytes.
-             final errText = utf8.decode(e.response!.data);
-             debugPrint("🔧 Error response body: $errText");
-             return errText;
-           } catch (_) {
-             return e.message;
-           }
+          try {
+            // If responseType was bytes, data is bytes.
+            final errText = utf8.decode(e.response!.data);
+            debugPrint("🔧 Error response body: $errText");
+            return errText;
+          } catch (_) {
+            return e.message;
+          }
         }
       }
       rethrow;
@@ -262,8 +268,8 @@ class ApiService {
       );
       return response.data; // Dio decodes JSON automatically
     } catch (e) {
-       debugPrint("❌ postJson Dio error: $e");
-       return null;
+      debugPrint("❌ postJson Dio error: $e");
+      return null;
     }
   }
 

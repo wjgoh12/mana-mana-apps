@@ -110,11 +110,9 @@ class GlobalDataManager extends ChangeNotifier {
       return;
     }
 
-    // Auto-detect user change: if we have cached data but it's for a different user,
-    // force a refresh to clear stale data
+    // Auto-detect user change
     bool userChanged = false;
     if (_isInitialized && !forceRefresh) {
-      // Try to get current user email from secure storage to detect user change
       try {
         final storage = const FlutterSecureStorage();
         final currentEmail = await storage.read(key: 'email');
@@ -131,12 +129,12 @@ class GlobalDataManager extends ChangeNotifier {
       }
     }
 
-    // Don't reload if already initialized and not forced (and user hasn't changed)
+    // Don't reload if already initialized and not forced
     if (_isInitialized && !forceRefresh && !userChanged) {
       return;
     }
 
-    // If user changed or force refresh, clear old data first
+    // ✅ Clear old data first if force refresh or user changed
     if (forceRefresh || userChanged) {
       print('🧹 Clearing cached data before refresh');
       clearAllData();
@@ -148,9 +146,6 @@ class GlobalDataManager extends ChangeNotifier {
     try {
       // Fetch all core data
       await _fetchAllData();
-
-      // Don't fetch states/locations during initialization
-      // They will be loaded when user navigates to location selection screen
 
       _isInitialized = true;
       _lastFetchTime = DateTime.now();

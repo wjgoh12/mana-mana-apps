@@ -42,7 +42,8 @@ class AuthService {
   }
 
   /// Initialize tokens from native login
-  Future<void> initializeTokensFromNativeLogin(String accessToken, String refreshToken) async {
+  Future<void> initializeTokensFromNativeLogin(
+      String accessToken, String refreshToken) async {
     await _secureStorage.write(key: 'access_token', value: accessToken);
     await _secureStorage.write(key: 'refresh_token', value: refreshToken);
     _startTokenRefreshTimer(accessToken);
@@ -201,24 +202,22 @@ class AuthService {
   }
 
   /// Update stored tokens (for user switching scenarios)
-  Future<void> updateTokens({
-    required String accessToken, 
-    String? refreshToken
-  }) async {
+  Future<void> updateTokens(
+      {required String accessToken, String? refreshToken}) async {
     debugPrint('🔄 Updating stored tokens for user switch');
-    
+
     // Store new access token
     await _secureStorage.write(key: 'access_token', value: accessToken);
-    
+
     // Store new refresh token if provided
     if (refreshToken != null) {
       await _secureStorage.write(key: 'refresh_token', value: refreshToken);
     }
-    
+
     // Cancel existing refresh timer and start new one with the new token
     _refreshTimer?.cancel();
     _startTokenRefreshTimer(accessToken);
-    
+
     debugPrint('✅ Tokens updated successfully');
   }
 
