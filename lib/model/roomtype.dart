@@ -13,6 +13,7 @@ class RoomType {
   final String pic4;
   final String pic5;
   final String roomTypeName;
+  final String roomTypeDesc; // Added field
   final double roomTypePoints;
   final int numberOfPax;
   final int numBedrooms;
@@ -31,6 +32,7 @@ class RoomType {
     this.pic4 = '',
     this.pic5 = '',
     required this.roomTypeName,
+    this.roomTypeDesc = '', // Default empty
     required this.roomTypePoints,
     required this.numberOfPax,
     this.numBedrooms = 1,
@@ -59,6 +61,7 @@ class RoomType {
       pic4: _safeString(json['pic4']),
       pic5: _safeString(json['pic5']),
       roomTypeName: _safeString(json['roomTypeName']),
+      roomTypeDesc: _safeString(json['roomTypeDesc']), // Parse field
       roomTypePoints: _parseToDouble(json['roomTypePoints']),
       numberOfPax: _safeInt(json['numGuestPax'] ?? json['numberOfPax']),
       numBedrooms: _safeInt(json['numBedrooms']),
@@ -103,6 +106,7 @@ class RoomType {
       "pic4": pic4,
       "pic5": pic5,
       "roomTypeName": roomTypeName,
+      "roomTypeDesc": roomTypeDesc,
       "roomTypePoints": roomTypePoints,
       "numGuestPax": numberOfPax,
       "numBedrooms": numBedrooms,

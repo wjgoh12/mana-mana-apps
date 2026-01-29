@@ -428,7 +428,7 @@ class RedemptionRepository {
     debugPrint(
         "   🏨 Stay Location (bookingLocationName): ${bookingRoom.bookingLocationName}");
     debugPrint(
-        "   🛏️  Room (typeName): ${_sanitizeRoomTypeName(bookingRoom.roomType.roomTypeName)}");
+        "   🛏️  Room (typeName): ${_sanitizeRoomTypeName(bookingRoom.roomType.roomTypeDesc)}");
 
     final body = {
       "stateName": effectiveStateName,
@@ -437,7 +437,7 @@ class RedemptionRepository {
       "unitNo": point.unitNo,
       "bookingLocationName": effectiveBookingLocation,
       "typeName": _sanitizeRoomTypeName(
-          bookingRoom.roomType.roomTypeName), // Send clean Description
+          bookingRoom.roomType.roomTypeDesc), // Send clean Description
       "arrivalDate":
           checkIn != null ? DateFormat('yyyy-MM-dd').format(checkIn) : "",
       "departureDate":
