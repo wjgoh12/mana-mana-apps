@@ -2,6 +2,7 @@ import 'package:mana_mana_app/core/constants/app_fonts.dart';
 import 'package:mana_mana_app/core/constants/app_dimens.dart';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/profile/view_model/owner_profile_view_model.dart';
@@ -10,6 +11,10 @@ import 'package:provider/provider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mana_mana_app/screens/book_freestay/view/select_date_room/select_date_room.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html if (dart.library.io) 'dart:io';
+import 'dart:ui_web' as ui_web if (dart.library.io) 'dart:io';
 
 class ChoosePropertyLocation extends StatefulWidget {
   final String selectedLocation;
@@ -261,8 +266,13 @@ class _ChoosePropertyLocationState extends State<ChoosePropertyLocation> {
                       crossAxisCount: 2,
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
-                      childAspectRatio:
-                          MediaQuery.of(context).size.width >= 600 ? 1.0 : 0.65,
+                      childAspectRatio: kIsWeb
+                          ? (MediaQuery.of(context).size.width >= 600
+                              ? 0.85
+                              : 0.70)
+                          : (MediaQuery.of(context).size.width >= 600
+                              ? 1.0
+                              : 0.65),
                     ),
                     padding: const EdgeInsets.all(26),
                     itemCount: locationsToShow.length,
@@ -325,8 +335,11 @@ class LocationCard extends StatefulWidget {
 class _LocationCardState extends State<LocationCard>
     with AutomaticKeepAliveClientMixin {
   Uint8List? _decodedImage;
+  String? _dataUrl; // For web: use data URL instead of Image.memory
+  String? _htmlViewType; // For web: unique view type for HtmlElementView
   bool _isDecoded = false;
   bool _isUrl = false;
+  bool _isSvg = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -344,29 +357,84 @@ class _LocationCardState extends State<LocationCard>
     }
 
     try {
+      // Check if it's a URL (http/https)
       if (widget.picBase64!.startsWith('http')) {
         if (mounted) setState(() => _isUrl = true);
         return;
       }
 
-      Uint8List? result;
+      // Check if it specifies SVG in data header
+      bool isHeaderSvg =
+          widget.picBase64!.toLowerCase().contains('image/svg+xml');
 
+      // Otherwise, it's Base64 (data:image or raw)
+      Uint8List? result;
       if (widget.picBase64!.startsWith("data:image")) {
         result = Uri.parse(widget.picBase64!).data?.contentAsBytes();
       } else {
         // Sanitize Base64 string: remove all whitespace/newlines
-        final cleanBase64 = widget.picBase64!.replaceAll(RegExp(r'\s+'), '');
+        String cleanBase64 = widget.picBase64!.replaceAll(RegExp(r'\s+'), '');
+
+        // Fix Base64 padding if necessary (length must be multiple of 4)
+        int missingPadding = (4 - (cleanBase64.length % 4)) % 4;
+        if (missingPadding > 0) {
+          cleanBase64 += '=' * missingPadding;
+          debugPrint(
+              "⚠️ Added $missingPadding padding characters to Base64 for ${widget.locationName}");
+        }
+
         result = base64Decode(cleanBase64);
+      }
+
+      // Check for SVG signature in bytes using binary check (safe for PNG/JPG)
+      bool isContentSvg = false;
+      if (result != null && result.length >= 4) {
+        // Check for SVG: starts with '<svg' or '<?xml' (after optional whitespace/BOM)
+        // SVG bytes: '<' = 0x3C, 's' = 0x73, 'v' = 0x76, 'g' = 0x67
+        // XML bytes: '<' = 0x3C, '?' = 0x3F, 'x' = 0x78, 'm' = 0x6D
+        int startIdx = 0;
+        // Skip BOM if present (EF BB BF)
+        if (result.length >= 3 && result[0] == 0xEF && result[1] == 0xBB && result[2] == 0xBF) {
+          startIdx = 3;
+        }
+        // Skip whitespace
+        while (startIdx < result.length && (result[startIdx] == 0x20 || result[startIdx] == 0x0A || result[startIdx] == 0x0D || result[startIdx] == 0x09)) {
+          startIdx++;
+        }
+        
+        if (startIdx + 4 <= result.length) {
+          // Check for '<svg' (case insensitive for 's')
+          if (result[startIdx] == 0x3C && 
+              (result[startIdx + 1] == 0x73 || result[startIdx + 1] == 0x53) &&
+              (result[startIdx + 2] == 0x76 || result[startIdx + 2] == 0x56) &&
+              (result[startIdx + 3] == 0x67 || result[startIdx + 3] == 0x47)) {
+            isContentSvg = true;
+          }
+          // Check for '<?xml' which likely indicates SVG
+          else if (result[startIdx] == 0x3C && result[startIdx + 1] == 0x3F &&
+                   (result[startIdx + 2] == 0x78 || result[startIdx + 2] == 0x58)) {
+            isContentSvg = true;
+          }
+        }
+        debugPrint("🔍 Image Check [${widget.locationName}]: IsSVG=$isContentSvg, Size=${result.length} bytes");
       }
 
       if (mounted) {
         setState(() {
           _decodedImage = result;
+          _isSvg = isHeaderSvg || isContentSvg;
+          // For web: create data URL and register HTML element
+          if (kIsWeb && result != null && !_isSvg) {
+            _dataUrl = 'data:image/png;base64,${base64Encode(result)}';
+            _htmlViewType = 'img-${widget.locationName}-${DateTime.now().millisecondsSinceEpoch}';
+            _registerHtmlImage();
+          }
           _isDecoded = true;
         });
       }
     } catch (e) {
       debugPrint("❌ Failed to decode image for ${widget.locationName}: $e");
+      // Fallback: If it's a URL but didn't start with http (e.g. malformed), try treating as one
       if (mounted) setState(() => _isDecoded = true);
     }
   }
@@ -375,6 +443,30 @@ class _LocationCardState extends State<LocationCard>
   void dispose() {
     _decodedImage = null;
     super.dispose();
+  }
+
+  void _registerHtmlImage() {
+    if (!kIsWeb || _dataUrl == null || _htmlViewType == null) return;
+    
+    // ignore: undefined_prefixed_name
+    ui_web.platformViewRegistry.registerViewFactory(
+      _htmlViewType!,
+      (int viewId) {
+        final img = html.ImageElement()
+          ..src = _dataUrl!
+          ..style.width = '100%'
+          ..style.height = '100%'
+          ..style.objectFit = 'cover';
+        return img;
+      },
+    );
+  }
+
+  Widget _buildWebImage() {
+    if (_htmlViewType != null) {
+      return HtmlElementView(viewType: _htmlViewType!);
+    }
+    return _buildPlaceholder();
   }
 
   @override
@@ -430,30 +522,51 @@ class _LocationCardState extends State<LocationCard>
         child: Column(
           children: [
             Container(
-              height: ResponsiveSize.scaleHeight(200),
+              height: kIsWeb
+                  ? ResponsiveSize.scaleHeight(280)
+                  : ResponsiveSize.scaleHeight(200),
               width: double.infinity,
-              child: _isUrl
-                  ? Image.network(
-                      widget.picBase64!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        debugPrint(
-                            "❌ Error displaying network image for ${widget.locationName}: $error");
-                        return _buildPlaceholder();
-                      },
-                    )
-                  : _isDecoded
-                      ? _decodedImage != null
-                          ? Image.memory(
-                              _decodedImage!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                debugPrint(
-                                    "❌ Error displaying memory image for ${widget.locationName}: $error");
-                                return _buildPlaceholder();
-                              },
-                            )
+              child: kIsWeb
+                  ? _isUrl
+                      ? Image.network(
+                          widget.picBase64!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            debugPrint(
+                                "❌ PWA Image.network failed for ${widget.locationName}");
+                            return _buildPlaceholder();
+                          },
+                        )
+                      : _decodedImage != null
+                          ? (_isSvg
+                              ? SvgPicture.memory(
+                                  _decodedImage!,
+                                  fit: BoxFit.cover,
+                                  placeholderBuilder: (_) =>
+                                      _buildPlaceholder(),
+                                )
+                              : _buildWebImage())
                           : _buildPlaceholder()
+                  : _isDecoded
+                      ? (_decodedImage != null
+                          ? (_isSvg
+                              ? SvgPicture.memory(
+                                  _decodedImage!,
+                                  fit: BoxFit.cover,
+                                  placeholderBuilder: (_) =>
+                                      _buildPlaceholder(),
+                                )
+                              : Image.memory(
+                                  _decodedImage!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder:
+                                      (context, memoryError, stackTrace) {
+                                    debugPrint(
+                                        "❌ Image.memory failed for ${widget.locationName}: $memoryError");
+                                    return _buildPlaceholder();
+                                  },
+                                ))
+                          : _buildPlaceholder())
                       : const Center(child: CircularProgressIndicator()),
             ),
             Text(
