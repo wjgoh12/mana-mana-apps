@@ -22,7 +22,7 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   bool occupancyRateLoaded = false;
   bool _hasShownNewFeaturesDialog = false;
   bool _hasShownNoticeDialog = false;
-  bool _hasShownPopoutDialog = false;
+  static bool _hasShownPopoutDialog = false; // Static: show only once per app session
   bool _userHasExploredFeatures = false;
   bool _userHasSeenNotice = false;
   bool _userHasSeenPopouts = false;
@@ -119,6 +119,11 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     notifyListeners();
   }
 
+  static void resetSession() {
+    _hasShownPopoutDialog = false;
+    debugPrint('🔔 Popout session reset via resetSession()');
+  }
+
   Future<void> resetPopoutDialog() async {
     _userHasSeenPopouts = false;
     _hasShownPopoutDialog = false;
@@ -159,8 +164,8 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    await resetPopoutDialog(); // Force reset to show popout again for debugging
-    debugPrint('🔔 DEBUG: Popout state has been reset for testing');
+    // Note: Do NOT reset popout dialog here - it should only show once per session
+    // The static _hasShownPopoutDialog flag ensures this behavior
 
     try {
       await _globalDataManager.initializeData();

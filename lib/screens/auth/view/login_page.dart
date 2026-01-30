@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mana_mana_app/config/AppAuth/native_auth_service.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/screens/dashboard/view/dashboard_view.dart';
+import 'package:mana_mana_app/screens/dashboard/view_model/dashboard_view_model.dart';
 import 'package:mana_mana_app/screens/auth/view/forgot_password_page.dart';
 import 'package:mana_mana_app/screens/auth/view/update_password_page.dart';
 
@@ -73,6 +74,7 @@ class LoginPageState extends State<LoginPage> {
     final hasSession = await _authService.hasValidSession();
 
     if (hasSession && mounted) {
+      NewDashboardVM_v3.resetSession();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const NewDashboardV3()),
       );
@@ -123,6 +125,7 @@ class LoginPageState extends State<LoginPage> {
 
           print('🧹 Clearing cached data before navigating to dashboard');
           GlobalDataManager().clearAllData();
+          NewDashboardVM_v3.resetSession();
 
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const NewDashboardV3()),
