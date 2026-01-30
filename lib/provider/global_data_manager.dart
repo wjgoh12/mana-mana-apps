@@ -10,6 +10,7 @@ import 'package:mana_mana_app/repository/property_list.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 
 class GlobalDataManager extends ChangeNotifier {
   static final GlobalDataManager _instance = GlobalDataManager._internal();
@@ -159,6 +160,13 @@ class GlobalDataManager extends ChangeNotifier {
 
   Future<void> _fetchAllData() async {
     _users = await _userRepository.getUsers();
+
+    if (_users.isEmpty) {
+      print('🛑 No user account detected - logging out');
+      final AuthService authService = AuthService();
+      await authService.handleServerAuthenticationFailure();
+      return;
+    }
 
     // Track the current user email to detect user changes
     if (_users.isNotEmpty && _users.first.email != null) {

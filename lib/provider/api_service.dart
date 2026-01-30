@@ -44,6 +44,10 @@ class ApiService {
     }
   }
 
+  static void clearCookies() {
+    _cookieJar.deleteAll();
+  }
+
   Future<dynamic> post(
     String url, {
     Map<String, dynamic>? data,
@@ -85,8 +89,14 @@ class ApiService {
               jsonResponse['accessToken'];
 
           if (newToken != null && newToken.toString().isNotEmpty) {
+            final newRefreshToken = jsonResponse['refresh_token'] ??
+                jsonResponse['refreshToken'];
+            
             debugPrint('🔑 Found new token in API response, updating...');
-            await authService.updateTokens(accessToken: newToken.toString());
+            await authService.updateTokens(
+              accessToken: newToken.toString(),
+              refreshToken: newRefreshToken?.toString(),
+            );
           }
         }
 
@@ -110,6 +120,12 @@ class ApiService {
       }
     } catch (e) {
       if (e is DioException) {
+        if (e.response?.statusCode == 401) {
+          debugPrint("🛑 401 Unauthorized in post - logging out");
+          await _handleAuthError();
+          throw AuthenticationException('Unauthorized');
+        }
+        
         debugPrint("❌ Dio error: ${e.message}");
         if (e.response != null) {
           debugPrint("🔧 Error response body: ${e.response?.data}");
@@ -315,6 +331,12 @@ class ApiService {
           ...?headers,
         },
       );
+      
+      if (response.statusCode == 401) {
+        debugPrint('🛑 401 Unauthorized in get - logging out');
+        await _handleAuthError();
+        throw AuthenticationException('Unauthorized');
+      }
 
       // debugPrint("🔍 GET Request URL: $url");
       // debugPrint("🔍 GET Response Status: ${response.statusCode}");
@@ -325,6 +347,11 @@ class ApiService {
       debugPrint('❌ GET request error: $e');
       rethrow; // Re-throw to preserve the exception type
     }
+  }
+
+  Future<void> _handleAuthError() async {
+    final AuthService authService = AuthService();
+    await authService.handleServerAuthenticationFailure();
   }
 
   // Find where you're decoding the token (likely in ApiService)

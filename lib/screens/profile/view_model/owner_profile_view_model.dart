@@ -12,6 +12,7 @@ import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
+import 'package:mana_mana_app/provider/api_service.dart';
 
 class OwnerProfileVM extends ChangeNotifier {
   final RedemptionRepository _ownerBookingRepository = RedemptionRepository();
@@ -643,6 +644,10 @@ class OwnerProfileVM extends ChangeNotifier {
       // ✅ Update token if server returned one
       if (confirmRes['token'] != null &&
           confirmRes['token'].toString().isNotEmpty) {
+        
+        // Clear old cookies/session data before setting new token
+        ApiService.clearCookies();
+        
         final authService = AuthService();
         await authService.updateTokens(
           accessToken: confirmRes['token'],
@@ -655,7 +660,7 @@ class OwnerProfileVM extends ChangeNotifier {
       _globalDataManager.isSwitchUser = true;
 
       // ✅ Force refresh to get switched user's data
-      await _globalDataManager.initializeData(forceRefresh: true);
+      await _globalDataManager.resetAndRefreshData();
 
       debugPrint('✅ switchUserAndReload completed for $email');
       notifyListeners();

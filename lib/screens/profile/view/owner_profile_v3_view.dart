@@ -191,8 +191,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                       children: [
                         TextButton(
                           style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(Colors.white),
+                            backgroundColor: WidgetStateProperty.all(Colors.white),
                           ),
                           onPressed: () async {
                             Navigator.of(context).pop();
@@ -203,8 +202,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         const SizedBox(width: 8),
                         ElevatedButton(
                           style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(Colors.white),
+                            backgroundColor: WidgetStateProperty.all(Colors.white),
                           ),
                           onPressed: () async {
                             final email = emailController.text.trim();
@@ -215,6 +213,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               return;
                             }
 
+                            // ✅ Validate user first
                             final validateRes =
                                 await model.validateSwitchUser(email);
 
@@ -230,6 +229,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               return;
                             }
 
+                            // ✅ Show confirmation dialog
                             final doSwitch = await showDialog<bool>(
                               context: context,
                               builder: (ctx) => AlertDialog(

@@ -325,4 +325,51 @@ class AuthService {
       return false;
     }
   }
+
+  Future<bool> login(String username, String password) async {
+    try {
+      final Uri tokenEndpoint = Uri.parse(
+          '${EnvConfig.keycloakBaseUrl}/auth/realms/mana/protocol/openid-connect/token');
+
+      final response = await http.post(
+        tokenEndpoint,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {
+          'grant_type': 'password',
+          'client_id': EnvConfig.keycloakClientId,
+          'client_secret': EnvConfig.keycloakClientSecret,
+          'username': username,
+          'password': password,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> tokenData = json.decode(response.body);
+
+        // Store new tokens
+        await _secureStorage.write(
+            key: 'access_token', value: tokenData['access_token']);
+
+        if (tokenData['refresh_token'] != null) {
+          await _secureStorage.write(
+              key: 'refresh_token', value: tokenData['refresh_token']);
+        }
+        
+        // Also store the email/username used for login
+        await _secureStorage.write(key: 'email', value: username);
+
+        // Start new timer with the new token
+        _startTokenRefreshTimer(tokenData['access_token']);
+
+        return true;
+      } else {
+        print(
+            '❌ Login failed: ${response.statusCode} - ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('❌ Login error: $e');
+      return false;
+    }
+  }
 }
