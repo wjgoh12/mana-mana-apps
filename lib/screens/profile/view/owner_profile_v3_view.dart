@@ -819,7 +819,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                       mode: LaunchMode.externalApplication,
                                       webOnlyWindowName: '_blank',
                                     );
-                                  } 
+                                  }
 
                                   // ✅ Fallback / Mobile: Use system default (mailto)
                                   if (!launched) {
@@ -836,7 +836,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   if (!launched && context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Email: admin@manamana.my'),
+                                        content:
+                                            Text('Email: admin@manamana.my'),
                                         duration: Duration(seconds: 3),
                                       ),
                                     );
@@ -846,7 +847,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Email: admin@manamana.my'),
+                                        content:
+                                            Text('Email: admin@manamana.my'),
                                       ),
                                     );
                                   }
@@ -880,7 +882,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (model.canSwitchUser) ...[
+                          if (model.canSwitchUser && !kIsWeb) ...[
                             TextButton(
                               onPressed: () {
                                 _showSwitchUserDialog();
