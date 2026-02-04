@@ -13,8 +13,6 @@ import 'package:mana_mana_app/screens/book_freestay/view/select_date_room/select
 import 'package:mana_mana_app/core/utils/size_utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html if (dart.library.io) 'dart:io';
-import 'dart:ui_web' as ui_web if (dart.library.io) 'dart:io';
 
 class ChoosePropertyLocation extends StatefulWidget {
   final String selectedLocation;
@@ -394,29 +392,38 @@ class _LocationCardState extends State<LocationCard>
         // XML bytes: '<' = 0x3C, '?' = 0x3F, 'x' = 0x78, 'm' = 0x6D
         int startIdx = 0;
         // Skip BOM if present (EF BB BF)
-        if (result.length >= 3 && result[0] == 0xEF && result[1] == 0xBB && result[2] == 0xBF) {
+        if (result.length >= 3 &&
+            result[0] == 0xEF &&
+            result[1] == 0xBB &&
+            result[2] == 0xBF) {
           startIdx = 3;
         }
         // Skip whitespace
-        while (startIdx < result.length && (result[startIdx] == 0x20 || result[startIdx] == 0x0A || result[startIdx] == 0x0D || result[startIdx] == 0x09)) {
+        while (startIdx < result.length &&
+            (result[startIdx] == 0x20 ||
+                result[startIdx] == 0x0A ||
+                result[startIdx] == 0x0D ||
+                result[startIdx] == 0x09)) {
           startIdx++;
         }
-        
+
         if (startIdx + 4 <= result.length) {
           // Check for '<svg' (case insensitive for 's')
-          if (result[startIdx] == 0x3C && 
+          if (result[startIdx] == 0x3C &&
               (result[startIdx + 1] == 0x73 || result[startIdx + 1] == 0x53) &&
               (result[startIdx + 2] == 0x76 || result[startIdx + 2] == 0x56) &&
               (result[startIdx + 3] == 0x67 || result[startIdx + 3] == 0x47)) {
             isContentSvg = true;
           }
           // Check for '<?xml' which likely indicates SVG
-          else if (result[startIdx] == 0x3C && result[startIdx + 1] == 0x3F &&
-                   (result[startIdx + 2] == 0x78 || result[startIdx + 2] == 0x58)) {
+          else if (result[startIdx] == 0x3C &&
+              result[startIdx + 1] == 0x3F &&
+              (result[startIdx + 2] == 0x78 || result[startIdx + 2] == 0x58)) {
             isContentSvg = true;
           }
         }
-        debugPrint("🔍 Image Check [${widget.locationName}]: IsSVG=$isContentSvg, Size=${result.length} bytes");
+        debugPrint(
+            "🔍 Image Check [${widget.locationName}]: IsSVG=$isContentSvg, Size=${result.length} bytes");
       }
 
       if (mounted) {
@@ -426,7 +433,8 @@ class _LocationCardState extends State<LocationCard>
           // For web: create data URL and register HTML element
           if (kIsWeb && result != null && !_isSvg) {
             _dataUrl = 'data:image/png;base64,${base64Encode(result)}';
-            _htmlViewType = 'img-${widget.locationName}-${DateTime.now().millisecondsSinceEpoch}';
+            _htmlViewType =
+                'img-${widget.locationName}-${DateTime.now().millisecondsSinceEpoch}';
             _registerHtmlImage();
           }
           _isDecoded = true;
@@ -447,19 +455,8 @@ class _LocationCardState extends State<LocationCard>
 
   void _registerHtmlImage() {
     if (!kIsWeb || _dataUrl == null || _htmlViewType == null) return;
-    
-    // ignore: undefined_prefixed_name
-    ui_web.platformViewRegistry.registerViewFactory(
-      _htmlViewType!,
-      (int viewId) {
-        final img = html.ImageElement()
-          ..src = _dataUrl!
-          ..style.width = '100%'
-          ..style.height = '100%'
-          ..style.objectFit = 'cover';
-        return img;
-      },
-    );
+
+    // registerHtmlView(_htmlViewType!, _dataUrl!);
   }
 
   Widget _buildWebImage() {

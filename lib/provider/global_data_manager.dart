@@ -21,6 +21,7 @@ class GlobalDataManager extends ChangeNotifier {
   final UserRepository _userRepository = UserRepository();
   final PropertyListRepository _propertyRepository = PropertyListRepository();
   final RedemptionRepository _redemptionRepository = RedemptionRepository();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   // Data state
   bool _isInitialized = false;
@@ -46,6 +47,20 @@ class GlobalDataManager extends ChangeNotifier {
   bool _isLoadingLocations = false;
   String? _selectedState;
   bool isSwitchUser = false;
+  String? _switchedUserEmail;
+
+  // Getter and setter for switched user email with persistence
+  String? get switchedUserEmail => _switchedUserEmail;
+  set switchedUserEmail(String? email) {
+    _switchedUserEmail = email;
+    if (email != null) {
+      _secureStorage.write(key: 'switched_user_email', value: email);
+      _secureStorage.write(key: 'is_switch_user', value: 'true');
+    } else {
+      _secureStorage.delete(key: 'switched_user_email');
+      _secureStorage.delete(key: 'is_switch_user');
+    }
+  }
 
   // Add cache for filtered locations
   Map<String, List<PropertyState>> _filteredLocationCache = {};
@@ -111,6 +126,17 @@ class GlobalDataManager extends ChangeNotifier {
       return;
     }
 
+    // ✅ Load persisted switch user state if not already set (Handles PWA Reloads)
+    if (!isSwitchUser) {
+      final persistedEmail = await _secureStorage.read(key: 'switched_user_email');
+      if (persistedEmail != null && persistedEmail.isNotEmpty) {
+        print('🔄 Restoring switch user state from storage: $persistedEmail');
+        isSwitchUser = true;
+        _switchedUserEmail = persistedEmail;
+        forceRefresh = true;
+      }
+    }
+
     // Auto-detect user change
     bool userChanged = false;
     if (_isInitialized && !forceRefresh) {
@@ -159,7 +185,26 @@ class GlobalDataManager extends ChangeNotifier {
   }
 
   Future<void> _fetchAllData() async {
-    _users = await _userRepository.getUsers();
+    // ✅ Determine the email to use for API calls
+    // In switch user mode, use the switched user email
+    final String? targetEmail = (isSwitchUser && _switchedUserEmail != null && _switchedUserEmail!.isNotEmpty)
+        ? _switchedUserEmail
+        : null;
+
+    debugPrint('🔄 _fetchAllData: isSwitchUser=$isSwitchUser, targetEmail=$targetEmail');
+
+    // ✅ Use getSwitchedUser when in switch user mode
+    if (isSwitchUser && targetEmail != null) {
+      debugPrint('🔄 Fetching data for switched user: $targetEmail');
+      _users = await _userRepository.getSwitchedUser(targetEmail);
+      
+      if (_users.isEmpty) {
+        debugPrint('⚠️ getSwitchedUser returned empty, trying getUsers as fallback');
+        _users = await _userRepository.getUsers();
+      }
+    } else {
+      _users = await _userRepository.getUsers();
+    }
 
     if (_users.isEmpty) {
       print('🛑 No user account detected - logging out');
@@ -174,14 +219,19 @@ class GlobalDataManager extends ChangeNotifier {
       print('📧 Current user set to: $_currentUserEmail');
     }
 
-    _ownerUnits = await _propertyRepository.getOwnerUnit();
+    // ✅ Pass the target email to API calls that support it
+    // In switch user mode, this ensures we get the switched user's data
+    _ownerUnits = await _propertyRepository.getOwnerUnit(email: targetEmail);
+    debugPrint('📦 getOwnerUnit with email=$targetEmail returned ${_ownerUnits.length} units');
     _unitByMonth = await _propertyRepository.getUnitByMonth();
     _revenueDashboard = await _propertyRepository.revenueByYear();
     _totalByMonth = await _propertyRepository.totalByMonth();
     _locationByMonth = await _propertyRepository.locationByMonth();
 
     try {
-      final email = _users.first.email ?? '';
+      // Use switched user email or fallback to fetched user email
+      final email = targetEmail ?? _users.first.email ?? '';
+      debugPrint('📋 Fetching property contract type for email: $email');
       final contractResponse =
           await _propertyRepository.getPropertyContractType(email: email);
       _propertyContractType = List<Map<String, dynamic>>.from(contractResponse);
@@ -464,6 +514,14 @@ class GlobalDataManager extends ChangeNotifier {
     _isInitialized = false;
     _isLoading = false;
     _lastFetchTime = null;
+
+    // ✅ Clear switch user state
+    isSwitchUser = false;
+    _switchedUserEmail = null;
+    try {
+      _secureStorage.delete(key: 'switched_user_email');
+      _secureStorage.delete(key: 'is_switch_user');
+    } catch (_) {}
 
     notifyListeners();
   }

@@ -36,6 +36,22 @@ ext {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+
+    // Namespace Fix for AGP 8+
+    project.afterEvaluate {
+        def android = project.extensions.findByName("android")
+        if (android != null) {
+            if (android.namespace == null) {
+                 if (project.name == 'huawei_hmsavailability') {
+                     android.namespace = 'com.huawei.hms.flutter.hmsavailability'
+                 } else if (project.name == 'huawei_account') {
+                     android.namespace = 'com.huawei.hms.flutter.account'
+                 } else {
+                     android.namespace = project.group
+                 }
+            }
+        }
+    }
 }
 subprojects {
     project.evaluationDependsOn(':app')

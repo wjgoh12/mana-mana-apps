@@ -13,6 +13,8 @@ import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
 import 'package:mana_mana_app/provider/api_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:mana_mana_app/splashscreen.dart';
 
 class OwnerProfileVM extends ChangeNotifier {
   final RedemptionRepository _ownerBookingRepository = RedemptionRepository();
@@ -659,6 +661,16 @@ class OwnerProfileVM extends ChangeNotifier {
 
       _globalDataManager.isSwitchUser = true;
 
+      // ✅ PWA Adaptation: Force Hard Navigation Reset
+      if (kIsWeb) {
+        debugPrint("🔄 PWA Mode: Performing hard navigation reset to apply switch user state");
+        AuthService.navigatorKey?.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const Splashscreen()),
+          (route) => false,
+        );
+        return null;
+      }
+
       // ✅ Force refresh to get switched user's data
       await _globalDataManager.resetAndRefreshData();
 
@@ -675,6 +687,16 @@ class OwnerProfileVM extends ChangeNotifier {
     await _userRepository.cancelSwitchUser(email);
 
     _globalDataManager.isSwitchUser = false;
+
+    // ✅ PWA Adaptation: Hard Reset
+    if (kIsWeb) {
+        debugPrint("🔄 PWA Mode: cancelling switch user with hard reset");
+        AuthService.navigatorKey?.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const Splashscreen()),
+          (route) => false,
+        );
+        return;
+    }
 
     await _globalDataManager.initializeData(forceRefresh: true);
 

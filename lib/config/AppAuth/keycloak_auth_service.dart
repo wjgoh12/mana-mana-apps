@@ -16,6 +16,7 @@ class AuthService {
 
   // Add a global navigation key reference
   static GlobalKey<NavigatorState>? _navigatorKey;
+  static GlobalKey<NavigatorState>? get navigatorKey => _navigatorKey;
 
   // Method to set the navigator key from main app
   static void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
