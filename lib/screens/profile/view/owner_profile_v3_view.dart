@@ -11,6 +11,7 @@ import 'package:mana_mana_app/core/utils/size_utils.dart';
 // ignore: depend_on_referenced_packages
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart';
 
 // ignore: camel_case_types
 class OwnerProfile_v3 extends StatefulWidget {
@@ -91,6 +92,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
       }
 
       await model.cancelUser(currentUserEmail);
+
+      if (kIsWeb) return; // Web performs hard reset, stop here
 
       GlobalDataManager().isSwitchUser = false;
 
@@ -191,7 +194,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                       children: [
                         TextButton(
                           style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(Colors.white),
+                            backgroundColor:
+                                WidgetStateProperty.all(Colors.white),
                           ),
                           onPressed: () async {
                             Navigator.of(context).pop();
@@ -202,7 +206,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                         const SizedBox(width: 8),
                         ElevatedButton(
                           style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(Colors.white),
+                            backgroundColor:
+                                WidgetStateProperty.all(Colors.white),
                           ),
                           onPressed: () async {
                             final email = emailController.text.trim();
@@ -263,8 +268,11 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                       final error = await model
                                           .switchUserAndReload(email);
 
+                                      // ✅ If Web Reset happened (error is null), stop everything
+                                      if (kIsWeb && error == null) return;
+
                                       // ✅ Close loading dialog
-                                      Navigator.of(ctx).pop();
+                                      if (ctx.mounted) Navigator.of(ctx).pop();
 
                                       if (error != null) {
                                         // Show error
@@ -797,12 +805,52 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             _buildContactOption(
                               iconPath: 'assets/images/profile_email.png',
                               label: 'Email',
-                              onTap: () {
-                                final Uri emailLaunchUri = Uri(
-                                  scheme: 'mailto',
-                                  path: 'admin@manamana.my',
-                                );
-                                launchUrl(emailLaunchUri);
+                              onTap: () async {
+                                try {
+                                  bool launched = false;
+
+                                  if (kIsWeb) {
+                                    // ✅ For PWA: Force open Gmail Website in New Tab
+                                    final Uri gmailUri = Uri.parse(
+                                      'https://mail.google.com/mail/?view=cm&fs=1&to=admin@manamana.my',
+                                    );
+                                    launched = await launchUrl(
+                                      gmailUri,
+                                      mode: LaunchMode.externalApplication,
+                                      webOnlyWindowName: '_blank',
+                                    );
+                                  } 
+
+                                  // ✅ Fallback / Mobile: Use system default (mailto)
+                                  if (!launched) {
+                                    final Uri emailLaunchUri = Uri(
+                                      scheme: 'mailto',
+                                      path: 'admin@manamana.my',
+                                    );
+                                    launched = await launchUrl(
+                                      emailLaunchUri,
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+
+                                  if (!launched && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Email: admin@manamana.my'),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  debugPrint('Email error: $e');
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Email: admin@manamana.my'),
+                                      ),
+                                    );
+                                  }
+                                }
                               },
                             ),
                             SizedBox(height: 12.fSize),
