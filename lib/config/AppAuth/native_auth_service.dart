@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -73,16 +74,32 @@ class NativeAuthService {
         // Other errors
         print('DEBUG: Authentication failed - Status: ${response.statusCode}');
         print('DEBUG: Response body: ${response.body}');
-        final Map<String, dynamic> errorData = json.decode(response.body);
-        return AuthResult(
-          success: false,
-          message: errorData['error_description'] ?? 'Login failed',
-        );
+        try {
+          final Map<String, dynamic> errorData = json.decode(response.body);
+          return AuthResult(
+            success: false,
+            message: errorData['error_description'] ??
+                'Login failed. Please try again.',
+          );
+        } catch (e) {
+          return AuthResult(
+            success: false,
+            message: 'Login failed. Please try again.',
+          );
+        }
       }
-    } catch (e) {
+    } on SocketException catch (e) {
+      print('DEBUG: Socket error: $e');
       return AuthResult(
         success: false,
-        message: 'Network error: Please check your connection',
+        message: 'Please check your internet connection and try again.',
+      );
+    } catch (e) {
+      // CORS or other network-related errors
+      print('DEBUG: Authentication error: $e');
+      return AuthResult(
+        success: false,
+        message: 'Login failed. Please try again.',
       );
     }
   }
