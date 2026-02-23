@@ -11,6 +11,78 @@ import 'package:mana_mana_app/model/popout_notification.dart';
 class UserRepository {
   final ApiService _apiService = ApiService();
 
+  String _normalizeEmail(String? value) => (value ?? '').trim().toLowerCase();
+
+  String? _extractEmailFromMap(Map<String, dynamic> data) {
+    final ownersInfo = data['ownersinfo'];
+    if (ownersInfo is Map<String, dynamic>) {
+      final ownersEmail = ownersInfo['email']?.toString();
+      if (ownersEmail != null && ownersEmail.isNotEmpty) {
+        return ownersEmail;
+      }
+    }
+
+    final directEmail = data['email']?.toString();
+    if (directEmail != null && directEmail.isNotEmpty) {
+      return directEmail;
+    }
+
+    final ownerEmail = data['ownerEmail']?.toString();
+    if (ownerEmail != null && ownerEmail.isNotEmpty) {
+      return ownerEmail;
+    }
+
+    final userId = data['userId']?.toString();
+    if (userId != null && userId.contains('@')) {
+      return userId;
+    }
+
+    return null;
+  }
+
+  String? _extractFirstEmail(dynamic response) {
+    if (response is Map<String, dynamic>) {
+      return _extractEmailFromMap(response);
+    }
+
+    if (response is List) {
+      for (final item in response) {
+        if (item is Map) {
+          final email = _extractEmailFromMap(Map<String, dynamic>.from(item));
+          if (email != null && email.isNotEmpty) {
+            return email;
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  bool _responseMatchesEmail(dynamic response, String targetEmail) {
+    final normalizedTarget = _normalizeEmail(targetEmail);
+    if (normalizedTarget.isEmpty) return false;
+
+    if (response is Map<String, dynamic>) {
+      final email = _extractEmailFromMap(response);
+      return _normalizeEmail(email) == normalizedTarget;
+    }
+
+    if (response is List) {
+      for (final item in response) {
+        if (item is Map) {
+          final email = _extractEmailFromMap(Map<String, dynamic>.from(item));
+          if (_normalizeEmail(email) == normalizedTarget) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    return false;
+  }
+
   Future<List<User>> getUsers() async {
     return await _apiService.post(ApiEndpoint.ownerUserData).then((res) {
       try {
@@ -18,8 +90,8 @@ class UserRepository {
           print("⚠️ API returned null for ownerUserData");
           return [];
         }
-        debugPrint(
-            "✅ API call succeeded for ownerUserData; \nraw response: $res");
+        // debugPrint(
+        //     "✅ API call succeeded for ownerUserData; \nraw response: $res");
         print(res['ownersinfo']);
 
         if (res is String) {
@@ -134,32 +206,43 @@ class UserRepository {
       });
       debugPrint('🔁 confirmSwitchUser response: $response');
 
-      // ✅ Extract token if present in response
-      String? newToken;
+      // Server returns plain text for switch-user (session/cookie-based impersonation).
+      // No new JWT token is issued — identity is managed server-side via session cookie.
+      bool isSuccess = true;
+      int statusCode = 200;
 
-      // Check if response contains token in various formats
       if (response is Map<String, dynamic>) {
-        newToken = response['token'] ??
-            response['access_token'] ??
-            response['accessToken'];
+        final dynamic successValue = response['success'];
+        if (successValue is bool) {
+          isSuccess = successValue;
+        }
+
+        final dynamic statusValue =
+            response['statusCode'] ?? response['status'];
+        if (statusValue is int) {
+          statusCode = statusValue;
+          if (statusCode >= 400) isSuccess = false;
+        }
       } else if (response is String) {
-        // Try to parse token from string response
-        final tokenRegex =
-            RegExp(r'eyJ[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]*');
-        final tokenMatch = tokenRegex.firstMatch(response);
-        if (tokenMatch != null) {
-          newToken = tokenMatch.group(0);
-          debugPrint('🔑 Extracted token from string response');
+        final lower = response.toLowerCase();
+        final hasKnownError = lower.contains('403') ||
+            lower.contains('forbidden') ||
+            lower.contains('not allowed') ||
+            lower.contains('unauthorized') ||
+            lower.contains('failed');
+        if (hasKnownError) {
+          isSuccess = false;
+          statusCode = 403;
         }
       }
 
-      debugPrint('✅ User switch confirmed, token present: ${newToken != null}');
+      debugPrint(
+          '${isSuccess ? '✅' : '❌'} User switch confirm status: success=$isSuccess');
 
       return {
-        'statusCode': 200,
-        'success': true,
+        'statusCode': statusCode,
+        'success': isSuccess,
         'body': response,
-        'token': newToken, // ✅ Include token in return
       };
     } catch (e) {
       debugPrint('❌ confirmSwitchUser error: $e');
@@ -185,29 +268,47 @@ class UserRepository {
       debugPrint('🔍 getUserByEmail: Fetching user for email: $email');
 
       final possiblePayloads = [
-        {'email': email},
         {'switchUserEmail': email},
-        {'userEmail': email},
         {'ownerEmail': email},
+        {'userEmail': email},
+        {'email': email},
       ];
 
       dynamic res;
       for (final payload in possiblePayloads) {
         try {
           debugPrint('🔍 Trying payload: $payload');
-          res = await _apiService.post(
+          final attempt = await _apiService.post(
             ApiEndpoint.ownerUserData,
             data: payload,
           );
 
-          if (res != null) {
-            debugPrint('✅ Got response with payload: $payload');
+          if (attempt == null) {
+            continue;
+          }
+
+          final resolvedEmail = _extractFirstEmail(attempt);
+          final isMatch = _responseMatchesEmail(attempt, email);
+          debugPrint(
+              '🔍 Payload $payload resolvedEmail=$resolvedEmail, match=$isMatch');
+
+          if (isMatch) {
+            res = attempt;
             break;
           }
+
+          // Keep first non-null response as a last-resort fallback.
+          res ??= attempt;
         } catch (e) {
           debugPrint('⚠️ Failed with payload $payload: $e');
-          res = null;
         }
+      }
+
+      if (res != null && !_responseMatchesEmail(res, email)) {
+        final fallbackEmail = _extractFirstEmail(res);
+        debugPrint(
+            '⚠️ getUserByEmail payload probes did not match target=$email (got=$fallbackEmail). Falling back to local search.');
+        res = null;
       }
 
       if (res == null) {
@@ -232,9 +333,18 @@ class UserRepository {
       try {
         if (res is List && res.isNotEmpty) {
           debugPrint('📋 Response is a List with ${res.length} items');
-          final user = User.fromJson(res.first as Map<String, dynamic>);
-          debugPrint('✅ Parsed user from list: ${user.email}');
-          return user;
+          for (final item in res) {
+            if (item is! Map) continue;
+            final user = User.fromJson(Map<String, dynamic>.from(item));
+            final parsedEmail =
+                _normalizeEmail(user.email ?? user.ownerEmail ?? '');
+            if (parsedEmail == _normalizeEmail(email)) {
+              debugPrint('✅ Parsed matching user from list: ${user.email}');
+              return user;
+            }
+          }
+          debugPrint('⚠️ No matching user found in list for email=$email');
+          return null;
         }
 
         if (res is Map<String, dynamic>) {
@@ -242,13 +352,12 @@ class UserRepository {
           final user = User.fromJson(res);
           debugPrint('✅ Parsed user from map: ${user.email}');
 
-          if ((user.email ?? '').toLowerCase() == email.toLowerCase()) {
-            return user;
-          } else {
-            debugPrint('⚠️ Email mismatch: got ${user.email}, expected $email');
-
+          final parsedEmail = _normalizeEmail(user.email ?? user.ownerEmail);
+          if (parsedEmail == _normalizeEmail(email)) {
             return user;
           }
+          debugPrint('⚠️ Email mismatch: got ${user.email}, expected $email');
+          return null;
         }
 
         debugPrint('❌ Unexpected response format: ${res.runtimeType}');
@@ -277,10 +386,10 @@ class UserRepository {
 
   Future<List<User>> getSwitchedUser(String email) async {
     final possiblePayloads = [
-      {'email': email},
       {'switchUserEmail': email},
-      {'userEmail': email},
       {'ownerEmail': email},
+      {'userEmail': email},
+      {'email': email},
     ];
 
     debugPrint('🔁 getSwitchedUser: probing payloads for email: $email');
@@ -294,9 +403,16 @@ class UserRepository {
           data: payload,
         );
 
-        debugPrint('🔁 Raw response for payload $payload: $attempt');
+        if (attempt == null) {
+          continue;
+        }
 
-        if (attempt != null) {
+        final resolvedEmail = _extractFirstEmail(attempt);
+        final isMatch = _responseMatchesEmail(attempt, email);
+        debugPrint(
+            '🔁 Payload $payload resolvedEmail=$resolvedEmail, match=$isMatch');
+
+        if (isMatch) {
           res = attempt;
           break;
         }
@@ -311,8 +427,7 @@ class UserRepository {
         final attempt = await _apiService.post(
           ApiEndpoint.ownerUserData,
         );
-        debugPrint('🔁 Raw response for empty payload: $attempt');
-        if (attempt != null) {
+        if (attempt != null && _responseMatchesEmail(attempt, email)) {
           res = attempt;
         }
       } catch (e) {
@@ -325,13 +440,33 @@ class UserRepository {
         print("⚠️ other user API returned null for ownerUserData");
         return [];
       }
-      debugPrint(
-          "✅ API call succeeded for switched ownerUserData; raw response: $res");
+      // debugPrint(
+      //     "✅ API call succeeded for switched ownerUserData; raw response: $res");
 
       Map<String, dynamic> userMap;
       if (res is List && res.isNotEmpty) {
-        userMap = Map<String, dynamic>.from(res.first as Map);
+        Map<String, dynamic>? match;
+        for (final item in res) {
+          if (item is! Map) continue;
+          final mapItem = Map<String, dynamic>.from(item);
+          if (_responseMatchesEmail(mapItem, email)) {
+            match = mapItem;
+            break;
+          }
+        }
+        if (match == null) {
+          debugPrint(
+              '⚠️ getSwitchedUser list response did not contain target email=$email');
+          return [];
+        }
+        userMap = match;
       } else if (res is Map<String, dynamic>) {
+        if (!_responseMatchesEmail(res, email)) {
+          final resolvedEmail = _extractEmailFromMap(res);
+          debugPrint(
+              '⚠️ getSwitchedUser map response email mismatch: expected=$email, got=$resolvedEmail');
+          return [];
+        }
         userMap = res;
       } else {
         debugPrint(
@@ -354,7 +489,7 @@ class UserRepository {
             if (parts.length >= 2) {
               final normalized = base64Url.normalize(parts[1]);
               final decoded = utf8.decode(base64Url.decode(normalized));
-              debugPrint('🔐 token payload: $decoded');
+              // debugPrint('🔐 token payload: $decoded');
               try {
                 final Map<String, dynamic> payloadJson =
                     Map<String, dynamic>.from(json.decode(decoded));
@@ -380,7 +515,6 @@ class UserRepository {
   Future<List<PopoutNotification>> getPopoutNotifications() async {
     try {
       final response = await _apiService.get(ApiEndpoint.getPopout);
-      debugPrint("getPopoutNotifications response: $response");
 
       if (response != null && response is List) {
         return response
@@ -389,7 +523,6 @@ class UserRepository {
       }
       return [];
     } catch (e) {
-      debugPrint("Error fetching popouts: $e");
       return [];
     }
   }

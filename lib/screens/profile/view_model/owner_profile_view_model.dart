@@ -12,7 +12,6 @@ import 'package:mana_mana_app/model/user_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
 import 'package:mana_mana_app/repository/redemption_repo.dart';
 import 'package:mana_mana_app/repository/user_repo.dart';
-import 'package:mana_mana_app/provider/api_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mana_mana_app/splashscreen.dart';
 
@@ -643,23 +642,19 @@ class OwnerProfileVM extends ChangeNotifier {
       final confirmRes = await _userRepository.confirmSwitchUser(email);
       debugPrint('✅ confirmSwitchUser response: $confirmRes');
 
-      // ✅ Update token if server returned one
-      if (confirmRes['token'] != null &&
-          confirmRes['token'].toString().isNotEmpty) {
-        
-        // Clear old cookies/session data before setting new token
-        ApiService.clearCookies();
-        
-        final authService = AuthService();
-        await authService.updateTokens(
-          accessToken: confirmRes['token'],
-        );
-        debugPrint('✅ Updated token for switched user');
-      } else {
-        debugPrint('⚠️ No token in response, relying on session/cookie');
+      if (confirmRes['success'] != true) {
+        final body = confirmRes['body']?.toString() ?? 'Unknown switch error';
+        debugPrint('❌ confirmSwitchUser failed: $body');
+        return body;
       }
 
-      _globalDataManager.isSwitchUser = true;
+      // Server uses session/cookie-based impersonation (no new token issued).
+      // The session cookie is now set — subsequent API calls will resolve
+      // to the target user's identity on the server side.
+      debugPrint('✅ Server session updated for switch user via cookie');
+
+      // Persist switched email before any hard reset so PWA reload can restore state.
+      await _globalDataManager.enableSwitchUser(email);
 
       // ✅ PWA Adaptation: Force Hard Navigation Reset
       if (kIsWeb) {
@@ -674,7 +669,17 @@ class OwnerProfileVM extends ChangeNotifier {
       // ✅ Force refresh to get switched user's data
       await _globalDataManager.resetAndRefreshData();
 
-      debugPrint('✅ switchUserAndReload completed for $email');
+      // ✅ Post-switch verification: confirm loaded user matches target
+      final loadedUsers = _globalDataManager.users;
+      if (loadedUsers.isNotEmpty) {
+        final loadedEmail = (loadedUsers.first.email ?? loadedUsers.first.ownerEmail ?? '').toLowerCase();
+        if (loadedEmail != email.toLowerCase()) {
+          debugPrint('⚠️ Post-switch mismatch: expected=$email, loaded=$loadedEmail');
+          return 'Switch appeared successful but loaded data belongs to "$loadedEmail" instead of "$email". Please try again.';
+        }
+      }
+
+      debugPrint('✅ switchUserAndReload completed and verified for $email');
       notifyListeners();
       return null;
     } catch (e, st) {
@@ -686,7 +691,7 @@ class OwnerProfileVM extends ChangeNotifier {
   Future<void> cancelUser(String email) async {
     await _userRepository.cancelSwitchUser(email);
 
-    _globalDataManager.isSwitchUser = false;
+    await _globalDataManager.disableSwitchUser();
 
     // ✅ PWA Adaptation: Hard Reset
     if (kIsWeb) {

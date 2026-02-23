@@ -62,6 +62,28 @@ class GlobalDataManager extends ChangeNotifier {
     }
   }
 
+  /// Persist switch-user context so web/PWA hard resets can restore it.
+  Future<void> enableSwitchUser(String email) async {
+    _switchedUserEmail = email;
+    isSwitchUser = true;
+    _isInitialized = false;
+    _lastFetchTime = null;
+    await _secureStorage.write(key: 'switched_user_email', value: email);
+    await _secureStorage.write(key: 'is_switch_user', value: 'true');
+    notifyListeners();
+  }
+
+  /// Clear switch-user context from memory and storage.
+  Future<void> disableSwitchUser() async {
+    isSwitchUser = false;
+    _switchedUserEmail = null;
+    _isInitialized = false;
+    _lastFetchTime = null;
+    await _secureStorage.delete(key: 'switched_user_email');
+    await _secureStorage.delete(key: 'is_switch_user');
+    notifyListeners();
+  }
+
   // Add cache for filtered locations
   Map<String, List<PropertyState>> _filteredLocationCache = {};
 
@@ -137,6 +159,28 @@ class GlobalDataManager extends ChangeNotifier {
       }
     }
 
+    final String? preservedSwitchEmail =
+        (isSwitchUser && _switchedUserEmail != null && _switchedUserEmail!.isNotEmpty)
+            ? _switchedUserEmail
+            : null;
+
+    // If switch-user mode is on but cached data belongs to another user,
+    // force a refresh to avoid showing stale original-account data.
+    if (isSwitchUser &&
+        _isInitialized &&
+        !forceRefresh &&
+        _switchedUserEmail != null &&
+        _switchedUserEmail!.isNotEmpty &&
+        _users.isNotEmpty) {
+      final loadedEmail = (_users.first.email ?? '').toLowerCase();
+      final switchEmail = _switchedUserEmail!.toLowerCase();
+      if (loadedEmail.isNotEmpty && loadedEmail != switchEmail) {
+        debugPrint(
+            '🔄 Switch-user mismatch detected (loaded=$loadedEmail, switched=$switchEmail), forcing refresh');
+        forceRefresh = true;
+      }
+    }
+
     // Auto-detect user change
     bool userChanged = false;
     if (_isInitialized && !forceRefresh) {
@@ -165,6 +209,15 @@ class GlobalDataManager extends ChangeNotifier {
     if (forceRefresh || userChanged) {
       print('🧹 Clearing cached data before refresh');
       clearAllData();
+
+      // If this refresh was part of switch-user restore, keep that context.
+      if (preservedSwitchEmail != null) {
+        isSwitchUser = true;
+        _switchedUserEmail = preservedSwitchEmail;
+        await _secureStorage.write(
+            key: 'switched_user_email', value: preservedSwitchEmail);
+        await _secureStorage.write(key: 'is_switch_user', value: 'true');
+      }
     }
 
     _isLoading = true;
@@ -197,9 +250,25 @@ class GlobalDataManager extends ChangeNotifier {
     if (isSwitchUser && targetEmail != null) {
       debugPrint('🔄 Fetching data for switched user: $targetEmail');
       _users = await _userRepository.getSwitchedUser(targetEmail);
-      
+
+      String loadedEmail = '';
+      if (_users.isNotEmpty) {
+        loadedEmail =
+            (_users.first.email ?? _users.first.ownerEmail ?? '').toLowerCase();
+      }
+
+      if (_users.isEmpty || loadedEmail != targetEmail.toLowerCase()) {
+        debugPrint(
+            '⚠️ switched user lookup mismatch (loaded=$loadedEmail, target=${targetEmail.toLowerCase()}), trying getUserByEmail');
+        final fallbackUser = await _userRepository.getUserByEmail(targetEmail);
+        if (fallbackUser != null) {
+          _users = [fallbackUser];
+        }
+      }
+
       if (_users.isEmpty) {
-        debugPrint('⚠️ getSwitchedUser returned empty, trying getUsers as fallback');
+        debugPrint(
+            '⚠️ switched user lookup failed, trying getUsers as fallback');
         _users = await _userRepository.getUsers();
       }
     } else {
@@ -528,7 +597,22 @@ class GlobalDataManager extends ChangeNotifier {
 
   // Reset and refresh all data (useful for switching users)
   Future<void> resetAndRefreshData() async {
+    final preservedSwitchEmail = (isSwitchUser &&
+            _switchedUserEmail != null &&
+            _switchedUserEmail!.isNotEmpty)
+        ? _switchedUserEmail
+        : null;
+
     clearAllData();
+
+    if (preservedSwitchEmail != null) {
+      isSwitchUser = true;
+      _switchedUserEmail = preservedSwitchEmail;
+      await _secureStorage.write(
+          key: 'switched_user_email', value: preservedSwitchEmail);
+      await _secureStorage.write(key: 'is_switch_user', value: 'true');
+    }
+
     await initializeData(forceRefresh: true);
   }
 

@@ -114,7 +114,7 @@ class RedemptionRepository {
       // ✅ Use cached data if available
       if (_isCacheValid && _stateLocationsCache != null) {
         final cachedCount = _stateLocationsCache!.keys.length;
-        debugPrint("✅ Using cached states: $cachedCount");
+        // debugPrint("✅ Using cached states: $cachedCount");
 
         // If cache is empty, force a refresh
         if (cachedCount == 0) {
@@ -182,11 +182,11 @@ class RedemptionRepository {
       );
 
       if (res == null) {
-        debugPrint('🔍 Response for $state: (null) - API returned null');
+        // debugPrint('🔍 Response for $state: (null) - API returned null');
         return;
       }
 
-      debugPrint('🔍 Response for $state: ${res.runtimeType}');
+      // debugPrint('🔍 Response for $state: ${res.runtimeType}');
 
       // Log first 500 chars of response for debugging
       final resStr = res.toString();
@@ -223,7 +223,7 @@ class RedemptionRepository {
         debugPrint('ℹ️ No locations for state $state, skipping cache entry.');
       }
     } catch (e) {
-      debugPrint("⚠️ Error fetching locations for $state: $e");
+      // debugPrint("⚠️ Error fetching locations for $state: $e");
     }
   }
 
@@ -232,7 +232,7 @@ class RedemptionRepository {
       if (_isCacheValid && _stateLocationsCache != null) {
         final cached = _stateLocationsCache![state];
         if (cached != null) {
-          debugPrint("✅ Using cached locations for $state: ${cached.length}");
+          // debugPrint("✅ Using cached locations for $state: ${cached.length}");
           return cached;
         }
       }
@@ -465,12 +465,10 @@ class RedemptionRepository {
 
     final firstToken = s.split(RegExp(r'\s+'))[0];
 
-    // 1. Remove digit-starting prefixes (e.g., "22M ")
     if (RegExp(r'^\d').hasMatch(firstToken)) {
       return s.substring(firstToken.length).trim();
     }
 
-    // 2. Remove ALL CAPS alphabetic prefixes of length 2-5 (e.g., "PAX ", "SCA ")
     final isAllCaps = RegExp(r'^[A-Z]+$').hasMatch(firstToken);
     if (isAllCaps && firstToken.length >= 2 && firstToken.length <= 5) {
       return s.substring(firstToken.length).trim();

@@ -68,11 +68,8 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       _userHasSeenPopouts = prefs.getBool(_hasSeenPopoutKey) ?? false;
       _popoutStateLoaded = true;
-      debugPrint(
-          '🔔 Popout: Loaded state from prefs, _userHasSeenPopouts=$_userHasSeenPopouts');
       notifyListeners();
     } catch (e) {
-      debugPrint('Error loading popout state: $e');
       _popoutStateLoaded = true; // Still mark as loaded to avoid blocking
       notifyListeners();
     }
@@ -121,7 +118,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
   static void resetSession() {
     _hasShownPopoutDialog = false;
-    debugPrint('🔔 Popout session reset via resetSession()');
   }
 
   Future<void> resetPopoutDialog() async {
@@ -129,7 +125,6 @@ class NewDashboardVM_v3 extends ChangeNotifier {
     _hasShownPopoutDialog = false;
     await _savePopoutState();
     notifyListeners();
-    debugPrint('🔔 Popout dialog state reset');
   }
 
   String get userNameAccount => _globalDataManager.userNameAccount;
@@ -172,27 +167,17 @@ class NewDashboardVM_v3 extends ChangeNotifier {
 
       // Fetch Popouts
       final allPopouts = await _userRepository.getPopoutNotifications();
-      debugPrint('🔔 Popout: Fetched ${allPopouts.length} popouts from API');
-      for (var p in allPopouts) {
-        debugPrint(
-            '🔔 Popout item: title=${p.title}, status=${p.status}, start=${p.startDate}, end=${p.endDate}');
-      }
 
       final now = DateTime.now();
-      debugPrint('🔔 Popout: Current time is $now');
 
       validPopouts = allPopouts.where((n) {
         if (n.status != true) {
-          debugPrint(
-              '🔔 Popout "${n.title}" filtered out: status is not true (${n.status})');
           return false;
         }
 
         if (n.startDate != null) {
           final start = DateTime.tryParse(n.startDate!);
           if (start != null && now.isBefore(start)) {
-            debugPrint(
-                '🔔 Popout "${n.title}" filtered out: now is before startDate ($start)');
             return false;
           }
         }
@@ -200,17 +185,11 @@ class NewDashboardVM_v3 extends ChangeNotifier {
         if (n.endDate != null) {
           final end = DateTime.tryParse(n.endDate!);
           if (end != null && now.isAfter(end)) {
-            debugPrint(
-                '🔔 Popout "${n.title}" filtered out: now is after endDate ($end)');
             return false;
           }
         }
-        debugPrint('🔔 Popout "${n.title}" is valid and will be shown');
         return true;
       }).toList();
-
-      debugPrint(
-          '🔔 Popout: ${validPopouts.length} valid popouts after filtering');
 
       contractTypeLoaded = _globalDataManager.propertyContractType.isNotEmpty;
       occupancyRateLoaded = _globalDataManager.propertyOccupancy.isNotEmpty;
@@ -268,18 +247,13 @@ class NewDashboardVM_v3 extends ChangeNotifier {
   }
 
   void checkAndShowPopoutDialog(BuildContext context) {
-    debugPrint(
-        '🔔 checkAndShowPopoutDialog called: isLoading=$isLoading, _popoutStateLoaded=$_popoutStateLoaded, _hasShownPopoutDialog=$_hasShownPopoutDialog, _userHasSeenPopouts=$_userHasSeenPopouts, validPopouts.length=${validPopouts.length}');
     if (!isLoading &&
         _popoutStateLoaded &&
         !_hasShownPopoutDialog &&
         // !_userHasSeenPopouts && // Show every time, even if seen before
         validPopouts.isNotEmpty) {
-      debugPrint('🔔 Showing popout dialog!');
       _showPopoutDialog(context);
       _hasShownPopoutDialog = true;
-    } else {
-      debugPrint('🔔 NOT showing popout dialog - conditions not met');
     }
   }
 
@@ -326,13 +300,10 @@ class NewDashboardVM_v3 extends ChangeNotifier {
       _userHasSeenPopouts = true;
       _savePopoutState();
       notifyListeners();
-      debugPrint('🔔 All ${validPopouts.length} popouts have been shown');
       return;
     }
 
     final notification = validPopouts[index];
-    debugPrint(
-        '🔔 Showing popout ${index + 1} of ${validPopouts.length}: "${notification.title}"');
 
     showDialog(
       context: context,

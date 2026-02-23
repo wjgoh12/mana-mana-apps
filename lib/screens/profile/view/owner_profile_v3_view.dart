@@ -237,6 +237,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                             // ✅ Show confirmation dialog
                             final doSwitch = await showDialog<bool>(
                               context: context,
+                              barrierDismissible: false,
                               builder: (ctx) => AlertDialog(
                                 backgroundColor: Colors.white,
                                 title: const Text('Confirm Switch',
@@ -255,37 +256,8 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                                             fontFamily: AppFonts.outfit)),
                                   ),
                                   TextButton(
-                                    onPressed: () async {
-                                      // ✅ Show loading
-                                      showDialog(
-                                        context: ctx,
-                                        barrierDismissible: false,
-                                        builder: (_) => const Center(
-                                            child: CircularProgressIndicator()),
-                                      );
-
-                                      // ✅ Switch user
-                                      final error = await model
-                                          .switchUserAndReload(email);
-
-                                      // ✅ If Web Reset happened (error is null), stop everything
-                                      if (kIsWeb && error == null) return;
-
-                                      // ✅ Close loading dialog
-                                      if (ctx.mounted) Navigator.of(ctx).pop();
-
-                                      if (error != null) {
-                                        // Show error
-                                        ScaffoldMessenger.of(ctx).showSnackBar(
-                                            SnackBar(
-                                                content: Text(
-                                                    'Switch failed: $error')));
-                                        Navigator.of(ctx).pop(false);
-                                        return;
-                                      }
-
-                                      Navigator.of(ctx).pop(true);
-                                    },
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(true),
                                     child: const Text('Yes',
                                         style: TextStyle(
                                             fontFamily: AppFonts.outfit)),
@@ -298,10 +270,47 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                               return;
                             }
 
+                            // ✅ Close the switch user dialog before proceeding
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                            }
+
                             if (!mounted) return;
 
-                            // ✅ Navigate to dashboard with fresh data
-                            Navigator.of(context).pushAndRemoveUntil(
+                            // ✅ Show full-screen loading overlay on the page
+                            showDialog(
+                              context: this.context,
+                              barrierDismissible: false,
+                              builder: (_) => const Center(
+                                  child: CircularProgressIndicator()),
+                            );
+
+                            // ✅ Perform the switch
+                            final error =
+                                await model.switchUserAndReload(email);
+
+                            // ✅ PWA: switchUserAndReload navigates to Splashscreen, stop here
+                            if (kIsWeb && error == null) return;
+
+                            // ✅ Close loading overlay
+                            if (mounted) {
+                              Navigator.of(this.context).pop();
+                            }
+
+                            if (error != null) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(this.context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Switch failed: $error')));
+                              }
+                              return;
+                            }
+
+                            if (!mounted) return;
+
+                            // ✅ Mobile: Navigate to dashboard with fresh data
+                            Navigator.of(this.context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (_) => const NewDashboardV3()),
                                 (route) => false);
@@ -882,7 +891,7 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (model.canSwitchUser && !kIsWeb) ...[
+                          if (model.canSwitchUser) ...[
                             TextButton(
                               onPressed: () {
                                 _showSwitchUserDialog();

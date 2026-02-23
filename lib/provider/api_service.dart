@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
 import 'package:mana_mana_app/config/env_config.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/browser.dart';
 
 import 'package:flutter/foundation.dart';
 
@@ -35,10 +35,13 @@ class ApiService {
         // On Web, the Browser handles cookies automatically.
         _dio.interceptors.add(CookieManager(_cookieJar));
       } else {
-        // For Web, we rely on Browser cookies.
-        // We might need withCredentials=true for specific servers,
-        // but for now keeping it disabled to avoid CORS errors on Prod.
-        // _dio.options.extra['withCredentials'] = true;
+        // Switch-user on web relies on server session cookies.
+        // Ensure browser sends/receives cookies for cross-origin API calls.
+        final adapter = _dio.httpClientAdapter;
+        if (adapter is BrowserHttpClientAdapter) {
+          adapter.withCredentials = true;
+          debugPrint('🌐 ApiService web credentials enabled');
+        }
       }
       _initialized = true;
     }
@@ -73,10 +76,11 @@ class ApiService {
             'Content-Type': 'application/json',
           },
           responseType: ResponseType.plain,
+          extra: kIsWeb ? {'withCredentials': true} : null,
         ),
       );
 
-      debugPrint("🔧 Raw response body: ${response.data}");
+      // debugPrint("🔧 Raw response body: ${response.data}");
 
       // Try to parse as JSON
       try {
@@ -89,9 +93,9 @@ class ApiService {
               jsonResponse['accessToken'];
 
           if (newToken != null && newToken.toString().isNotEmpty) {
-            final newRefreshToken = jsonResponse['refresh_token'] ??
-                jsonResponse['refreshToken'];
-            
+            final newRefreshToken =
+                jsonResponse['refresh_token'] ?? jsonResponse['refreshToken'];
+
             debugPrint('🔑 Found new token in API response, updating...');
             await authService.updateTokens(
               accessToken: newToken.toString(),
@@ -102,10 +106,14 @@ class ApiService {
 
         return jsonResponse;
       } catch (e) {
-        debugPrint("❌ JSON decode error: $e");
-
         // ✅ Try to extract token from string response
         final responseStr = response.data.toString();
+        final trimmed = responseStr.trimLeft();
+        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+          debugPrint("❌ JSON decode error: $e");
+        } else {
+          debugPrint("ℹ️ Non-JSON response body received");
+        }
         final tokenRegex =
             RegExp(r'eyJ[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]*');
         final tokenMatch = tokenRegex.firstMatch(responseStr);
@@ -125,7 +133,7 @@ class ApiService {
           await _handleAuthError();
           throw AuthenticationException('Unauthorized');
         }
-        
+
         debugPrint("❌ Dio error: ${e.message}");
         if (e.response != null) {
           debugPrint("🔧 Error response body: ${e.response?.data}");
@@ -180,6 +188,7 @@ class ApiService {
             'Content-Type': 'application/json',
           },
           responseType: ResponseType.bytes, // Important for PDF
+          extra: kIsWeb ? {'withCredentials': true} : null,
         ),
       );
 
@@ -280,6 +289,7 @@ class ApiService {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
+          extra: kIsWeb ? {'withCredentials': true} : null,
         ),
       );
       return response.data; // Dio decodes JSON automatically
@@ -300,19 +310,19 @@ class ApiService {
           final prefix = token.substring(0, min(10, token.length));
           debugPrint('🔐 ApiService.get using token prefix: $prefix');
 
-          // Try to decode token to see which user it belongs to
-          try {
-            final parts = token.split('.');
-            if (parts.length >= 2) {
-              final payload = json.decode(utf8.decode(
-                  base64Decode(parts[1] + '=' * (4 - parts[1].length % 4))));
+          // Decode token payload safely (base64url normalization).
+          final decodedPayload = _decodeTokenPayload(token);
+          if (decodedPayload != null) {
+            try {
+              final payload = json.decode(decodedPayload);
               tokenOwner = payload['email'] ??
                   payload['preferred_username'] ??
+                  payload['sub'] ??
                   'unknown';
               debugPrint('🔐 Token belongs to: $tokenOwner');
+            } catch (e) {
+              debugPrint('🔐 Could not parse decoded token payload JSON: $e');
             }
-          } catch (e) {
-            debugPrint('🔐 Could not decode token payload: $e');
           }
         }
       } catch (_) {}
@@ -321,31 +331,35 @@ class ApiService {
         throw AuthenticationException('Session expired');
       }
 
-      final url = Uri.parse('$baseUrl$endpoint');
-
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token', // Add this
-          'Content-Type': 'application/json',
-          ...?headers,
-        },
+      final response = await _dio.get(
+        '$baseUrl$endpoint',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            ...?headers,
+          },
+          responseType: ResponseType.plain,
+          extra: kIsWeb ? {'withCredentials': true} : null,
+        ),
       );
-      
-      if (response.statusCode == 401) {
-        debugPrint('🛑 401 Unauthorized in get - logging out');
-        await _handleAuthError();
-        throw AuthenticationException('Unauthorized');
+
+      final body = response.data?.toString() ?? '';
+      try {
+        return json.decode(body);
+      } catch (_) {
+        // Return raw response for non-JSON endpoints/cases.
+        return body;
       }
-
-      // debugPrint("🔍 GET Request URL: $url");
-      // debugPrint("🔍 GET Response Status: ${response.statusCode}");
-      // debugPrint("🔍 GET Response Body: ${response.body}");
-
-      return json.decode(response.body);
     } catch (e) {
-      debugPrint('❌ GET request error: $e');
-      rethrow; // Re-throw to preserve the exception type
+      if (e is DioException) {
+        if (e.response?.statusCode == 401) {
+          debugPrint('🛑 401 Unauthorized in get - logging out');
+          await _handleAuthError();
+          throw AuthenticationException('Unauthorized');
+        }
+      }
+      rethrow;
     }
   }
 
