@@ -1,6 +1,7 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:mana_mana_app/config/AppAuth/keycloak_auth_service.dart';
+import 'package:mana_mana_app/config/oauth2_provider.dart';
 import 'package:mana_mana_app/model/owner_property_list.dart';
 import 'package:mana_mana_app/model/booking_history.dart';
 import 'package:mana_mana_app/model/booking_room.dart';
@@ -150,7 +151,7 @@ class OwnerProfileVM extends ChangeNotifier {
     try {
       debugPrint('📍 Fetching available points...');
       _isLoadingAvailablePoints = true;
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) => notifyListeners());
       final response = await _ownerBookingRepository.getUnitAvailablePoints(
         email: email,
       );
@@ -161,7 +162,7 @@ class OwnerProfileVM extends ChangeNotifier {
       debugPrint('❌ Error fetching available points: $e');
     } finally {
       _isLoadingAvailablePoints = false;
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) => notifyListeners());
 
       _isLoadingBookingHistory = false;
 
@@ -639,6 +640,13 @@ class OwnerProfileVM extends ChangeNotifier {
 
   Future<String?> switchUserAndReload(String email) async {
     try {
+      // ✅ PWA: Save admin tokens before switching (for later restore via Revert)
+      if (kIsWeb) {
+        debugPrint('🔄 PWA Mode: Saving admin session before switch');
+        await OAuth2Provider.instance.saveAdminSession();
+      }
+
+      // ✅ Use server-side session impersonation (works on both PWA and Mobile)
       final confirmRes = await _userRepository.confirmSwitchUser(email);
       debugPrint('✅ confirmSwitchUser response: $confirmRes');
 
@@ -648,17 +656,17 @@ class OwnerProfileVM extends ChangeNotifier {
         return body;
       }
 
-      // Server uses session/cookie-based impersonation (no new token issued).
-      // The session cookie is now set — subsequent API calls will resolve
-      // to the target user's identity on the server side.
-      debugPrint('✅ Server session updated for switch user via cookie');
+      debugPrint('✅ Server session updated for switch user');
 
-      // Persist switched email before any hard reset so PWA reload can restore state.
+      // Persist switched email so PWA reload can restore state
       await _globalDataManager.enableSwitchUser(email);
 
-      // ✅ PWA Adaptation: Force Hard Navigation Reset
       if (kIsWeb) {
-        debugPrint("🔄 PWA Mode: Performing hard navigation reset to apply switch user state");
+        // Track impersonated email in OAuth2Provider
+        await OAuth2Provider.instance.setImpersonatedEmail(email);
+
+        // PWA: Force hard navigation reset to reload with switched session
+        debugPrint('🔄 PWA Mode: Performing hard navigation reset');
         AuthService.navigatorKey?.currentState?.pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const Splashscreen()),
           (route) => false,
@@ -666,7 +674,7 @@ class OwnerProfileVM extends ChangeNotifier {
         return null;
       }
 
-      // ✅ Force refresh to get switched user's data
+      // ✅ Mobile: Force refresh to get switched user's data
       await _globalDataManager.resetAndRefreshData();
 
       // ✅ Post-switch verification: confirm loaded user matches target
@@ -689,23 +697,33 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   Future<void> cancelUser(String email) async {
-    await _userRepository.cancelSwitchUser(email);
-
-    await _globalDataManager.disableSwitchUser();
-
-    // ✅ PWA Adaptation: Hard Reset
+    // ✅ PWA: Restore admin's original token via OAuth2Provider
     if (kIsWeb) {
-        debugPrint("🔄 PWA Mode: cancelling switch user with hard reset");
-        AuthService.navigatorKey?.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const Splashscreen()),
-          (route) => false,
-        );
-        return;
+      debugPrint('🔄 PWA Mode: Restoring admin session via OAuth2Provider');
+
+      final restored = await OAuth2Provider.instance.switchBack();
+      if (!restored) {
+        debugPrint('⚠️ OAuth2Provider switchBack failed — admin may need to re-login');
+      }
+
+      await _userRepository.cancelSwitchUser(email);
+      await _globalDataManager.disableSwitchUser();
+
+      debugPrint('🔄 PWA Mode: Hard reset after switch back');
+      AuthService.navigatorKey?.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const Splashscreen()),
+        (route) => false,
+      );
+      return;
     }
+
+    // ✅ Mobile: Session-based cancel
+    await _userRepository.cancelSwitchUser(email);
+    await _globalDataManager.disableSwitchUser();
 
     await _globalDataManager.initializeData(forceRefresh: true);
 
-    debugPrint("Cancel user operation executed and data refreshed.");
+    debugPrint('Cancel user operation executed and data refreshed.');
     notifyListeners();
   }
 }

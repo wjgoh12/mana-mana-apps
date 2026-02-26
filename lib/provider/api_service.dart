@@ -37,10 +37,11 @@ class ApiService {
       } else {
         // Switch-user on web relies on server session cookies.
         // Ensure browser sends/receives cookies for cross-origin API calls.
-        final adapter = _dio.httpClientAdapter;
-        if (adapter is BrowserHttpClientAdapter) {
-          adapter.withCredentials = true;
-          debugPrint('🌐 ApiService web credentials enabled');
+        try {
+          _dio.httpClientAdapter = BrowserHttpClientAdapter(withCredentials: true);
+          debugPrint('🌐 ApiService web credentials explicitly enabled');
+        } catch (e) {
+          debugPrint('⚠️ ApiService error setting web credentials: $e');
         }
       }
       _initialized = true;
@@ -292,9 +293,26 @@ class ApiService {
           extra: kIsWeb ? {'withCredentials': true} : null,
         ),
       );
+
+      // Handle cases where the server returns a 200/500 but with HTML instead of JSON
+      if (response.data is String &&
+          ((response.data as String).trim().startsWith('<!DOCTYPE') ||
+              (response.data as String).trim().startsWith('<html') ||
+              (response.data as String).trim().startsWith('Cannot inv'))) {
+        debugPrint(
+            "❌ postJson: Received non-JSON error response from $url (starts with '${(response.data as String).substring(0, 10)}')");
+        return null;
+      }
+
       return response.data; // Dio decodes JSON automatically
-    } catch (e) {
+    } on DioException catch (e) {
       debugPrint("❌ postJson Dio error: $e");
+      if (e.response?.data != null) {
+        debugPrint("❌ postJson Error data: ${e.response?.data}");
+      }
+      return null;
+    } catch (e) {
+      debugPrint("❌ postJson Unexpected error: $e");
       return null;
     }
   }

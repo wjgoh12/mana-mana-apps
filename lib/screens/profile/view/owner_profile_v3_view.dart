@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mana_mana_app/screens/dashboard/view/dashboard_view.dart';
 import 'package:mana_mana_app/screens/profile/view_model/owner_profile_view_model.dart';
 import 'package:mana_mana_app/provider/global_data_manager.dart';
+import 'package:mana_mana_app/config/oauth2_provider.dart';
 import 'package:mana_mana_app/widgets/bottom_nav_bar.dart';
 import 'package:mana_mana_app/widgets/responsive_size.dart';
 import 'package:mana_mana_app/core/utils/size_utils.dart';
@@ -119,6 +120,9 @@ class _OwnerProfile_v3State extends State<OwnerProfile_v3> {
     });
 
     try {
+      // ✅ Clear impersonation state on logout
+      await OAuth2Provider.instance.clearImpersonationState();
+
       final authService = AuthService();
       await authService.logout(context);
     } catch (e) {

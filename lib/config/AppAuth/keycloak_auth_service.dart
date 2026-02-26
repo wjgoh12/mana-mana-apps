@@ -14,16 +14,13 @@ class AuthService {
   Timer? _refreshTimer;
   bool _isRefreshing = false;
 
-  // Add a global navigation key reference
   static GlobalKey<NavigatorState>? _navigatorKey;
   static GlobalKey<NavigatorState>? get navigatorKey => _navigatorKey;
 
-  // Method to set the navigator key from main app
   static void setNavigatorKey(GlobalKey<NavigatorState> navigatorKey) {
     _navigatorKey = navigatorKey;
   }
 
-  // Method to handle session expiry globally
   void _handleSessionExpiry() {
     print('🚪 Session expired - navigating to login');
     if (_navigatorKey?.currentContext != null) {
@@ -42,7 +39,6 @@ class AuthService {
     _handleSessionExpiry();
   }
 
-  /// Initialize tokens from native login
   Future<void> initializeTokensFromNativeLogin(
       String accessToken, String refreshToken) async {
     await _secureStorage.write(key: 'access_token', value: accessToken);
@@ -51,8 +47,6 @@ class AuthService {
     print('✅ Tokens initialized from native login');
   }
 
-  // Removed web-based authentication - now using native login only
-  // This method is kept for backward compatibility but will return false
   Future<bool> authenticate() async {
     print('⚠️ Web-based authentication disabled. Use native login instead.');
     return false;
@@ -90,10 +84,9 @@ class AuthService {
     String? refreshToken = await _secureStorage.read(key: 'refresh_token');
 
     if (accessToken == null || refreshToken == null) {
-      return null; // missing tokens
+      return null;
     }
 
-    // ✅ 5. Check refresh token expiry
     try {
       if (JwtDecoder.isExpired(refreshToken)) {
         print('❌ Refresh token expired - need to re-login');
@@ -108,7 +101,6 @@ class AuthService {
       return null;
     }
 
-    // ✅ 6. Refresh access token if expiring soon (normal user only)
     if (JwtDecoder.isExpired(accessToken) ||
         JwtDecoder.getRemainingTime(accessToken).inSeconds <= 60) {
       print('🔄 Access token expired/expiring, refreshing...');
@@ -131,7 +123,7 @@ class AuthService {
     try {
       String? validToken = await getValidAccessToken();
       if (validToken != null) {
-        _startTokenRefreshTimer(validToken); // Still keep timer as backup
+        _startTokenRefreshTimer(validToken);
         return true;
       }
       return false;
@@ -141,10 +133,8 @@ class AuthService {
     }
   }
 
-  // Modify existing methods to use detection-based approach
   Future<bool> validateToken(String token) async {
     try {
-      // Simply check if token is expired
       return !JwtDecoder.isExpired(token);
     } catch (e) {
       return false;
@@ -183,9 +173,7 @@ class AuthService {
           'client_secret': EnvConfig.keycloakClientSecret,
         },
       );
-    } catch (e) {
-      //print('❌ Logout error: $e');
-    }
+    } catch (e) {}
 
     await _removeAllAppData();
     Navigator.of(context).pushAndRemoveUntil(
@@ -202,20 +190,16 @@ class AuthService {
     return await _secureStorage.read(key: 'access_token');
   }
 
-  /// Update stored tokens (for user switching scenarios)
   Future<void> updateTokens(
       {required String accessToken, String? refreshToken}) async {
     debugPrint('🔄 Updating stored tokens for user switch');
 
-    // Store new access token
     await _secureStorage.write(key: 'access_token', value: accessToken);
 
-    // Store new refresh token if provided
     if (refreshToken != null) {
       await _secureStorage.write(key: 'refresh_token', value: refreshToken);
     }
 
-    // Cancel existing refresh timer and start new one with the new token
     _refreshTimer?.cancel();
     _startTokenRefreshTimer(accessToken);
 
@@ -232,20 +216,14 @@ class AuthService {
       Duration refreshIn = timeUntilExpiry - refreshBefore;
 
       if (refreshIn.isNegative) {
-        //print('⚠️ Token already expired or near expiry, refreshing now.');
         await refreshTokenFunction();
         return;
       }
 
       _refreshTimer = Timer(refreshIn, () async {
-        //print('⏱️ Timer triggered token refresh');
         await refreshTokenFunction();
       });
-
-      //print('🕒 Refresh timer set for ${refreshIn.inSeconds} seconds');
-    } catch (e) {
-      //print('❌ Failed to set refresh timer: $e');
-    }
+    } catch (e) {}
   }
 
   Future<bool> refreshTokenFunction() async {
@@ -266,7 +244,6 @@ class AuthService {
         return false;
       }
 
-      // Check refresh token expiry before using it
       if (JwtDecoder.isExpired(refreshToken)) {
         print('❌ Refresh token expired - clearing tokens');
         await _removeAllAppData();
@@ -292,7 +269,6 @@ class AuthService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> tokenData = json.decode(response.body);
 
-        // Store new tokens
         await _secureStorage.write(
             key: 'access_token', value: tokenData['access_token']);
 
@@ -301,17 +277,14 @@ class AuthService {
               key: 'refresh_token', value: tokenData['refresh_token']);
         }
 
-        // Start new timer with the new token
         _startTokenRefreshTimer(tokenData['access_token']);
 
-        // print('✅ Token refreshed successfully');
         _isRefreshing = false;
         return true;
       } else {
         print(
             '❌ Token refresh failed: ${response.statusCode} - ${response.body}');
 
-        // If refresh fails, likely means refresh token is invalid/expired
         if (response.statusCode == 400 || response.statusCode == 401) {
           await _removeAllAppData();
           _handleSessionExpiry();
@@ -347,7 +320,6 @@ class AuthService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> tokenData = json.decode(response.body);
 
-        // Store new tokens
         await _secureStorage.write(
             key: 'access_token', value: tokenData['access_token']);
 
@@ -355,17 +327,14 @@ class AuthService {
           await _secureStorage.write(
               key: 'refresh_token', value: tokenData['refresh_token']);
         }
-        
-        // Also store the email/username used for login
+
         await _secureStorage.write(key: 'email', value: username);
 
-        // Start new timer with the new token
         _startTokenRefreshTimer(tokenData['access_token']);
 
         return true;
       } else {
-        print(
-            '❌ Login failed: ${response.statusCode} - ${response.body}');
+        print('❌ Login failed: ${response.statusCode} - ${response.body}');
         return false;
       }
     } catch (e) {
