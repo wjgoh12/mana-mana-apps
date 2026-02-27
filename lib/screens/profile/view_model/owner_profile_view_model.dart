@@ -66,6 +66,12 @@ class OwnerProfileVM extends ChangeNotifier {
   List<OwnerPropertyList> get ownerUnits => _globalDataManager.ownerUnits;
 
   String getOwnerName() {
+    // In switch mode, prefer the switched email as display if users list has wrong data
+    if (_globalDataManager.isSwitchUser && _globalDataManager.switchedUserEmail != null) {
+      if (users.isEmpty || (users.first.ownerFullName == null || users.first.ownerFullName!.isEmpty)) {
+        return _globalDataManager.switchedUserEmail!;
+      }
+    }
     if (users.isEmpty) return 'No Information';
     return users.first.ownerFullName?.toString() ?? 'No Information';
   }
@@ -99,7 +105,9 @@ class OwnerProfileVM extends ChangeNotifier {
 
   Future<void> fetchData() async {
     await _globalDataManager.initializeData();
-    _users = await _userRepository.getUsers();
+    // Use GlobalDataManager.users — do NOT call getUsers() independently
+    // In switch mode, GlobalDataManager has already fetched the switched user
+    _users = _globalDataManager.users.toList();
 
     await checkRole();
 
@@ -117,7 +125,8 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   Future<void> fetchBookingHistory() async {
-    final email = users.isNotEmpty ? users.first.email ?? '' : '';
+    // Use activeEmail to ensure switched user's history is fetched
+    final email = _globalDataManager.activeEmail;
 
     if (email.isEmpty) {
       debugPrint("⚠️ No email found, cannot fetch booking history.");
@@ -141,7 +150,8 @@ class OwnerProfileVM extends ChangeNotifier {
   }
 
   Future<void> fetchUserAvailablePoints() async {
-    final email = users.isNotEmpty ? users.first.email ?? '' : '';
+    // Use activeEmail to ensure switched user's points are fetched
+    final email = _globalDataManager.activeEmail;
 
     if (email.isEmpty) {
       debugPrint("⚠️ No email found, cannot fetch available points.");
@@ -149,7 +159,7 @@ class OwnerProfileVM extends ChangeNotifier {
     }
 
     try {
-      debugPrint('📍 Fetching available points...');
+      debugPrint('📍 Fetching available points for email=$email...');
       _isLoadingAvailablePoints = true;
       WidgetsBinding.instance.addPostFrameCallback((_) => notifyListeners());
       final response = await _ownerBookingRepository.getUnitAvailablePoints(

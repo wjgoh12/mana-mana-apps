@@ -145,18 +145,9 @@ class UserRepository {
         try {
           final serverUserId = userMap['userId']?.toString();
           final serverEmail = userMap['email']?.toString();
-          final token = userMap['token']?.toString();
-          debugPrint(
-              '🔎 ownerUserData parsed: userId=$serverUserId, email=$serverEmail, token_present=${token != null}');
-
-          if (token != null && token.isNotEmpty) {
-            debugPrint(
-                '🔑 Found token in getUsers JSON response, updating stored token');
-            final AuthService authService = AuthService();
-            authService.updateTokens(accessToken: token);
-            debugPrint('✅ Updated token from getUsers JSON response');
-          }
-        } catch (_) {}
+        } catch (e) {
+          debugPrint('⚠️ Error parsing user token context: $e');
+        }
 
         debugPrint("✅ Successfully parsed user: ${user.email}");
         return [user];
@@ -422,27 +413,11 @@ class UserRepository {
     }
 
     if (res == null) {
-      try {
-        debugPrint('🔁 No payloads succeeded; trying empty body');
-        final attempt = await _apiService.post(
-          ApiEndpoint.ownerUserData,
-        );
-        if (attempt != null && _responseMatchesEmail(attempt, email)) {
-          res = attempt;
-        }
-      } catch (e) {
-        debugPrint('⚠️ Final empty-body attempt failed: $e');
-      }
+      debugPrint("⚠️ getSwitchedUser: No matching payload found for $email, returning empty");
+      return [];
     }
 
     try {
-      if (res == null) {
-        print("⚠️ other user API returned null for ownerUserData");
-        return [];
-      }
-      // debugPrint(
-      //     "✅ API call succeeded for switched ownerUserData; raw response: $res");
-
       Map<String, dynamic> userMap;
       if (res is List && res.isNotEmpty) {
         Map<String, dynamic>? match;
@@ -479,29 +454,12 @@ class UserRepository {
       try {
         final serverUserId = userMap['userId']?.toString();
         final serverEmail = userMap['email']?.toString();
-        final token = userMap['token']?.toString();
         debugPrint(
-            '🔎 getSwitchedUser parsed: userId=$serverUserId, email=$serverEmail, token_present=${token != null}');
+            '🔎 getSwitchedUser parsed: userId=$serverUserId, email=$serverEmail, token_present=${userMap['token'] != null}');
 
-        if (token != null && token.isNotEmpty) {
-          try {
-            final parts = token.split('.');
-            if (parts.length >= 2) {
-              final normalized = base64Url.normalize(parts[1]);
-              final decoded = utf8.decode(base64Url.decode(normalized));
-              // debugPrint('🔐 token payload: $decoded');
-              try {
-                final Map<String, dynamic> payloadJson =
-                    Map<String, dynamic>.from(json.decode(decoded));
-                debugPrint(
-                    '🔐 token.sub: ${payloadJson['sub']}, token.email?: ${payloadJson['email'] ?? ''}');
-              } catch (_) {}
-            }
-          } catch (e) {
-            debugPrint('⚠️ Failed to decode token payload: $e');
-          }
-        }
-      } catch (_) {}
+        // We DO NOT update tokens here anymore. ApiService.post already handles it
+        // and OwnerProfileVM will verify identity.
+      } catch (e) {}
 
       debugPrint("Successfully parsed switched user: ${user.ownerEmail}");
       return [user];

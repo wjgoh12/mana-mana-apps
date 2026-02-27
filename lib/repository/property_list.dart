@@ -143,9 +143,11 @@ class PropertyListRepository {
     }
   }
 
-  Future<List<Map<String, dynamic>>> revenueByYear() async {
+  Future<List<Map<String, dynamic>>> revenueByYear({String? email}) async {
+    final Map<String, dynamic>? data =
+        (email != null && email.isNotEmpty) ? {'email': email} : null;
     return await _apiService
-        .post(ApiEndpoint.dashboardReveueByYear)
+        .post(ApiEndpoint.dashboardReveueByYear, data: data)
         .then((res) {
       if (res is List && res.isNotEmpty) {
         return res
@@ -160,9 +162,11 @@ class PropertyListRepository {
     });
   }
 
-  Future<List<Map<String, dynamic>>> totalByMonth() async {
+  Future<List<Map<String, dynamic>>> totalByMonth({String? email}) async {
+    final Map<String, dynamic>? data =
+        (email != null && email.isNotEmpty) ? {'email': email} : null;
     return await _apiService
-        .post(ApiEndpoint.dashboardTotalByMonth)
+        .post(ApiEndpoint.dashboardTotalByMonth, data: data)
         .then((res) {
       if (res is List && res.isNotEmpty) {
         return res
@@ -185,8 +189,10 @@ class PropertyListRepository {
     });
   }
 
-  Future<List<Map<String, dynamic>>> locationByMonth() async {
-    return await _apiService.post(ApiEndpoint.locationByMonth).then((res) {
+  Future<List<Map<String, dynamic>>> locationByMonth({String? email}) async {
+    final Map<String, dynamic>? data =
+        (email != null && email.isNotEmpty) ? {'email': email} : null;
+    return await _apiService.post(ApiEndpoint.locationByMonth, data: data).then((res) {
       if (res is List && res.isNotEmpty) {
         return res
             .map((item) => {
@@ -202,8 +208,10 @@ class PropertyListRepository {
     });
   }
 
-  Future<List<SingleUnitByMonth>> getUnitByMonth() async {
-    return await _apiService.post(ApiEndpoint.getUnitByMonth).then((res) {
+  Future<List<SingleUnitByMonth>> getUnitByMonth({String? email}) async {
+    final Map<String, dynamic>? data =
+        (email != null && email.isNotEmpty) ? {'email': email} : null;
+    return await _apiService.post(ApiEndpoint.getUnitByMonth, data: data).then((res) {
       List<dynamic> value = res ?? [];
       List<SingleUnitByMonth> _ = [];
       for (int i = 0; i < value.length; i++) {

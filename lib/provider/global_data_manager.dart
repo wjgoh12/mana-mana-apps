@@ -48,6 +48,19 @@ class GlobalDataManager extends ChangeNotifier {
   String? _selectedState;
   bool isSwitchUser = false;
   String? _switchedUserEmail;
+  String? _impersonationError;
+
+  String? get impersonationError => _impersonationError;
+
+  /// The authoritative email for fetching data.
+  /// In switch-user mode, returns the switched email.
+  /// Otherwise, returns the logged-in user's email.
+  String get activeEmail {
+    if (isSwitchUser && _switchedUserEmail != null && _switchedUserEmail!.isNotEmpty) {
+      return _switchedUserEmail!;
+    }
+    return _users.isNotEmpty ? (_users.first.email ?? '') : '';
+  }
 
   // Getter and setter for switched user email with persistence
   String? get switchedUserEmail => _switchedUserEmail;
@@ -66,6 +79,7 @@ class GlobalDataManager extends ChangeNotifier {
   Future<void> enableSwitchUser(String email) async {
     _switchedUserEmail = email;
     isSwitchUser = true;
+    _impersonationError = null;
     _isInitialized = false;
     _lastFetchTime = null;
     await _secureStorage.write(key: 'switched_user_email', value: email);
@@ -259,17 +273,12 @@ class GlobalDataManager extends ChangeNotifier {
 
       if (_users.isEmpty || loadedEmail != targetEmail.toLowerCase()) {
         debugPrint(
-            '⚠️ switched user lookup mismatch (loaded=$loadedEmail, target=${targetEmail.toLowerCase()}), trying getUserByEmail');
-        final fallbackUser = await _userRepository.getUserByEmail(targetEmail);
-        if (fallbackUser != null) {
-          _users = [fallbackUser];
-        }
-      }
-
-      if (_users.isEmpty) {
+            '⚠️ switched user lookup mismatch (loaded=$loadedEmail, target=$targetEmail)');
         debugPrint(
-            '⚠️ switched user lookup failed, trying getUsers as fallback');
-        _users = await _userRepository.getUsers();
+            '🔄 JWT identity differs from target — proceeding with email-parameterized calls');
+        _impersonationError = null; // Don't halt, just note it
+      } else {
+        _impersonationError = null;
       }
     } else {
       _users = await _userRepository.getUsers();
@@ -290,12 +299,16 @@ class GlobalDataManager extends ChangeNotifier {
 
     // ✅ Pass the target email to API calls that support it
     // In switch user mode, this ensures we get the switched user's data
+    // Use targetEmail for ALL email-parameterized endpoints
+    final fetchEmail = targetEmail ?? (users.isNotEmpty ? users.first.email : null);
+    debugPrint('📧 _fetchAllData using fetchEmail=$fetchEmail');
+
     _ownerUnits = await _propertyRepository.getOwnerUnit(email: targetEmail);
     debugPrint('📦 getOwnerUnit with email=$targetEmail returned ${_ownerUnits.length} units');
-    _unitByMonth = await _propertyRepository.getUnitByMonth();
-    _revenueDashboard = await _propertyRepository.revenueByYear();
-    _totalByMonth = await _propertyRepository.totalByMonth();
-    _locationByMonth = await _propertyRepository.locationByMonth();
+    _unitByMonth = await _propertyRepository.getUnitByMonth(email: targetEmail);
+    _revenueDashboard = await _propertyRepository.revenueByYear(email: targetEmail);
+    _totalByMonth = await _propertyRepository.totalByMonth(email: targetEmail);
+    _locationByMonth = await _propertyRepository.locationByMonth(email: targetEmail);
 
     try {
       // Use switched user email or fallback to fetched user email
